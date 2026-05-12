@@ -1,6 +1,6 @@
 com\mycompany\projectuts\LoginController.class
+com\mycompany\projectuts\DashboardController.class
 com\mycompany\projectuts\App.class
 com\mycompany\projectuts\SignupController.class
 com\mycompany\projectuts\SecondaryController.class
 module-info.class
-com\mycompany\projectuts\PrimaryController.class
