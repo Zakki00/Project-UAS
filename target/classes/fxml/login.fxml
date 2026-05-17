@@ -5,7 +5,7 @@
 <?import javafx.scene.shape.*?>
 <StackPane xmlns="http://javafx.com/javafx/21"
            xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="com.mycompany.projectuts.LoginController"
+           fx:controller="com.mycompany.projectuas.LoginController"
            styleClass="root-bg"
            stylesheets="@../styles/login.css">
     <!-- Wrapper utama: selalu CENTER di tengah window -->

@@ -1,4 +1,4 @@
-package com.mycompany.projectuts;
+package com.mycompany.projectuas;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;

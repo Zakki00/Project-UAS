@@ -8,7 +8,7 @@
 <BorderPane
     xmlns="http://javafx.com/javafx/21"
     xmlns:fx="http://javafx.com/fxml/1"
-    fx:controller="com.mycompany.projectuts.DashboardController"
+    fx:controller="com.mycompany.projectuas.DashboardController"
     styleClass="root-pane"
     prefHeight="900" prefWidth="1080"
     stylesheets="@../styles/dashboard.css">

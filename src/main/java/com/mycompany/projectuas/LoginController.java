@@ -1,4 +1,4 @@
-package com.mycompany.projectuts;
+package com.mycompany.projectuas;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,7 +15,7 @@ import java.util.ResourceBundle;
 
 /**
  * LoginController
- * Package : com.mycompany.projectuts
+ * Package : com.mycompany.projectuas
  * FXML : resources/fxml/login.fxml
  */
 public class LoginController implements Initializable {

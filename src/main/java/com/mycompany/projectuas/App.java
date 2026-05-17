@@ -1,4 +1,4 @@
-package com.mycompany.projectuts;
+package com.mycompany.projectuas;
 
 import java.io.IOException;
 
