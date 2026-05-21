@@ -98,16 +98,16 @@
 
 .feature-item {
     -fx-padding: 10 12 10 12;
-    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-color: #ffffff08;
     -fx-background-radius: 10;
-    -fx-border-color: rgba(255, 255, 255, 0.05);
+    -fx-border-color: #ffffff0d;
     -fx-border-radius: 10;
     -fx-border-width: 1;
 }
 
 .feature-item:hover {
-    -fx-background-color: rgba(108, 92, 231, 0.13);
-    -fx-border-color: rgba(108, 92, 231, 0.35);
+    -fx-background-color: #6c5ce721;
+    -fx-border-color: #6c5ce759;
     -fx-cursor: hand;
 }
 
@@ -146,7 +146,7 @@
 .login-card {
     -fx-background-color: linear-gradient(to bottom, #1c2740, #162035);
     -fx-background-radius: 18;
-    -fx-border-color: rgba(108, 92, 231, 0.18);
+    -fx-border-color: #6c5ce72e;
     -fx-border-radius: 18;
     -fx-border-width: 1;
     -fx-padding: 36 34 24 34;
@@ -332,7 +332,7 @@
 }
 
 .guest-btn {
-    -fx-background-color: rgba(255, 255, 255, 0.03);
+    -fx-background-color: #ffffff08;
     -fx-text-fill: #8899aa;
     -fx-font-size: 12px;
     -fx-font-family: "Segoe UI", sans-serif;
@@ -345,13 +345,13 @@
 }
 
 .guest-btn:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.06);
+    -fx-background-color: #ffffff0f;
     -fx-text-fill: #c0ccd8;
     -fx-border-color: #2a3e54;
 }
 
 .guest-btn:pressed {
-    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-color: #ffffff1a;
 }
 
 /* ============================================================
