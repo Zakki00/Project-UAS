@@ -1,23 +1,34 @@
 package com.mycompany.projectuas;
 
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.input.MouseEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.chart.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
 
 public class DashboardController implements Initializable {
 
@@ -155,12 +166,15 @@ public class DashboardController implements Initializable {
                 userRow.setPadding(new Insets(12, 16, 12, 16));
             });
             toggleBtn.setText("◀");
-        }
+           
+        
 
         // Atur padding nav items saat collapse
         updateNavPadding(sidebarCollapsed);
 
         timeline.play();
+        }
+        
     }
 
     private void hideSidebarText() {
@@ -200,6 +214,7 @@ public class DashboardController implements Initializable {
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
+            
         }
     }
 
@@ -209,6 +224,8 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
+        
+        
     }
 
     @FXML
@@ -219,6 +236,8 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
+        navigation nav = new navigation();
+        nav.navigateToTransaksi();
     }
 
     @FXML
@@ -229,11 +248,14 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
+        navigation nav = new navigation();
+        nav.navigateToLaporan();
     }
 
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
+        
     }
 
     private void setActiveNav(HBox selected) {
@@ -257,6 +279,9 @@ public class DashboardController implements Initializable {
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
+
+
+    
 
     // ═════════════════════════════════════════════════════
     // CHARTS
@@ -441,4 +466,7 @@ public class DashboardController implements Initializable {
     private void onLihatSemua() {
         System.out.println("Lihat semua transaksi");
     }
+    
 }
+
+

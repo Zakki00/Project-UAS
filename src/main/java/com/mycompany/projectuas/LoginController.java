@@ -1,22 +1,26 @@
 package com.mycompany.projectuas;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
 /**
- * LoginController
- * Package : com.mycompany.projectuas
- * FXML : resources/fxml/login.fxml
+ * LoginController Package : com.mycompany.projectuas FXML :
+ * resources/fxml/login.fxml
  */
 public class LoginController implements Initializable {
 
@@ -36,6 +40,8 @@ public class LoginController implements Initializable {
     private Button togglePasswordBtn;
 
     private boolean showingPassword = false;
+    public String name;
+    public int userId;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,15 +56,23 @@ public class LoginController implements Initializable {
         String password = showingPassword
                 ? passwordVisible.getText()
                 : passwordField.getText();
-
+        String query = "SELECT * FROM tb_user WHERE username = '" + username + "' AND password = '" + password + "'";
+        List<Object[]> result = koneksi.ambilData(query);
         if (username.isEmpty() || password.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Perhatian", "Username dan password tidak boleh kosong.");
-            return;
+            System.out.println(result.get(0)[0].toString());
         }
 
         // TODO: ganti dengan logika autentikasi nyata
-        if (username.equals("admin@storems.id") && password.equals("admin123")) {
-            navigateToDashboard();
+        if (result.size() > 0) {
+            // navigateToDashboard();
+            navigation nav = new navigation();
+            nav.navigateToDashboard();
+            userId = (int) result.get(0)[0];
+            name = (String) result.get(0)[1];
+            System.out.println("Login berhasil untuk user ID: " + userId);
+            Stage stage = (Stage) loginBtn.getScene().getWindow();
+            stage.close();
         } else {
             showAlert(Alert.AlertType.ERROR, "Gagal Masuk", "Username atau password salah.");
         }
@@ -66,7 +80,11 @@ public class LoginController implements Initializable {
 
     @FXML
     private void handleGuestLogin(ActionEvent event) {
-        navigateToDashboard();
+        navigation nav = new navigation();
+        nav.navigateToDashboard();
+        Stage stage = (Stage) guestBtn.getScene().getWindow();
+        stage.close();
+
     }
 
     @FXML
@@ -93,20 +111,7 @@ public class LoginController implements Initializable {
                 "Silakan hubungi administrator untuk mereset password Anda.");
     }
 
-    private void navigateToDashboard() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/dashboard.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) loginBtn.getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setMaximized(true);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Error", "Gagal memuat halaman dashboard.");
-        }
-    }
+   
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
@@ -115,4 +120,5 @@ public class LoginController implements Initializable {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 }

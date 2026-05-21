@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class koneksi {
-    private static final String URL = "jdbc:mysql://localhost:3306/java";
+    private static final String URL = "jdbc:mysql://localhost:3306/db_enjoy_cave";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 

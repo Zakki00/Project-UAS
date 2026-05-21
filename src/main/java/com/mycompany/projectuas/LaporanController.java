@@ -6,15 +6,14 @@ package com.mycompany.projectuas;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import javafx.fxml.Initializable;
 
 /**
  * FXML Controller class
  *
- * @author Lenovo
+ * @author zakki mubarroq
  */
-public class SignupController implements Initializable {
+public class LaporanController implements Initializable {
 
     /**
      * Initializes the controller class.
@@ -22,8 +21,6 @@ public class SignupController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-    }
-
-
-
+    }    
+    
 }
