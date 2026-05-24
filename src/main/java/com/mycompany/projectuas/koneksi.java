@@ -33,11 +33,9 @@ public class koneksi {
         try (Connection connection = getConnection()) {
             connection.createStatement().execute(query);
             System.out.println("Query berhasil dieksekusi!");
-            JOptionPane.showMessageDialog(null, "Query berhasil dieksekusi!");
-
+            
         } catch (SQLException e) {
             System.err.println("Gagal mengeksekusi query: " + e.getMessage());
-            JOptionPane.showMessageDialog(null, "Gagal Mengesekusi Query" + e.getMessage());
 
         }
 

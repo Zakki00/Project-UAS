@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS db_enjoy_cave;
 
+
 USE db_enjoy_cave;
 
 CREATE TABLE tb_user (
@@ -27,8 +28,11 @@ CREATE TABLE tb_transaksi (
     id_user INT NOT NULL,
     total DECIMAL(10, 2) NOT NULL,
     tanggal_transaksi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    pelanggan VARCHAR(100),
     FOREIGN KEY (id_user) REFERENCES tb_user (id_user)
 );
+
+
 
 CREATE Table tb_detail_transaksi (
     id_detail INT AUTO_INCREMENT PRIMARY KEY,

@@ -23,7 +23,8 @@ import javafx.stage.Stage;
  * resources/fxml/login.fxml
  */
 public class LoginController implements Initializable {
-
+    session session = new session();
+    
     @FXML
     private TextField usernameField;
     @FXML
@@ -68,8 +69,8 @@ public class LoginController implements Initializable {
             // navigateToDashboard();
             navigation nav = new navigation();
             nav.navigateToDashboard();
-            userId = (int) result.get(0)[0];
-            name = (String) result.get(0)[1];
+            session.id_user = (int) result.get(0)[0];
+            session.username = (String) result.get(0)[1];
             System.out.println("Login berhasil untuk user ID: " + userId);
             Stage stage = (Stage) loginBtn.getScene().getWindow();
             stage.close();

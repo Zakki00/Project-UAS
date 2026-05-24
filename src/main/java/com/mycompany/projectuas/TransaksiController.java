@@ -20,7 +20,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.stage.Stage;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -36,8 +35,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.util.Duration;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
 
 /**
  * FXML Controller class
@@ -194,7 +194,8 @@ public class TransaksiController implements Initializable {
         alert.setContentText("Tidak ada pemberitahuan baru.");
         alert.showAndWait();
     }
-// ═════════════════════════════════════════════════════
+
+    // ═════════════════════════════════════════════════════
     // NAV CLICK HANDLERS
     // ═════════════════════════════════════════════════════
     @FXML
@@ -204,8 +205,7 @@ public class TransaksiController implements Initializable {
         nav.navigateToDashboard();
         Stage stage = (Stage) navDashboard.getScene().getWindow();
         stage.close();
-        
-        
+
     }
 
     @FXML
@@ -216,7 +216,7 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
-       
+
     }
 
     @FXML
@@ -236,9 +236,8 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-        
-    }
 
+    }
 
     private void hideSidebarText() {
         logoBrand.setVisible(false);
@@ -303,9 +302,7 @@ public class TransaksiController implements Initializable {
 
     // ── Model ─────────────────────────────────────────────
     static class Produk {
-
         String nama, kategori, description, imageUrl;
-
         int id, stok, harga;
 
         Produk(int id, String nama, int harga, String kategori, int stok, String description, String imageUrl) {
@@ -316,7 +313,6 @@ public class TransaksiController implements Initializable {
             this.stok = stok;
             this.description = description;
             this.imageUrl = imageUrl;
-
         }
     }
 
@@ -336,7 +332,7 @@ public class TransaksiController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    //  INITIALIZE
+    // INITIALIZE
     // ═════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -350,7 +346,6 @@ public class TransaksiController implements Initializable {
         lblShift.setText("Shift Siang");
         lblNoTrx.setText(String.format("#TRX-%04d", noTrx));
         btnBayar.setDisable(true);
-        
     }
 
     // ──data ────────────────────────────────────────
@@ -384,7 +379,7 @@ public class TransaksiController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    //  RENDER PRODUK CARDS
+    // RENDER PRODUK CARDS
     // ═════════════════════════════════════════════════════
     private void renderProduk(List<Produk> list) {
         flowProduk.getChildren().clear();
@@ -401,12 +396,12 @@ public class TransaksiController implements Initializable {
         ImageView img = new ImageView();
         img.setFitWidth(120);
         img.setFitHeight(90);
-        img.setPreserveRatio(true);  // ← tetap true, jaga rasio
+        img.setPreserveRatio(true); // ← tetap true, jaga rasio
         img.setSmooth(true);
 
-// Crop tengah — potong bagian yang keluar
+        // Crop tengah — potong bagian yang keluar
         Rectangle clip = new Rectangle(120, 90);
-        clip.setArcWidth(10);   // rounded clip juga
+        clip.setArcWidth(10); // rounded clip juga
         clip.setArcHeight(10);
         img.setClip(clip);
 
@@ -469,20 +464,42 @@ public class TransaksiController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    //  FILTER
+    // FILTER
     // ═════════════════════════════════════════════════════
     private void filterProduk() {
         String query = tfCari.getText().toLowerCase().trim();
         String kat = cbKategori.getValue();
 
-        List<Produk> hasil = semuaProduk.stream()
-                .filter(p -> (kat == null || kat.equals("Semua Kategori")
-                || p.kategori.equals(kat)))
-                .filter(p -> query.isEmpty()
-                || p.nama.toLowerCase().contains(query))
-                .toList();
+        // ── Bangun SQL dinamis ────────────────────────
+        StringBuilder sql = new StringBuilder("SELECT * FROM tb_barang WHERE 1=1");
 
-        renderProduk(hasil);
+        // tambah filter kategori hanya jika bukan "Semua Kategori"
+        if (kat != null && !kat.equals("Semua Kategori")) {
+            sql.append(" AND kategori = '").append(kat).append("'");
+        }
+
+        // tambah filter nama hanya jika ada ketikan
+        if (!query.isEmpty()) {
+            sql.append(" AND nama_barang LIKE '%").append(query).append("%'");
+        }
+
+        // ── Ambil data ────────────────────────────────
+        List<Object[]> hasil = koneksi.ambilData(sql.toString());
+        List<Produk> list = new ArrayList<>();
+
+        for (Object[] row : hasil) {
+            int id = (int) row[0];
+            String nama = (String) row[1];
+            int harga = (int) row[2];
+            String kategori = (String) row[3];
+            int stok = (int) row[4];
+            String description = (String) row[5];
+            String imageUrl = (String) row[6];
+
+            list.add(new Produk(id, nama, harga, kategori, stok, description, imageUrl));
+        }
+
+        renderProduk(list);
     }
 
     @FXML
@@ -493,7 +510,7 @@ public class TransaksiController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    //  KERANJANG
+    // KERANJANG
     // ═════════════════════════════════════════════════════
     private void tambahKeKeranjang(Produk p) {
         if (keranjang.containsKey(p.id)) {
@@ -591,7 +608,7 @@ public class TransaksiController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    //  SUMMARY
+    // SUMMARY
     // ═════════════════════════════════════════════════════
     private void updateSummary() {
         long subtotal = keranjang.values().stream()
@@ -620,7 +637,7 @@ public class TransaksiController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    //  HANDLERS
+    // HANDLERS
     // ═════════════════════════════════════════════════════
     @FXML
     private void onDiskonChanged() {
@@ -702,13 +719,28 @@ public class TransaksiController implements Initializable {
             return;
         }
 
+        CartItem ci = keranjang.values().iterator().next(); // ambil salah satu item untuk contoh
+        String sqlTransaksi = String.format(
+                "INSERT INTO tb_transaksi (id_user, total, tanggal_transaksi, pelanggan) VALUES (%d, %d, NOW(), '%s')",
+                session.id_user, keranjang.values().stream().mapToLong(CartItem::subtotal).sum(), "");
+
+        koneksi.eksekusiQuery(sqlTransaksi);
+
+        // Update stok di database
+        String sqlUpdateStok = String.format("UPDATE tb_barang SET stok = stok - %d WHERE id_barang = %d",
+                ci.qty, ci.produk.id);
+        koneksi.eksekusiQuery(sqlUpdateStok);
+
+        semuaProduk.clear();
+        loadproduk();
+        onClearSearch();
+
         // TODO: simpan ke database, cetak struk, dll.
         System.out.println("=== TRANSAKSI BERHASIL ===");
         System.out.println("No: #TRX-" + String.format("%04d", noTrx));
         System.out.println("Metode: " + metodeBayar);
-        keranjang.forEach((id, ci)
-                -> System.out.printf("  %s x%d = Rp %s%n",
-                        ci.produk.nama, ci.qty, FMT.format(ci.subtotal())));
+        // keranjang.forEach((id, ci) -> System.out.printf("  %s x%d = Rp %s%n",
+        //         ci.produk.nama, ci.qty, FMT.format(ci.subtotal())));
 
         // Reset
         noTrx++;
@@ -719,12 +751,17 @@ public class TransaksiController implements Initializable {
         updateSummary();
         lblNoTrx.setText(String.format("#TRX-%04d", noTrx));
 
-        // Tampilkan alert sukses
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Transaksi Berhasil");
-        alert.setHeaderText(null);
-        alert.setContentText("✅ Pembayaran berhasil diproses!");
-        alert.showAndWait();
+        // // Tampilkan alert sukses
+        // Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        // alert.setTitle("Transaksi Berhasil");
+        // alert.setHeaderText(null);
+        // alert.setContentText("✅ Pembayaran berhasil diproses!");
+        // alert.showAndWait();
+
+        navigation nav = new navigation();
+        Stage stage = (Stage) btnBayar.getScene().getWindow();
+        nav.detailTransaksi(stage);
+        
     }
 
     // ── Helpers ───────────────────────────────────────────

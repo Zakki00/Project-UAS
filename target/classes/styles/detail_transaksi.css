@@ -1,0 +1,290 @@
+/* ═══════════════════════════════════════════════════════
+   StoreMS — detail_transaksi.css
+   Dark Mode  |  com.mycompany.projectuts
+════════════════════════════════════════════════════════ */
+
+/* ROOT */
+.detail-root {
+    -fx-background-color: #0F1117;
+}
+
+/* ── HEADER PELANGGAN ────────────────────────────────── */
+.header-box {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: transparent transparent #2E3250 transparent;
+    -fx-border-width: 1;
+    -fx-padding: 20 30 20 30;
+}
+
+.header-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.header-sub {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+}
+
+.lbl-pelanggan {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+    -fx-min-width: 90;
+}
+
+.tf-pelanggan {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+    -fx-padding: 8 12 8 12;
+}
+
+.tf-pelanggan:focused {
+    -fx-border-color: #6C63FF;
+}
+
+/* ── NO TRANSAKSI BADGE ──────────────────────────────── */
+.no-trx-badge {
+    -fx-background-color: rgba(108, 99, 255, 0.15);
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 6 16 6 16;
+}
+
+.no-trx-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+}
+
+.no-trx-value {
+    -fx-text-fill: #6C63FF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.tanggal-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+}
+
+/* ── SCROLL & LIST ───────────────────────────────────── */
+.detail-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #0F1117;
+    -fx-border-width: 0;
+    -fx-padding: 0 16 0 16;
+}
+
+.detail-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.detail-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #2E3250;
+    -fx-background-radius: 4;
+}
+
+.detail-list {
+    -fx-background-color: transparent;
+    -fx-spacing: 10;
+}
+
+/* ── TABLE HEADER ────────────────────────────────────── */
+.table-header {
+    -fx-background-color: #252840;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 16 10 16;
+}
+
+.th-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+/* ── ITEM ROW ────────────────────────────────────────── */
+.item-row {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12 16 12 16;
+}
+
+.item-row:hover {
+    -fx-background-color: #252840;
+    -fx-border-color: #6C63FF;
+}
+
+.item-no {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+    -fx-min-width: 30;
+    -fx-alignment: CENTER;
+}
+
+.item-nama {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.item-kategori {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+}
+
+.item-harga {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+    -fx-min-width: 100;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+.item-qty {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-min-width: 40;
+    -fx-alignment: CENTER;
+}
+
+.item-subtotal {
+    -fx-text-fill: #00E5A0;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-min-width: 110;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+.item-hapus {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 0 4 0 4;
+}
+
+.item-hapus:hover {
+    -fx-text-fill: #FF5C7C;
+}
+
+/* ── SUMMARY BOX ─────────────────────────────────────── */
+.summary-section {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: #2E3250 transparent transparent transparent;
+    -fx-border-width: 1;
+    -fx-padding: 16 30 0 30;
+}
+
+.summary-row {
+    -fx-padding: 4 0 4 0;
+}
+
+.summary-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+}
+
+.summary-value {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+}
+
+.summary-diskon {
+    -fx-text-fill: #FFD166;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.summary-sep {
+    -fx-background-color: #2E3250;
+}
+
+.total-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+}
+
+.total-value {
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* ── BOTTOM BUTTONS ──────────────────────────────────── */
+.footer-box {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: #2E3250 transparent transparent transparent;
+    -fx-border-width: 1;
+    -fx-padding: 16 30 20 30;
+}
+
+.btn-simpan {
+    -fx-background-color: #6C63FF;
+    -fx-border-width: 0;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 14 0 14 0;
+    -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.45), 14, 0, 0, 4);
+}
+
+.btn-simpan:hover {
+    -fx-background-color: #5a52e0;
+}
+
+.btn-simpan:disabled {
+    -fx-background-color: #2E3250;
+    -fx-text-fill: #8B8FA8;
+    -fx-effect: none;
+}
+
+.btn-batal {
+    -fx-background-color: transparent;
+    -fx-border-color: #FF5C7C;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-text-fill: #FF5C7C;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 14 0 14 0;
+}
+
+.btn-batal:hover {
+    -fx-background-color: rgba(255, 92, 124, 0.12);
+}
+
+/* Empty state */
+.empty-icon {
+    -fx-font-size: 40px;
+    -fx-opacity: 0.3;
+}
+
+.empty-text {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.empty-sub {
+    -fx-text-fill: #2E3250;
+    -fx-font-size: 10px;
+}
