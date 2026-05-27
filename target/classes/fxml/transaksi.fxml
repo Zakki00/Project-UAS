@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -13,7 +12,6 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
-
 <BorderPane prefHeight="900" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/transaksi.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.TransaksiController">
     <!-- sidebar -->
     <left>
@@ -71,6 +69,13 @@
                                 <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan" />
                             </children>
                         </HBox>
+                        <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
+                            <children>
+                                <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                                <Label styleClass="nav-icon" text="💰" />
+                                <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang" />
+                            </children>
+                        </HBox>
                         <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
                             <children>
                                 <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
@@ -96,7 +101,6 @@
             </children>
         </VBox>
     </left>
-
     <!-- main content -->
     <center>
         <VBox styleClass="main-content">
@@ -159,9 +163,7 @@
                     </VBox>
                     <!-- Divider vertikal -->
                     <Separator orientation="VERTICAL" styleClass="panel-divider" />
-                    <!-- ═══════════════════════════════════
-         KANAN — Keranjang & Bayar
-    ════════════════════════════════════ -->
+                    <!-- ═══════════════════════════════════ KANAN — Keranjang & Bayar════════════════════════════════════ -->
                     <VBox minWidth="290" prefHeight="543.0" prefWidth="297.0" spacing="12" styleClass="panel-right">
                         <padding>
                             <Insets bottom="16" left="12" right="16" top="16" />
@@ -242,7 +244,7 @@
                             </HBox>
                             <!-- Kembalian -->
                             <HBox alignment="CENTER_LEFT" styleClass="kembalian-box">
-                                <Label styleClass="kembalian-label" text="Kembalian" HBox.hgrow="ALWAYS" />
+                                <!-- <Label styleClass="kembalian-label" text="Kembalian" HBox.hgrow="ALWAYS" /> -->
                                 <Label fx:id="lblKembalian" styleClass="kembalian-value" text="Rp 0" />
                             </HBox>
                             <!-- Quick amount buttons -->

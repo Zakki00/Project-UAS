@@ -28,6 +28,10 @@ CREATE TABLE tb_transaksi (
     id_transaksi INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT NOT NULL,
     total DECIMAL(10, 2) NOT NULL,
+    tunai INT(100) NOT NULL,
+    kembalian INT(100),
+    kekurangan INT(100),
+    status_pembayaran VARCHAR(50) NOT NULL,
     tanggal_transaksi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     pelanggan VARCHAR(100),
     FOREIGN KEY (id_user) REFERENCES tb_user (id_user)

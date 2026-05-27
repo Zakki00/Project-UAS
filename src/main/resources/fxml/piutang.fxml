@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane prefHeight="900" prefWidth="1080" style="root-pane" stylesheets="@../styles/piutang.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PiutangController">
+   <left>
+      <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
+         <children>
+            <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
+               <children>
+                  <Label styleClass="logo-icon" text="🏪" />
+                  <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
+                     <children>
+                        <Label styleClass="logo-title" text="StoreMS" />
+                        <Label styleClass="logo-sub" text="Manajemen Toko" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Separator styleClass="sidebar-divider" />
+            <VBox fx:id="navMenu" spacing="2" styleClass="nav-menu" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="10" top="10" />
+               </VBox.margin>
+               <children>
+                  <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
+                     <children>
+                        <Rectangle height="0" styleClass="nav-active-bar" width="3" />
+                        <Label styleClass="nav-icon" text="⊞" />
+                        <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
+                     <children>
+                        <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                        <Label styleClass="nav-icon" text="📦" />
+                        <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
+                     <children>
+                        <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                        <Label styleClass="nav-icon" text="🛒" />
+                        <Label fx:id="navLblKasir" styleClass="nav-label" text="Kasir" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="navPelanggan" alignment="CENTER_LEFT" onMouseClicked="#onNavPelanggan" spacing="10" styleClass="nav-item">
+                     <children>
+                        <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                        <Label styleClass="nav-icon" text="👥" />
+                        <Label fx:id="navLblPelanggan" styleClass="nav-label" text="Pelanggan" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
+                     <children>
+                        <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                        <Label styleClass="nav-icon" text="📈" />
+                        <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
+                     <children>
+                        <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                        <Label styleClass="nav-icon" text="💰" />
+                        <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang" />
+                     </children>
+                  </HBox>
+                  <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
+                     <children>
+                        <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                        <Label styleClass="nav-icon" text="⚙️" />
+                        <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Pengaturan" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Separator styleClass="sidebar-divider" />
+            <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
+               <children>
+                  <Label styleClass="user-avatar" text="A" />
+                  <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
+                     <children>
+                        <Label styleClass="user-name" text="Admin" />
+                        <Label styleClass="user-role" text="Administrator" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀" />
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox styleClass="main-content">
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+               <children>
+                  <VBox spacing="1" HBox.hgrow="ALWAYS">
+                     <children>
+                        <Label styleClass="page-title" text="Dashboard" />
+                        <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
+                     </children>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="276.0" spacing="8" styleClass="search-box">
+                     <children>
+                        <Label styleClass="search-icon" text="🔍" />
+                        <TextField promptText="Cari..." styleClass="search-field" />
+                     </children>
+                  </HBox>
+                  <StackPane styleClass="notif-wrapper">
+                     <children>
+                        <Button onAction="#onNotif" styleClass="notif-btn" text="🔔" />
+                        <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />
+                     </children>
+                  </StackPane>
+                  <Label styleClass="topbar-avatar" text="A" />
+               </children>
+            </HBox>
+            <VBox spacing="16" styleClass="body-content">
+               <padding>
+                  <Insets bottom="16" left="16" right="16" top="16" />
+               </padding>
+               <children>
+                  <HBox spacing="14">
+                     <children>
+                        <VBox spacing="6" styleClass="kpi-card, kpi-purple" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="kpi-label" text="Total Piutang" />
+                              <Label fx:id="kpiPenjualan" styleClass="kpi-value" text="Rp 4.280.000" />
+                              <Label styleClass="kpi-delta-up" text="▲ +12% vs kemarin" />
+                           </children>
+                        </VBox>
+                        <VBox prefHeight="104.0" prefWidth="204.0" spacing="6" styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label styleClass="kpi-label" text="Jumlah Transaksi Yang Belum Lunas" />
+                              <Label fx:id="kpiTransaksi" styleClass="kpi-value" text="128" />
+                              <Label styleClass="kpi-delta-up" text="▲ +8% vs kemarin" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6" styleClass="kpi-card, kpi-yellow" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label prefHeight="15.0" prefWidth="196.0" styleClass="kpi-label" text="Transaksi Yang Belum Lunas Hari Ini" />
+                              <Label fx:id="kpiProduk" styleClass="kpi-value" text="312 unit" />
+                              <Label styleClass="kpi-delta-down" text="▼ -3% vs kemarin" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox spacing="14" />
+               </children>
+            </VBox>
+            <VBox prefHeight="701.0" prefWidth="773.0" VBox.vgrow="ALWAYS">
+               <!-- Header pelanggan -->
+               <HBox alignment="CENTER_LEFT" prefHeight="124.0" prefWidth="773.0" spacing="12" styleClass="header-piutang">
+                  <Label styleClass="lbl-pelanggan" text="Nama Pelanggan" />
+                  <TextField fx:id="tfPelanggan" prefHeight="37.0" promptText="Cari nama pelanggan..." styleClass="tf-pelanggan" HBox.hgrow="ALWAYS" />
+               </HBox>
+               <!-- Konten bawah -->
+               <HBox prefHeight="575.0" prefWidth="773.0" VBox.vgrow="ALWAYS">
+                  <!-- Tabel barang -->
+                  <TableView fx:id="tabelBarang" prefHeight="575.0" styleClass="table-piutang" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                     <columns>
+                        <TableColumn fx:id="colNo" prefWidth="50" text="No" />
+                        <TableColumn fx:id="colNama" prefWidth="200" text="Nama Barang" />
+                        <TableColumn fx:id="colHarga" prefWidth="110" text="Harga" />
+                        <TableColumn fx:id="colQty" prefWidth="60" text="Qty" />
+                        <TableColumn fx:id="colSubtotal" prefWidth="120" text="Subtotal" />
+                     </columns>
+                  </TableView>
+                  <!-- Panel info kanan -->
+                  <VBox prefHeight="573.0" prefWidth="248.0" spacing="12" styleClass="panel-kanan">
+                     <Label styleClass="info-section-title" text="INFO TRANSAKSI" />
+                     <!-- Nama pelanggan -->
+                     <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label styleClass="info-label" text="Pelanggan" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblNamaPelanggan" styleClass="info-value" text="-" />
+                     </HBox>
+                     <!-- ID transaksi -->
+                     <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label styleClass="info-label" text="ID Transaksi" HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblIdTransaksi" styleClass="info-value-id" text="-" />
+                     </HBox>
+                     <Separator styleClass="info-sep" />
+                     <!-- Jumlah hutang -->
+                     <VBox spacing="4" styleClass="hutang-box">
+                        <Label styleClass="hutang-label" text="TOTAL HUTANG" />
+                        <Label fx:id="lblJumlahHutang" styleClass="hutang-value" text="Rp 0" />
+                     </VBox>
+                     <!-- Spacer -->
+                     <VBox VBox.vgrow="ALWAYS" />
+                     <!-- Tombol -->
+                     <HBox spacing="8">
+                        <Button fx:id="btnLunas" maxWidth="Infinity" onAction="#onLunas" prefHeight="50" styleClass="btn-lunas" text="✓  Lunas" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btnBatal" maxWidth="Infinity" onAction="#onBatal" prefHeight="50" styleClass="btn-batal" text="✕  Batal" HBox.hgrow="ALWAYS" />
+                     </HBox>
+                  </VBox>
+               </HBox>
+            </VBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

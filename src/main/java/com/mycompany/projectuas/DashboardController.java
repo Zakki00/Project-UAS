@@ -10,8 +10,6 @@ import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -29,6 +27,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class DashboardController implements Initializable {
@@ -60,6 +59,8 @@ public class DashboardController implements Initializable {
     private HBox navPelanggan;
     @FXML
     private HBox navLaporan;
+    @FXML
+    private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
 
@@ -135,10 +136,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
-
         double targetWidth = sidebarCollapsed ? SIDEBAR_MINI : SIDEBAR_FULL;
-
-        // Animasi lebar sidebar
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
@@ -146,19 +144,14 @@ public class DashboardController implements Initializable {
                 new KeyFrame(Duration.millis(350),
                         new KeyValue(sidebar.prefWidthProperty(), targetWidth),
                         new KeyValue(sidebar.minWidthProperty(), targetWidth)));
-
-        // Sembunyikan / tampilkan teks dengan fade
         if (sidebarCollapsed) {
-            // Langsung sembunyikan teks saat mulai collapse
             hideSidebarText();
             toggleBtn.setText("▶");
-            // Ubah padding logo row ke center
-            logoRow.setAlignment(javafx.geometry.Pos.CENTER);
+            logoRow.setAlignment(Pos.CENTER);
             logoRow.setPadding(new Insets(18, 0, 18, 0));
-            userRow.setAlignment(javafx.geometry.Pos.CENTER);
+            userRow.setAlignment(Pos.CENTER);
             userRow.setPadding(new Insets(12, 0, 12, 0));
         } else {
-            // Tampilkan teks setelah animasi selesai
             timeline.setOnFinished(e -> {
                 showSidebarText();
                 logoRow.setAlignment(Pos.CENTER_LEFT);
@@ -167,15 +160,9 @@ public class DashboardController implements Initializable {
                 userRow.setPadding(new Insets(12, 16, 12, 16));
             });
             toggleBtn.setText("◀");
-           
-        
-
-        // Atur padding nav items saat collapse
-        updateNavPadding(sidebarCollapsed);
-
-        timeline.play();
         }
-        
+        updateNavPadding(sidebarCollapsed);
+        timeline.play(); 
     }
 
     private void hideSidebarText() {
@@ -215,7 +202,7 @@ public class DashboardController implements Initializable {
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
-            
+
         }
     }
 
@@ -225,8 +212,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
-        
-        
+
     }
 
     @FXML
@@ -254,11 +240,19 @@ public class DashboardController implements Initializable {
         navigation nav = new navigation();
         nav.navigateToLaporan();
     }
+    @FXML
+    private void onNavPiutang(){
+        setActiveNav(navPiutang);
+        navigation nav = new navigation();
+        nav.navigateToPiutang();
+        Stage stage = (Stage) navPiutang.getScene().getWindow();
+        stage.close();
+    }
 
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-        
+
     }
 
     private void setActiveNav(HBox selected) {
@@ -282,9 +276,6 @@ public class DashboardController implements Initializable {
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
-
-
-    
 
     // ═════════════════════════════════════════════════════
     // CHARTS
@@ -469,7 +460,5 @@ public class DashboardController implements Initializable {
     private void onLihatSemua() {
         System.out.println("Lihat semua transaksi");
     }
-    
+
 }
-
-
