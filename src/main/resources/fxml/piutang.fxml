@@ -174,8 +174,9 @@
                            <columns>
                               <TableColumn fx:id="colNo" prefWidth="50" text="No" />
                               <TableColumn fx:id="colNama" prefWidth="200" text="Nama Pelanggan" />
+                              <TableColumn fx:id="colTotalPembayaran" prefWidth="110" text="Total Pembayaran" />
+                              <TableColumn fx:id="colUangPembayaran" prefWidth="110" text="Uang Pembayaran" />
                               <TableColumn fx:id="colKekurangan" prefWidth="110" text="Kekurangan" />
-                              <TableColumn fx:id="colPembayaran" prefWidth="139.0" text="Total Pembayaran" />
                               <TableColumn fx:id="colTanggal_Transaksi" prefWidth="172.0" text="Tanggal Transaksi" />
                            </columns>
                         </TableView>

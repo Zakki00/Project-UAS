@@ -761,7 +761,7 @@ public class TransaksiController implements Initializable {
 
             String sqlTransaksi = String.format(
                     "INSERT INTO tb_transaksi " +
-                            "(id_user, total, tunai, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                            "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                             +
                             "VALUES (%d, %d, %d, %d, %d, '%s', NOW(), '%s')",
 
@@ -779,7 +779,7 @@ public class TransaksiController implements Initializable {
 
             String sqlTransaksi = String.format(
                     "INSERT INTO tb_transaksi " +
-                            "(id_user, total, tunai, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                            "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                             +
                             "VALUES (%d, %d, %d, %d, %d, '%s', NOW(), '%s')",
 

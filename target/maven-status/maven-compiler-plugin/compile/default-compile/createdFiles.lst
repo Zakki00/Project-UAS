@@ -9,6 +9,7 @@ com\mycompany\projectuas\TransaksiController.class
 com\mycompany\projectuas\DashboardController$TransaksiItem.class
 module-info.class
 com\mycompany\projectuas\navigation.class
+com\mycompany\projectuas\PiutangController$DataHutang.class
 com\mycompany\projectuas\session.class
 com\mycompany\projectuas\TransaksiController$CartItem.class
 com\mycompany\projectuas\SecondaryController.class
@@ -18,6 +19,6 @@ com\mycompany\projectuas\DashboardController$1.class
 com\mycompany\projectuas\koneksi.class
 com\mycompany\projectuas\DetailTransaksiController$ItemTransaksi.class
 com\mycompany\projectuas\DetailTransaksiController.class
-com\mycompany\projectuas\PiutangController$BarangItem.class
 com\mycompany\projectuas\LaporanController.class
+com\mycompany\projectuas\PiutangController$DataBarang.class
 com\mycompany\projectuas\LoginController.class
