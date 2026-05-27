@@ -303,9 +303,8 @@ public class TransaksiController implements Initializable {
         }
     }
 
-    // ── Data ─────────────────────────────────────────────
+    // ── Variables ──────────────────────────────────────────────
     private final List<Produk> semuaProduk = new ArrayList<>();
-
     private String metodeBayar = "TUNAI";
     private int noTrx = 1;
 

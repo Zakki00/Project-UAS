@@ -84,3 +84,14 @@ INSERT INTO tb_barang (nama_barang, harga, kategori, stok, deskripsi) VALUES
 ('Kopi Kopi Es Kopi Es', 30000, 'Minuman', 100, 'Minuman kopi dingin dengan tambahan es batu dan es krim, memberikan sensasi segar dan manis dalam setiap tegukan.'),
 ('Kopi Susu Gula Aren Es Kopi Es', 40000, 'Minuman', 80, 'Minuman kopi dingin dengan tambahan susu panas, gula aren, es batu, dan es krim, memberikan kombinasi rasa kopi, susu, manis alami, dan sensasi segar yang lezat.'),
 ('Kopi Es Kopi Es Kopi Es', 55000, 'Minuman', 50, 'Minuman kopi dingin dengan tambahan es batu dan es krim, memberikan');
+
+
+SELECT * FROM  tb_transaksi JOIN tb_detail_transaksi ON tb_transaksi.id_transaksi = tb_detail_transaksi.id_transaksi
+JOIN tb_barang ON tb_detail_transaksi.id_barang = tb_barang.id_barang WHERE tb_transaksi.status_pembayaran = 'Belum Lunas';
+
+list data piutang
+nama pelanggna
+kekurangan
+total pembayaran
+status pembayaran
+tanggal transaksi

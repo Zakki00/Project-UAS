@@ -2,6 +2,7 @@ package com.mycompany.projectuas;
 
 import java.net.URL;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -10,8 +11,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -76,41 +75,144 @@ public class PiutangController implements Initializable {
     private Label navLblPiutang;
     @FXML
     private Label navLblPengaturan;
-    
+
     // ── FXML refs ──────────────────────────────────
-    @FXML private TextField  tfPelanggan;
-    @FXML private TableView<BarangItem> tabelBarang;
-    @FXML private TableColumn<BarangItem, String> colNo;
-    @FXML private TableColumn<BarangItem, String> colNama;
-    @FXML private TableColumn<BarangItem, String> colHarga;
-    @FXML private TableColumn<BarangItem, String> colQty;
-    @FXML private TableColumn<BarangItem, String> colSubtotal;
+    @FXML
+    private TextField tfPelanggan;
+    @FXML
+    private TableView<DataHutang> tableHutang;
+    @FXML
+    private TableColumn<DataHutang, String> colNo;
+    @FXML
+    private TableColumn<DataHutang, String> colNama;
+    @FXML
+    private TableColumn<DataHutang, String> colKekurangan;
+    @FXML
+    private TableColumn<DataHutang, String> colPembayaran;
+    @FXML
+    private TableColumn<DataHutang, String> colTanggal_Transaksi;
 
-    @FXML private Label lblNamaPelanggan;
-    @FXML private Label lblIdTransaksi;
-    @FXML private Label lblJumlahHutang;
-    @FXML private Button btnLunas;
-    @FXML private Button btnBatal;
+    @FXML
+    private TextField tfTunai;
+    @FXML
+    private Label lblKembalian;
+    @FXML
+    private Label lblNamaPelanggan;
+    @FXML
+    private Label lblIdTransaksi;
+    @FXML
+    private Label lblJumlahHutang;
+    @FXML
+    private Button btnLunas;
+    @FXML
+    private Button btnBatal;
 
-    
     // ── Data ───────────────────────────────────────
     private static final NumberFormat FMT = NumberFormat.getInstance(
             new Locale("id", "ID"));
 
     // Model
-    static class BarangItem {
-        String no, nama;
-        long harga;
-        int qty;
+    // static class BarangItem {
+    // String no, nama;
+    // long harga;
+    // int qty;
+    // BarangItem(String no, String nama, long harga, int qty) {
+    // this.no = no;
+    // this.nama = nama;
+    // this.harga = harga;
+    // this.qty = qty;
+    // }
+    // long subtotal() {
+    // return harga * qty;
+    // }
+    // }
+    // ---------prepare data hutang dari database----------------
+    private final List<DataHutang> dataHutang = new ArrayList<>();
 
-        BarangItem(String no, String nama, long harga, int qty) {
-            this.no    = no;
-            this.nama  = nama;
-            this.harga = harga;
-            this.qty   = qty;
+    static class DataHutang {
+        int no;
+        String idTransaksi;
+        String namaPelanggan;
+        long kekurangan;
+        Long total_pembayaran;
+        String status_pembayaran;
+        String tanggal_transaksi;
+        String nama_barang;
+        long harga_barang;
+        int qty;
+        DataHutang(int no,
+                String idTransaksi,
+                String namaPelanggan,
+                long kekurangan,
+                Long total_pembayaran,
+                String status_pembayaran,
+                String tanggal_transaksi,
+                String nama_barang,
+                long harga_barang,
+                int qty) {
+            this.no = no;
+            this.idTransaksi = idTransaksi;
+            this.namaPelanggan = namaPelanggan;
+            this.kekurangan = kekurangan;
+            this.total_pembayaran = total_pembayaran;
+            this.status_pembayaran = status_pembayaran;
+            this.tanggal_transaksi = tanggal_transaksi;
+            this.nama_barang = nama_barang;
+            this.harga_barang = harga_barang;
+            this.qty = qty;
+        
+            this.harga_barang = harga_barang;
+            this.qty = qty;
         }
 
-        long subtotal() { return harga * qty; }
+    }
+
+    private void load_data_hutang(String namapelanggan) {
+        String sql = "SELECT "
+                + "t.id_transaksi, "
+                + "t.pelanggan AS nama_pelanggan, "
+                + "t.kekurangan, "
+                + "0 AS total_pembayaran, "
+                + "t.status_pembayaran, "
+                + "t.tanggal_transaksi, "
+                + "b.nama_barang, "
+                + "b.harga AS harga_barang, "
+                + "td.jumlah AS qty "
+                + "FROM tb_transaksi t "
+                + "JOIN tb_detail_transaksi td "
+                + "ON t.id_transaksi = td.id_transaksi "
+                + "JOIN tb_barang b "
+                + "ON td.id_barang = b.id_barang "
+                + "WHERE t.status_pembayaran = 'Belum Lunas' "
+                + "AND t.pelanggan LIKE '%" + namapelanggan + "%'";
+
+        int rowNo = 1;
+        List<Object[]> results = koneksi.ambilData(sql);
+        for (Object[] row : results) {
+
+            String idTransaksi = (String) row[0];
+            String namaPelanggan = (String) row[1];
+            long kekurangan = (long) row[2];
+            Long total_pembayaran = (Long) row[3];
+            String status_pembayaran = (String) row[4];
+            String tanggal_transaksi = (String) row[5];
+            String nama_barang = (String) row[6];
+            long harga_barang = (long) row[7];
+            int qty = (int) row[8];
+
+            dataHutang.add(new DataHutang(
+                    rowNo++,
+                    idTransaksi,
+                    namaPelanggan,
+                    kekurangan,
+                    total_pembayaran,
+                    status_pembayaran,
+                    tanggal_transaksi,
+                    nama_barang,
+                    harga_barang,
+                    qty));
+        }
+        tableHutang.getItems().setAll(dataHutang);
     }
 
     private Stage myStage;
@@ -129,7 +231,9 @@ public class PiutangController implements Initializable {
     // ═════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+        setupNavHover();
+        setupTable();
+        load_data_hutang(null);
     }
 
     // ═════════════════════════════════════════════════════
@@ -164,7 +268,7 @@ public class PiutangController implements Initializable {
             toggleBtn.setText("◀");
         }
         updateNavPadding(sidebarCollapsed);
-        timeline.play(); 
+        timeline.play();
     }
 
     private void hideSidebarText() {
@@ -186,7 +290,7 @@ public class PiutangController implements Initializable {
     private void setNavLabelsVisible(boolean visible) {
         List<Label> labels = List.of(
                 navLblDashboard, navLblProduk, navLblKasir,
-                navLblPelanggan, navLblLaporan, navLblPengaturan);
+                navLblPelanggan, navLblLaporan, navLblPiutang, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -200,7 +304,7 @@ public class PiutangController implements Initializable {
 
         List<HBox> items = List.of(
                 navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan);
+                navPelanggan, navLaporan, navPiutang, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -214,7 +318,7 @@ public class PiutangController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
-        navigation nav = new  navigation();
+        navigation nav = new navigation();
         nav.navigateToDashboard();
         Stage stage = (Stage) navDashboard.getScene().getWindow();
         stage.close();
@@ -246,6 +350,7 @@ public class PiutangController implements Initializable {
         navigation nav = new navigation();
         nav.navigateToLaporan();
     }
+
     @FXML
     private void onNavPiutang() {
         setActiveNav(navPiutang);
@@ -260,11 +365,12 @@ public class PiutangController implements Initializable {
     private void setActiveNav(HBox selected) {
         List<HBox> all = List.of(
                 navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan);
+                navPelanggan, navLaporan, navPiutang, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
-            if (!item.getStyleClass().contains("nav-item"))
+            if (!item.getStyleClass().contains("nav-item")) {
                 item.getStyleClass().add("nav-item");
+            }
         }
         selected.getStyleClass().add("nav-active");
     }
@@ -272,52 +378,24 @@ public class PiutangController implements Initializable {
     private void setupNavHover() {
         List<HBox> all = List.of(
                 navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan);
+                navPelanggan, navLaporan, navPiutang, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
 
-     // ── Setup tabel ────────────────────────────────
+    // ── Setup tabel ────────────────────────────────
     private void setupTable() {
-        colNo.setCellValueFactory(d ->
-            new SimpleStringProperty(d.getValue().no));
-        colNama.setCellValueFactory(d ->
-            new SimpleStringProperty(d.getValue().nama));
-        colHarga.setCellValueFactory(d ->
-            new SimpleStringProperty("Rp " + FMT.format(d.getValue().harga)));
-        colQty.setCellValueFactory(d ->
-            new SimpleStringProperty(String.valueOf(d.getValue().qty)));
-        colSubtotal.setCellValueFactory(d ->
-            new SimpleStringProperty("Rp " + FMT.format(d.getValue().subtotal())));
-
-        tabelBarang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    }
-
-    // ── Dummy data ─────────────────────────────────
-    private void loadDummyData() {
-        ObservableList<BarangItem> data = FXCollections.observableArrayList(
-            new BarangItem("1", "Indomie Goreng",  3_500,  3),
-            new BarangItem("2", "Aqua 600ml",      4_000,  2),
-            new BarangItem("3", "Sabun Lifebuoy",  12_500, 1),
-            new BarangItem("4", "Teh Sosro",       5_000,  4),
-            new BarangItem("5", "Beng-Beng",       4_000,  2)
-        );
-
-        tabelBarang.setItems(data);
-
-        // Hitung total hutang
-        long total = data.stream().mapToLong(BarangItem::subtotal).sum();
-
-        // Update info panel kanan
-        lblNamaPelanggan.setText("Budi Santoso");
-        lblIdTransaksi.setText("#TRX-0042");
-        lblJumlahHutang.setText("Rp " + FMT.format(total));
+        colNo.setCellValueFactory(cellData -> new SimpleStringProperty(String.valueOf(tableHutang.getItems().indexOf(cellData.getValue()) + 1)));
+        colNama.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().namaPelanggan));
+        colKekurangan.setCellValueFactory(data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().kekurangan)));
+        colPembayaran.setCellValueFactory(data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().total_pembayaran)));
+        colTanggal_Transaksi.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().tanggal_transaksi));
     }
 
     // ═══════════════════════════════════════════════
-    //  HANDLERS
+    // HANDLERS
     // ═══════════════════════════════════════════════
     @FXML
     private void onLunas() {
@@ -328,8 +406,8 @@ public class PiutangController implements Initializable {
         confirm.showAndWait().ifPresent(response -> {
             if (response.getButtonData().isDefaultButton()) {
                 // TODO: update status di database
-                System.out.println("Transaksi " 
-                    + lblIdTransaksi.getText() + " ditandai LUNAS");
+                System.out.println("Transaksi "
+                        + lblIdTransaksi.getText() + " ditandai LUNAS");
                 closeForm();
             }
         });
@@ -352,12 +430,7 @@ public class PiutangController implements Initializable {
         }
     }
 
-
-
-
-
-
-     // ═════════════════════════════════════════════════════
+    // ═════════════════════════════════════════════════════
     // OTHER HANDLERS
     // ═════════════════════════════════════════════════════
     @FXML
@@ -368,5 +441,74 @@ public class PiutangController implements Initializable {
     @FXML
     private void onLihatSemua() {
         System.out.println("Lihat semua transaksi");
+    }
+
+    long kembalian;
+    long tunai;
+
+    public void updateSummary() {
+
+        // Kembalian
+        tunai = parseLong(tfTunai.getText().replaceAll("[^0-9]", ""));
+        kembalian = tunai - data_transaksi.total;
+        lblKembalian.setText(kembalian >= 0
+                ? "Kembalian Rp " + FMT.format(kembalian)
+                : "Kurang Rp " + FMT.format(Math.abs(kembalian)));
+        lblKembalian.setStyle(kembalian >= 0
+                ? "-fx-text-fill: #00E5A0;"
+                : "-fx-text-fill: #FF5C7C;");
+    }
+
+    @FXML
+    private void onQuick5() {
+        tfTunai.setText("5000");
+        updateSummary();
+    }
+
+    @FXML
+    private void onQuick10() {
+        tfTunai.setText("10000");
+        updateSummary();
+    }
+
+    @FXML
+    private void onQuick20() {
+        tfTunai.setText("20000");
+        updateSummary();
+    }
+
+    @FXML
+    private void onQuick50() {
+        tfTunai.setText("50000");
+        updateSummary();
+    }
+
+    private boolean isUpdating = false;
+
+    @FXML
+    private void onTunaiChanged() {
+        if (isUpdating) {
+            return;
+        }
+        isUpdating = true;
+        String raw = tfTunai.getText().replaceAll("[^0-9]", "");
+        if (raw.isEmpty()) {
+            tfTunai.setText("");
+            isUpdating = false;
+            updateSummary();
+        }
+        long value = Long.parseLong(raw);
+        tfTunai.setText("Rp " + FMT.format(value));
+        tfTunai.positionCaret(tfTunai.getText().length());
+        isUpdating = false;
+        updateSummary();
+    }
+
+    private long parseLong(String s) {
+        try {
+            return s == null || s.isBlank() ? 0 : Long.parseLong(s.trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

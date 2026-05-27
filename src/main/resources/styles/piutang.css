@@ -596,3 +596,97 @@
 .btn-batal:hover {
     -fx-background-color: rgba(255, 92, 124, 0.12);
 }
+
+/* ── SECTION LABEL ───────────────────────────────────── */
+.section-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1;
+}
+
+/* ── TUNAI INPUT ─────────────────────────────────────── */
+.tunai-input-box {
+    -fx-background-color: #252840;
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 8 12 8 12;
+}
+
+.tunai-prefix {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+}
+
+.tunai-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-prompt-text-fill: #8B8FA8;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+}
+
+.kembalian-box {
+    -fx-background-color: rgba(0, 229, 160, 0.08);
+    -fx-border-color: rgba(0, 229, 160, 0.3);
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 7 12 7 12;
+}
+
+.kembalian-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+}
+
+.kembalian-value {
+    -fx-text-fill: #00E5A0;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+/* Quick amount */
+.btn-quick {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+    -fx-cursor: hand;
+    -fx-padding: 5 0 5 0;
+}
+
+.btn-quick:hover {
+    -fx-background-color: rgba(108, 99, 255, 0.15);
+    -fx-border-color: #6C63FF;
+    -fx-text-fill: #6C63FF;
+}
+
+/* ── SCROLL & LIST ───────────────────────────────────── */
+.detail-scroll {
+    -fx-background-color: transparent;
+    -fx-background: #0F1117;
+    -fx-border-width: 0;
+    -fx-padding: 0 16 0 16;
+}
+
+.detail-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.detail-scroll .scroll-bar:vertical .thumb {
+    -fx-background-color: #2E3250;
+    -fx-background-radius: 4;
+}
+
+.detail-list {
+    -fx-background-color: transparent;
+    -fx-spacing: 10;
+}
