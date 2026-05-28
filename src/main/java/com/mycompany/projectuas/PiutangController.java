@@ -134,6 +134,14 @@ public class PiutangController implements Initializable {
     private ScrollPane detailScroll;
     @FXML
     private Button btnBatal;
+    @FXML
+    private Button btnQuick5;
+    @FXML
+    private Button btnQuick10;
+    @FXML
+    private Button btnQuick20;
+    @FXML
+    private Button btnQuick50;
 
     // ── Data ───────────────────────────────────────
     private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
@@ -247,6 +255,7 @@ public class PiutangController implements Initializable {
         SetupRowClick();
         renderList();
         loadKPI();
+        setupForm();
     }
 
     // ═════════════════════════════════════════════════════
@@ -407,6 +416,18 @@ public class PiutangController implements Initializable {
         load_data_hutang("");
         tableHutang.setItems(dataHutang);
         tableHutang.refresh();
+    }
+
+    // setupa form
+    private void setupForm() {
+        tfTunai.setDisable(true);
+        lblKembalian.setText("Rp 0");
+        lblNamaPelanggan.setText("-");
+        lblJumlahHutang.setText("Rp 0");
+        btnQuick5.setDisable(true);
+        btnQuick10.setDisable(true);
+        btnQuick20.setDisable(true);
+        btnQuick50.setDisable(true);
     }
 
     // ── Setup tabel ────────────────────────────────
@@ -624,6 +645,8 @@ public class PiutangController implements Initializable {
         renderList();
         tfPelanggan.setDisable(false);
         clearform();
+        setupForm();
+
     }
 
     long kembalian;
@@ -643,9 +666,8 @@ public class PiutangController implements Initializable {
 
     @FXML
     private void onTunaiChanged() {
-        if (isUpdating) {
+        if (isUpdating)
             return;
-        }
         isUpdating = true;
         String raw = tfTunai.getText().replaceAll("[^0-9]", "");
         if (raw.isEmpty()) {
@@ -678,7 +700,12 @@ public class PiutangController implements Initializable {
                 load_data_barang(selected);
                 renderList();
                 tfPelanggan.setDisable(true);
+                tfTunai.setDisable(false);
                 dataBarang.clear();
+                btnQuick5.setDisable(false);
+                btnQuick10.setDisable(false);
+                btnQuick20.setDisable(false);
+                btnQuick50.setDisable(false);
             }
         });
     }
@@ -705,13 +732,13 @@ public class PiutangController implements Initializable {
             empty.setAlignment(Pos.CENTER);
             empty.setPadding(new Insets(60, 0, 60, 0));
 
-            Label icon = new Label("🛒");
+            Label icon = new Label("💰");
             icon.getStyleClass().add("empty-icon");
 
             Label text = new Label("Belum ada item");
             text.getStyleClass().add("empty-text");
 
-            Label sub = new Label("Tambahkan produk dari halaman kasir");
+            Label sub = new Label("Pilih Data Hutang untuk melihat detail barang");
             sub.getStyleClass().add("empty-sub");
 
             empty.getChildren().addAll(icon, text, sub);
@@ -829,25 +856,25 @@ public class PiutangController implements Initializable {
 
     @FXML
     private void onQuick5() {
-        tfTunai.setText("5000");
+        tfTunai.setText("5.000");
         updateSummary();
     }
 
     @FXML
     private void onQuick10() {
-        tfTunai.setText("10000");
+        tfTunai.setText("10.000");
         updateSummary();
     }
 
     @FXML
     private void onQuick20() {
-        tfTunai.setText("20000");
+        tfTunai.setText("20.000");
         updateSummary();
     }
 
     @FXML
     private void onQuick50() {
-        tfTunai.setText("50000");
+        tfTunai.setText("50.000");
         updateSummary();
     }
 

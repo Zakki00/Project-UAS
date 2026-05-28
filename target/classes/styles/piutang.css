@@ -646,7 +646,31 @@
   -fx-font-size: 11px;
   -fx-font-weight: bold;
 }
+/* Empty cart */
+.empty-cart {
+  -fx-padding: 30 0 30 0;
+}
 
+.empty-icon {
+  -fx-font-size: 36px;
+  -fx-opacity: 0.3;
+}
+
+.empty-text {
+  -fx-text-fill: #8B8FA8;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+}
+
+.empty-sub {
+  -fx-text-fill: #2E3250;
+  -fx-font-size: 10px;
+}
+
+/* Divider */
+.cart-divider {
+  -fx-background-color: #2E3250;
+}
 /* Hutang total */
 .hutang-box {
   -fx-background-color: rgba(255, 92, 124, 0.08);

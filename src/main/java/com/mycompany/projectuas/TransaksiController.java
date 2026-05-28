@@ -102,10 +102,6 @@ public class TransaksiController implements Initializable {
     @FXML
     private Label navLblPengaturan;
 
-    private boolean sidebarCollapsed = false;
-    private static final double SIDEBAR_FULL = 220;
-    private static final double SIDEBAR_MINI = 60;
-
     @FXML
     private VBox vboxKeranjang;
     @FXML
@@ -121,8 +117,7 @@ public class TransaksiController implements Initializable {
     private Label lblSubtotal;
     @FXML
     private Label lblDiskon;
-    @FXML
-    private Label lblPajak;
+
     @FXML
     private Label lblTotal;
     @FXML
@@ -139,11 +134,17 @@ public class TransaksiController implements Initializable {
     @FXML
     private Button btnBayar;
     @FXML
-    private Button btnTunai;
+    private Button btnQuick5;
     @FXML
-    private Button btnQris;
+    private Button btnQuick10;
     @FXML
-    private Button btnDebit;
+    private Button btnQuick20;
+    @FXML
+    private Button btnQuick50;
+
+    private boolean sidebarCollapsed = false;
+    private static final double SIDEBAR_FULL = 220;
+    private static final double SIDEBAR_MINI = 60;
 
     @FXML
     private void onToggleSidebar() {
@@ -350,7 +351,7 @@ public class TransaksiController implements Initializable {
         lblNamaKasir.setText("Budi S.");
         lblShift.setText("Shift Siang");
         lblNoTrx.setText(String.format("#TRX-%04d", noTrx));
-        btnBayar.setDisable(true);
+        setupForm();
     }
 
     // ──data ────────────────────────────────────────
@@ -381,6 +382,17 @@ public class TransaksiController implements Initializable {
 
     private void setupSearch() {
         tfCari.textProperty().addListener((obs, o, n) -> filterProduk());
+    }
+
+    // setupa form
+    private void setupForm() {
+        btnBayar.setDisable(true);
+        tfTunai.setDisable(true);
+        lblKembalian.setText("Rp 0");
+        btnQuick5.setDisable(true);
+        btnQuick10.setDisable(true);
+        btnQuick20.setDisable(true);
+        btnQuick50.setDisable(true);
     }
 
     // ═════════════════════════════════════════════════════
@@ -528,6 +540,7 @@ public class TransaksiController implements Initializable {
         }
         renderKeranjang();
         updateSummary();
+
     }
 
     public void renderKeranjang() {
@@ -545,6 +558,13 @@ public class TransaksiController implements Initializable {
 
         lblJumlahItem.setText(totalItem + " item");
         btnBayar.setDisable(kosong);
+        tfTunai.setDisable(kosong);
+        btnQuick5.setDisable(kosong);
+        btnQuick10.setDisable(kosong);
+        btnQuick20.setDisable(kosong);
+        btnQuick50.setDisable(kosong);
+        tfTunai.setText("0");
+        tfDiskon.setText("0");
     }
 
     private HBox buildCartItem(CartItem ci) {
@@ -623,13 +643,11 @@ public class TransaksiController implements Initializable {
 
         double diskonPct = parseDouble(tfDiskon.getText().replace("[^0-9]", ""));
         long diskon = (long) (data_transaksi.subtotal * diskonPct / 100.0);
-        long afterDiskon = data_transaksi.subtotal - diskon;
-        long pajak = (long) (afterDiskon * 0.11);
-        data_transaksi.total = afterDiskon + pajak;
+        data_transaksi.total = data_transaksi.subtotal - diskon;
 
         lblSubtotal.setText("Rp " + FMT.format(data_transaksi.subtotal));
         lblDiskon.setText("- Rp " + FMT.format(diskon));
-        lblPajak.setText("Rp " + FMT.format(pajak));
+
         lblTotal.setText("Rp " + FMT.format(data_transaksi.total));
 
         // Kembalian
@@ -647,6 +665,8 @@ public class TransaksiController implements Initializable {
     private void onDiskonChanged() {
         updateSummary();
     }
+
+    private boolean isUpdating = false;
 
     @FXML
     private void onTunaiChanged() {
@@ -673,61 +693,28 @@ public class TransaksiController implements Initializable {
         updateSummary();
     }
 
-    // Metode bayar
-    @FXML
-    private void onPayTunai() {
-        metodeBayar = "TUNAI";
-        btnTunai.getStyleClass().setAll("pay-method-active");
-        btnQris.getStyleClass().setAll("pay-method");
-        btnDebit.getStyleClass().setAll("pay-method");
-        tunaiBox.setVisible(true);
-        tunaiBox.setManaged(true);
-    }
-
-    @FXML
-    private void onPayQris() {
-        metodeBayar = "QRIS";
-        btnQris.getStyleClass().setAll("pay-method-active");
-        btnTunai.getStyleClass().setAll("pay-method");
-        btnDebit.getStyleClass().setAll("pay-method");
-        tunaiBox.setVisible(false);
-        tunaiBox.setManaged(false);
-    }
-
-    private boolean isUpdating = false;
-
-    @FXML
-    private void onPayDebit() {
-        metodeBayar = "DEBIT";
-        btnDebit.getStyleClass().setAll("pay-method-active");
-        btnTunai.getStyleClass().setAll("pay-method");
-        btnQris.getStyleClass().setAll("pay-method");
-        tunaiBox.setVisible(false);
-        tunaiBox.setManaged(false);
-    }
-
     // Quick nominal tunai
     @FXML
     private void onQuick5() {
-        tfTunai.setText("5000");
+        tfTunai.setText("5.000");
         updateSummary();
     }
 
     @FXML
     private void onQuick10() {
-        tfTunai.setText("10000");
+        tfTunai.setText("10.000");
         updateSummary();
     }
 
     @FXML
     private void onQuick20() {
-        tfTunai.setText("20000");
+        tfTunai.setText("20.000");
         updateSummary();
     }
 
     @FXML
     private void onQuick50() {
-        tfTunai.setText("50000");
+        tfTunai.setText("50.000");
         updateSummary();
     }
 
@@ -768,10 +755,16 @@ public class TransaksiController implements Initializable {
             koneksi.eksekusiQuery(sqlTransaksi);
         }
 
+        for (CartItem item : data_transaksi.keranjang.values()) {
+
+            String sqlUpdateStok = "UPDATE tb_barang SET stok = stok - '" + item.qty + "' WHERE id_barang = '"
+                    + item.produk.id + "'";
+
+            koneksi.eksekusiQuery(sqlUpdateStok);
+            System.out.println("Berhasil update stok barang ID: " + item.produk.id +
+                    " qty: " + item.qty);
+        }
         // Update stok di database
-        String sqlUpdateStok = String.format("UPDATE tb_barang SET stok = stok - %d WHERE id_barang = %d", ci.qty,
-                ci.produk.id);
-        koneksi.eksekusiQuery(sqlUpdateStok);
 
         semuaProduk.clear();
         loadproduk();
