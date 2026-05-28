@@ -17,6 +17,14 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import java.io.IOException;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
+import java.io.IOException;
+import javafx.fxml.FXMLLoader;
 
 public class BarangController implements Initializable {
 
@@ -230,5 +238,27 @@ public class BarangController implements Initializable {
     @FXML void onNavPelanggan(MouseEvent event) {}
     @FXML void onNavPengaturan(MouseEvent event) {}
     @FXML void onNavPiutang(MouseEvent event) {}
-    @FXML void onNavProduk(MouseEvent event) {}
-}
+    
+
+@FXML
+    void onNavProduk(javafx.scene.input.MouseEvent event) {
+        try {
+            // Memuat file fxml barang menggunakan jalur absolut resources
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/fxml/barang.fxml"));
+            javafx.scene.Parent root = loader.load();
+            
+            // Mengambil scene aktif dari tombol yang sedang diklik
+            javafx.scene.Scene scene = ((javafx.scene.Node) event.getSource()).getScene();
+            
+            // Mengubah tampilan utama ke halaman barang
+            scene.setRoot(root);
+            
+            System.out.println("🔥 Navigasi ke menu Produk Berhasil!");
+        } catch (java.io.IOException e) {
+            System.out.println("❌ Gagal memuat halaman produk: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("❌ Terjadi kesalahan navigasi: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }}
