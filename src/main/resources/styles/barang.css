@@ -3,12 +3,6 @@
    Dark Mode Theme  |  com.mycompany.projectuas
 ════════════════════════════════════════════════════════════ */
 
-/* ── VARIABLES (emulated via repeating values) ───────────── */
-/* bg:#0F1117  surface:#1A1D2E  surface2:#252840
-   accent:#6C63FF  accent2:#00D4FF
-   green:#00E5A0  red:#FF5C7C  yellow:#FFD166
-   text:#FFFFFF  muted:#8B8FA8  border:#2E3250            */
-
 /* ── ROOT ────────────────────────────────────────────────── */
 .root-pane {
     -fx-background-color: #0F1117;
@@ -25,7 +19,6 @@
     -fx-pref-width: 220;
 }
 
-/* Logo row */
 .logo-row {
     -fx-padding: 18 16 18 16;
     -fx-min-height: 62;
@@ -42,10 +35,6 @@
     -fx-alignment: CENTER;
 }
 
-.logo-brand {
-    /* managed by controller when collapsed */
-}
-
 .logo-title {
     -fx-text-fill: #FFFFFF;
     -fx-font-size: 14px;
@@ -57,20 +46,17 @@
     -fx-font-size: 9px;
 }
 
-/* Divider */
 .sidebar-divider {
     -fx-background-color: #2E3250;
     -fx-padding: 0;
 }
 
-/* Nav menu */
 .nav-menu {
     -fx-padding: 10 0 10 0;
 }
 
 .nav-item {
     -fx-padding: 10 14 10 0;
-    -fx-margin: 2 6 2 6;
     -fx-background-color: transparent;
     -fx-background-radius: 10;
     -fx-cursor: hand;
@@ -89,7 +75,6 @@
     -fx-background-color: rgba(108, 99, 255, 0.18);
 }
 
-/* Active bar (left accent) */
 .nav-active-bar {
     -fx-fill: #6C63FF;
     -fx-arc-width: 4;
@@ -129,7 +114,6 @@
     -fx-text-fill: #6C63FF;
 }
 
-/* User row */
 .user-row {
     -fx-padding: 12 16 12 16;
 }
@@ -161,7 +145,6 @@
     -fx-font-size: 9px;
 }
 
-/* Toggle button */
 .toggle-btn {
     -fx-background-color: #252840;
     -fx-border-color: #2E3250;
@@ -172,7 +155,6 @@
     -fx-font-size: 14px;
     -fx-cursor: hand;
     -fx-padding: 6 10 6 10;
-    -fx-margin: 8 12 14 12;
 }
 
 .toggle-btn:hover {
@@ -181,12 +163,13 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   MAIN CONTENT & TOP BAR
+   MAIN CONTENT
 ════════════════════════════════════════════════════════════ */
 .main-content {
     -fx-background-color: #0F1117;
 }
 
+/* ── TOP BAR ─────────────────────────────────────────────── */
 .topbar {
     -fx-background-color: #1A1D2E;
     -fx-border-color: #2E3250;
@@ -311,24 +294,24 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   KOMPONEN KHUSUS HALAMAN BARANG / PRODUK (TAMBAHAN SINKRONISASI)
+   FORM CARD  — dengan left accent bar ungu seperti referensi
 ════════════════════════════════════════════════════════════ */
-
-/* Form Input / Field Tambah Barang */
 .form-card {
     -fx-background-color: #1A1D2E;
-    -fx-border-color: #2E3250;
-    -fx-border-width: 1;
-    -fx-border-radius: 14;
-    -fx-background-radius: 14;
-    -fx-padding: 16;
+    -fx-border-color: #6C63FF #2E3250 #2E3250 #2E3250;
+    -fx-border-width: 0 1 1 4;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 20;
 }
 
 .form-label {
     -fx-text-fill: #8B8FA8;
-    -fx-font-size: 11px;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
 }
 
+/* ── INPUT FIELDS ────────────────────────────────────────── */
 .form-field {
     -fx-background-color: #252840;
     -fx-border-color: #2E3250;
@@ -336,43 +319,121 @@
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-text-fill: #FFFFFF;
-    -fx-padding: 8 12;
+    -fx-prompt-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+    -fx-padding: 8 12 8 12;
+    -fx-pref-height: 38;
 }
 
 .form-field:focused {
     -fx-border-color: #6C63FF;
+    -fx-background-color: #2A2D4A;
 }
 
-/* Tombol Aksi (Simpan, Ubah, Hapus) */
+/* TextArea inner */
+.form-field > .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.form-field > .scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.form-field > .scroll-pane > .viewport > .content {
+    -fx-background-color: transparent;
+}
+
+/* ComboBox internals */
+.form-field > .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.form-field > .arrow-button > .arrow {
+    -fx-background-color: #8B8FA8;
+}
+
+.form-field > .list-cell {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: transparent;
+    -fx-padding: 0 8 0 0;
+}
+
+/* ComboBox dropdown popup */
+.combo-box-popup > .list-view {
+    -fx-background-color: #252840;
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 12, 0, 0, 4);
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #252840;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 12px;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:hover {
+    -fx-background-color: #6C63FF;
+    -fx-text-fill: #FFFFFF;
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:selected {
+    -fx-background-color: rgba(108, 99, 255, 0.4);
+    -fx-text-fill: #FFFFFF;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════════════════════════ */
+
+/* Simpan / Create — ungu */
 .btn-primary {
     -fx-background-color: #6C63FF;
     -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
-    -fx-padding: 8 16;
+    -fx-padding: 10 22 10 22;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(108,99,255,0.35), 8, 0, 0, 2);
 }
 
 .btn-primary:hover {
     -fx-background-color: #5B52E5;
 }
 
+.btn-primary:pressed {
+    -fx-background-color: #4A42D0;
+    -fx-effect: none;
+}
+
+/* Hapus — merah-pink */
 .btn-danger {
     -fx-background-color: #FF5C7C;
     -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
-    -fx-padding: 8 16;
+    -fx-padding: 10 22 10 22;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255,92,124,0.35), 8, 0, 0, 2);
 }
 
 .btn-danger:hover {
     -fx-background-color: #E04B6A;
 }
 
-/* Tabel Data Barang (Menyesuaikan Gaya .trx-table) */
+.btn-danger:pressed {
+    -fx-background-color: #C43A58;
+    -fx-effect: none;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABLE VIEW  — sesuai referensi: header terang, row gelap
+════════════════════════════════════════════════════════════ */
 .barang-table {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -380,31 +441,42 @@
     -fx-padding: 0;
 }
 
+/* Header row — warna gelap solid */
 .barang-table .column-header-background {
-    -fx-background-color: transparent;
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
 }
 
 .barang-table .column-header {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
+    -fx-size: 42;
 }
 
 .barang-table .column-header .label {
     -fx-text-fill: #8B8FA8;
     -fx-font-size: 11px;
     -fx-font-weight: bold;
-    -fx-padding: 0 8 8 8;
+    -fx-padding: 12 8 12 8;
+    -fx-alignment: CENTER_LEFT;
 }
 
+.barang-table .column-header-background .filler {
+    -fx-background-color: transparent;
+}
+
+/* Data rows */
 .barang-table .table-row-cell {
     -fx-background-color: #1A1D2E;
-    -fx-background-radius: 8;
     -fx-table-cell-border-color: transparent;
-    -fx-cell-size: 40px;
+    -fx-cell-size: 62px;
+    -fx-border-color: transparent transparent #252840 transparent;
+    -fx-border-width: 0 0 1 0;
 }
 
 .barang-table .table-row-cell:odd {
-    -fx-background-color: #252840;
+    -fx-background-color: #131625;
 }
 
 .barang-table .table-row-cell:hover {
@@ -412,11 +484,77 @@
 }
 
 .barang-table .table-row-cell:selected {
-    -fx-background-color: rgba(108, 99, 255, 0.25);
+    -fx-background-color: rgba(108, 99, 255, 0.2);
+}
+
+.barang-table .table-row-cell:selected .table-cell {
+    -fx-text-fill: #FFFFFF;
 }
 
 .barang-table .table-cell {
     -fx-text-fill: #FFFFFF;
     -fx-font-size: 12px;
+    -fx-alignment: CENTER_LEFT;
     -fx-padding: 0 8 0 8;
+    -fx-border-color: transparent;
+}
+
+/* Scrollbar dalam tabel */
+.barang-table .scroll-bar:vertical {
+    -fx-background-color: #1A1D2E;
+    -fx-pref-width: 8;
+}
+
+.barang-table .scroll-bar:vertical .thumb {
+    -fx-background-color: #2E3250;
+    -fx-background-radius: 4;
+}
+
+.barang-table .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.barang-table .scroll-bar:vertical .increment-button,
+.barang-table .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STATUS BADGE  (dipakai via controller: setStyle / Label)
+════════════════════════════════════════════════════════════ */
+.badge-tersedia {
+    -fx-background-color: rgba(0, 229, 160, 0.15);
+    -fx-border-color: #00E5A0;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #00E5A0;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3 12 3 12;
+}
+
+.badge-tidak-tersedia {
+    -fx-background-color: rgba(255, 92, 124, 0.15);
+    -fx-border-color: #FF5C7C;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #FF5C7C;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3 12 3 12;
+}
+
+.badge-menipis {
+    -fx-background-color: rgba(255, 209, 102, 0.15);
+    -fx-border-color: #FFD166;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #FFD166;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 3 12 3 12;
 }
