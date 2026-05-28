@@ -213,6 +213,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
+        // ── Navigasi ke halaman produk ─────────────────────
         navigation nav = new navigation();
         nav.navigateToProduk();
         Stage stage = (Stage) navProduk.getScene().getWindow();
