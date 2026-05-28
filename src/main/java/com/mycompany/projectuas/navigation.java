@@ -43,6 +43,10 @@ public class navigation {
         navigateTo("laporan.fxml", "Laporan");
     }
 
+    public void navigateToPiutang() {
+        navigateTo("piutang.fxml", "Piutang");
+    }
+
     public void navigateToLogin() {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/fxml/login.fxml"));
@@ -56,14 +60,11 @@ public class navigation {
         }
     }
 
-    public void detailTransaksi(
-            Stage ownerStage,
-            TransaksiController transaksiController) {
+    public void detailTransaksi(Stage ownerStage, TransaksiController transaksiController) {
 
         try {
 
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/fxml/detail_transaksi.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/detail_transaksi.fxml"));
             Parent root = loader.load();
             DetailTransaksiController controller = loader.getController();
             controller.setTransaksiController(transaksiController);
@@ -91,8 +92,7 @@ public class navigation {
         // ── Animasi getar pakai setX langsung ──
         double originalX = stage.getX();
 
-        Timeline shake = new Timeline(
-                new KeyFrame(Duration.millis(0), e -> stage.setX(originalX)),
+        Timeline shake = new Timeline(new KeyFrame(Duration.millis(0), e -> stage.setX(originalX)),
                 new KeyFrame(Duration.millis(50), e -> stage.setX(originalX + 10)),
                 new KeyFrame(Duration.millis(100), e -> stage.setX(originalX - 10)),
                 new KeyFrame(Duration.millis(150), e -> stage.setX(originalX + 8)),

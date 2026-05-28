@@ -1,16 +1,13 @@
 package com.mycompany.projectuas;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -24,7 +21,7 @@ import javafx.stage.Stage;
  */
 public class LoginController implements Initializable {
     session session = new session();
-    
+
     @FXML
     private TextField usernameField;
     @FXML
@@ -41,39 +38,53 @@ public class LoginController implements Initializable {
     private Button togglePasswordBtn;
 
     private boolean showingPassword = false;
-    public String name;
-    public int userId;
+    Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Sync PasswordField <-> TextField untuk show/hide password
         passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
         loginBtn.setDefaultButton(true);
+        loadRememberedCredentials();
     }
 
     @FXML
     private void handleLogin(ActionEvent event) {
+
         String username = usernameField.getText().trim();
-        String password = showingPassword
-                ? passwordVisible.getText()
-                : passwordField.getText();
-        String query = "SELECT * FROM tb_user WHERE username = '" + username + "' AND password = '" + password + "'";
-        List<Object[]> result = koneksi.ambilData(query);
+        String password = showingPassword ? passwordVisible.getText() : passwordField.getText();
+
         if (username.isEmpty() || password.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Perhatian", "Username dan password tidak boleh kosong.");
-            System.out.println(result.get(0)[0].toString());
+            return;
         }
 
-        // TODO: ganti dengan logika autentikasi nyata
+        String query = "SELECT * FROM tb_user WHERE username = '" + username + "' AND password = '" + password + "'";
+        List<Object[]> result = koneksi.ambilData(query);
+
         if (result.size() > 0) {
-            // navigateToDashboard();
-            navigation nav = new navigation();
-            nav.navigateToDashboard();
+
             session.id_user = (int) result.get(0)[0];
             session.username = (String) result.get(0)[1];
-            System.out.println("Login berhasil untuk user ID: " + userId);
+
+            if (rememberMe.isSelected()) {
+                prefs.put("username", username);
+                prefs.put("password", password);
+                prefs.putBoolean("remember", true);
+                System.out.println("Memory saved: " + username + " / " + password);
+            } else {
+                prefs.remove("username");
+                prefs.remove("password");
+                prefs.putBoolean("remember", false);
+            }
+
+            navigation nav = new navigation();
+            nav.navigateToDashboard();
+
             Stage stage = (Stage) loginBtn.getScene().getWindow();
             stage.close();
+
         } else {
             showAlert(Alert.AlertType.ERROR, "Gagal Masuk", "Username atau password salah.");
         }
@@ -112,8 +123,6 @@ public class LoginController implements Initializable {
                 "Silakan hubungi administrator untuk mereset password Anda.");
     }
 
-   
-
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -122,4 +131,11 @@ public class LoginController implements Initializable {
         alert.showAndWait();
     }
 
+    public void loadRememberedCredentials() {
+        if (prefs.getBoolean("remember", false)) {
+            usernameField.setText(prefs.get("username", ""));
+            passwordField.setText(prefs.get("password", ""));
+            rememberMe.setSelected(true);
+        }
+    }
 }

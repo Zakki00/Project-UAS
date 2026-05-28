@@ -45,14 +45,12 @@ public class DetailTransaksiController implements Initializable {
     // --------------passing reference object
     private TransaksiController transaksiController;
 
-    public void setTransaksiController(
-        TransaksiController transaksiController) {
-            this.transaksiController = transaksiController;
+    public void setTransaksiController(TransaksiController transaksiController) {
+        this.transaksiController = transaksiController;
     }
 
     // ── Data ──────────────────────────────────────────
-    private static final NumberFormat FMT = NumberFormat.getInstance(
-            new Locale("id", "ID"));
+    private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
     int id_transaksi = -1;
 
     void idtransaksi() {
@@ -71,8 +69,7 @@ public class DetailTransaksiController implements Initializable {
         long harga;
         int qty;
 
-        ItemTransaksi(String id, String nama, String kategori,
-                long harga, int qty) {
+        ItemTransaksi(String id, String nama, String kategori, long harga, int qty) {
             this.id = id;
             this.nama = nama;
             this.kategori = kategori;
@@ -311,8 +308,8 @@ public class DetailTransaksiController implements Initializable {
         // TODO: simpan ke database
         System.out.println("=== SIMPAN TRANSAKSI ===");
         System.out.println("Pelanggan: " + pelanggan);
-        listItem.forEach(item -> System.out.printf("  %s x%d = Rp %s%n",
-                item.nama, item.qty, FMT.format(item.subtotal())));
+        listItem.forEach(
+                item -> System.out.printf("  %s x%d = Rp %s%n", item.nama, item.qty, FMT.format(item.subtotal())));
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Berhasil");

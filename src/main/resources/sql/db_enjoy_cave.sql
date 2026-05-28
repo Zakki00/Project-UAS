@@ -27,7 +27,11 @@ CREATE TABLE tb_barang(
 CREATE TABLE tb_transaksi (
     id_transaksi INT AUTO_INCREMENT PRIMARY KEY,
     id_user INT NOT NULL,
-    total DECIMAL(10, 2) NOT NULL,
+    total_pembayaran DECIMAL(10, 2) NOT NULL,
+    uang_pembayaran INT(100) NOT NULL,
+    kembalian INT(100),
+    kekurangan INT(100),
+    status_pembayaran VARCHAR(50) NOT NULL,
     tanggal_transaksi TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     pelanggan VARCHAR(100),
     FOREIGN KEY (id_user) REFERENCES tb_user (id_user)
@@ -80,3 +84,7 @@ INSERT INTO tb_barang (nama_barang, harga, kategori, stok, deskripsi) VALUES
 ('Kopi Kopi Es Kopi Es', 30000, 'Minuman', 100, 'Minuman kopi dingin dengan tambahan es batu dan es krim, memberikan sensasi segar dan manis dalam setiap tegukan.'),
 ('Kopi Susu Gula Aren Es Kopi Es', 40000, 'Minuman', 80, 'Minuman kopi dingin dengan tambahan susu panas, gula aren, es batu, dan es krim, memberikan kombinasi rasa kopi, susu, manis alami, dan sensasi segar yang lezat.'),
 ('Kopi Es Kopi Es Kopi Es', 55000, 'Minuman', 50, 'Minuman kopi dingin dengan tambahan es batu dan es krim, memberikan');
+
+
+SELECT * FROM  tb_transaksi JOIN tb_detail_transaksi ON tb_transaksi.id_transaksi = tb_detail_transaksi.id_transaksi
+JOIN tb_barang ON tb_detail_transaksi.id_barang = tb_barang.id_barang WHERE tb_transaksi.status_pembayaran = 'Belum Lunas';

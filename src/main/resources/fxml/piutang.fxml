@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane prefHeight="972.0" prefWidth="1181.0" style="root-pane" stylesheets="@../styles/piutang.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PiutangController">
+  <left>
+    <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
+      <children>
+        <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
+          <children>
+            <Label styleClass="logo-icon" text="🏪"/>
+            <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
+              <children>
+                <Label styleClass="logo-title" text="StoreMS"/>
+                <Label styleClass="logo-sub" text="Manajemen Toko"/>
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+        <Separator styleClass="sidebar-divider"/>
+        <VBox fx:id="navMenu" spacing="2" styleClass="nav-menu" VBox.vgrow="ALWAYS">
+          <VBox.margin>
+            <Insets bottom="10" top="10"/>
+          </VBox.margin>
+          <children>
+            <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item">
+              <children>
+                <Rectangle height="0" styleClass="nav-active-bar" width="3"/>
+                <Label styleClass="nav-icon" text="⊞"/>
+                <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard"/>
+              </children>
+            </HBox>
+            <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
+              <children>
+                <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+                <Label styleClass="nav-icon" text="📦"/>
+                <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk"/>
+              </children>
+            </HBox>
+            <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
+              <children>
+                <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+                <Label styleClass="nav-icon" text="🛒"/>
+                <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi"/>
+              </children>
+            </HBox>
+            <HBox fx:id="navPelanggan" alignment="CENTER_LEFT" onMouseClicked="#onNavPelanggan" spacing="10" styleClass="nav-item">
+              <children>
+                <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+                <Label styleClass="nav-icon" text="👥"/>
+                <Label fx:id="navLblPelanggan" styleClass="nav-label" text="Pelanggan"/>
+              </children>
+            </HBox>
+            <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
+              <children>
+                <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+                <Label styleClass="nav-icon" text="📈"/>
+                <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan"/>
+              </children>
+            </HBox>
+            <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item ,nav-active">
+              <children>
+                <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+                <Label styleClass="nav-icon" text="💰"/>
+                <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang"/>
+              </children>
+            </HBox>
+            <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
+              <children>
+                <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+                <Label styleClass="nav-icon" text="⚙️"/>
+                <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Pengaturan"/>
+              </children>
+            </HBox>
+          </children>
+        </VBox>
+        <Separator styleClass="sidebar-divider"/>
+        <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
+          <children>
+            <Label styleClass="user-avatar" text="A"/>
+            <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
+              <children>
+                <Label styleClass="user-name" text="Admin"/>
+                <Label styleClass="user-role" text="Administrator"/>
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+        <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀"/>
+      </children>
+    </VBox>
+  </left>
+
+  <center>
+    <VBox styleClass="main-content">
+      <children>
+        <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+          <children>
+            <VBox spacing="1" HBox.hgrow="ALWAYS">
+              <children>
+                <Label styleClass="page-title" text="Piutang"/>
+                <Label styleClass="page-date" text="Senin, 16 Juni 2025"/>
+              </children>
+            </VBox>
+            <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="276.0" spacing="8" styleClass="search-box">
+              <children>
+                <Label styleClass="search-icon" text="🔍"/>
+                <TextField promptText="Cari..." styleClass="search-field"/>
+              </children>
+            </HBox>
+            <StackPane styleClass="notif-wrapper">
+              <children>
+                <Button onAction="#onNotif" styleClass="notif-btn" text="🔔"/>
+                <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT"/>
+              </children>
+            </StackPane>
+            <Label styleClass="topbar-avatar" text="A"/>
+          </children>
+        </HBox>
+        <VBox spacing="16" styleClass="body-content">
+          <padding>
+            <Insets bottom="16" left="16" right="16" top="16"/>
+          </padding>
+          <children>
+            <HBox spacing="14">
+              <children>
+                <VBox spacing="6" styleClass="kpi-card, kpi-purple" HBox.hgrow="ALWAYS">
+                  <children>
+                    <Label styleClass="kpi-label" text="Total Piutang"/>
+                    <Label fx:id="kpiTotalPiutang" styleClass="kpi-value" text="Rp 0"/>
+                    <Label fx:id="lblDeltaPiutang" styleClass="kpi-delta-up" text="▲ +12% vs kemarin"/>
+                  </children>
+                </VBox>
+                <VBox spacing="6" styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS">
+                  <children>
+                    <Label styleClass="kpi-label" text="Jumlah Transaksi Yang Belum Lunas"/>
+                    <Label fx:id="kpiJumlahTransaksi" styleClass="kpi-value" text="0"/>
+                    <Label fx:id="lblDeltaTransaksi" styleClass="kpi-delta-up" text="▲ +8% vs kemarin"/>
+                  </children>
+                </VBox>
+                <VBox spacing="6" styleClass="kpi-card, kpi-yellow" HBox.hgrow="ALWAYS">
+                  <children>
+                    <Label styleClass="kpi-label" text="Transaksi Yang Belum Lunas Hari Ini"/>
+                    <Label fx:id="kpiHariIni" styleClass="kpi-value" text="0"/>
+                    <Label fx:id="lblDeltaHariIni" styleClass="kpi-delta-down" text="▼ -3% vs kemarin"/>
+                  </children>
+                </VBox>
+              </children>
+            </HBox>
+            <HBox spacing="14"/>
+          </children>
+        </VBox>
+        <HBox prefHeight="759.0" prefWidth="860.0" VBox.vgrow="ALWAYS">
+          <children>
+            <VBox prefHeight="766.0" prefWidth="600.0" HBox.hgrow="ALWAYS">
+              <!-- Header pelanggan -->
+              <HBox alignment="CENTER_LEFT" prefHeight="124.0" prefWidth="773.0" spacing="12" styleClass="header-piutang">
+                <Label styleClass="lbl-pelanggan" text="Nama Pelanggan"/>
+                <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" prefHeight="10.0" prefWidth="405.0" spacing="8" styleClass="search-box" HBox.hgrow="ALWAYS">
+                  <children>
+                    <Label styleClass="search-icon" text="🔍"/>
+                    <TextField fx:id="tfPelanggan" promptText="Cari Nama Pelanggan" styleClass="search-field" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnClearSearch" onAction="#onClearSearch" styleClass="btn-clear" text="✕"/>
+                  </children>
+                </HBox>
+              </HBox>
+              <!-- Konten bawah -->
+              <HBox prefHeight="575.0" prefWidth="773.0" VBox.vgrow="ALWAYS">
+                <!-- Tabel barang -->
+                <TableView fx:id="tableHutang" prefHeight="573.0" prefWidth="600.0" styleClass="table-piutang" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                  <columns>
+                    <TableColumn fx:id="colNo" prefWidth="50" text="No"/>
+                    <TableColumn fx:id="colNama" prefWidth="70" text="Nama Pelanggan"/>
+                    <TableColumn fx:id="colTotalPembayaran" prefWidth="90" text="Total Pembayaran"/>
+                    <TableColumn fx:id="colUangPembayaran" prefWidth="120" text="Uang Pembayaran"/>
+                    <TableColumn fx:id="colKekurangan" prefWidth="100.0" text="Kekurangan"/>
+                    <TableColumn fx:id="colTanggal_Transaksi" prefWidth="159.0" text="Tanggal Transaksi"/>
+                  </columns>
+                </TableView>
+              </HBox>
+            </VBox>
+            <VBox prefHeight="766.0" prefWidth="363.0" spacing="12" styleClass="panel-kanan">
+              <children>
+                <Label styleClass="info-section-title" text="INFO TRANSAKSI"/>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                  <children>
+                    <Label styleClass="info-label" text="Pelanggan" HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblNamaPelanggan" styleClass="info-value" text="-"/>
+                  </children>
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8">
+                  <children>
+                    <Label styleClass="info-label" text="ID Transaksi" HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblIdTransaksi" styleClass="info-value-id" text="-"/>
+                  </children>
+                </HBox>
+                <Separator styleClass="info-sep"/>
+                <VBox spacing="4" styleClass="hutang-box">
+                  <children>
+                    <Label styleClass="hutang-label" text="TOTAL HUTANG"/>
+                    <Label fx:id="lblJumlahHutang" styleClass="hutang-value" text="Rp 0"/>
+                  </children>
+                </VBox>
+                <ScrollPane fx:id="detailScroll" fitToWidth="true" prefHeight="426.0" prefWidth="202.0" style="-fx-background-color: #0F1117;" styleClass="detail-scroll"/>
+                <VBox fx:id="tunaiBox" managed="true" spacing="6" visible="true">
+                  <children>
+                    <Label styleClass="section-label" text="UANG DITERIMA"/>
+                    <HBox alignment="CENTER_LEFT" spacing="6" styleClass="tunai-input-box">
+                      <children>
+                        <Label styleClass="tunai-prefix" text="Rp"/>
+                        <TextField fx:id="tfTunai" onKeyReleased="#onTunaiChanged" promptText="0" styleClass="tunai-field" HBox.hgrow="ALWAYS"/>
+                      </children>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" styleClass="kembalian-box">
+                      <children>
+                        <Label fx:id="lblKembalian" styleClass="kembalian-value" text="Rp 0"/>
+                      </children>
+                    </HBox>
+                    <HBox spacing="6">
+                      <children>
+                        <Button fx:id="btnQuick5" maxWidth="Infinity" onAction="#onQuick5" styleClass="btn-quick" text="Rp 5rb" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnQuick10" maxWidth="Infinity" onAction="#onQuick10" styleClass="btn-quick" text="Rp 10rb" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnQuick20" maxWidth="Infinity" onAction="#onQuick20" styleClass="btn-quick" text="Rp 20rb" HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="btnQuick50" maxWidth="Infinity" onAction="#onQuick50" styleClass="btn-quick" text="Rp 50rb" HBox.hgrow="ALWAYS"/>
+                      </children>
+                    </HBox>
+                  </children>
+                </VBox>
+                <HBox spacing="8">
+                  <children>
+                    <Button fx:id="btnLunas" maxWidth="Infinity" onAction="#onLunas" prefHeight="50" styleClass="btn-lunas" text="✓ Lunas" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnBatal" maxWidth="Infinity" onAction="#onBatal" prefHeight="50" styleClass="btn-batal" text="✕ Batal" HBox.hgrow="ALWAYS"/>
+                  </children>
+                </HBox>
+              </children>
+            </VBox>
+          </children>
+        </HBox>
+      </children>
+    </VBox>
+  </center>
+</BorderPane>

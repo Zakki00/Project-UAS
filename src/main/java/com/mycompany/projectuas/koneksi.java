@@ -33,7 +33,7 @@ public class koneksi {
         try (Connection connection = getConnection()) {
             connection.createStatement().execute(query);
             System.out.println("Query berhasil dieksekusi!");
-            
+
         } catch (SQLException e) {
             System.err.println("Gagal mengeksekusi query: " + e.getMessage());
 
@@ -74,8 +74,7 @@ public class koneksi {
     public static List<Object[]> ambilData(String query) {
         List<Object[]> dataList = new ArrayList<>();
 
-        try (Connection connection = getConnection();
-                Statement statement = connection.createStatement();
+        try (Connection connection = getConnection(); Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(query)) {
 
             ResultSetMetaData metaData = resultSet.getMetaData();
@@ -97,9 +96,5 @@ public class koneksi {
 
         return dataList;
     }
-
-
-      
-        
 
 }

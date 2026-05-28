@@ -4,6 +4,7 @@ module com.mycompany.projectuas {
     requires java.base;
     requires java.sql;
     requires java.desktop;
+    requires java.prefs;
 
     opens com.mycompany.projectuas to javafx.fxml;
 

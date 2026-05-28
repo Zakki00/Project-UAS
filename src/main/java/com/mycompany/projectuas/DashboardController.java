@@ -10,8 +10,6 @@ import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -29,6 +27,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class DashboardController implements Initializable {
@@ -60,6 +59,8 @@ public class DashboardController implements Initializable {
     private HBox navPelanggan;
     @FXML
     private HBox navLaporan;
+    @FXML
+    private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
 
@@ -135,30 +136,20 @@ public class DashboardController implements Initializable {
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
-
         double targetWidth = sidebarCollapsed ? SIDEBAR_MINI : SIDEBAR_FULL;
-
-        // Animasi lebar sidebar
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO,
-                        new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
+                new KeyFrame(Duration.ZERO, new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
                         new KeyValue(sidebar.minWidthProperty(), sidebar.getMinWidth())),
-                new KeyFrame(Duration.millis(350),
-                        new KeyValue(sidebar.prefWidthProperty(), targetWidth),
+                new KeyFrame(Duration.millis(350), new KeyValue(sidebar.prefWidthProperty(), targetWidth),
                         new KeyValue(sidebar.minWidthProperty(), targetWidth)));
-
-        // Sembunyikan / tampilkan teks dengan fade
         if (sidebarCollapsed) {
-            // Langsung sembunyikan teks saat mulai collapse
             hideSidebarText();
             toggleBtn.setText("▶");
-            // Ubah padding logo row ke center
-            logoRow.setAlignment(javafx.geometry.Pos.CENTER);
+            logoRow.setAlignment(Pos.CENTER);
             logoRow.setPadding(new Insets(18, 0, 18, 0));
-            userRow.setAlignment(javafx.geometry.Pos.CENTER);
+            userRow.setAlignment(Pos.CENTER);
             userRow.setPadding(new Insets(12, 0, 12, 0));
         } else {
-            // Tampilkan teks setelah animasi selesai
             timeline.setOnFinished(e -> {
                 showSidebarText();
                 logoRow.setAlignment(Pos.CENTER_LEFT);
@@ -167,15 +158,9 @@ public class DashboardController implements Initializable {
                 userRow.setPadding(new Insets(12, 16, 12, 16));
             });
             toggleBtn.setText("◀");
-           
-        
-
-        // Atur padding nav items saat collapse
-        updateNavPadding(sidebarCollapsed);
-
-        timeline.play();
         }
-        
+        updateNavPadding(sidebarCollapsed);
+        timeline.play();
     }
 
     private void hideSidebarText() {
@@ -195,9 +180,8 @@ public class DashboardController implements Initializable {
     }
 
     private void setNavLabelsVisible(boolean visible) {
-        List<Label> labels = List.of(
-                navLblDashboard, navLblProduk, navLblKasir,
-                navLblPelanggan, navLblLaporan, navLblPengaturan);
+        List<Label> labels = List.of(navLblDashboard, navLblProduk, navLblKasir, navLblPelanggan, navLblLaporan,
+                navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -209,13 +193,11 @@ public class DashboardController implements Initializable {
         Insets normalPad = new Insets(10, 14, 10, 0);
         Insets pad = collapsed ? collapsedPad : normalPad;
 
-        List<HBox> items = List.of(
-                navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
-            
+
         }
     }
 
@@ -225,8 +207,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
-        
-        
+
     }
 
     @FXML
@@ -256,15 +237,22 @@ public class DashboardController implements Initializable {
     }
 
     @FXML
+    private void onNavPiutang() {
+        setActiveNav(navPiutang);
+        navigation nav = new navigation();
+        nav.navigateToPiutang();
+        Stage stage = (Stage) navPiutang.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-        
+
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(
-                navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -274,17 +262,12 @@ public class DashboardController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(
-                navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
-
-
-    
 
     // ═════════════════════════════════════════════════════
     // CHARTS
@@ -419,10 +402,8 @@ public class DashboardController implements Initializable {
     }
 
     private void setupStockList() {
-        List<StockItem> items = List.of(
-                new StockItem("Minyak Goreng", 3, 50, "Kritis"),
-                new StockItem("Teh Botol Sosro", 12, 100, "Menipis"),
-                new StockItem("Gula Pasir", 8, 40, "Kritis"),
+        List<StockItem> items = List.of(new StockItem("Minyak Goreng", 3, 50, "Kritis"),
+                new StockItem("Teh Botol Sosro", 12, 100, "Menipis"), new StockItem("Gula Pasir", 8, 40, "Kritis"),
                 new StockItem("Kopi Kapal Api", 18, 80, "Menipis"));
 
         for (StockItem si : items) {
@@ -469,7 +450,5 @@ public class DashboardController implements Initializable {
     private void onLihatSemua() {
         System.out.println("Lihat semua transaksi");
     }
-    
+
 }
-
-
