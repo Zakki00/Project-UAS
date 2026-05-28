@@ -5,6 +5,7 @@ module com.mycompany.projectuas {
     requires java.sql;
     requires java.desktop;
     requires java.prefs;
+    requires mysql.connector.j;
 
     opens com.mycompany.projectuas to javafx.fxml;
 
