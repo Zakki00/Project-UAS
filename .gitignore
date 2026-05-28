@@ -1,2 +1,6 @@
 target/
 *.class
+
+git add .
+git commit -m "pesan commit"
+git push origin barang

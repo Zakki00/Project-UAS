@@ -36,7 +36,7 @@ public class navigation {
     }
 
     public void navigateToProduk() {
-        navigateTo("produk.fxml", "Produk");
+        navigateTo("barang.fxml", "Produk");
     }
 
     public void navigateToLaporan() {
