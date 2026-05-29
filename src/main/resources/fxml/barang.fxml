@@ -107,7 +107,7 @@
                         <Label style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Form Data Produk" />
                         
                         <HBox spacing="15.0">
-                            <VBox HBox.hgrow="ALWAYS" spacing="5">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
                                 <Label styleClass="form-label" text="NAMA BARANG" />
                                 <TextField fx:id="txtNama" promptText="Masukkan nama barang..." styleClass="form-field" />
                             </VBox>
@@ -118,15 +118,15 @@
                         </HBox>
 
                         <HBox spacing="15.0">
-                            <VBox HBox.hgrow="ALWAYS" spacing="5">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
                                 <Label styleClass="form-label" text="HARGA JUAL (RP)" />
                                 <TextField fx:id="txtHarga" promptText="Contoh: 5000" styleClass="form-field" />
                             </VBox>
-                            <VBox HBox.hgrow="ALWAYS" spacing="5">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
                                 <Label styleClass="form-label" text="JUMLAH STOK" />
                                 <TextField fx:id="txtStok" promptText="0" styleClass="form-field" />
                             </VBox>
-                            <VBox HBox.hgrow="ALWAYS" spacing="5">
+                            <VBox spacing="5" HBox.hgrow="ALWAYS">
                                 <Label styleClass="form-label" text="FOTO PRODUK LOKAL" />
                                 <HBox spacing="8.0">
                                     <Button onAction="#onPilihFoto" style="-fx-background-color: #252840; -fx-text-fill: white; -fx-border-color: #2E3250; -fx-border-radius: 8; -fx-background-radius: 8;" text="Pilih File..." />
@@ -141,9 +141,9 @@
                         </VBox>
 
                         <HBox alignment="TOP_RIGHT" spacing="10.0">
-                            <Button onAction="#tambahBarang" styleClass="btn-primary" text="Tambah Baru" />
-                            <Button onAction="#ubahBarang" style="-fx-background-color: #FFD166; -fx-text-fill: #1A1D2E;" styleClass="btn-primary" text="Simpan Perubahan" />
-                            <Button onAction="#hapusBarang" styleClass="btn-danger" text="Hapus Data" />
+                            <Button onAction="#tambahBarang" styleClass="btn-primary" text="Simpan (Create)" />
+                            <Button onAction="#ubahBarang" style="-fx-background-color: #FFD166; -fx-text-fill: #1A1D2E;" styleClass="btn-primary" text="Update" />
+                            <Button onAction="#hapusBarang" styleClass="btn-danger" text="Hapus (Delete)" />
                             <Button onAction="#clearForm" style="-fx-background-color: transparent; -fx-text-fill: #8B8FA8; -fx-border-color: #2E3250; -fx-border-radius: 8;" styleClass="btn-primary" text="Reset" />
                         </HBox>
                     </VBox>
