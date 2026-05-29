@@ -7,21 +7,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class PiutangModel {
-     private final ObservableList<DataHutang> dataHutang = FXCollections.observableArrayList();
-    private final static List<DataBarang> dataBarang = new ArrayList<>();
+    public final static ObservableList<DataHutang> dataHutang = FXCollections.observableArrayList();
+    public final static List<DataBarangHutang> dataBarang = new ArrayList<>();
 
-    static class DataHutang {
+    public static class DataHutang {
 
-        int no;
-        String idTransaksi;
-        String namaPelanggan;
-        Long total_pembayaran;
-        Long uang_pembayaran;
-        long kekurangan;
-        String status_pembayaran;
-        String tanggal_transaksi;
+        public int no;
+        public String idTransaksi;
+        public String namaPelanggan;
+        public Long total_pembayaran;
+        public Long uang_pembayaran;
+        public long kekurangan;
+        public String status_pembayaran;
+        public String tanggal_transaksi;
 
-        DataHutang(int no, String idTransaksi, String namaPelanggan, Long total_pembayaran, Long uang_pembayaran,
+        public DataHutang(int no, String idTransaksi, String namaPelanggan, Long total_pembayaran, Long uang_pembayaran,
                 long kekurangan, String status_pembayaran, String tanggal_transaksi) {
             this.no = no;
             this.idTransaksi = idTransaksi;
@@ -35,14 +35,13 @@ public class PiutangModel {
         }
 
     }
-    
-    static class DataBarang {
 
-        String nama_barang;
-        long harga_barang;
-        int qty;
+    public static class DataBarangHutang {
+        public String nama_barang;
+        public long harga_barang;
+        public int qty;
 
-        DataBarang(String nama_barang, long harga_barang, int qty) {
+       public  DataBarangHutang(String nama_barang, long harga_barang, int qty) {
             this.nama_barang = nama_barang;
             this.harga_barang = harga_barang;
             this.qty = qty;

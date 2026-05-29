@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import com.mycompany.Model.PiutangModel;
+import com.mycompany.Model.PiutangModel.DataHutang;
+import com.mycompany.Model.PiutangModel.DataBarangHutang;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -152,7 +156,7 @@ public class PiutangController implements Initializable {
 
     // -------------------ambil data hutang dari database----------------
     private void load_data_hutang(String namapelanggan) {
-        dataHutang.clear();
+        PiutangModel.dataHutang.clear();
         String sql = "SELECT " + "t.id_transaksi, " + "t.pelanggan AS nama_pelanggan, " + "t.total_pembayaran, "
                 + "t.uang_pembayaran, " + "t.kekurangan, " + "t.status_pembayaran, " + "t.tanggal_transaksi "
                 + "FROM tb_transaksi t " + "WHERE t.status_pembayaran = 'Belum Lunas' " + "AND t.pelanggan LIKE '%"
@@ -172,7 +176,7 @@ public class PiutangController implements Initializable {
             String status = String.valueOf(row[5]);
             String tanggal = String.valueOf(row[6]);
 
-            dataHutang.add(new DataHutang(rowNo++, idTransaksi, namaPelanggan, totalPembayaran, uangPembayaran,
+            PiutangModel.dataHutang.add(new DataHutang(rowNo++, idTransaksi, namaPelanggan, totalPembayaran, uangPembayaran,
                     kekurangan, status, tanggal));
         }
     }
@@ -187,7 +191,7 @@ public class PiutangController implements Initializable {
             String nama = String.valueOf(row[0]);
             long harga = ((Number) row[1]).longValue();
             int qty = ((Number) row[2]).intValue();
-            dataBarang.add(new DataBarang(nama, harga, qty));
+            PiutangModel.dataBarang.add(new PiutangModel.DataBarangHutang(nama, harga, qty));
         }
     }
 
@@ -210,7 +214,7 @@ public class PiutangController implements Initializable {
         setupNavHover();
         setupTable();
         setupSearch();
-        tableHutang.setItems(dataHutang);
+        tableHutang.setItems(PiutangModel.dataHutang);
         load_data_hutang("");
         setupLayout();
         SetupRowClick();
@@ -370,7 +374,7 @@ public class PiutangController implements Initializable {
     private void setupSearch() {
         tfPelanggan.textProperty().addListener((obs, o, n) -> {
             load_data_hutang(n);
-            tableHutang.setItems(dataHutang);
+            tableHutang.setItems(PiutangModel.dataHutang);
         });
     }
 
@@ -378,7 +382,7 @@ public class PiutangController implements Initializable {
     void onClearSearch() {
         tfPelanggan.setText("Cari Nama Pelanggan");
         load_data_hutang("");
-        tableHutang.setItems(dataHutang);
+        tableHutang.setItems(PiutangModel.dataHutang);
         tableHutang.refresh();
     }
 
@@ -584,12 +588,12 @@ public class PiutangController implements Initializable {
             System.out.println("Transaksi " + idTransaksi + " ditandai LUNAS");
 
             // 5. Reset state UI
-            dataBarang.clear();
+            PiutangModel.dataBarang.clear();
             renderList();
 
             // 6. Reload data utama (INI YANG PENTING)
             load_data_hutang(tfPelanggan.getText());
-            tableHutang.setItems(dataHutang);
+            tableHutang.setItems(PiutangModel.dataHutang);
             tableHutang.refresh();
 
             // 7. Update komponen lain
@@ -605,7 +609,7 @@ public class PiutangController implements Initializable {
 
     @FXML
     private void onBatal() {
-        dataBarang.clear();
+        PiutangModel.dataBarang.clear();
         renderList();
         tfPelanggan.setDisable(false);
         clearform();
@@ -665,7 +669,7 @@ public class PiutangController implements Initializable {
                 renderList();
                 tfPelanggan.setDisable(true);
                 tfTunai.setDisable(false);
-                dataBarang.clear();
+                PiutangModel.dataBarang.clear();
                 btnQuick5.setDisable(false);
                 btnQuick10.setDisable(false);
                 btnQuick20.setDisable(false);
@@ -690,7 +694,7 @@ public class PiutangController implements Initializable {
     private void renderList() {
         detailList.getChildren().clear();
 
-        if (dataBarang.isEmpty()) {
+        if (PiutangModel.dataBarang.isEmpty()) {
             // Empty state
             VBox empty = new VBox(8);
             empty.setAlignment(Pos.CENTER);
@@ -716,14 +720,14 @@ public class PiutangController implements Initializable {
             detailList.getChildren().add(buildTableHeader());
             // Item rows
             int no = 1;
-            for (DataBarang barang : dataBarang) {
+            for (PiutangModel.DataBarangHutang barang : PiutangModel.dataBarang) {
                 detailList.getChildren().add(setdatabarang(barang, no));
                 no++;
             }
             // Summary
             updateSummary();
             btnLunas.setDisable(false);
-            System.out.println("Menampilkan Jumlah Data Barang: " + dataBarang.size() + " item");
+            System.out.println("Menampilkan Jumlah Data Barang: " + PiutangModel.dataBarang.size() + " item");
         }
 
     }
@@ -771,7 +775,7 @@ public class PiutangController implements Initializable {
     }
 
     // ── Set data barang row ─────────────────────────────
-    private HBox setdatabarang(DataBarang barang, int no) {
+    private HBox setdatabarang(PiutangModel.DataBarangHutang barang, int no) {
         // cell data
         Label lblNo = new Label(String.valueOf(no));
         Label lblNama = new Label(barang.nama_barang);
