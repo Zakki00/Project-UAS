@@ -113,21 +113,20 @@ public class LaporanController implements Initializable {
     private TextField tfNominal;
     @FXML
     private Button btnExport;
-
     @FXML
-    private TableView<LaporanModel.LaporanTransaksiItem> TableLaporan;
+    private TableView<LaporanModel.LaporanTableItem> TableLaporan;
     @FXML
-    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colNo;
+    private TableColumn<LaporanModel.LaporanTableItem, String> colNo;
     @FXML
-    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colNama;
+    private TableColumn<LaporanModel.LaporanTableItem, String> colNama;
     @FXML
-    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colTotalPembayaran;
+    private TableColumn<LaporanModel.LaporanTableItem, String> colTotalPembayaran;
     @FXML
-    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colUangPembayaran;
+    private TableColumn<LaporanModel.LaporanTableItem, String> colUangPembayaran;
     @FXML
-    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colKekurangan;
+    private TableColumn<LaporanModel.LaporanTableItem, String> colKekurangan;
     @FXML
-    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colTanggalTransaksi;
+    private TableColumn<LaporanModel.LaporanTableItem, String> colTanggalTransaksi;
 
     // ── Charts ────────────────────────────────────────────
     @FXML
@@ -155,6 +154,7 @@ public class LaporanController implements Initializable {
     @FXML
     private VBox stockList;
 
+    private ObservableList<LaporanModel.LaporanTableItem> dataLaporan = FXCollections.observableArrayList();
     // ── State ─────────────────────────────────────────────
     private boolean sidebarCollapsed = false;
     private static final double SIDEBAR_FULL = 220;
@@ -164,24 +164,121 @@ public class LaporanController implements Initializable {
     private static final NumberFormat FMT = NumberFormat.getInstance(
             new Locale("id", "ID"));
 
+    private void loadLaporanTransaksi() {
 
-    // ── Model ──────────────────────────────────────
-    String sql = "SELECT\r\n" + //
-                "    id_transaksi,\r\n" + //
-                "    pelanggan,\r\n" + //
-                "    status_pembayaran,\r\n" + //
-                "    total_pembayaran,\r\n" + //
-                "    kekurangan,\r\n" + //
-                "    tanggal_transaksi\r\n" + //
-                "FROM tb_transaksi\r\n" + //
-                "WHERE kekurangan > 0\r\n" + //
-                "ORDER BY tanggal_transaksi DESC;";
+        dataLaporan.clear();
+
+        String sql = """
+                    SELECT
+                        t.id_transaksi,
+                        t.tanggal_transaksi,
+                        t.pelanggan,
+                        t.status_pembayaran,
+                        t.total_pembayaran,
+                        t.uang_pembayaran,
+                        t.kekurangan,
+                        u.nama_lengkap
+                    FROM tb_transaksi t
+                    JOIN tb_user u ON t.id_user = u.id_user
+                    ORDER BY t.tanggal_transaksi DESC
+                """;
+
+        List<Object[]> results = koneksi.ambilData(sql);
+
+        int no = 1;
+
+        for (Object[] row : results) {
+
+            dataLaporan.add(new LaporanModel.LaporanTableItem(
+                    String.valueOf(no++),
+                    (String) row[2], // pelanggan
+                    String.valueOf(row[4]), // total
+                    String.valueOf(row[5]), // uang
+                    String.valueOf(row[6]), // kurang
+                    row[1].toString() // tanggal
+            ));
+        }
+
+        TableLaporan.setItems(dataLaporan);
+    }
+
+    private void loadLaporanBarang() {
+
+        dataLaporan.clear();
+
+        String sql = """
+                    SELECT
+                        id_barang,
+                        nama_barang,
+                        kategori,
+                        stok,
+                        harga
+                    FROM tb_barang
+                    ORDER BY nama_barang ASC
+                """;
+
+        List<Object[]> results = koneksi.ambilData(sql);
+
+        int no = 1;
+
+        for (Object[] row : results) {
+
+            dataLaporan.add(new LaporanModel.LaporanTableItem(
+                    String.valueOf(no++),
+                    (String) row[1], // nama barang
+                    (String) row[2], // kategori
+                    String.valueOf(row[3]), // stok
+                    String.valueOf(row[4]), // harga
+                    "-"));
+        }
+
+        TableLaporan.setItems(dataLaporan);
+    }
+
+    private void loadLaporanPiutang() {
+
+        dataLaporan.clear();
+
+        String sql = """
+                    SELECT
+                        id_transaksi,
+                        pelanggan,
+                        total_pembayaran,
+                        kekurangan,
+                        status_pembayaran,
+                        tanggal_transaksi
+                    FROM tb_transaksi
+                    WHERE kekurangan > 0
+                    ORDER BY tanggal_transaksi DESC
+                """;
+
+        List<Object[]> results = koneksi.ambilData(sql);
+
+        int no = 1;
+
+        for (Object[] row : results) {
+
+            dataLaporan.add(new LaporanModel.LaporanTableItem(
+                    String.valueOf(no++),
+                    (String) row[1], // pelanggan
+                    String.valueOf(row[2]), // total
+                    String.valueOf(row[3]), // kurang
+                    (String) row[4], // status
+                    row[5].toString() // tanggal
+            ));
+        }
+
+        TableLaporan.setItems(dataLaporan);
+    }
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
     // ════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        loadLaporanTransaksi();
+        loadLaporanBarang();
+        loadLaporanPiutang();
         // loadLaporan();
         setupCharts();
         setupTable();
@@ -337,13 +434,18 @@ public class LaporanController implements Initializable {
     // setup tabel laporan
     // ═════════════════════════════════════════════════════
     // private void setupTableLaporan() {
-    //     colNo.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().no)));
-    //     colNama.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().idTransaksi + " - " + d.getValue().pelanggan));
-    //     colTotalPembayaran.setCellValueFactory(d -> new SimpleStringProperty();
-    //     colUangPembayaran.setCellValueFactory(d -> new SimpleStringProperty(FMT.format(d.getValue().uangPembayaran)));
-    //     colKekurangan.setCellValueFactory(d -> new SimpleStringProperty(FMT.format(d.getValue().kekurangan)));
-    //     colTanggalTransaksi.setCellValueFactory(
-    //             d -> new SimpleStringProperty(d.getValue().tanggalTransaksi.toString()));
+    // colNo.setCellValueFactory(d -> new
+    // SimpleStringProperty(String.valueOf(d.getValue().no)));
+    // colNama.setCellValueFactory(d -> new
+    // SimpleStringProperty(d.getValue().idTransaksi + " - " +
+    // d.getValue().pelanggan));
+    // colTotalPembayaran.setCellValueFactory(d -> new SimpleStringProperty();
+    // colUangPembayaran.setCellValueFactory(d -> new
+    // SimpleStringProperty(FMT.format(d.getValue().uangPembayaran)));
+    // colKekurangan.setCellValueFactory(d -> new
+    // SimpleStringProperty(FMT.format(d.getValue().kekurangan)));
+    // colTanggalTransaksi.setCellValueFactory(
+    // d -> new SimpleStringProperty(d.getValue().tanggalTransaksi.toString()));
     // }
 
     // ═════════════════════════════════════════════════════
@@ -522,7 +624,8 @@ public class LaporanController implements Initializable {
     private void onExport() {
         // TODO: implementasi export ke Excel pakai Apache POI
         System.out.println("Export ke Excel...");
-        // System.out.println("Total data: " + TableLaporan.getItems().size() + " baris");
+        // System.out.println("Total data: " + TableLaporan.getItems().size() + "
+        // baris");
     }
 
     // ═════════════════════════════════════════════════════

@@ -8,7 +8,8 @@ import javafx.collections.ObservableList;
 public class LaporanModel {
 
     public static final ObservableList<LaporanTransaksiItem> dataLaporanTransaksi = FXCollections.observableArrayList();
-    private ObservableList<LaporanBarangItem> dataLaporanBarang = FXCollections.observableArrayList();
+    public static final ObservableList<LaporanBarangItem> dataLaporanBarang = FXCollections.observableArrayList();
+    public static final ObservableList<LaporanPiutangItem> dataLaporanHutang = FXCollections.observableArrayList();
 
     public static class LaporanTransaksiItem {
 
@@ -79,6 +80,7 @@ public class LaporanModel {
             this.harga = harga;
         }
     }
+
     public static class LaporanPiutangItem {
 
         public int no;
@@ -90,7 +92,8 @@ public class LaporanModel {
         public String status_pembayaran;
         public String tanggal_transaksi;
 
-        public LaporanPiutangItem(int no, String idTransaksi, String namaPelanggan, Long total_pembayaran, Long uang_pembayaran,
+        public LaporanPiutangItem(int no, String idTransaksi, String namaPelanggan, Long total_pembayaran,
+                Long uang_pembayaran,
                 long kekurangan, String status_pembayaran, String tanggal_transaksi) {
             this.no = no;
             this.idTransaksi = idTransaksi;
@@ -103,6 +106,31 @@ public class LaporanModel {
 
         }
 
+    }
+
+    public static class LaporanTableItem {
+
+        public String no;
+        public String nama;
+        public String col3;
+        public String col4;
+        public String col5;
+        public String tanggal;
+
+        public LaporanTableItem(
+                String no,
+                String nama,
+                String col3,
+                String col4,
+                String col5,
+                String tanggal) {
+            this.no = no;
+            this.nama = nama;
+            this.col3 = col3;
+            this.col4 = col4;
+            this.col5 = col5;
+            this.tanggal = tanggal;
+        }
     }
 
 }
