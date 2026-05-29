@@ -1,4 +1,7 @@
 target/
+output/
+*.class
+*.jar
 *.class
 /output/
 *.exe
