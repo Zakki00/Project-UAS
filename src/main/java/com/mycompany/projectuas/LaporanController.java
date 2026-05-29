@@ -1,12 +1,24 @@
 package com.mycompany.projectuas;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import com.mycompany.Model.LaporanModel;
+import com.mycompany.Model.LaporanModel.LaporanTransaksiItem;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -34,6 +46,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -43,7 +56,6 @@ import javafx.util.Duration;
  * @author zakki mubarroq
  */
 public class LaporanController implements Initializable {
-
     // ── Sidebar ───────────────────────────────────────────
     @FXML
     private VBox sidebar;
@@ -106,28 +118,33 @@ public class LaporanController implements Initializable {
     @FXML
     private ComboBox<String> cbStatusPembayaran;
     @FXML
-    private ComboBox<String> cbJenisLaporan;
-    @FXML
     private TextField tfNamaPelanggan;
     @FXML
     private TextField tfNominal;
     @FXML
     private Button btnExport;
     @FXML
-    private TableView<LaporanModel.LaporanTableItem> TableLaporan;
+    private TableView<LaporanModel.LaporanTransaksiItem> TableLaporan;
     @FXML
-    private TableColumn<LaporanModel.LaporanTableItem, String> colNo;
+    private TableColumn<LaporanModel.LaporanTransaksiItem, Integer> colNo;
     @FXML
-    private TableColumn<LaporanModel.LaporanTableItem, String> colNama;
+    private TableColumn<LaporanModel.LaporanTransaksiItem, Integer> colIdTransaksi;
     @FXML
-    private TableColumn<LaporanModel.LaporanTableItem, String> colTotalPembayaran;
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colNama;
     @FXML
-    private TableColumn<LaporanModel.LaporanTableItem, String> colUangPembayaran;
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colUser;
     @FXML
-    private TableColumn<LaporanModel.LaporanTableItem, String> colKekurangan;
+    private TableColumn<LaporanTransaksiItem, String> colUangPembayaran;
     @FXML
-    private TableColumn<LaporanModel.LaporanTableItem, String> colTanggalTransaksi;
-
+    private TableColumn<LaporanTransaksiItem, String> colKembalian;
+    @FXML
+    private TableColumn<LaporanTransaksiItem, String> colKekurangan;
+    @FXML
+    private TableColumn<LaporanTransaksiItem, String> colTotalPembayaran;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colStatus;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, LocalDate> colTanggalTransaksi;
     // ── Charts ────────────────────────────────────────────
     @FXML
     private AreaChart<String, Number> salesChart;
@@ -154,7 +171,6 @@ public class LaporanController implements Initializable {
     @FXML
     private VBox stockList;
 
-    private ObservableList<LaporanModel.LaporanTableItem> dataLaporan = FXCollections.observableArrayList();
     // ── State ─────────────────────────────────────────────
     private boolean sidebarCollapsed = false;
     private static final double SIDEBAR_FULL = 220;
@@ -166,9 +182,7 @@ public class LaporanController implements Initializable {
 
     private void loadLaporanTransaksi() {
 
-        dataLaporan.clear();
-
-        String sql = """
+        StringBuilder sql = new StringBuilder("""
                     SELECT
                         t.id_transaksi,
                         t.tanggal_transaksi,
@@ -176,116 +190,125 @@ public class LaporanController implements Initializable {
                         t.status_pembayaran,
                         t.total_pembayaran,
                         t.uang_pembayaran,
+                        t.kembalian,
                         t.kekurangan,
+                        u.username,
                         u.nama_lengkap
                     FROM tb_transaksi t
                     JOIN tb_user u ON t.id_user = u.id_user
-                    ORDER BY t.tanggal_transaksi DESC
-                """;
+                    WHERE 1=1
+                """);
 
-        List<Object[]> results = koneksi.ambilData(sql);
+        // =========================
+        // FILTER STATUS PEMBAYARAN
+        // =========================
+        if (cbStatusPembayaran.getValue() != null
+                && !cbStatusPembayaran.getValue().isEmpty()
+                && !cbStatusPembayaran.getValue().equals("Semua")) {
 
-        int no = 1;
-
-        for (Object[] row : results) {
-
-            dataLaporan.add(new LaporanModel.LaporanTableItem(
-                    String.valueOf(no++),
-                    (String) row[2], // pelanggan
-                    String.valueOf(row[4]), // total
-                    String.valueOf(row[5]), // uang
-                    String.valueOf(row[6]), // kurang
-                    row[1].toString() // tanggal
-            ));
+            sql.append(" AND t.status_pembayaran = '")
+                    .append(cbStatusPembayaran.getValue())
+                    .append("'");
         }
 
-        TableLaporan.setItems(dataLaporan);
-    }
+        // =========================
+        // FILTER TANGGAL
+        // =========================
+        if (dpTanggal.getValue() != null) {
 
-    private void loadLaporanBarang() {
-
-        dataLaporan.clear();
-
-        String sql = """
-                    SELECT
-                        id_barang,
-                        nama_barang,
-                        kategori,
-                        stok,
-                        harga
-                    FROM tb_barang
-                    ORDER BY nama_barang ASC
-                """;
-
-        List<Object[]> results = koneksi.ambilData(sql);
-
-        int no = 1;
-
-        for (Object[] row : results) {
-
-            dataLaporan.add(new LaporanModel.LaporanTableItem(
-                    String.valueOf(no++),
-                    (String) row[1], // nama barang
-                    (String) row[2], // kategori
-                    String.valueOf(row[3]), // stok
-                    String.valueOf(row[4]), // harga
-                    "-"));
+            sql.append(" AND DATE(t.tanggal_transaksi) = '")
+                    .append(dpTanggal.getValue())
+                    .append("'");
         }
 
-        TableLaporan.setItems(dataLaporan);
-    }
+        // =========================
+        // FILTER NAMA PELANGGAN
+        // =========================
+        if (!tfNamaPelanggan.getText().trim().isEmpty()) {
 
-    private void loadLaporanPiutang() {
-
-        dataLaporan.clear();
-
-        String sql = """
-                    SELECT
-                        id_transaksi,
-                        pelanggan,
-                        total_pembayaran,
-                        kekurangan,
-                        status_pembayaran,
-                        tanggal_transaksi
-                    FROM tb_transaksi
-                    WHERE kekurangan > 0
-                    ORDER BY tanggal_transaksi DESC
-                """;
-
-        List<Object[]> results = koneksi.ambilData(sql);
-
-        int no = 1;
-
-        for (Object[] row : results) {
-
-            dataLaporan.add(new LaporanModel.LaporanTableItem(
-                    String.valueOf(no++),
-                    (String) row[1], // pelanggan
-                    String.valueOf(row[2]), // total
-                    String.valueOf(row[3]), // kurang
-                    (String) row[4], // status
-                    row[5].toString() // tanggal
-            ));
+            sql.append(" AND t.pelanggan LIKE '%")
+                    .append(tfNamaPelanggan.getText().trim())
+                    .append("%'");
         }
 
-        TableLaporan.setItems(dataLaporan);
+        // =========================
+        // FILTER NOMINAL
+        // =========================
+        if (!tfNominal.getText().trim().isEmpty()) {
+
+            sql.append(" AND t.total_pembayaran >= ")
+                    .append(tfNominal.getText().trim());
+        }
+
+        // =========================
+        // ORDER
+        // =========================
+        sql.append(" ORDER BY t.tanggal_transaksi DESC");
+
+        // DEBUG QUERY
+        System.out.println(sql);
+
+        List<Object[]> results = koneksi.ambilData(sql.toString());
+
+        LaporanModel.dataLaporanTransaksi.clear();
+        int no = 1;
+        for (Object[] row : results) {
+            int idTransaksi = ((Number) row[0]).intValue();
+            LocalDate tanggalTransaksi = ((java.util.Date) row[1]).toInstant()
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDate();
+            String pelanggan = (String) row[2];
+            String statusPembayaran = (String) row[3];
+            long totalPembayaran = ((Number) row[4]).longValue();
+            long uangPembayaran = ((Number) row[5]).longValue();
+            long kembalian = ((Number) row[6]).longValue();
+            long kekurangan = ((Number) row[7]).longValue();
+            String username = (String) row[8];
+            String namaLengkap = (String) row[9];
+            LaporanModel.dataLaporanTransaksi.add(
+                    new LaporanTransaksiItem(
+                            no++,
+                            idTransaksi,
+                            username,
+                            namaLengkap,
+                            pelanggan,
+                            totalPembayaran,
+                            uangPembayaran,
+                            kembalian,
+                            kekurangan,
+                            statusPembayaran,
+                            tanggalTransaksi));
+        }
+        TableLaporan.setItems(LaporanModel.dataLaporanTransaksi);
+        // =========================
+        // LOG
+        // =========================
+        if (results.isEmpty()) {
+
+            System.out.println("Tidak ada data laporan transaksi.");
+
+        } else {
+
+            System.out.println(
+                    "Laporan transaksi berhasil dimuat: "
+                            + results.size()
+                            + " data");
+        }
     }
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
-    // ════════════════════════════════════════════════════
+    // ══════════════════════╗
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadLaporanTransaksi();
-        loadLaporanBarang();
-        loadLaporanPiutang();
-        // loadLaporan();
         setupCharts();
         setupTable();
         setupStockList();
         setupNavHover();
-        setupfomr();
+        SetupFrome();
         setActiveNav(navLaporan);
+        setupTableLaporan();
     }
 
     // ═════════════════════════════════════════════════════
@@ -426,27 +449,48 @@ public class LaporanController implements Initializable {
         }
     }
 
-    private void setupfomr() {
+    private void SetupFrome() {
         cbStatusPembayaran.getItems().addAll("Semua", "Lunas", "Belum Lunas");
+        cbStatusPembayaran.setOnAction(e -> {
+            loadLaporanTransaksi();
+        });
+        dpTanggal.setOnAction(e -> {
+            loadLaporanTransaksi();
+        });
+        tfNamaPelanggan.textProperty().addListener((obs, old, niu) -> {
+            loadLaporanTransaksi();
+        });
+        tfNominal.textProperty().addListener((obs, old, niu) -> {
+            loadLaporanTransaksi();
+            onNominalChanged();
+
+        });
     }
 
     // ═════════════════════════════════════════════════════
     // setup tabel laporan
-    // ═════════════════════════════════════════════════════
-    // private void setupTableLaporan() {
-    // colNo.setCellValueFactory(d -> new
-    // SimpleStringProperty(String.valueOf(d.getValue().no)));
-    // colNama.setCellValueFactory(d -> new
-    // SimpleStringProperty(d.getValue().idTransaksi + " - " +
-    // d.getValue().pelanggan));
-    // colTotalPembayaran.setCellValueFactory(d -> new SimpleStringProperty();
-    // colUangPembayaran.setCellValueFactory(d -> new
-    // SimpleStringProperty(FMT.format(d.getValue().uangPembayaran)));
-    // colKekurangan.setCellValueFactory(d -> new
-    // SimpleStringProperty(FMT.format(d.getValue().kekurangan)));
-    // colTanggalTransaksi.setCellValueFactory(
-    // d -> new SimpleStringProperty(d.getValue().tanggalTransaksi.toString()));
-    // }
+    private void setupTableLaporan() {
+        colNo.setCellValueFactory(
+                data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().no).asObject());
+        colIdTransaksi.setCellValueFactory(
+                data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().idTransaksi).asObject());
+        colNama.setCellValueFactory(
+                data -> new javafx.beans.property.SimpleStringProperty(data.getValue().namaLengkap));
+        colUser.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().username));
+        colTotalPembayaran.setCellValueFactory(
+                data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().totalPembayaran)));
+        colUangPembayaran.setCellValueFactory(
+                data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().uangPembayaran)));
+        colKembalian.setCellValueFactory(
+                data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().kembalian)));
+        colKekurangan.setCellValueFactory(
+                data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().kekurangan)));
+        colStatus.setCellValueFactory(
+                data -> new javafx.beans.property.SimpleStringProperty(data.getValue().statusPembayaran));
+        colTanggalTransaksi.setCellValueFactory(
+                data -> new javafx.beans.property.SimpleObjectProperty<>(data.getValue().tanggalTransaksi));
+        TableLaporan.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
 
     // ═════════════════════════════════════════════════════
     // CHARTS
@@ -617,15 +661,113 @@ public class LaporanController implements Initializable {
         }
     }
 
+    private boolean isUpdating = false;
+
+    // ═════════════════════════════════════════════════════
+    // NOMINAL TEXTFIELD: format otomatis saat input
+    private void onNominalChanged() {
+        if (isUpdating)
+            return;
+        isUpdating = true;
+        String raw = tfNominal.getText().replaceAll("[^0-9]", "");
+        if (raw.isEmpty()) {
+            tfNominal.setText("");
+            isUpdating = false;
+        }
+        long value = Long.parseLong(raw);
+        tfNominal.setText("Rp " + FMT.format(value));
+        tfNominal.positionCaret(tfNominal.getText().length());
+        isUpdating = false;
+    }
+
     // ═══════════════════════════════════════════════
     // HANDLERS
     // ═══════════════════════════════════════════════
     @FXML
     private void onExport() {
-        // TODO: implementasi export ke Excel pakai Apache POI
-        System.out.println("Export ke Excel...");
-        // System.out.println("Total data: " + TableLaporan.getItems().size() + "
-        // baris");
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Simpan Laporan Excel");
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Excel Files", "*.xlsx"));
+            fileChooser.setInitialFileName("laporan-transaksi.xlsx");
+            File file = fileChooser.showSaveDialog(TableLaporan.getScene().getWindow());
+            if (file == null) {
+                return;
+            }
+            Workbook workbook = new XSSFWorkbook();
+            Sheet sheet = workbook.createSheet("Laporan Transaksi");
+            // =========================
+            // STYLE HEADER
+            // =========================
+            CellStyle headerStyle = workbook.createCellStyle();
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            // =========================
+            // HEADER
+            // =========================
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {
+                    "No",
+                    "ID Transaksi",
+                    "Nama Lengkap",
+                    "Username",
+                    "Total Pembayaran",
+                    "Uang Pembayaran",
+                    "Kembalian",
+                    "Kekurangan",
+                    "Status",
+                    "Tanggal"
+            };
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // =========================
+            // DATA
+            // =========================
+            int rowIndex = 1;
+
+            for (LaporanTransaksiItem item : TableLaporan.getItems()) {
+
+                Row row = sheet.createRow(rowIndex++);
+
+                row.createCell(0).setCellValue(item.no);
+                row.createCell(1).setCellValue(item.idTransaksi);
+                row.createCell(2).setCellValue(item.namaLengkap);
+                row.createCell(3).setCellValue(item.username);
+
+                row.createCell(4).setCellValue(item.totalPembayaran);
+                row.createCell(5).setCellValue(item.uangPembayaran);
+                row.createCell(6).setCellValue(item.kembalian);
+                row.createCell(7).setCellValue(item.kekurangan);
+
+                row.createCell(8).setCellValue(item.statusPembayaran);
+
+                row.createCell(9).setCellValue(
+                        item.tanggalTransaksi.toString());
+            }
+
+            // =========================
+            // AUTO SIZE
+            // =========================
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            // =========================
+            // SAVE
+            // =========================
+            FileOutputStream fos = new FileOutputStream(file);
+            workbook.write(fos);
+            fos.close();
+            workbook.close();
+            System.out.println("Export Excel berhasil!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // ═════════════════════════════════════════════════════
