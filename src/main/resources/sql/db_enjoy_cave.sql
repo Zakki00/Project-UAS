@@ -7,7 +7,8 @@ USE db_enjoy_cave;
 CREATE TABLE tb_user (
     id_user INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    password VARCHAR(255) NOT NULL,
+    nama_lengkap VARCHAR(100) NOT NULL
 );
 
 
@@ -20,7 +21,7 @@ CREATE TABLE tb_barang(
     kategori VARCHAR(50) NOT NULL,
     stok INT NOT NULL,
     deskripsi TEXT,
-    image_url VARCHAR(255)
+    image_path VARCHAR(255)
 );
 
 

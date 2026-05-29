@@ -1,8 +1,14 @@
 package com.mycompany.projectuas;
 
 import java.net.URL;
+import java.text.NumberFormat;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
+
+import com.mycompany.Model.LaporanModel;
+import com.mycompany.projectuas.LaporanController.LaporanItem;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -19,11 +25,14 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -36,7 +45,7 @@ import javafx.util.Duration;
  * @author zakki mubarroq
  */
 public class LaporanController implements Initializable {
-     
+
     // ── Sidebar ───────────────────────────────────────────
     @FXML
     private VBox sidebar;
@@ -93,6 +102,35 @@ public class LaporanController implements Initializable {
     @FXML
     private Label kpiStok;
 
+    // ── FXML table laporan ──────────────────────────────────
+    @FXML
+    private DatePicker dpTanggal;
+    @FXML
+    private ComboBox<String> cbStatusPembayaran;
+    @FXML
+    private ComboBox<String> cbJenisLaporan;
+    @FXML
+    private TextField tfNamaPelanggan;
+    @FXML
+    private TextField tfNominal;
+    @FXML
+    private Button btnExport;
+
+    @FXML
+    private TableView<LaporanModel.LaporanTransaksiItem> TableLaporan;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colNo;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colNama;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colTotalPembayaran;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colUangPembayaran;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colKekurangan;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colTanggalTransaksi;
+
     // ── Charts ────────────────────────────────────────────
     @FXML
     private AreaChart<String, Number> salesChart;
@@ -119,21 +157,40 @@ public class LaporanController implements Initializable {
     @FXML
     private VBox stockList;
 
-
     // ── State ─────────────────────────────────────────────
     private boolean sidebarCollapsed = false;
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
 
+    // ── Data ───────────────────────────────────────
+    private static final NumberFormat FMT = NumberFormat.getInstance(
+            new Locale("id", "ID"));
+
+
+    // ── Model ──────────────────────────────────────
+    String sql = "SELECT\r\n" + //
+                "    id_transaksi,\r\n" + //
+                "    pelanggan,\r\n" + //
+                "    status_pembayaran,\r\n" + //
+                "    total_pembayaran,\r\n" + //
+                "    kekurangan,\r\n" + //
+                "    tanggal_transaksi\r\n" + //
+                "FROM tb_transaksi\r\n" + //
+                "WHERE kekurangan > 0\r\n" + //
+                "ORDER BY tanggal_transaksi DESC;";
+
     // ═════════════════════════════════════════════════════
     // INITIALIZE
-    // ═════════════════════════════════════════════════════
+    // ════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        // loadLaporan();
         setupCharts();
         setupTable();
         setupStockList();
         setupNavHover();
+        setupfomr();
+        setActiveNav(navLaporan);
     }
 
     // ═════════════════════════════════════════════════════
@@ -238,8 +295,7 @@ public class LaporanController implements Initializable {
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
-        navigation nav = new navigation();
-        nav.navigateToLaporan();
+
     }
 
     @FXML
@@ -274,6 +330,23 @@ public class LaporanController implements Initializable {
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
+
+    private void setupfomr() {
+        cbStatusPembayaran.getItems().addAll("Semua", "Lunas", "Belum Lunas");
+    }
+
+    // ═════════════════════════════════════════════════════
+    // setup tabel laporan
+    // ═════════════════════════════════════════════════════
+    // private void setupTableLaporan() {
+    //     colNo.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().no)));
+    //     colNama.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().idTransaksi + " - " + d.getValue().pelanggan));
+    //     colTotalPembayaran.setCellValueFactory(d -> new SimpleStringProperty();
+    //     colUangPembayaran.setCellValueFactory(d -> new SimpleStringProperty(FMT.format(d.getValue().uangPembayaran)));
+    //     colKekurangan.setCellValueFactory(d -> new SimpleStringProperty(FMT.format(d.getValue().kekurangan)));
+    //     colTanggalTransaksi.setCellValueFactory(
+    //             d -> new SimpleStringProperty(d.getValue().tanggalTransaksi.toString()));
+    // }
 
     // ═════════════════════════════════════════════════════
     // CHARTS
@@ -444,6 +517,16 @@ public class LaporanController implements Initializable {
         }
     }
 
+    // ═══════════════════════════════════════════════
+    // HANDLERS
+    // ═══════════════════════════════════════════════
+    @FXML
+    private void onExport() {
+        // TODO: implementasi export ke Excel pakai Apache POI
+        System.out.println("Export ke Excel...");
+        // System.out.println("Total data: " + TableLaporan.getItems().size() + " baris");
+    }
+
     // ═════════════════════════════════════════════════════
     // OTHER HANDLERS
     // ═════════════════════════════════════════════════════
@@ -456,6 +539,5 @@ public class LaporanController implements Initializable {
     private void onLihatSemua() {
         System.out.println("Lihat semua transaksi");
     }
-
 
 }

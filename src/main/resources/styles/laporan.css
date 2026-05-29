@@ -366,6 +366,9 @@
     -fx-font-size: 10px;
 }
 
+
+
+
 /* ═══════════════════════════════════════════════════════════
    GENERIC CARD
 ════════════════════════════════════════════════════════════ */
@@ -434,6 +437,278 @@
 
 .btn-outline:hover {
     -fx-background-color: rgba(108, 99, 255, 0.12);
+}
+
+/* ═══════════════════════════════════════════════
+   Laporan — filter bar & table
+════════════════════════════════════════════════ */
+
+.laporan-root {
+    -fx-background-color: #0F1117;
+}
+
+/* ── FILTER BAR ──────────────────────────────── */
+.filter-bar {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: transparent transparent #2E3250 transparent;
+    -fx-border-width: 1;
+    -fx-border-radius: 10 10 10 10;
+}
+
+.filter-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.5;
+}
+
+/* Input field */
+.filter-field {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+    -fx-padding: 7 12 7 12;
+}
+
+.filter-field:focused {
+    -fx-border-color: #6C63FF;
+}
+
+/* DatePicker */
+.filter-datepicker {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.filter-datepicker .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+    -fx-padding: 7 4 7 12;
+    -fx-border-width: 0;
+}
+
+.filter-datepicker:focused {
+    -fx-border-color: #6C63FF;
+}
+
+.filter-datepicker .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.filter-datepicker .arrow-button .arrow {
+    -fx-background-color: #8B8FA8;
+}
+
+/* ComboBox */
+.filter-combo {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 11px;
+}
+
+.filter-combo .list-cell {
+    -fx-background-color: #252840;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-padding: 6 12 6 12;
+}
+
+.filter-combo .list-cell:hover {
+    -fx-background-color: #2E3250;
+}
+
+.filter-combo .combo-box-popup .list-view {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 12, 0, 0, 4);
+}
+
+.filter-combo .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.filter-combo .arrow-button .arrow {
+    -fx-background-color: #8B8FA8;
+}
+
+.filter-combo:focused {
+    -fx-border-color: #6C63FF;
+}
+
+/* Export button */
+.btn-export {
+    -fx-background-color: #00E5A0;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #0F1117;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 8 16 8 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 229, 160, 0.35), 10, 0, 0, 3);
+}
+
+.btn-export:hover {
+    -fx-background-color: #00c98c;
+    -fx-effect: dropshadow(gaussian, rgba(0, 229, 160, 0.55), 14, 0, 0, 4);
+}
+/* ── TABLE VIEW ──────────────────────────────── */
+.table-laporan {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent;
+    -fx-background-radius: 12;
+}
+
+/* Header background */
+.table-laporan .column-header-background {
+    -fx-background-color: #252840;
+    -fx-background-radius: 10 10 0 0;
+    -fx-border-color: transparent transparent #2e3250 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Tiap kolom header */
+.table-laporan .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-size: 42px;
+}
+
+.table-laporan .column-header .label {
+    -fx-text-fill: #8b8fa8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 12 0 12;
+    -fx-letter-spacing: 0.8;
+}
+
+/* Hover header */
+.table-laporan .column-header:hover {
+    -fx-background-color: #2e3250;
+}
+
+/* Filler pojok kanan header */
+.table-laporan .filler {
+    -fx-background-color: #252840;
+    -fx-border-color: transparent;
+}
+
+/* ── ROWS ────────────────────────────────────── */
+.table-laporan .table-row-cell {
+    -fx-background-color: #1a1d2e;
+    -fx-table-cell-border-color: transparent;
+    -fx-cell-size: 46px;
+    -fx-border-color: transparent transparent #2e3250 transparent;
+    -fx-border-width: 0 0 0.5 0;
+}
+
+.table-laporan .table-row-cell:odd {
+    -fx-background-color: #1e2138;
+}
+
+.table-laporan .table-row-cell:hover {
+    -fx-background-color: #252840;
+    -fx-border-color: transparent transparent #6c63ff transparent;
+    -fx-cursor: hand;
+}
+
+.table-laporan .table-row-cell:selected {
+    -fx-background-color: rgba(108, 99, 255, 0.15);
+    -fx-border-color: transparent transparent #6c63ff transparent;
+}
+
+.table-laporan .table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* ── CELLS ───────────────────────────────────── */
+.table-laporan .table-cell {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-padding: 0 12 0 12;
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER;
+}
+
+/* Kolom No — tengah */
+.table-laporan .table-cell:first-child {
+    -fx-text-fill: #8b8fa8;
+    -fx-font-size: 11px;
+    -fx-alignment: CENTER;
+}
+
+/* Kolom harga & subtotal — kanan */
+.table-laporan .table-cell.numeric {
+    -fx-alignment: CENTER_RIGHT;
+    -fx-text-fill: #00e5a0;
+    -fx-font-weight: bold;
+}
+
+/* Kolom qty — tengah */
+.table-laporan .table-cell.center {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #8b8fa8;
+}
+
+/* Row selected — cell text */
+.table-laporan .table-row-cell:selected .table-cell {
+    -fx-text-fill: #ffffff;
+}
+
+/* ── SCROLLBAR ───────────────────────────────── */
+.table-laporan .scroll-bar {
+    -fx-background-color: #1a1d2e;
+}
+
+.table-laporan .scroll-bar .thumb {
+    -fx-background-color: #2e3250;
+    -fx-background-radius: 4;
+}
+
+.table-laporan .scroll-bar .thumb:hover {
+    -fx-background-color: #6c63ff;
+}
+
+.table-laporan .scroll-bar .track {
+    -fx-background-color: transparent;
+}
+
+.table-laporan .scroll-bar .increment-button,
+.table-laporan .scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+/* Sembunyikan scrollbar horizontal kalau tidak perlu */
+.table-laporan .scroll-bar:horizontal {
+    -fx-pref-height: 6;
+}
+
+.table-laporan .scroll-bar:vertical {
+    -fx-pref-width: 6;
+}
+
+/* ── PLACEHOLDER (tabel kosong) ──────────────── */
+.table-laporan .placeholder .label {
+    -fx-text-fill: #8b8fa8;
+    -fx-font-size: 12px;
 }
 
 /* ═══════════════════════════════════════════════════════════

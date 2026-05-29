@@ -13,6 +13,10 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import com.mycompany.Model.TransaksiModel;
+import com.mycompany.Model.TransaksiModel.CartItem;
+import com.mycompany.Model.TransaksiModel.Produk;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -146,6 +150,9 @@ public class TransaksiController implements Initializable {
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
 
+    private final java.util.List<Produk> semuaProduk = TransaksiModel.semuaProduk;
+    private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
+
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
@@ -206,7 +213,7 @@ public class TransaksiController implements Initializable {
         nav.navigateToDashboard();
         Stage stage = (Stage) navDashboard.getScene().getWindow();
         stage.close();
-        data_transaksi.keranjang.clear();
+        TransaksiModel.keranjang.clear();
 
     }
 
@@ -300,42 +307,7 @@ public class TransaksiController implements Initializable {
     }
 
     // ── Variables ──────────────────────────────────────────────
-    private final List<Produk> semuaProduk = new ArrayList<>();
-    private String metodeBayar = "TUNAI";
-    private int noTrx = 1;
-
-    private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
-
-    // ── Model ─────────────────────────────────────────────
-    static class Produk {
-        String nama, kategori, description, imageUrl;
-        int id, stok, harga;
-
-        Produk(int id, String nama, int harga, String kategori, int stok, String description, String imageUrl) {
-            this.id = id;
-            this.nama = nama;
-            this.harga = harga;
-            this.kategori = kategori;
-            this.stok = stok;
-            this.description = description;
-            this.imageUrl = imageUrl;
-        }
-    }
-
-    static class CartItem {
-
-        Produk produk;
-        int qty;
-
-        CartItem(Produk p) {
-            this.produk = p;
-            this.qty = 1;
-        }
-
-        long subtotal() {
-            return (long) produk.harga * qty;
-        }
-    }
+  
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
@@ -350,7 +322,7 @@ public class TransaksiController implements Initializable {
         updateSummary();
         lblNamaKasir.setText("Budi S.");
         lblShift.setText("Shift Siang");
-        lblNoTrx.setText(String.format("#TRX-%04d", noTrx));
+        lblNoTrx.setText(String.format("#TRX-%04d", TransaksiModel.noTrx));
         setupForm();
     }
 
@@ -530,13 +502,13 @@ public class TransaksiController implements Initializable {
     // KERANJANG
     // ═════════════════════════════════════════════════════
     private void tambahKeKeranjang(Produk p) {
-        if (data_transaksi.keranjang.containsKey(p.id)) {
-            CartItem ci = data_transaksi.keranjang.get(p.id);
+        if (TransaksiModel.keranjang.containsKey(p.id)) {
+            CartItem ci = TransaksiModel.keranjang.get(p.id);
             if (ci.qty < p.stok) {
                 ci.qty++;
             }
         } else {
-            data_transaksi.keranjang.put(p.id, new CartItem(p));
+            TransaksiModel.keranjang.put(p.id, new CartItem(p));
         }
         renderKeranjang();
         updateSummary();
@@ -545,13 +517,13 @@ public class TransaksiController implements Initializable {
 
     public void renderKeranjang() {
         vboxKeranjang.getChildren().clear();
-        boolean kosong = data_transaksi.keranjang.isEmpty();
+        boolean kosong = TransaksiModel.keranjang.isEmpty();
 
         emptyCart.setVisible(kosong);
         emptyCart.setManaged(kosong);
 
         int totalItem = 0;
-        for (CartItem ci : data_transaksi.keranjang.values()) {
+        for (CartItem ci : TransaksiModel.keranjang.values()) {
             totalItem += ci.qty;
             vboxKeranjang.getChildren().add(buildCartItem(ci));
         }
@@ -586,7 +558,7 @@ public class TransaksiController implements Initializable {
             if (ci.qty > 1) {
                 ci.qty--;
             } else {
-                data_transaksi.keranjang.remove(ci.produk.id);
+                TransaksiModel.keranjang.remove(ci.produk.id);
             }
             renderKeranjang();
             updateSummary();
@@ -617,7 +589,7 @@ public class TransaksiController implements Initializable {
         Button btnHapus = new Button("✕");
         btnHapus.getStyleClass().add("btn-hapus-item");
         btnHapus.setOnAction(e -> {
-            data_transaksi.keranjang.remove(ci.produk.id);
+            TransaksiModel.keranjang.remove(ci.produk.id);
             renderKeranjang();
             updateSummary();
         });
@@ -639,20 +611,20 @@ public class TransaksiController implements Initializable {
     long tunai;
 
     public void updateSummary() {
-        data_transaksi.subtotal = data_transaksi.keranjang.values().stream().mapToLong(CartItem::subtotal).sum();
+        TransaksiModel.subtotal = TransaksiModel.keranjang.values().stream().mapToLong(CartItem::subtotal).sum();
 
         double diskonPct = parseDouble(tfDiskon.getText().replace("[^0-9]", ""));
-        long diskon = (long) (data_transaksi.subtotal * diskonPct / 100.0);
-        data_transaksi.total = data_transaksi.subtotal - diskon;
+        long diskon = (long) (TransaksiModel.subtotal * diskonPct / 100.0);
+        TransaksiModel.total = TransaksiModel.subtotal - diskon;
 
-        lblSubtotal.setText("Rp " + FMT.format(data_transaksi.subtotal));
+        lblSubtotal.setText("Rp " + FMT.format(TransaksiModel.subtotal));
         lblDiskon.setText("- Rp " + FMT.format(diskon));
 
-        lblTotal.setText("Rp " + FMT.format(data_transaksi.total));
+        lblTotal.setText("Rp " + FMT.format(TransaksiModel.total));
 
         // Kembalian
         tunai = parseLong(tfTunai.getText().replaceAll("[^0-9]", ""));
-        kembalian = tunai - data_transaksi.total;
+        kembalian = tunai - TransaksiModel.total;
         lblKembalian.setText(kembalian >= 0 ? "Kembalian Rp " + FMT.format(kembalian)
                 : "Kurang Rp " + FMT.format(Math.abs(kembalian)));
         lblKembalian.setStyle(kembalian >= 0 ? "-fx-text-fill: #00E5A0;" : "-fx-text-fill: #FF5C7C;");
@@ -688,7 +660,7 @@ public class TransaksiController implements Initializable {
 
     @FXML
     private void onKosongkanKeranjang() {
-        data_transaksi.keranjang.clear();
+        TransaksiModel.keranjang.clear();
         renderKeranjang();
         updateSummary();
     }
@@ -721,7 +693,7 @@ public class TransaksiController implements Initializable {
     // Proses bayar
     @FXML
     private void onProsesBayar() {
-        if (data_transaksi.keranjang.isEmpty()) {
+        if (TransaksiModel.keranjang.isEmpty()) {
             return;
         }
         if (tfTunai.getText().isEmpty()) {
@@ -733,14 +705,14 @@ public class TransaksiController implements Initializable {
             return;
         }
 
-        CartItem ci = data_transaksi.keranjang.values().iterator().next(); // ambil salah satu item untuk contoh
+        CartItem ci = TransaksiModel.keranjang.values().iterator().next(); // ambil salah satu item untuk contoh
         if (kembalian >= 0) {
 
             String sqlTransaksi = String.format("INSERT INTO tb_transaksi "
                     + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                     + "VALUES (%d, %d, %d, %d, %d, '%s', NOW(), '%s')",
 
-                    session.id_user, data_transaksi.total, tunai, kembalian, 0, "Lunas", "");
+                    session.id_user, TransaksiModel.total, tunai, kembalian, 0, "Lunas", "");
 
             koneksi.eksekusiQuery(sqlTransaksi);
 
@@ -750,12 +722,12 @@ public class TransaksiController implements Initializable {
                     + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                     + "VALUES (%d, %d, %d, %d, %d, '%s', NOW(), '%s')",
 
-                    session.id_user, data_transaksi.total, tunai, 0, Math.abs(kembalian), "Belum Lunas", "");
+                    session.id_user, TransaksiModel.total, tunai, 0, Math.abs(kembalian), "Belum Lunas", "");
 
             koneksi.eksekusiQuery(sqlTransaksi);
         }
 
-        for (CartItem item : data_transaksi.keranjang.values()) {
+        for (CartItem item : TransaksiModel.keranjang.values()) {
 
             String sqlUpdateStok = "UPDATE tb_barang SET stok = stok - '" + item.qty + "' WHERE id_barang = '"
                     + item.produk.id + "'";
@@ -772,8 +744,8 @@ public class TransaksiController implements Initializable {
 
         // TODO: simpan ke database, cetak struk, dll.
         System.out.println("=== TRANSAKSI BERHASIL ===");
-        System.out.println("No: #TRX-" + String.format("%04d", noTrx));
-        System.out.println("Metode: " + metodeBayar);
+        System.out.println("No: #TRX-" + String.format("%04d", TransaksiModel.noTrx));
+        System.out.println("Metode: " + TransaksiModel.metodeBayar);
         tfTunai.clear();
         navigation nav = new navigation();
         Stage stage = (Stage) btnBayar.getScene().getWindow();

@@ -147,47 +147,8 @@ public class PiutangController implements Initializable {
     private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
 
     // ---------prepare data hutang dari database----------------
-    private final ObservableList<DataHutang> dataHutang = FXCollections.observableArrayList();
-    private final static List<DataBarang> dataBarang = new ArrayList<>();
+   
 
-    static class DataHutang {
-
-        int no;
-        String idTransaksi;
-        String namaPelanggan;
-        Long total_pembayaran;
-        Long uang_pembayaran;
-        long kekurangan;
-        String status_pembayaran;
-        String tanggal_transaksi;
-
-        DataHutang(int no, String idTransaksi, String namaPelanggan, Long total_pembayaran, Long uang_pembayaran,
-                long kekurangan, String status_pembayaran, String tanggal_transaksi) {
-            this.no = no;
-            this.idTransaksi = idTransaksi;
-            this.namaPelanggan = namaPelanggan;
-            this.total_pembayaran = total_pembayaran;
-            this.uang_pembayaran = uang_pembayaran;
-            this.kekurangan = kekurangan;
-            this.status_pembayaran = status_pembayaran;
-            this.tanggal_transaksi = tanggal_transaksi;
-
-        }
-
-    }
-
-    static class DataBarang {
-
-        String nama_barang;
-        long harga_barang;
-        int qty;
-
-        DataBarang(String nama_barang, long harga_barang, int qty) {
-            this.nama_barang = nama_barang;
-            this.harga_barang = harga_barang;
-            this.qty = qty;
-        }
-    }
 
     // -------------------ambil data hutang dari database----------------
     private void load_data_hutang(String namapelanggan) {
@@ -256,6 +217,7 @@ public class PiutangController implements Initializable {
         renderList();
         loadKPI();
         setupForm();
+        setActiveNav(navPiutang);
     }
 
     // ═════════════════════════════════════════════════════
@@ -367,6 +329,8 @@ public class PiutangController implements Initializable {
         setActiveNav(navLaporan);
         navigation nav = new navigation();
         nav.navigateToLaporan();
+        Stage stage = (Stage) navLaporan.getScene().getWindow();
+        stage.close();
     }
 
     @FXML

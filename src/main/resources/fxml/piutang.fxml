@@ -70,7 +70,7 @@
                 <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan"/>
               </children>
             </HBox>
-            <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item ,nav-active">
+            <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item ">
               <children>
                 <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
                 <Label styleClass="nav-icon" text="💰"/>

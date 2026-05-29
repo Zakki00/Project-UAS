@@ -1,5 +1,4 @@
 package com.mycompany.projectuas;
-
 import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -7,7 +6,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import com.mycompany.projectuas.TransaksiController.CartItem;
+import com.mycompany.Model.DetailTransaksiModel;
+import com.mycompany.Model.DetailTransaksiModel.ItemTransaksi;
+
+import com.mycompany.Model.TransaksiModel.CartItem;
+import com.mycompany.Model.TransaksiModel;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -63,26 +66,7 @@ public class DetailTransaksiController implements Initializable {
         }
     }
 
-    // Model item transaksi
-    static class ItemTransaksi {
-        String id, nama, kategori;
-        long harga;
-        int qty;
 
-        ItemTransaksi(String id, String nama, String kategori, long harga, int qty) {
-            this.id = id;
-            this.nama = nama;
-            this.kategori = kategori;
-            this.harga = harga;
-            this.qty = qty;
-        }
-
-        long subtotal() {
-            return harga * qty;
-        }
-    }
-
-    private final List<ItemTransaksi> listItem = new ArrayList<>();
     private VBox detailList;
 
     // ═════════════════════════════════════════════════
@@ -94,7 +78,7 @@ public class DetailTransaksiController implements Initializable {
         setupLayout();
         renderList();
 
-        if (!data_transaksi.keranjang.values().isEmpty()) {
+        if (!TransaksiModel.keranjang.values().isEmpty()) {
             System.out.println("data ada");
         }
     }
@@ -118,7 +102,7 @@ public class DetailTransaksiController implements Initializable {
     private void renderList() {
         detailList.getChildren().clear();
 
-        if (data_transaksi.keranjang.isEmpty()) {
+        if (TransaksiModel.keranjang.isEmpty()) {
             // Empty state
             VBox empty = new VBox(8);
             empty.setAlignment(Pos.CENTER);
@@ -144,7 +128,7 @@ public class DetailTransaksiController implements Initializable {
 
         // Item rows
         int no = 1;
-        for (CartItem ci : data_transaksi.keranjang.values()) {
+        for (CartItem ci : TransaksiModel.keranjang.values()) {
             detailList.getChildren().add(setdatatransaksi(ci, no));
             no++;
         }
@@ -247,14 +231,14 @@ public class DetailTransaksiController implements Initializable {
 
     // ── Summary ───────────────────────────────────────
     private void updateSummary() {
-        // data_transaksi.subtotal = listItem.stream()
+        // TransaksiModel.subtotal = listItem.stream()
         // .mapToLong(ItemTransaksi::subtotal).sum();
-        long pajak = (long) (data_transaksi.subtotal * 0.11);
-        // long total = data_transaksi.subtotal + pajak;
+        long pajak = (long) (TransaksiModel.subtotal * 0.11);
+        // long total = TransaksiModel.subtotal + pajak;
 
-        lblSubtotal.setText("Rp " + FMT.format(data_transaksi.subtotal));
+        lblSubtotal.setText("Rp " + FMT.format(TransaksiModel.subtotal));
         lblPajak.setText("Rp " + FMT.format(pajak));
-        lblTotal.setText("Rp " + FMT.format(data_transaksi.total));
+        lblTotal.setText("Rp " + FMT.format(TransaksiModel.total));
         Label lbel_total = new Label("Total");
 
     }
@@ -296,7 +280,7 @@ public class DetailTransaksiController implements Initializable {
         }
         // method helper untuk tutup form
 
-        for (CartItem ci : data_transaksi.keranjang.values()) {
+        for (CartItem ci : TransaksiModel.keranjang.values()) {
             String sql_dtransaksi = "INSERT INTO tb_detail_transaksi (id_transaksi,id_barang,jumlah,harga) VALUES ('"
                     + id_transaksi + "','" + ci.produk.id + "','" + ci.qty + "','" + ci.produk.harga + "')";
             koneksi.eksekusiQuery(sql_dtransaksi);
@@ -308,7 +292,7 @@ public class DetailTransaksiController implements Initializable {
         // TODO: simpan ke database
         System.out.println("=== SIMPAN TRANSAKSI ===");
         System.out.println("Pelanggan: " + pelanggan);
-        listItem.forEach(
+        DetailTransaksiModel.ItemTransaksi.listItem.forEach(
                 item -> System.out.printf("  %s x%d = Rp %s%n", item.nama, item.qty, FMT.format(item.subtotal())));
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -317,7 +301,7 @@ public class DetailTransaksiController implements Initializable {
         alert.setContentText("✅ Transaksi berhasil disimpan!");
         alert.showAndWait();
 
-        data_transaksi.keranjang.clear();
+        TransaksiModel.keranjang.clear();
         transaksiController.renderKeranjang();
         transaksiController.updateSummary();
         closeForm(btnSimpan);

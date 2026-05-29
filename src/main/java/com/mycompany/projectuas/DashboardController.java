@@ -234,6 +234,8 @@ public class DashboardController implements Initializable {
         setActiveNav(navLaporan);
         navigation nav = new navigation();
         nav.navigateToLaporan();
+        Stage stage = (Stage) navLaporan.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
