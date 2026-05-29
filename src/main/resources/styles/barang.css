@@ -19,6 +19,7 @@
     -fx-pref-width: 220;
 }
 
+
 .logo-row {
     -fx-padding: 18 16 18 16;
     -fx-min-height: 62;
@@ -207,6 +208,7 @@
 
 .search-field {
     -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
     -fx-text-fill: #FFFFFF;
     -fx-prompt-text-fill: #8B8FA8;
     -fx-font-size: 11px;
@@ -217,6 +219,7 @@
 
 .search-field:focused {
     -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
 }
 
 .notif-wrapper {
@@ -294,7 +297,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   FORM CARD  — dengan left accent bar ungu seperti referensi
+   FORM CARD
 ════════════════════════════════════════════════════════════ */
 .form-card {
     -fx-background-color: #1A1D2E;
@@ -314,6 +317,7 @@
 /* ── INPUT FIELDS ────────────────────────────────────────── */
 .form-field {
     -fx-background-color: #252840;
+    -fx-control-inner-background: #252840;
     -fx-border-color: #2E3250;
     -fx-border-width: 1;
     -fx-border-radius: 8;
@@ -328,9 +332,10 @@
 .form-field:focused {
     -fx-border-color: #6C63FF;
     -fx-background-color: #2A2D4A;
+    -fx-control-inner-background: #2A2D4A;
 }
 
-/* TextArea inner */
+/* TextArea inner scroll */
 .form-field > .scroll-pane {
     -fx-background-color: transparent;
 }
@@ -341,6 +346,27 @@
 
 .form-field > .scroll-pane > .viewport > .content {
     -fx-background-color: transparent;
+}
+
+/* TextArea scrollbar */
+.form-field .scroll-bar:vertical {
+    -fx-background-color: #252840;
+    -fx-pref-width: 6;
+}
+
+.form-field .scroll-bar:vertical .thumb {
+    -fx-background-color: #2E3250;
+    -fx-background-radius: 3;
+}
+
+.form-field .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+.form-field .scroll-bar:vertical .increment-button,
+.form-field .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
 /* ComboBox internals */
@@ -387,7 +413,6 @@
    BUTTONS
 ════════════════════════════════════════════════════════════ */
 
-/* Simpan / Create — ungu */
 .btn-primary {
     -fx-background-color: #6C63FF;
     -fx-text-fill: #FFFFFF;
@@ -409,7 +434,27 @@
     -fx-effect: none;
 }
 
-/* Hapus — merah-pink */
+.btn-warning {
+    -fx-background-color: #E8A838;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 22 10 22;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(232,168,56,0.35), 8, 0, 0, 2);
+}
+
+.btn-warning:hover {
+    -fx-background-color: #D09730;
+}
+
+.btn-warning:pressed {
+    -fx-background-color: #B88020;
+    -fx-effect: none;
+}
+
 .btn-danger {
     -fx-background-color: #FF5C7C;
     -fx-text-fill: #FFFFFF;
@@ -431,8 +476,28 @@
     -fx-effect: none;
 }
 
+.btn-secondary {
+    -fx-background-color: #2A2D45;
+    -fx-text-fill: #CCCCDD;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10 22 10 22;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: #2E3250;
+    -fx-text-fill: #FFFFFF;
+}
+
+.btn-secondary:pressed {
+    -fx-background-color: #252840;
+}
+
 /* ═══════════════════════════════════════════════════════════
-   TABLE VIEW  — sesuai referensi: header terang, row gelap
+   TABLE VIEW
 ════════════════════════════════════════════════════════════ */
 .barang-table {
     -fx-background-color: transparent;
@@ -441,7 +506,6 @@
     -fx-padding: 0;
 }
 
-/* Header row — warna gelap solid */
 .barang-table .column-header-background {
     -fx-background-color: #1A1D2E;
     -fx-border-color: transparent;
@@ -466,7 +530,6 @@
     -fx-background-color: transparent;
 }
 
-/* Data rows */
 .barang-table .table-row-cell {
     -fx-background-color: #1A1D2E;
     -fx-table-cell-border-color: transparent;
@@ -499,7 +562,6 @@
     -fx-border-color: transparent;
 }
 
-/* Scrollbar dalam tabel */
 .barang-table .scroll-bar:vertical {
     -fx-background-color: #1A1D2E;
     -fx-pref-width: 8;
@@ -521,7 +583,7 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
-   STATUS BADGE  (dipakai via controller: setStyle / Label)
+   STATUS BADGE
 ════════════════════════════════════════════════════════════ */
 .badge-tersedia {
     -fx-background-color: rgba(0, 229, 160, 0.15);

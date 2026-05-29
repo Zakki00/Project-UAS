@@ -83,17 +83,18 @@
         <VBox styleClass="main-content">
             <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
                 <VBox spacing="1" HBox.hgrow="ALWAYS">
-                    <Label styleClass="page-title" text="Manajemen Produk" />
-                    <Label styleClass="page-date" text="Kelola Data dan Stok Barang" />
+                    <Label styleClass="page-title" text="Produk" />
+                    <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
                 </VBox>
                 <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
                     <Label styleClass="search-icon" text="🔍" />
-                    <TextField fx:id="txtCari" onKeyReleased="#cariBarang" promptText="Cari produk..." styleClass="search-field" />
+                    <TextField promptText="Cari..." styleClass="search-field" />
                 </HBox>
                 <StackPane styleClass="notif-wrapper">
                     <Button styleClass="notif-btn" text="🔔" />
-                    <Label styleClass="notif-badge" />
+                    <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />
                 </StackPane>
+              
                 <Label styleClass="topbar-avatar" text="A" />
             </HBox>
 
@@ -103,7 +104,7 @@
                         <Insets bottom="20" left="20" right="20" top="20" />
                     </padding>
                     
-                    <VBox spacing="15.0" styleClass="form-card">
+                    <VBox spacing="20.0" styleClass="form-card">
                         <Label style="-fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 14px;" text="Form Data Produk" />
                         
                         <HBox spacing="15.0">
@@ -127,7 +128,7 @@
                                 <TextField fx:id="txtStok" promptText="0" styleClass="form-field" />
                             </VBox>
                             <VBox spacing="5" HBox.hgrow="ALWAYS">
-                                <Label styleClass="form-label" text="FOTO PRODUK LOKAL" />
+                                <Label styleClass="form-label" text="FOTO PRODUK" />
                                 <HBox spacing="8.0">
                                     <Button onAction="#onPilihFoto" style="-fx-background-color: #252840; -fx-text-fill: white; -fx-border-color: #2E3250; -fx-border-radius: 8; -fx-background-radius: 8;" text="Pilih File..." />
                                     <Label fx:id="lblFilePath" prefHeight="35.0" style="-fx-text-fill: #8B8FA8; -fx-padding: 8 0 0 5;" text="Tidak ada file dipilih" />
@@ -148,17 +149,21 @@
                         </HBox>
                     </VBox>
 
-                    <TableView fx:id="tabelBarang" prefHeight="400.0" styleClass="barang-table" VBox.vgrow="ALWAYS">
+                    <TableView fx:id="tabelBarang" prefHeight="480.0" styleClass="barang-table" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />
-                            <TableColumn fx:id="colGambar" prefWidth="80.0" text="Gambar" />
+                            <TableColumn fx:id="colGambar" prefWidth="100.0" text="Gambar" />
                             <TableColumn fx:id="colNama" prefWidth="200.0" text="Nama Barang" />
                             <TableColumn fx:id="colKategori" prefWidth="140.0" text="Kategori" />
                             <TableColumn fx:id="colHarga" prefWidth="120.0" text="Harga Jual" />
                             <TableColumn fx:id="colStok" prefWidth="90.0" text="Stok" />
                             <TableColumn fx:id="colDeskripsi" prefWidth="240.0" text="Deskripsi Singkat" />
                             <TableColumn fx:id="colStatus" prefWidth="130.0" text="Status Stok" />
-                        </columns>
+                           
+                            
+                           
+                                
+                            </columns>
                     </TableView>
                 </VBox>
             </ScrollPane>

@@ -345,7 +345,12 @@ public class PiutangController implements Initializable {
 
     @FXML
     private void onNavProduk() {
-        setActiveNav(navProduk);
+       setActiveNav(navProduk);
+        // ── Navigasi ke halaman produk ─────────────────────
+        navigation nav = new navigation();
+        nav.navigateToProduk();
+        Stage stage = (Stage) navProduk.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
