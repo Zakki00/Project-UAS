@@ -106,11 +106,22 @@ public class LaporanController implements Initializable {
     @FXML
     private Label kpiPenjualan;
     @FXML
+    private Label kpiPenjualanDelta;
+
+    @FXML
     private Label kpiTransaksi;
+    @FXML
+    private Label kpiTransaksiDelta;
+
     @FXML
     private Label kpiProduk;
     @FXML
+    private Label kpiProdukDelta;
+
+    @FXML
     private Label kpiStok;
+    @FXML
+    private Label kpiStokDelta;
 
     // ── FXML table laporan ──────────────────────────────────
     @FXML
@@ -302,6 +313,7 @@ public class LaporanController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         loadLaporanTransaksi();
+        loadKPI();
         setupCharts();
         setupTable();
         setupStockList();
@@ -309,6 +321,7 @@ public class LaporanController implements Initializable {
         SetupFrome();
         setActiveNav(navLaporan);
         setupTableLaporan();
+
     }
 
     // ═════════════════════════════════════════════════════
@@ -767,6 +780,102 @@ public class LaporanController implements Initializable {
             System.out.println("Export Excel berhasil!");
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // ====================================================
+    // KPI
+    // ====================================================
+    private void loadKPI() {
+        loadTotalPenjualan();
+        loadTotalTransaksi();
+        loadProdukTerjual();
+        loadStokMenipis();
+    }
+
+    private void loadTotalPenjualan() {
+
+        String query = """
+                    SELECT COALESCE(SUM(total_pembayaran), 0)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE()
+                """;
+
+        List<Object[]> data = koneksi.ambilData(query);
+
+        if (!data.isEmpty()) {
+
+            Object[] row = data.get(0);
+
+            double total = ((Number) row[0]).doubleValue();
+
+            kpiPenjualan.setText("Rp " + String.format("%,.0f", total));
+            kpiPenjualanDelta.setText("Penjualan hari ini");
+        }
+    }
+
+    private void loadTotalTransaksi() {
+
+        String query = """
+                    SELECT COUNT(*)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE()
+                """;
+
+        List<Object[]> data = koneksi.ambilData(query);
+
+        if (!data.isEmpty()) {
+
+            Object[] row = data.get(0);
+
+            int total = ((Number) row[0]).intValue();
+
+            kpiTransaksi.setText(String.valueOf(total));
+            kpiTransaksiDelta.setText("Transaksi hari ini");
+        }
+    }
+
+    private void loadProdukTerjual() {
+
+        String query = """
+                    SELECT COALESCE(SUM(jumlah), 0)
+                    FROM tb_detail_transaksi dt
+                    JOIN tb_transaksi t
+                    ON dt.id_transaksi = t.id_transaksi
+                    WHERE DATE(t.tanggal_transaksi) = CURDATE()
+                """;
+
+        List<Object[]> data = koneksi.ambilData(query);
+
+        if (!data.isEmpty()) {
+
+            Object[] row = data.get(0);
+
+            int total = ((Number) row[0]).intValue();
+
+            kpiProduk.setText(total + " Unit");
+            kpiProdukDelta.setText("Produk terjual hari ini");
+        }
+    }
+
+    private void loadStokMenipis() {
+
+        String query = """
+                    SELECT COUNT(*)
+                    FROM tb_barang
+                    WHERE stok <= 5
+                """;
+
+        List<Object[]> data = koneksi.ambilData(query);
+
+        if (!data.isEmpty()) {
+
+            Object[] row = data.get(0);
+
+            int total = ((Number) row[0]).intValue();
+
+            kpiStok.setText(total + " Item");
+            kpiStokDelta.setText("Perlu restock");
         }
     }
 
