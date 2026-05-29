@@ -2,13 +2,11 @@ package com.mycompany.projectuas;
 
 import java.net.URL;
 import java.text.NumberFormat;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.LaporanModel;
-import com.mycompany.projectuas.LaporanController.LaporanItem;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
