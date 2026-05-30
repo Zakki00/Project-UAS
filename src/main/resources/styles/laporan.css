@@ -794,6 +794,46 @@
     -fx-text-fill: #FFFFFF;
     -fx-font-size: 11px;
 }
+/* ═══════════════════════════════════════
+   Horizontal Bar Chart
+════════════════════════════════════════ */
+
+.bar-row {
+    -fx-padding: 6 0 6 0;
+}
+
+.bar-nama {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.bar-total {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+    -fx-min-width: 55;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+/* Track background */
+.bar-progress {
+    -fx-background-color: transparent;
+    -fx-pref-height: 12;
+}
+
+.bar-progress .track {
+    -fx-background-color: #252840;
+    -fx-background-radius: 99;
+    -fx-background-insets: 0;
+}
+
+.bar-progress .bar {
+    -fx-background-radius: 99;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/* merah  */
 
 /* ═══════════════════════════════════════════════════════════
    TABLE VIEW

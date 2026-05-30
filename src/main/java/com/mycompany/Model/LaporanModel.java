@@ -7,7 +7,13 @@ import javafx.collections.ObservableList;
 
 public class LaporanModel {
 
+    
     public static final ObservableList<LaporanTransaksiItem> dataLaporanTransaksi = FXCollections.observableArrayList();
+    // Static list masing-masing
+    public static final ObservableList<HarianItem> dataHarian = FXCollections.observableArrayList();
+    public static final ObservableList<BulananItem> dataBulanan = FXCollections.observableArrayList();
+    public static final ObservableList<TransaksiItem> dataTransaksi = FXCollections.observableArrayList();
+    public static final ObservableList<StokItem> dataStok = FXCollections.observableArrayList();
  
     public static class LaporanTransaksiItem {
 
@@ -50,6 +56,48 @@ public class LaporanModel {
         this.kekurangan = kekurangan;
         this.statusPembayaran = statusPembayaran;
         this.tanggalTransaksi = tanggalTransaksi;
+    }
+}
+
+// ═══════════════════════════════════════════════
+// MODEL CHART 1 & 2 — Harian (Area + Bar)
+// ═══════════════════════════════════════════════
+// Chart 1 & 2 — pakai ini sekaligus
+public static class HarianItem {
+    public String hari;
+    public long totalPenjualan; // → Area chart
+    public int jumlahTransaksi; // → Bar chart
+}
+
+// Chart 3
+public static class BulananItem {
+    public String bulan;
+    public int noBulan;
+    public long totalOmzet;
+}
+
+// Table 4
+public static class TransaksiItem {
+
+    public String id, items, kasir, waktu;
+    public long total;
+
+    public TransaksiItem(String id, String items, String kasir, String waktu, long total) {
+        this.id = id;
+        this.items = items;
+        this.kasir = kasir;
+        this.waktu = waktu;
+        this.total = total;
+    }
+}
+
+// Progress bar 5
+public static class StokItem {
+    public String nama, status;
+    public int stok, stokMax;
+
+    public double persen() {
+        return stokMax > 0 ? (double) stok / stokMax : 0;
     }
 }
 

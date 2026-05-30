@@ -20,6 +20,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.mycompany.Model.LaporanModel;
 import com.mycompany.Model.LaporanModel.LaporanTransaksiItem;
 
+import javafx.scene.layout.Region;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -45,6 +46,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -123,6 +125,10 @@ public class LaporanController implements Initializable {
     @FXML
     private Label kpiStokInfo;
 
+    @FXML
+    private Label chartslbstok;
+    @FXML
+    private Label chartslbSegeraStok;
     // ── FXML table laporan ──────────────────────────────────
     @FXML
     private DatePicker dpTanggal;
@@ -166,20 +172,9 @@ public class LaporanController implements Initializable {
     @FXML
     private LineChart<String, Number> monthChart;
 
-    // ── Table ─────────────────────────────────────────────
+    // ----caharts--------------------------------------------
     @FXML
-    private TableView<TransaksiItem> trxTable;
-    @FXML
-    private TableColumn<TransaksiItem, String> colId;
-    @FXML
-    private TableColumn<TransaksiItem, String> colItem;
-    @FXML
-    private TableColumn<TransaksiItem, String> colKasir;
-    @FXML
-    private TableColumn<TransaksiItem, String> colWaktu;
-    @FXML
-    private TableColumn<TransaksiItem, String> colTotal;
-
+    private VBox vboxChart;
     // ── Stock list ────────────────────────────────────────
     @FXML
     private VBox stockList;
@@ -247,17 +242,17 @@ public class LaporanController implements Initializable {
         // =========================
         // FILTER NOMINAL
         // =========================
-        if (!tfNominal.getText().trim().isEmpty()) {
+        String raw = tfNominal.getText().replaceAll("[^0-9]", "");
 
+        if (!raw.isEmpty()) {
             sql.append(" AND t.total_pembayaran >= ")
-                    .append(tfNominal.getText().trim());
+                    .append(Long.parseLong(raw));
         }
 
         // =========================
         // ORDER
         // =========================
         sql.append(" ORDER BY t.tanggal_transaksi DESC");
-
 
         List<Object[]> results = koneksi.ambilData(sql.toString());
 
@@ -315,7 +310,6 @@ public class LaporanController implements Initializable {
         loadLaporanTransaksi();
         loadKPI();
         setupCharts();
-        setupTable();
         setupStockList();
         setupNavHover();
         SetupFrome();
@@ -401,6 +395,10 @@ public class LaporanController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
+        navigation nav = new navigation();
+        nav.navigateToDashboard();
+        Stage stage = (Stage) navDashboard.getScene().getWindow();
+        stage.close();
 
     }
 
@@ -477,9 +475,9 @@ public class LaporanController implements Initializable {
             loadLaporanTransaksi();
             onNominalChanged();
         });
-        if(LaporanModel.dataLaporanTransaksi.isEmpty()){
+        if (LaporanModel.dataLaporanTransaksi.isEmpty()) {
             btnExport.setDisable(true);
-        }else{
+        } else {
             btnExport.setDisable(false);
         }
     }
@@ -555,170 +553,277 @@ public class LaporanController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    // CHARTS
+    // CHARTS —Table data dari database
     // ═════════════════════════════════════════════════════
     private void setupCharts() {
+        setupSalesChart();
+        setupTrxChart();
+        setupMonthChart();
+        loadBarChart();
+    }
 
-        // ── Area chart: Penjualan 7 hari ─────────────────
-        XYChart.Series<String, Number> salesSeries = new XYChart.Series<>();
-        salesSeries.setName("Penjualan");
-        String[] days = { "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min" };
-        long[] vals = { 2100000L, 3400000L, 2800000L, 4100000L, 3600000L, 4800000L, 4280000L };
-        for (int i = 0; i < days.length; i++)
-            salesSeries.getData().add(new XYChart.Data<>(days[i], vals[i]));
+    // ── Area chart: Penjualan 7 hari terakhir ────────────
+    private void setupSalesChart() {
+        String sql = """
+                SELECT
+                    DAYNAME(tanggal_transaksi) AS hari,
+                    SUM(total_pembayaran) AS total
+                FROM tb_transaksi
+                WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                AND status_pembayaran = 'Lunas'
+                GROUP BY DATE(tanggal_transaksi), DAYNAME(tanggal_transaksi)
+                ORDER BY DATE(tanggal_transaksi)
+                """;
 
-        salesChart.getData().add(salesSeries);
+        List<Object[]> data = koneksi.ambilData(sql);
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Penjualan");
+
+        // fallback kalau data kosong
+        if (data.isEmpty()) {
+            String[] days = { "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min" };
+            for (String d : days)
+                series.getData().add(new XYChart.Data<>(d, 0));
+        } else {
+            for (Object[] row : data) {
+                String hari = String.valueOf(row[0]);
+                long total = ((Number) row[1]).longValue();
+                series.getData().add(new XYChart.Data<>(hari, total));
+            }
+        }
+
+        salesChart.getData().clear();
+        salesChart.getData().add(series);
         salesChart.setLegendVisible(false);
         salesChart.setAnimated(true);
+    }
 
-        // ── Bar chart: Transaksi per hari ─────────────────
-        XYChart.Series<String, Number> trxSeries = new XYChart.Series<>();
-        trxSeries.setName("Transaksi");
-        int[] trxVals = { 42, 68, 54, 82, 71, 95, 128 };
-        for (int i = 0; i < days.length; i++)
-            trxSeries.getData().add(new XYChart.Data<>(days[i], trxVals[i]));
+    private void loadBarChart() {
+        String sql = """
+                SELECT b.nama_barang, SUM(dt.jumlah) AS total
+                FROM tb_detail_transaksi dt
+                JOIN tb_barang b ON dt.id_barang = b.id_barang
+                GROUP BY b.nama_barang
+                ORDER BY total DESC
+                LIMIT 5
+                """;
 
-        trxChart.getData().add(trxSeries);
+        List<Object[]> data = koneksi.ambilData(sql);
+
+        long max = 1;
+        for (Object[] row : data) {
+            long val = ((Number) row[1]).longValue();
+            if (val > max)
+                max = val;
+        }
+
+        vboxChart.getChildren().clear();
+
+        String[] colors = { "#6C63FF", "#00D4FF", "#00E5A0", "#FFD166", "#FF5C7C" };
+
+        for (int i = 0; i < data.size(); i++) {
+            Object[] row = data.get(i);
+            String nama = row[0].toString();
+            long total = ((Number) row[1]).longValue();
+            double pct = (double) total / max;
+
+            // ── Nama + angka ──────────────────────────
+            Label lblNama = new Label(nama);
+            lblNama.getStyleClass().add("bar-nama");
+            lblNama.setPrefWidth(140);
+            lblNama.setMinWidth(140);
+            lblNama.setMaxWidth(140);
+
+            Label lblTotal = new Label(total + " unit");
+            lblTotal.getStyleClass().add("bar-total");
+
+            // ── Progress bar ──────────────────────────
+            ProgressBar pb = new ProgressBar(pct);
+            pb.getStyleClass().add("bar-progress");
+            pb.setPrefHeight(12);
+            pb.setMaxWidth(Double.MAX_VALUE);
+            pb.setStyle("-fx-accent: " + colors[i % colors.length] + ";");
+            HBox.setHgrow(pb, Priority.ALWAYS);
+
+            // ── Row ───────────────────────────────────
+            HBox row2 = new HBox(10, lblNama, pb, lblTotal);
+            row2.setAlignment(Pos.CENTER_LEFT);
+            row2.getStyleClass().add("bar-row");
+
+            vboxChart.getChildren().add(row2);
+        }
+    }
+
+    // ── Bar chart: Jumlah transaksi per hari ─────────────
+    private void setupTrxChart() {
+        String sql = """
+                SELECT
+                    DAYNAME(tanggal_transaksi) AS hari,
+                    COUNT(*) AS jumlah
+                FROM tb_transaksi
+                WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+                GROUP BY DATE(tanggal_transaksi), DAYNAME(tanggal_transaksi)
+                ORDER BY DATE(tanggal_transaksi)
+                """;
+
+        List<Object[]> data = koneksi.ambilData(sql);
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Transaksi");
+
+        if (data.isEmpty()) {
+            String[] days = { "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min" };
+            for (String d : days)
+                series.getData().add(new XYChart.Data<>(d, 0));
+        } else {
+            for (Object[] row : data) {
+                String hari = String.valueOf(row[0]);
+                int jumlah = ((Number) row[1]).intValue();
+                series.getData().add(new XYChart.Data<>(hari, jumlah));
+            }
+        }
+
+        trxChart.getData().clear();
+        trxChart.getData().add(series);
         trxChart.setLegendVisible(false);
         trxChart.setAnimated(true);
+    }
 
-        // ── Line chart: Tren 6 bulan ──────────────────────
-        XYChart.Series<String, Number> monthSeries = new XYChart.Series<>();
-        monthSeries.setName("Omzet");
-        String[] months = { "Jan", "Feb", "Mar", "Apr", "Mei", "Jun" };
-        int[] monthVals = { 52, 61, 58, 74, 69, 87 };
-        for (int i = 0; i < months.length; i++)
-            monthSeries.getData().add(new XYChart.Data<>(months[i], monthVals[i]));
+    // ── Line chart: Tren omzet 6 bulan ───────────────────
+    private void setupMonthChart() {
+        String sql = """
+                SELECT
+                    DATE_FORMAT(tanggal_transaksi, '%b') AS bulan,
+                    MONTH(tanggal_transaksi) AS no_bulan,
+                    SUM(total_pembayaran) AS total
+                FROM tb_transaksi
+                WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                AND status_pembayaran = 'Lunas'
+                GROUP BY MONTH(tanggal_transaksi), DATE_FORMAT(tanggal_transaksi, '%b')
+                ORDER BY no_bulan
+                """;
 
-        monthChart.getData().add(monthSeries);
+        List<Object[]> data = koneksi.ambilData(sql);
+
+        XYChart.Series<String, Number> series = new XYChart.Series<>();
+        series.setName("Omzet");
+
+        if (data.isEmpty()) {
+            String[] months = { "Jan", "Feb", "Mar", "Apr", "Mei", "Jun" };
+            for (String m : months)
+                series.getData().add(new XYChart.Data<>(m, 0));
+        } else {
+            for (Object[] row : data) {
+                String bulan = String.valueOf(row[0]);
+                long total = ((Number) row[2]).longValue();
+                series.getData().add(new XYChart.Data<>(bulan, total));
+            }
+        }
+
+        monthChart.getData().clear();
+        monthChart.getData().add(series);
         monthChart.setLegendVisible(false);
         monthChart.setAnimated(true);
         monthChart.setCreateSymbols(false);
     }
 
     // ═════════════════════════════════════════════════════
-    // TABLE
-    // ═════════════════════════════════════════════════════
-    public static class TransaksiItem {
-        private final SimpleStringProperty id, item, kasir, waktu, total;
-
-        public TransaksiItem(String id, String item, String kasir, String waktu, String total) {
-            this.id = new SimpleStringProperty(id);
-            this.item = new SimpleStringProperty(item);
-            this.kasir = new SimpleStringProperty(kasir);
-            this.waktu = new SimpleStringProperty(waktu);
-            this.total = new SimpleStringProperty(total);
-        }
-
-        public String getId() {
-            return id.get();
-        }
-
-        public String getItem() {
-            return item.get();
-        }
-
-        public String getKasir() {
-            return kasir.get();
-        }
-
-        public String getWaktu() {
-            return waktu.get();
-        }
-
-        public String getTotal() {
-            return total.get();
-        }
-    }
-
-    private void setupTable() {
-        colId.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getId()));
-        colItem.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getItem()));
-        colKasir.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getKasir()));
-        colWaktu.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getWaktu()));
-        colTotal.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTotal()));
-
-        // Warna khusus kolom ID (ungu) dan Total (hijau)
-        colId.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(String s, boolean empty) {
-                super.updateItem(s, empty);
-                setText(empty ? null : s);
-                setStyle(empty ? "" : "-fx-text-fill: #6C63FF; -fx-font-weight: bold;");
-            }
-        });
-        colTotal.setCellFactory(col -> new TableCell<>() {
-            @Override
-            protected void updateItem(String s, boolean empty) {
-                super.updateItem(s, empty);
-                setText(empty ? null : s);
-                setStyle(empty ? "" : "-fx-text-fill: #00E5A0; -fx-font-weight: bold; -fx-alignment: CENTER-RIGHT;");
-            }
-        });
-
-        ObservableList<TransaksiItem> data = FXCollections.observableArrayList(
-                new TransaksiItem("#TRX-0128", "Indomie Goreng x3", "Budi S.", "14:22", "Rp 10.500"),
-                new TransaksiItem("#TRX-0127", "Aqua 600ml x5", "Siti R.", "13:51", "Rp 20.000"),
-                new TransaksiItem("#TRX-0126", "Teh Sosro x2", "Budi S.", "12:37", "Rp 10.000"),
-                new TransaksiItem("#TRX-0125", "Sabun Lifebuoy x1", "Rafi A.", "11:09", "Rp 12.500"),
-                new TransaksiItem("#TRX-0124", "Beng-Beng x4", "Siti R.", "10:33", "Rp 16.000"));
-
-        trxTable.setItems(data);
-        trxTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-    }
-
-    // ═════════════════════════════════════════════════════
-    // STOCK LIST (progress bars dinamis)
+    // TABLE — transaksi terbaru dari database
     // ═════════════════════════════════════════════════════
 
-    // Inner class pengganti record (kompatibel Java 11+)
-    private static class StockItem {
-        final String name;
-        final int stock;
-        final int max;
-        final String status;
-
-        StockItem(String name, int stock, int max, String status) {
-            this.name = name;
-            this.stock = stock;
-            this.max = max;
-            this.status = status;
-        }
-    }
-
+    // ═════════════════════════════════════════════════════
+    // STOCK LIST — dari database
+    // ═════════════════════════════════════════════════════
     private void setupStockList() {
-        List<StockItem> items = List.of(new StockItem("Minyak Goreng", 3, 50, "Kritis"),
-                new StockItem("Teh Botol Sosro", 12, 100, "Menipis"), new StockItem("Gula Pasir", 8, 40, "Kritis"),
-                new StockItem("Kopi Kapal Api", 18, 80, "Menipis"));
+        String sql = """
+                SELECT
+                    nama_barang,
+                    stok,
+                    CASE
+                        WHEN stok = 0    THEN 'Habis'
+                        WHEN stok <= 5   THEN 'Kritis'
+                        WHEN stok <= 20  THEN 'Menipis'
+                        ELSE 'Aman'
+                    END AS status
+                FROM tb_barang
+                WHERE stok <= 20
+                ORDER BY stok ASC
+                LIMIT 4
+                """;
 
-        for (StockItem si : items) {
-            double pct = (double) si.stock / si.max;
-            boolean kritis = si.status.equals("Kritis");
+        List<Object[]> data = koneksi.ambilData(sql);
 
-            // Row atas: nama | count + badge
-            Label nameLabel = new Label(si.name);
+        // pakai dummy kalau db kosong
+        if (data.isEmpty()) {
+            chartslbstok.setText("Tidak Ada Stok Barang Yang Habis");
+            chartslbSegeraStok.setVisible(false);
+        }
+
+        stockList.getChildren().clear();
+
+        for (Object[] row : data) {
+
+            String name = String.valueOf(row[0]);
+            int stock = ((Number) row[1]).intValue();
+            String status = String.valueOf(row[2]);
+
+            int max = 50;
+            double pct = Math.min(1.0, (double) stock / max);
+
+            boolean kritis = status.equals("Kritis") || status.equals("Habis");
+
+            // =========================
+            // LABEL KIRI (NAMA)
+            // =========================
+            Label nameLabel = new Label(name);
             nameLabel.getStyleClass().add("stock-item-name");
 
-            Label countLabel = new Label(si.stock + " unit");
+            // =========================
+            // COUNT
+            // =========================
+            Label countLabel = new Label(stock + " unit");
             countLabel.getStyleClass().add("stock-item-count");
 
-            Label badge = new Label(si.status);
+            // =========================
+            // BADGE STATUS
+            // =========================
+            Label badge = new Label(status);
             badge.getStyleClass().add(kritis ? "badge-kritis" : "badge-menipis");
 
+            // =========================
+            // RIGHT BOX (COUNT + BADGE)
+            // =========================
             HBox rightBox = new HBox(6, countLabel, badge);
             rightBox.setAlignment(Pos.CENTER_RIGHT);
+            rightBox.setMinWidth(Region.USE_PREF_SIZE);
 
-            HBox topRow = new HBox(nameLabel, rightBox);
-            HBox.setHgrow(nameLabel, Priority.ALWAYS);
+            // =========================
+            // SPACER (INI KUNCI BIAR TIDAK NEMPEL)
+            // =========================
+            Region spacer = new Region();
+            HBox.setHgrow(spacer, Priority.ALWAYS);
+
+            // =========================
+            // TOP ROW (NAMA | spacer | RIGHT)
+            // =========================
+            HBox topRow = new HBox(8, nameLabel, spacer, rightBox);
             topRow.setAlignment(Pos.CENTER_LEFT);
+            topRow.setMaxWidth(Double.MAX_VALUE);
 
-            // Progress bar
+            // =========================
+            // PROGRESS BAR
+            // =========================
             ProgressBar pb = new ProgressBar(pct);
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setPrefHeight(5);
             pb.getStyleClass().add(kritis ? "progress-kritis" : "progress-menipis");
 
+            // =========================
+            // ITEM BOX
+            // =========================
             VBox itemBox = new VBox(4, topRow, pb);
+
             stockList.getChildren().add(itemBox);
         }
     }
@@ -728,6 +833,7 @@ public class LaporanController implements Initializable {
     // ═════════════════════════════════════════════════════
     // NOMINAL TEXTFIELD: format otomatis saat input
     private void onNominalChanged() {
+
         if (isUpdating)
             return;
         isUpdating = true;
@@ -735,16 +841,23 @@ public class LaporanController implements Initializable {
         if (raw.isEmpty()) {
             tfNominal.setText("");
             isUpdating = false;
+            return;
         }
-        long value = Long.parseLong(raw);
+        long value;
+        try {
+            value = Long.parseLong(raw);
+        } catch (NumberFormatException e) {
+            isUpdating = false;
+            return;
+        }
         tfNominal.setText("Rp " + FMT.format(value));
         tfNominal.positionCaret(tfNominal.getText().length());
         isUpdating = false;
     }
 
-    // ═══════════════════════════════════════════════
-    // HANDLERS
-    // ═══════════════════════════════════════════════
+    // ================================
+    // Exxport To Excel
+    // ================================
     @FXML
     private void onExport() {
         try {
@@ -886,7 +999,7 @@ public class LaporanController implements Initializable {
 
         kpiPenjualan.setText("Rp " + String.format("%,.0f", today));
         setPersenKPI(kpiPenjulanPersen, today, yesterday);
-        }
+    }
 
     private void loadTotalTransaksi() {
 
@@ -903,7 +1016,7 @@ public class LaporanController implements Initializable {
                 """).get(0)[0]).doubleValue();
 
         kpiTransaksi.setText(String.valueOf((int) today));
-        setPersenKPI(kpiTransaksiPersen,today, yesterday);
+        setPersenKPI(kpiTransaksiPersen, today, yesterday);
     }
 
     private void loadProdukTerjual() {
