@@ -132,25 +132,25 @@
                         <VBox spacing="6" styleClass="kpi-card, kpi-purple" HBox.hgrow="ALWAYS">
                             <Label styleClass="kpi-label" text="Total Penjualan" />
                             <Label fx:id="kpiPenjualan" styleClass="kpi-value" text="Rp 4.280.000" />
-                            <Label styleClass="kpi-delta-up" text="▲ +12% vs kemarin" />
+                            <Label fx:id="kpiPenjulanPersen" styleClass="kpi-delta-up" text="▲ +12% vs kemarin" />
                         </VBox>
                         <!-- Transaksi -->
                         <VBox spacing="6" styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS">
                             <Label styleClass="kpi-label" text="Transaksi Hari Ini" />
                             <Label fx:id="kpiTransaksi" styleClass="kpi-value" text="128" />
-                            <Label styleClass="kpi-delta-up" text="▲ +8% vs kemarin" />
+                            <Label fx:id="kpiTransaksiPersen" styleClass="kpi-delta-up" text="▲ +8% vs kemarin" />
                         </VBox>
                         <!-- Produk Terjual -->
                         <VBox spacing="6" styleClass="kpi-card, kpi-yellow" HBox.hgrow="ALWAYS">
                             <Label styleClass="kpi-label" text="Produk Terjual" />
                             <Label fx:id="kpiProduk" styleClass="kpi-value" text="312 unit" />
-                            <Label styleClass="kpi-delta-down" text="▼ -3% vs kemarin" />
+                            <Label fx:id="kpiProdukPersen" styleClass="kpi-delta-down" text="▼ -3% vs kemarin" />
                         </VBox>
                         <!-- Stok Menipis -->
                         <VBox spacing="6" styleClass="kpi-card, kpi-red" HBox.hgrow="ALWAYS">
                             <Label styleClass="kpi-label" text="Stok Menipis" />
                             <Label fx:id="kpiStok" styleClass="kpi-value" text="7 Item" />
-                            <Label styleClass="kpi-delta-down" text="▼ Perlu restock" />
+                            <Label fx:id="kpiStokInfo" styleClass="kpi-delta-down" text="▼ Perlu restock" />
                         </VBox>
                     </HBox>
                     <!-- ── CHARTS ROW ── -->
