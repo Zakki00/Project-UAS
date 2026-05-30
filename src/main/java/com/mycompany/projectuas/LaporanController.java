@@ -20,13 +20,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.mycompany.Model.LaporanModel;
 import com.mycompany.Model.LaporanModel.LaporanTransaksiItem;
 
-import javafx.scene.layout.Region;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -46,8 +43,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -171,6 +170,48 @@ public class LaporanController implements Initializable {
     private BarChart<String, Number> trxChart;
     @FXML
     private LineChart<String, Number> monthChart;
+
+    //=======Card View Shift
+        @FXML
+    private VBox cardPagi;
+    @FXML
+    private VBox cardMalam;
+    @FXML
+    private Label lblUsernamePagi;
+    @FXML
+    private Label lblNamaPagi;
+    @FXML
+    private Label lblTrxPagi;
+    @FXML
+    private Label lblItemPagi;
+    @FXML
+    private Label lblPendapatanPagi;
+    @FXML
+    private Label lblStatusPagi;
+    @FXML
+    private Label lblJamPagi;
+
+    @FXML
+    private Label lblUsernameMalam;
+    @FXML
+    private Label lblNamaMalam;
+    @FXML
+    private Label lblTrxMalam;
+    @FXML
+    private Label lblItemMalam;
+    @FXML
+    private Label lblPendapatanMalam;
+    @FXML
+    private Label lblStatusMalam;
+    @FXML
+    private Label lblJamMalam;
+    @FXML
+    private StackPane wrapperPagi;
+    @FXML 
+    private StackPane wrapperMalam;
+
+    // @FXML
+    // private StackPane wrapperMalam;
 
     // ----caharts--------------------------------------------
     @FXML
@@ -315,6 +356,7 @@ public class LaporanController implements Initializable {
         SetupFrome();
         setActiveNav(navLaporan);
         setupTableLaporan();
+        
 
     }
 
@@ -480,10 +522,217 @@ public class LaporanController implements Initializable {
         } else {
             btnExport.setDisable(false);
         }
+        applyRoundedClip(wrapperPagi);
+        applyRoundedClip(wrapperMalam);
+    }
+     // ====================================================
+    // KPI
+    // ====================================================
+    private void loadKPI() {
+        loadTotalPenjualan();
+        loadTotalTransaksi();
+        loadProdukTerjual();
+        loadStokMenipis();
+        loadShiftData();
+    }
+
+    private void setPersenKPI(Label label, double today, double yesterday) {
+
+        double persen;
+
+        if (yesterday == 0) {
+            persen = today > 0 ? 100 : 0;
+        } else {
+            persen = ((today - yesterday) / yesterday) * 100;
+        }
+
+        String icon = persen >= 0 ? "▲ +" : "▼ -";
+        String text = icon + String.format("%.1f", Math.abs(persen));
+
+        label.setText(text);
+
+        // warna langsung di sini
+        if (persen > 0) {
+            label.setStyle("-fx-text-fill: #22c55e;"); // hijau
+        } else if (persen < 0) {
+            label.setStyle("-fx-text-fill: #ef4444;"); // merah
+        } else {
+            label.setStyle("-fx-text-fill: #9ca3af;"); // abu-abu
+        }
+    }
+
+    private void loadTotalPenjualan() {
+
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(total_pembayaran), 0)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE()
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(total_pembayaran), 0)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
+                """);
+
+        double today = ((Number) todayData.get(0)[0]).doubleValue();
+        double yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+
+        kpiPenjualan.setText("Rp " + String.format("%,.0f", today));
+        setPersenKPI(kpiPenjulanPersen, today, yesterday);
+    }
+
+    private void loadTotalTransaksi() {
+
+        double today = ((Number) koneksi.ambilData("""
+                    SELECT COUNT(*)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE()
+                """).get(0)[0]).doubleValue();
+
+        double yesterday = ((Number) koneksi.ambilData("""
+                    SELECT COUNT(*)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
+                """).get(0)[0]).doubleValue();
+
+        kpiTransaksi.setText(String.valueOf((int) today));
+        setPersenKPI(kpiTransaksiPersen, today, yesterday);
+    }
+
+    private void loadProdukTerjual() {
+
+        double today = ((Number) koneksi.ambilData("""
+                    SELECT COALESCE(SUM(jumlah), 0)
+                    FROM tb_detail_transaksi dt
+                    JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
+                    WHERE DATE(t.tanggal_transaksi) = CURDATE()
+                """).get(0)[0]).doubleValue();
+
+        double yesterday = ((Number) koneksi.ambilData("""
+                    SELECT COALESCE(SUM(jumlah), 0)
+                    FROM tb_detail_transaksi dt
+                    JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
+                    WHERE DATE(t.tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
+                """).get(0)[0]).doubleValue();
+
+        kpiProduk.setText((int) today + " Unit");
+        setPersenKPI(kpiProdukPersen, today, yesterday);
+    }
+
+    private void loadStokMenipis() {
+        int stokMenipis = ((Number) koneksi.ambilData("""
+                    SELECT COUNT(*)
+                    FROM tb_barang
+                    WHERE stok <= 5
+                """).get(0)[0]).intValue();
+
+        kpiStok.setText(stokMenipis + " Item");
+        if (stokMenipis == 0) {
+            kpiStokInfo.setText("Semua stok aman");
+            kpiStokInfo.setStyle("""
+                            -fx-text-fill: #00C853;
+                            -fx-font-weight: bold;
+                    """);
+        } else if (stokMenipis <= 5) {
+            kpiStokInfo.setText("⚠ Perlu restock segera");
+            kpiStokInfo.setStyle("""
+                            -fx-text-fill: #D50000;
+                            -fx-font-weight: bold;
+                    """);
+        } else {
+            kpiStokInfo.setText("Stok kritis");
+        }
+    }
+    // ══════════════════════════════════════════════
+    // LOAD SHIFT DATA
+    // ══════════════════════════════════════════════
+    private void loadShiftData() {
+        loadShift(
+                "06:00:00", "12:00:00", // jam mulai-selesai pagi
+                lblUsernamePagi, lblNamaPagi,
+                lblTrxPagi, lblItemPagi,
+                lblPendapatanPagi, lblStatusPagi,
+                lblJamPagi, "06:00 — 12:00");
+
+        loadShift(
+                "12:00:00", "21:00:00", // jam mulai-selesai malam
+                lblUsernameMalam, lblNamaMalam,
+                lblTrxMalam, lblItemMalam,
+                lblPendapatanMalam, lblStatusMalam,
+                lblJamMalam, "12:00 — 21:00");
+
+        // tandai shift yang sedang aktif
+        updateStatusDot();
+    }
+
+    private void loadShift(
+            String jamMulai, String jamSelesai,
+            Label lblUsername, Label lblNama,
+            Label lblTrx, Label lblItem,
+            Label lblPendapatan, Label lblStatus,
+            Label lblJam, String jamText) {
+
+        String sql = """
+                SELECT
+                    u.username,
+                    u.nama_lengkap,
+                    COUNT(t.id_transaksi)        AS total_trx,
+                    SUM(dt.jumlah)               AS total_item,
+                    SUM(t.total_pembayaran)      AS total_pendapatan
+                FROM tb_transaksi t
+                JOIN tb_user u ON t.id_user = u.id_user
+                JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+                WHERE DATE(t.tanggal_transaksi) = CURDATE()
+                AND TIME(t.tanggal_transaksi) BETWEEN '""" + jamMulai + "' AND '" + jamSelesai + """
+                '
+                GROUP BY u.id_user, u.username, u.nama_lengkap
+                ORDER BY total_pendapatan DESC
+                LIMIT 1
+                """;
+
+        List<Object[]> data = koneksi.ambilData(sql);
+
+        lblJam.setText(jamText);
+
+        if (data.isEmpty()) {
+            lblUsername.setText("Tidak ada kasir");
+            lblNama.setText("-");
+            lblTrx.setText("0");
+            lblItem.setText("0 unit");
+            lblPendapatan.setText("Rp 0");
+        } else {
+            Object[] row = data.get(0);
+            lblUsername.setText(String.valueOf(row[0]));
+            lblNama.setText(String.valueOf(row[1]));
+            lblTrx.setText(String.valueOf(((Number) row[2]).intValue()));
+            lblItem.setText(((Number) row[3]).intValue() + " unit");
+            lblPendapatan.setText("Rp " + FMT.format(((Number) row[4]).longValue()));
+        }
+    }
+
+    // ── Tandai shift aktif berdasarkan jam sekarang ──
+    private void updateStatusDot() {
+        int jamSekarang = java.time.LocalTime.now().getHour();
+
+        boolean pagiAktif = jamSekarang >= 6 && jamSekarang < 12;
+        boolean malamAktif = jamSekarang >= 12 && jamSekarang < 21;
+
+        lblStatusPagi.getStyleClass().removeAll(
+                "shift-status-aktif", "shift-status-nonaktif");
+        lblStatusPagi.getStyleClass().add(
+                pagiAktif ? "shift-status-aktif" : "shift-status-nonaktif");
+
+        lblStatusMalam.getStyleClass().removeAll(
+                "shift-status-aktif", "shift-status-nonaktif");
+        lblStatusMalam.getStyleClass().add(
+                malamAktif ? "shift-status-aktif" : "shift-status-nonaktif");
     }
 
     // ═════════════════════════════════════════════════════
     // setup tabel laporan
+    //======================================================
+
     private void setupTableLaporan() {
         colNo.setCellValueFactory(
                 data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().no).asObject());
@@ -729,10 +978,6 @@ public class LaporanController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    // TABLE — transaksi terbaru dari database
-    // ═════════════════════════════════════════════════════
-
-    // ═════════════════════════════════════════════════════
     // STOCK LIST — dari database
     // ═════════════════════════════════════════════════════
     private void setupStockList() {
@@ -945,124 +1190,8 @@ public class LaporanController implements Initializable {
         }
     }
 
-    // ====================================================
-    // KPI
-    // ====================================================
-    private void loadKPI() {
-        loadTotalPenjualan();
-        loadTotalTransaksi();
-        loadProdukTerjual();
-        loadStokMenipis();
-    }
 
-    private void setPersenKPI(Label label, double today, double yesterday) {
-
-        double persen;
-
-        if (yesterday == 0) {
-            persen = today > 0 ? 100 : 0;
-        } else {
-            persen = ((today - yesterday) / yesterday) * 100;
-        }
-
-        String icon = persen >= 0 ? "▲ +" : "▼ -";
-        String text = icon + String.format("%.1f", Math.abs(persen));
-
-        label.setText(text);
-
-        // warna langsung di sini
-        if (persen > 0) {
-            label.setStyle("-fx-text-fill: #22c55e;"); // hijau
-        } else if (persen < 0) {
-            label.setStyle("-fx-text-fill: #ef4444;"); // merah
-        } else {
-            label.setStyle("-fx-text-fill: #9ca3af;"); // abu-abu
-        }
-    }
-
-    private void loadTotalPenjualan() {
-
-        List<Object[]> todayData = koneksi.ambilData("""
-                    SELECT COALESCE(SUM(total_pembayaran), 0)
-                    FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE()
-                """);
-
-        List<Object[]> yesterdayData = koneksi.ambilData("""
-                    SELECT COALESCE(SUM(total_pembayaran), 0)
-                    FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
-                """);
-
-        double today = ((Number) todayData.get(0)[0]).doubleValue();
-        double yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
-
-        kpiPenjualan.setText("Rp " + String.format("%,.0f", today));
-        setPersenKPI(kpiPenjulanPersen, today, yesterday);
-    }
-
-    private void loadTotalTransaksi() {
-
-        double today = ((Number) koneksi.ambilData("""
-                    SELECT COUNT(*)
-                    FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE()
-                """).get(0)[0]).doubleValue();
-
-        double yesterday = ((Number) koneksi.ambilData("""
-                    SELECT COUNT(*)
-                    FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
-                """).get(0)[0]).doubleValue();
-
-        kpiTransaksi.setText(String.valueOf((int) today));
-        setPersenKPI(kpiTransaksiPersen, today, yesterday);
-    }
-
-    private void loadProdukTerjual() {
-
-        double today = ((Number) koneksi.ambilData("""
-                    SELECT COALESCE(SUM(jumlah), 0)
-                    FROM tb_detail_transaksi dt
-                    JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
-                    WHERE DATE(t.tanggal_transaksi) = CURDATE()
-                """).get(0)[0]).doubleValue();
-
-        double yesterday = ((Number) koneksi.ambilData("""
-                    SELECT COALESCE(SUM(jumlah), 0)
-                    FROM tb_detail_transaksi dt
-                    JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
-                    WHERE DATE(t.tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
-                """).get(0)[0]).doubleValue();
-
-        kpiProduk.setText((int) today + " Unit");
-        setPersenKPI(kpiProdukPersen, today, yesterday);
-    }
-
-    private void loadStokMenipis() {
-        int stokMenipis = ((Number) koneksi.ambilData("""
-                    SELECT COUNT(*)
-                    FROM tb_barang
-                    WHERE stok <= 5
-                """).get(0)[0]).intValue();
-
-        kpiStok.setText(stokMenipis + " Item");
-        if (stokMenipis == 0) {
-            kpiStokInfo.setText("Semua stok aman");
-            kpiStokInfo.setStyle("""
-                            -fx-text-fill: #00C853;
-                            -fx-font-weight: bold;
-                    """);
-        } else if (stokMenipis <= 5) {
-            kpiStokInfo.setText("⚠ Perlu restock segera");
-            kpiStokInfo.setStyle("""
-                            -fx-text-fill: #D50000;
-                            -fx-font-weight: bold;
-                    """);
-        } else {
-            kpiStokInfo.setText("Stok kritis");
-        }
-    }
+   
 
     // ═════════════════════════════════════════════════════
     // OTHER HANDLERS
@@ -1076,5 +1205,22 @@ public class LaporanController implements Initializable {
     private void onLihatSemua() {
         System.out.println("Lihat semua transaksi");
     }
+    
+    private void applyRoundedClip(StackPane pane) {
+        Rectangle clip = new Rectangle();
+
+        clip.widthProperty().bind(pane.widthProperty());
+        clip.heightProperty().bind(pane.heightProperty());
+
+        clip.setArcWidth(20);
+        clip.setArcHeight(20);
+
+        pane.setClip(clip);
+    }
+
+
+
+
+    
 
 }

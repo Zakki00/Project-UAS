@@ -307,7 +307,6 @@ public class TransaksiController implements Initializable {
     }
 
     // ── Variables ──────────────────────────────────────────────
-  
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE

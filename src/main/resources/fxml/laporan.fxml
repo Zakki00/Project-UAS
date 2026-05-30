@@ -157,6 +157,181 @@
               <Label fx:id="kpiStokInfo" styleClass="kpi-delta-down" text="▼ Perlu restock" />
             </VBox>
           </HBox>
+               <HBox prefHeight="310.0" prefWidth="646.0" spacing="16"
+      styleClass="shift-container">
+    <padding>
+        <Insets bottom="16" left="16" right="16" top="16"/>
+    </padding>
+    <children>
+
+        <!-- ── SHIFT PAGI ── -->
+        <StackPane fx:id="wrapperPagi" styleClass="shift-wrapper"
+                   HBox.hgrow="ALWAYS">
+            <VBox fx:id="cardPagi" spacing="0"
+                  styleClass="shift-card, shift-pagi"
+                  HBox.hgrow="ALWAYS">
+                <padding>
+                    <Insets bottom="20" left="20" right="20" top="20"/>
+                </padding>
+                <children>
+
+                    <!-- Badge + dot -->
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label fx:id="lblBadgePagi"
+                               styleClass="shift-badge, badge-pagi"
+                               text="🌤  Shift Pagi - Siang"/>
+                        <Label fx:id="lblStatusPagi"
+                               styleClass="shift-pagi-dot"
+                               text="●"/>
+                    </HBox>
+
+                    <!-- Jam -->
+                    <Label fx:id="lblJamPagi"
+                           styleClass="shift-pagi-jam"
+                           text="06:00 — 12:00"/>
+
+                    <!-- Divider -->
+                    <Separator styleClass="shift-pagi-divider"
+                               VBox.vgrow="NEVER"/>
+
+                    <!-- Info kasir -->
+                    <VBox spacing="10" styleClass="shift-info-box">
+                        <VBox.margin><Insets top="16"/></VBox.margin>
+                        <children>
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <Label styleClass="shift-pagi-icon" text="👤"/>
+                                <VBox spacing="2">
+                                    <Label fx:id="lblUsernamePagi"
+                                           styleClass="shift-pagi-username"
+                                           text="-"/>
+                                    <Label fx:id="lblNamaPagi"
+                                           styleClass="shift-pagi-nama"
+                                           text="-"/>
+                                </VBox>
+                            </HBox>
+
+                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                  styleClass="shift-pagi-stat-row">
+                                <Label styleClass="shift-pagi-stat-label"
+                                       text="Total Transaksi"
+                                       HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblTrxPagi"
+                                       styleClass="shift-pagi-stat-value"
+                                       text="0"/>
+                            </HBox>
+
+                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                  styleClass="shift-pagi-stat-row">
+                                <Label styleClass="shift-pagi-stat-label"
+                                       text="Item Terjual"
+                                       HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblItemPagi"
+                                       styleClass="shift-pagi-stat-value"
+                                       text="0 unit"/>
+                            </HBox>
+                        </children>
+                    </VBox>
+
+                    <!-- Pendapatan -->
+                    <VBox alignment="CENTER"
+                          styleClass="shift-pagi-pendapatan-box">
+                        <VBox.margin><Insets top="16"/></VBox.margin>
+                        <Label styleClass="shift-pagi-pendapatan-label"
+                               text="PENDAPATAN SHIFT"/>
+                        <Label fx:id="lblPendapatanPagi"
+                               styleClass="shift-pagi-pendapatan-value"
+                               text="Rp 0"/>
+                    </VBox>
+
+                </children>
+            </VBox>
+        </StackPane>
+
+        <!-- ── SHIFT MALAM ── -->
+        <StackPane fx:id="wrapperMalam" styleClass="shift-wrapper"
+                   HBox.hgrow="ALWAYS">
+            <VBox fx:id="cardMalam" spacing="0"
+                  styleClass="shift-card, shift-malam"
+                  HBox.hgrow="ALWAYS">
+                <padding>
+                    <Insets bottom="20" left="20" right="20" top="20"/>
+                </padding>
+                <children>
+
+                    <!-- Badge + dot -->
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label fx:id="lblBadgeMalam"
+                               styleClass="shift-badge, badge-malam"
+                               text="🌙  Shift Siang - Malam"/>
+                        <Label fx:id="lblStatusMalam"
+                               styleClass="shift-malam-dot"
+                               text="●"/>
+                    </HBox>
+
+                    <!-- Jam -->
+                    <Label fx:id="lblJamMalam"
+                           styleClass="shift-malam-jam"
+                           text="12:00 — 21:00"/>
+
+                    <!-- Divider -->
+                    <Separator styleClass="shift-malam-divider"
+                               VBox.vgrow="NEVER"/>
+
+                    <!-- Info kasir -->
+                    <VBox spacing="10" styleClass="shift-info-box">
+                        <VBox.margin><Insets top="16"/></VBox.margin>
+                        <children>
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <Label styleClass="shift-malam-icon" text="👤"/>
+                                <VBox spacing="2">
+                                    <Label fx:id="lblUsernameMalam"
+                                           styleClass="shift-malam-username"
+                                           text="-"/>
+                                    <Label fx:id="lblNamaMalam"
+                                           styleClass="shift-malam-nama"
+                                           text="-"/>
+                                </VBox>
+                            </HBox>
+
+                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                  styleClass="shift-malam-stat-row">
+                                <Label styleClass="shift-malam-stat-label"
+                                       text="Total Transaksi"
+                                       HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblTrxMalam"
+                                       styleClass="shift-malam-stat-value"
+                                       text="0"/>
+                            </HBox>
+
+                            <HBox alignment="CENTER_LEFT" spacing="10"
+                                  styleClass="shift-malam-stat-row">
+                                <Label styleClass="shift-malam-stat-label"
+                                       text="Item Terjual"
+                                       HBox.hgrow="ALWAYS"/>
+                                <Label fx:id="lblItemMalam"
+                                       styleClass="shift-malam-stat-value"
+                                       text="0 unit"/>
+                            </HBox>
+                        </children>
+                    </VBox>
+
+                    <!-- Pendapatan -->
+                    <VBox alignment="CENTER"
+                          styleClass="shift-malam-pendapatan-box">
+                        <VBox.margin><Insets top="16"/></VBox.margin>
+                        <Label styleClass="shift-malam-pendapatan-label"
+                               text="PENDAPATAN SHIFT"/>
+                        <Label fx:id="lblPendapatanMalam"
+                               styleClass="shift-malam-pendapatan-value"
+                               text="Rp 0"/>
+                    </VBox>
+
+                </children>
+            </VBox>
+        </StackPane>
+
+    </children>
+</HBox>
           <VBox fx:id="nodeTablelaporan" maxHeight="Infinity" styleClass="laporan-root" VBox.vgrow="ALWAYS">
             <!-- ── FILTER BAR ── -->
             <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-background-radius: 10 10 10 10;" styleClass="filter-bar" VBox.vgrow="ALWAYS">

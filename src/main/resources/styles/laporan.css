@@ -959,3 +959,268 @@
     -fx-background-radius: 99;
     -fx-background-insets: 0;
 }
+
+/* ═══════════════════════════════════════════════
+   Shift Card — Pagi & Malam
+════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════
+   Shift Card — Pagi & Malam
+════════════════════════════════════════════════ */
+
+.shift-container {
+    -fx-background-color: transparent;
+}
+
+.shift-wrapper {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+}
+
+/* ── BASE CARD ───────────────────────────────── */
+.shift-card {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 16, 0, 0, 4);
+}
+
+/* ════════════════════════════════════════════════
+   SHIFT PAGI — background cerah/terang
+   semua teks gelap agar kontras
+════════════════════════════════════════════════ */
+.shift-pagi {
+    -fx-background-image: url("../image/pagi.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-border-color: rgba(255, 200, 50, 0.4);
+}
+
+/* Badge pagi */
+.badge-pagi {
+    -fx-background-color: rgba(255, 255, 255, 0.55);
+    -fx-border-color: rgba(255, 255, 255, 0.85);
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #1A1A2E;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 12 4 12;
+}
+
+
+/* Divider pagi */
+.shift-pagi-divider {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Icon kasir pagi */
+.shift-pagi-icon {
+    -fx-font-size: 22px;
+}
+
+
+/* ════════════════════════════════════════════════
+   SHIFT MALAM — background gelap
+   semua teks terang agar kontras
+════════════════════════════════════════════════ */
+.shift-malam {
+    -fx-background-image: url("../image/malam.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-border-color: rgba(108, 99, 255, 0.4);
+    -fx-background-color: transparent;
+}
+
+/* Badge malam */
+.badge-malam {
+    -fx-background-color: rgba(108, 99, 255, 0.25);
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #E0DDFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 12 4 12;
+}
+
+/* Divider malam */
+.shift-malam-divider {
+    -fx-background-color: rgba(108, 99, 255, 0.35);
+}
+
+/* Icon kasir malam */
+.shift-malam-icon {
+    -fx-font-size: 22px;
+}
+
+/* ── STATUS DOT animasi ───────────────────────── */
+.shift-status-aktif {
+    -fx-effect: dropshadow(gaussian, #00E5A0, 6, 0.8, 0, 0);
+    -fx-text-fill: #00E5A0;
+}
+
+.shift-status-nonaktif {
+    -fx-text-fill: rgba(255, 255, 255, 0.2);
+    -fx-effect: none;
+}
+
+
+
+
+/* ════════════════════════════════════════════════
+   SHIFT PAGI — teks gelap (representasi malam)
+════════════════════════════════════════════════ */
+
+.shift-pagi-jam {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-padding: 10 0 10 0;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.4), 4, 0, 0, 1);
+}
+
+.shift-pagi-username {
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.shift-pagi-nama {
+    -fx-text-fill: #2E3270;
+    /* navy medium */
+    -fx-font-size: 10px;
+}
+
+.shift-pagi-stat-row {
+    -fx-background-color: rgba(26, 29, 78, 0.10);
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+}
+
+.shift-pagi-stat-label {
+    -fx-text-fill: #2E3270;
+    /* navy medium */
+    -fx-font-size: 11px;
+}
+
+.shift-pagi-stat-value {
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.shift-pagi-pendapatan-box {
+    -fx-background-color: rgba(26, 29, 78, 0.10);
+    -fx-border-color: rgba(26, 29, 78, 0.20);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 14 0 14 0;
+}
+
+.shift-pagi-pendapatan-label {
+    -fx-text-fill: rgba(26, 29, 78, 0.60);
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 6 0;
+}
+
+.shift-pagi-pendapatan-value {
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 4, 0, 0, 1);
+}
+
+.shift-pagi-dot {
+    -fx-font-size: 10px;
+    -fx-text-fill: #1A1D4E;
+}
+
+.shift-pagi-icon {
+    -fx-font-size: 22px;
+}
+
+/* ════════════════════════════════════════════════
+   SHIFT MALAM — teks terang (representasi pagi)
+════════════════════════════════════════════════ */
+
+.shift-malam-jam {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E8F4FF;
+    /* putih kebiruan */
+    -fx-padding: 10 0 10 0;
+    -fx-effect: dropshadow(gaussian, rgba(100, 180, 255, 0.4), 6, 0, 0, 2);
+}
+
+.shift-malam-username {
+    -fx-text-fill: #FFFFFF;
+    /* putih */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.shift-malam-nama {
+    -fx-text-fill: #B8D4F0;
+    /* biru muda terang */
+    -fx-font-size: 10px;
+}
+
+.shift-malam-stat-row {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+}
+
+.shift-malam-stat-label {
+    -fx-text-fill: #B8D4F0;
+    /* biru muda terang */
+    -fx-font-size: 11px;
+}
+
+.shift-malam-stat-value {
+    -fx-text-fill: #FFFFFF;
+    /* putih */
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.shift-malam-pendapatan-box {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-border-color: rgba(255, 255, 255, 0.20);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 14 0 14 0;
+}
+
+.shift-malam-pendapatan-label {
+    -fx-text-fill: rgba(184, 212, 240, 0.70);
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 6 0;
+}
+
+.shift-malam-pendapatan-value {
+    -fx-text-fill: #E8F4FF;
+    /* putih kebiruan */
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(100, 180, 255, 0.5), 6, 0, 0, 2);
+}
+
+.shift-malam-dot {
+    -fx-font-size: 10px;
+    -fx-text-fill: #B8D4F0;
+}
+
+.shift-malam-icon {
+    -fx-font-size: 22px;
+}

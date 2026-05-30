@@ -1,0 +1,12 @@
+.test {
+    -fx-background-color: #4f4f4f;
+
+    -fx-background-radius: 100;
+    -fx-border-radius: 100;
+
+    /* -fx-border-color: #AB8EB5; */
+    -fx-border-width: 10;
+
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+}
