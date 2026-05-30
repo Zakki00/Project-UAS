@@ -136,25 +136,25 @@
             <VBox spacing="6" styleClass="kpi-card, kpi-purple" HBox.hgrow="ALWAYS">
               <Label styleClass="kpi-label" text="Total Penjualan"/>
               <Label fx:id="kpiPenjualan" styleClass="kpi-value" text="Rp 4.280.000"/>
-              <Label fx:id="kpiPenjualanDelta" styleClass="kpi-delta-up" text="▲ +12% vs kemarin"/>
+              <Label fx:id="kpiPenjulanPersen" styleClass="kpi-delta-up" text="▲ +12% vs kemarin"/>
             </VBox>
             <!-- Transaksi -->
             <VBox spacing="6" styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS">
               <Label styleClass="kpi-label" text="Transaksi Hari Ini"/>
               <Label fx:id="kpiTransaksi" styleClass="kpi-value" text="128"/>
-              <Label fx:id="kpiTransaksiDelta" styleClass="kpi-delta-up" text="▲ +8% vs kemarin"/>
+              <Label fx:id="kpiTransaksiPersen" styleClass="kpi-delta-up" text="▲ +8% vs kemarin"/>
             </VBox>
             <!-- Produk Terjual -->
             <VBox spacing="6" styleClass="kpi-card, kpi-yellow" HBox.hgrow="ALWAYS">
               <Label styleClass="kpi-label" text="Produk Terjual"/>
               <Label fx:id="kpiProduk" styleClass="kpi-value" text="312 unit"/>
-              <Label fx:id="kpiProdukDelta" styleClass="kpi-delta-down" text="▼ -3% vs kemarin"/>
+              <Label fx:id="kpiProdukPersen" styleClass="kpi-delta-down" text="▼ -3% vs kemarin"/>
             </VBox>
             <!-- Stok Menipis -->
             <VBox spacing="6" styleClass="kpi-card, kpi-red" HBox.hgrow="ALWAYS">
               <Label styleClass="kpi-label" text="Stok Menipis"/>
               <Label fx:id="kpiStok" styleClass="kpi-value" text="7 Item"/>
-              <Label fx:id="kpiStokDelta" styleClass="kpi-delta-down" text="▼ Perlu restock"/>
+              <Label fx:id="kpiStokInfo" styleClass="kpi-delta-down" text="▼ Perlu restock"/>
             </VBox>
           </HBox>
           <VBox fx:id="nodeTablelaporan" maxHeight="Infinity" styleClass="laporan-root" VBox.vgrow="ALWAYS">
@@ -199,13 +199,16 @@
                 <TableColumn fx:id="colNo" prefWidth="60" text="No"/>
                 <TableColumn fx:id="colIdTransaksi" prefWidth="120" text="ID Transaksi"/>
                 <TableColumn fx:id="colNama" prefWidth="180" text="Nama Pelanggan"/>
-                <TableColumn fx:id="colUser" prefWidth="160" text="User Input"/>
                 <TableColumn fx:id="colTotalPembayaran" prefWidth="150" text="Total Pembayaran"/>
                 <TableColumn fx:id="colUangPembayaran" prefWidth="150" text="Uang Dibayar"/>
                 <TableColumn fx:id="colKembalian" prefWidth="130" text="Kembalian"/>
                 <TableColumn fx:id="colKekurangan" prefWidth="130" text="Kekurangan"/>
                 <TableColumn fx:id="colStatus" prefWidth="140" text="Status"/>
                 <TableColumn fx:id="colTanggalTransaksi" prefWidth="160" text="Tanggal Transaksi"/>
+                <TableColumn fx:id="colUser" prefWidth="160" text="User Input"/>
+                <TableColumn fx:id="colNamalengkap" prefWidth="160" text="Nama Kasir"/>
+                
+
               </columns>
               <VBox.margin>
                 <Insets top="10.0"/>

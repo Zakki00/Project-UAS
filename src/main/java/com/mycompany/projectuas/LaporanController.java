@@ -106,22 +106,22 @@ public class LaporanController implements Initializable {
     @FXML
     private Label kpiPenjualan;
     @FXML
-    private Label kpiPenjualanDelta;
+    private Label kpiPenjulanPersen;
 
     @FXML
     private Label kpiTransaksi;
     @FXML
-    private Label kpiTransaksiDelta;
+    private Label kpiTransaksiPersen;
 
     @FXML
     private Label kpiProduk;
     @FXML
-    private Label kpiProdukDelta;
+    private Label kpiProdukPersen;
 
     @FXML
     private Label kpiStok;
     @FXML
-    private Label kpiStokDelta;
+    private Label kpiStokInfo;
 
     // ── FXML table laporan ──────────────────────────────────
     @FXML
@@ -144,6 +144,8 @@ public class LaporanController implements Initializable {
     private TableColumn<LaporanModel.LaporanTransaksiItem, String> colNama;
     @FXML
     private TableColumn<LaporanModel.LaporanTransaksiItem, String> colUser;
+    @FXML
+    private TableColumn<LaporanModel.LaporanTransaksiItem, String> colNamalengkap;
     @FXML
     private TableColumn<LaporanTransaksiItem, String> colUangPembayaran;
     @FXML
@@ -256,8 +258,6 @@ public class LaporanController implements Initializable {
         // =========================
         sql.append(" ORDER BY t.tanggal_transaksi DESC");
 
-        // DEBUG QUERY
-        System.out.println(sql);
 
         List<Object[]> results = koneksi.ambilData(sql.toString());
 
@@ -476,8 +476,12 @@ public class LaporanController implements Initializable {
         tfNominal.textProperty().addListener((obs, old, niu) -> {
             loadLaporanTransaksi();
             onNominalChanged();
-
         });
+        if(LaporanModel.dataLaporanTransaksi.isEmpty()){
+            btnExport.setDisable(true);
+        }else{
+            btnExport.setDisable(false);
+        }
     }
 
     // ═════════════════════════════════════════════════════
@@ -488,8 +492,7 @@ public class LaporanController implements Initializable {
         colIdTransaksi.setCellValueFactory(
                 data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().idTransaksi).asObject());
         colNama.setCellValueFactory(
-                data -> new javafx.beans.property.SimpleStringProperty(data.getValue().namaLengkap));
-        colUser.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().username));
+                data -> new javafx.beans.property.SimpleStringProperty(data.getValue().pelanggan));
         colTotalPembayaran.setCellValueFactory(
                 data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().totalPembayaran)));
         colUangPembayaran.setCellValueFactory(
@@ -498,10 +501,56 @@ public class LaporanController implements Initializable {
                 data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().kembalian)));
         colKekurangan.setCellValueFactory(
                 data -> new SimpleStringProperty("Rp " + FMT.format(data.getValue().kekurangan)));
+        // 1. Value factory dulu
         colStatus.setCellValueFactory(
                 data -> new javafx.beans.property.SimpleStringProperty(data.getValue().statusPembayaran));
+        colStatus.setCellFactory(column -> new TableCell<LaporanModel.LaporanTransaksiItem, String>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
+                super.updateItem(status, empty);
+
+                if (empty || status == null) {
+                    setText(null);
+                    setGraphic(null);
+                    setStyle("");
+                    return;
+                }
+
+                setText(null);
+
+                Label label = new Label(status);
+                label.setMaxWidth(Double.MAX_VALUE);
+                label.setAlignment(javafx.geometry.Pos.CENTER);
+                label.setPadding(new javafx.geometry.Insets(4, 10, 4, 10));
+
+                if (status.equalsIgnoreCase("Lunas")) {
+                    label.setStyle("""
+                                -fx-text-fill: #00C853;
+                                -fx-font-weight: bold;
+                                -fx-background-color: rgba(0, 200, 83, 0.15);
+                                -fx-background-radius: 6;
+                            """);
+                } else if (status.equalsIgnoreCase("Belum Lunas")) {
+                    label.setStyle("""
+                                -fx-text-fill: #D50000;
+                                -fx-font-weight: bold;
+                                -fx-background-color: rgba(213, 0, 0, 0.12);
+                                -fx-background-radius: 6;
+                            """);
+                } else {
+                    label.setStyle("");
+                }
+
+                setGraphic(label);
+                setStyle("");
+            }
+        });
         colTanggalTransaksi.setCellValueFactory(
                 data -> new javafx.beans.property.SimpleObjectProperty<>(data.getValue().tanggalTransaksi));
+        colUser.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().username));
+        colNamalengkap.setCellValueFactory(
+                data -> new javafx.beans.property.SimpleStringProperty(data.getValue().namaLengkap));
+
         TableLaporan.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
@@ -793,89 +842,112 @@ public class LaporanController implements Initializable {
         loadStokMenipis();
     }
 
-    private void loadTotalPenjualan() {
+    private void setPersenKPI(Label label, double today, double yesterday) {
 
-        String query = """
-                    SELECT COALESCE(SUM(total_pembayaran), 0)
-                    FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE()
-                """;
+        double persen;
 
-        List<Object[]> data = koneksi.ambilData(query);
+        if (yesterday == 0) {
+            persen = today > 0 ? 100 : 0;
+        } else {
+            persen = ((today - yesterday) / yesterday) * 100;
+        }
 
-        if (!data.isEmpty()) {
+        String icon = persen >= 0 ? "▲ +" : "▼ -";
+        String text = icon + String.format("%.1f", Math.abs(persen));
 
-            Object[] row = data.get(0);
+        label.setText(text);
 
-            double total = ((Number) row[0]).doubleValue();
-
-            kpiPenjualan.setText("Rp " + String.format("%,.0f", total));
-            kpiPenjualanDelta.setText("Penjualan hari ini");
+        // warna langsung di sini
+        if (persen > 0) {
+            label.setStyle("-fx-text-fill: #22c55e;"); // hijau
+        } else if (persen < 0) {
+            label.setStyle("-fx-text-fill: #ef4444;"); // merah
+        } else {
+            label.setStyle("-fx-text-fill: #9ca3af;"); // abu-abu
         }
     }
 
+    private void loadTotalPenjualan() {
+
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(total_pembayaran), 0)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE()
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(total_pembayaran), 0)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
+                """);
+
+        double today = ((Number) todayData.get(0)[0]).doubleValue();
+        double yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+
+        kpiPenjualan.setText("Rp " + String.format("%,.0f", today));
+        setPersenKPI(kpiPenjulanPersen, today, yesterday);
+        }
+
     private void loadTotalTransaksi() {
 
-        String query = """
+        double today = ((Number) koneksi.ambilData("""
                     SELECT COUNT(*)
                     FROM tb_transaksi
                     WHERE DATE(tanggal_transaksi) = CURDATE()
-                """;
+                """).get(0)[0]).doubleValue();
 
-        List<Object[]> data = koneksi.ambilData(query);
+        double yesterday = ((Number) koneksi.ambilData("""
+                    SELECT COUNT(*)
+                    FROM tb_transaksi
+                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
+                """).get(0)[0]).doubleValue();
 
-        if (!data.isEmpty()) {
-
-            Object[] row = data.get(0);
-
-            int total = ((Number) row[0]).intValue();
-
-            kpiTransaksi.setText(String.valueOf(total));
-            kpiTransaksiDelta.setText("Transaksi hari ini");
-        }
+        kpiTransaksi.setText(String.valueOf((int) today));
+        setPersenKPI(kpiTransaksiPersen,today, yesterday);
     }
 
     private void loadProdukTerjual() {
 
-        String query = """
+        double today = ((Number) koneksi.ambilData("""
                     SELECT COALESCE(SUM(jumlah), 0)
                     FROM tb_detail_transaksi dt
-                    JOIN tb_transaksi t
-                    ON dt.id_transaksi = t.id_transaksi
+                    JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
                     WHERE DATE(t.tanggal_transaksi) = CURDATE()
-                """;
+                """).get(0)[0]).doubleValue();
 
-        List<Object[]> data = koneksi.ambilData(query);
+        double yesterday = ((Number) koneksi.ambilData("""
+                    SELECT COALESCE(SUM(jumlah), 0)
+                    FROM tb_detail_transaksi dt
+                    JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
+                    WHERE DATE(t.tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
+                """).get(0)[0]).doubleValue();
 
-        if (!data.isEmpty()) {
-
-            Object[] row = data.get(0);
-
-            int total = ((Number) row[0]).intValue();
-
-            kpiProduk.setText(total + " Unit");
-            kpiProdukDelta.setText("Produk terjual hari ini");
-        }
+        kpiProduk.setText((int) today + " Unit");
+        setPersenKPI(kpiProdukPersen, today, yesterday);
     }
 
     private void loadStokMenipis() {
-
-        String query = """
+        int stokMenipis = ((Number) koneksi.ambilData("""
                     SELECT COUNT(*)
                     FROM tb_barang
                     WHERE stok <= 5
-                """;
+                """).get(0)[0]).intValue();
 
-        List<Object[]> data = koneksi.ambilData(query);
-
-        if (!data.isEmpty()) {
-
-            Object[] row = data.get(0);
-
-            int total = ((Number) row[0]).intValue();
-
-            kpiStok.setText(total + " Item");
-            kpiStokDelta.setText("Perlu restock");
+        kpiStok.setText(stokMenipis + " Item");
+        if (stokMenipis == 0) {
+            kpiStokInfo.setText("Semua stok aman");
+            kpiStokInfo.setStyle("""
+                            -fx-text-fill: #00C853;
+                            -fx-font-weight: bold;
+                    """);
+        } else if (stokMenipis <= 5) {
+            kpiStokInfo.setText("⚠ Perlu restock segera");
+            kpiStokInfo.setStyle("""
+                            -fx-text-fill: #D50000;
+                            -fx-font-weight: bold;
+                    """);
+        } else {
+            kpiStokInfo.setText("Stok kritis");
         }
     }
 
