@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -16,15 +17,22 @@ import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -74,6 +82,164 @@ public class BarangController implements Initializable {
     private boolean isSidebarExpanded = true;
     private boolean isUpdatingHarga = false;
 
+    // ═══════════════════════════════════════════
+    // MODERN POPUP TOAST
+    // ═══════════════════════════════════════════
+    public enum PopupType { SUCCESS, ERROR, WARNING }
+
+    private void showModernPopup(String title, String message, PopupType type) {
+        Stage popupStage = new Stage(StageStyle.TRANSPARENT);
+        popupStage.setAlwaysOnTop(true);
+
+        // Warna berdasarkan tipe
+        String bgColor, iconText, borderColor;
+        switch (type) {
+            case SUCCESS:
+                bgColor     = "#1a1a2e";
+                iconText    = "✓";
+                borderColor = "#00d084";
+                break;
+            case ERROR:
+                bgColor     = "#1a1a2e";
+                iconText    = "✕";
+                borderColor = "#ff4d6d";
+                break;
+            case WARNING:
+                bgColor     = "#1a1a2e";
+                iconText    = "⚠";
+                borderColor = "#ffd60a";
+                break;
+            default:
+                bgColor     = "#1a1a2e";
+                iconText    = "ℹ";
+                borderColor = "#4cc9f0";
+        }
+
+        // ── Icon circle ──
+        Label icon = new Label(iconText);
+        icon.setFont(Font.font("System", FontWeight.BOLD, 18));
+        icon.setTextFill(Color.web(borderColor));
+        icon.setStyle(
+            "-fx-background-color: transparent;" +
+            "-fx-border-color: " + borderColor + ";" +
+            "-fx-border-radius: 50;" +
+            "-fx-background-radius: 50;" +
+            "-fx-border-width: 2;" +
+            "-fx-min-width: 36px;" +
+            "-fx-min-height: 36px;" +
+            "-fx-max-width: 36px;" +
+            "-fx-max-height: 36px;" +
+            "-fx-alignment: center;"
+        );
+
+        // ── Teks ──
+        Label lblTitle = new Label(title);
+        lblTitle.setFont(Font.font("System", FontWeight.BOLD, 14));
+        lblTitle.setTextFill(Color.WHITE);
+
+        Label lblMessage = new Label(message);
+        lblMessage.setFont(Font.font("System", 12));
+        lblMessage.setTextFill(Color.web("#a0a0b0"));
+        lblMessage.setWrapText(true);
+        lblMessage.setMaxWidth(220);
+
+        VBox textBox = new VBox(3, lblTitle, lblMessage);
+        textBox.setAlignment(Pos.CENTER_LEFT);
+
+        // ── Progress bar auto-dismiss ──
+        ProgressBar progressBar = new ProgressBar(1.0);
+        progressBar.setPrefWidth(310);
+        progressBar.setPrefHeight(3);
+        progressBar.setStyle(
+            "-fx-accent: " + borderColor + ";" +
+            "-fx-background-color: #2a2a3e;" +
+            "-fx-background-radius: 0;" +
+            "-fx-border-radius: 0;"
+        );
+
+        // ── Layout utama ──
+        HBox content = new HBox(14, icon, textBox);
+        content.setAlignment(Pos.CENTER_LEFT);
+        content.setPadding(new Insets(16, 18, 12, 18));
+
+        VBox card = new VBox(0, content, progressBar);
+        card.setStyle(
+            "-fx-background-color: " + bgColor + ";" +
+            "-fx-background-radius: 12;" +
+            "-fx-border-color: " + borderColor + ";" +
+            "-fx-border-width: 1;" +
+            "-fx-border-radius: 12;" +
+            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0, 0, 6);"
+        );
+        card.setMinWidth(310);
+        card.setMaxWidth(310);
+
+        StackPane root = new StackPane(card);
+        root.setStyle("-fx-background-color: transparent;");
+        root.setPadding(new Insets(6));
+
+        Scene scene = new Scene(root, 322, 80);
+        scene.setFill(Color.TRANSPARENT);
+        popupStage.setScene(scene);
+
+        // ── Posisi kanan bawah layar ──
+        javafx.geometry.Rectangle2D screen = javafx.stage.Screen.getPrimary().getVisualBounds();
+        popupStage.setX(screen.getMaxX() - 340);
+        popupStage.setY(screen.getMaxY() - 110);
+
+        popupStage.show();
+
+        // ── Animasi fade in ──
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(250), root);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        TranslateTransition slideIn = new TranslateTransition(Duration.millis(250), root);
+        slideIn.setFromX(40);
+        slideIn.setToX(0);
+
+        ParallelTransition enterAnim = new ParallelTransition(fadeIn, slideIn);
+        enterAnim.play();
+
+        // ── Progress bar countdown (3 detik) ──
+        Timeline countdown = new Timeline(
+            new KeyFrame(Duration.ZERO,       new KeyValue(progressBar.progressProperty(), 1.0)),
+            new KeyFrame(Duration.seconds(3), new KeyValue(progressBar.progressProperty(), 0.0))
+        );
+        countdown.play();
+
+        // ── Fade out lalu tutup ──
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+        pause.setOnFinished(e -> {
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(300), root);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+
+            TranslateTransition slideOut = new TranslateTransition(Duration.millis(300), root);
+            slideOut.setFromX(0);
+            slideOut.setToX(40);
+
+            ParallelTransition exitAnim = new ParallelTransition(fadeOut, slideOut);
+            exitAnim.setOnFinished(ev -> popupStage.close());
+            exitAnim.play();
+        });
+        pause.play();
+
+        // ── Klik untuk tutup manual ──
+        root.setOnMouseClicked(e -> {
+            pause.stop();
+            countdown.stop();
+            FadeTransition fadeOut = new FadeTransition(Duration.millis(200), root);
+            fadeOut.setFromValue(1);
+            fadeOut.setToValue(0);
+            fadeOut.setOnFinished(ev -> popupStage.close());
+            fadeOut.play();
+        });
+    }
+
+    // ═══════════════════════════════════════════
+    // INITIALIZE
+    // ═══════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         cmbKategori.setItems(FXCollections.observableArrayList("Makanan", "Minuman"));
@@ -85,17 +251,14 @@ public class BarangController implements Initializable {
         colDeskripsi.setCellValueFactory(new PropertyValueFactory<>("deskripsi"));
         tabelBarang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // ── Kolom harga tampil dengan prefix "Rp" ──
+        // ── Kolom harga format Rp ──
         colHarga.setCellValueFactory(new PropertyValueFactory<>("harga"));
         colHarga.setCellFactory(col -> new TableCell<BarangModel, Integer>() {
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText("Rp " + String.format("%,d", item).replace(',', '.'));
-                }
+                if (empty || item == null) setText(null);
+                else setText("Rp " + String.format("%,d", item).replace(',', '.'));
             }
         });
 
@@ -108,27 +271,22 @@ public class BarangController implements Initializable {
                 imageView.setFitHeight(50);
                 imageView.setPreserveRatio(true);
             }
-
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null || item.isBlank()) {
-                    setGraphic(null);
-                    setText(null);
+                    setGraphic(null); setText(null);
                 } else {
                     try {
                         var stream = getClass().getResourceAsStream("/image-barang/" + item);
                         if (stream != null) {
                             imageView.setImage(new Image(stream));
-                            setGraphic(imageView);
-                            setText(null);
+                            setGraphic(imageView); setText(null);
                         } else {
-                            setGraphic(null);
-                            setText(item);
+                            setGraphic(null); setText(item);
                         }
                     } catch (Exception e) {
-                        setGraphic(null);
-                        setText(null);
+                        setGraphic(null); setText(null);
                     }
                 }
             }
@@ -140,20 +298,17 @@ public class BarangController implements Initializable {
             return new SimpleStringProperty(stokVal > 0 ? "Tersedia" : "Habis");
         });
 
-        // ── txtStok: hanya angka ──
+        // ── Validasi txtStok hanya angka ──
         txtStok.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (!newVal.matches("\\d*")) {
+            if (!newVal.matches("\\d*"))
                 txtStok.setText(newVal.replaceAll("[^\\d]", ""));
-            }
         });
 
-        // ── txtHarga: hanya angka, format Rp otomatis ──
+        // ── txtHarga format Rp otomatis ──
         txtHarga.textProperty().addListener((obs, oldVal, newVal) -> {
             if (isUpdatingHarga) return;
             isUpdatingHarga = true;
-
             String angkaSaja = newVal.replaceAll("[^\\d]", "");
-
             if (angkaSaja.isEmpty()) {
                 txtHarga.setText("");
             } else {
@@ -161,7 +316,6 @@ public class BarangController implements Initializable {
                 txtHarga.setText(formatted);
                 Platform.runLater(() -> txtHarga.positionCaret(txtHarga.getText().length()));
             }
-
             isUpdatingHarga = false;
         });
 
@@ -179,10 +333,8 @@ public class BarangController implements Initializable {
                 txtDeskripsi.setText(newSelection.getDeskripsi());
                 lblFilePath.setText(newSelection.getGambar() != null ? newSelection.getGambar() : "Tidak ada file dipilih");
 
-                // Set harga dengan format Rp
                 isUpdatingHarga = true;
-                String hargaFormatted = "Rp " + String.format("%,d", newSelection.getHarga()).replace(',', '.');
-                txtHarga.setText(hargaFormatted);
+                txtHarga.setText("Rp " + String.format("%,d", newSelection.getHarga()).replace(',', '.'));
                 Platform.runLater(() -> txtHarga.positionCaret(txtHarga.getText().length()));
                 isUpdatingHarga = false;
             }
@@ -193,11 +345,8 @@ public class BarangController implements Initializable {
     private int getHargaValue() {
         String angkaSaja = txtHarga.getText().replaceAll("[^\\d]", "");
         if (angkaSaja.isEmpty()) return 0;
-        try {
-            return Integer.parseInt(angkaSaja);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+        try { return Integer.parseInt(angkaSaja); }
+        catch (NumberFormatException e) { return 0; }
     }
 
     // ═══════════════════════════════════════════
@@ -206,33 +355,25 @@ public class BarangController implements Initializable {
     private boolean isInputValid(boolean isUpdate, BarangModel dipilih) {
         StringBuilder pesan = new StringBuilder();
 
-        if (txtNama.getText().trim().isEmpty()) {
+        if (txtNama.getText().trim().isEmpty())
             pesan.append("- Nama barang wajib diisi.\n");
-        }
-        if (cmbKategori.getValue() == null) {
+        if (cmbKategori.getValue() == null)
             pesan.append("- Kategori wajib dipilih.\n");
-        }
-        if (txtHarga.getText().trim().isEmpty() || getHargaValue() <= 0) {
+        if (txtHarga.getText().trim().isEmpty() || getHargaValue() <= 0)
             pesan.append("- Harga wajib diisi dan harus lebih dari 0.\n");
-        }
-        if (txtStok.getText().trim().isEmpty()) {
+        if (txtStok.getText().trim().isEmpty())
             pesan.append("- Stok wajib diisi.\n");
-        }
 
-        // Validasi gambar:
-        // - Tambah: wajib pilih gambar baru
-        // - Ubah  : boleh tidak pilih ulang jika data lama sudah punya gambar
         boolean gambarBaru = !lblFilePath.getText().equals("Tidak ada file dipilih");
         boolean gambarLama = isUpdate && dipilih != null
                 && dipilih.getGambar() != null
                 && !dipilih.getGambar().isBlank();
 
-        if (!gambarBaru && !gambarLama) {
+        if (!gambarBaru && !gambarLama)
             pesan.append("- Gambar barang wajib dipilih.\n");
-        }
 
         if (pesan.length() > 0) {
-            showAlert("Peringatan", "Harap lengkapi data berikut:\n\n" + pesan.toString().trim());
+            showModernPopup("Validasi Gagal", pesan.toString().trim(), PopupType.WARNING);
             return false;
         }
         return true;
@@ -260,7 +401,7 @@ public class BarangController implements Initializable {
                 ));
             }
         } catch (SQLException e) {
-            showAlert("Error DB", "Gagal memuat data: " + e.getMessage());
+            showModernPopup("Error Database", "Gagal memuat data: " + e.getMessage(), PopupType.ERROR);
         }
     }
 
@@ -269,7 +410,6 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════
     @FXML
     void tambahBarang(ActionEvent event) {
-        // Validasi: gambar wajib diisi saat tambah (isUpdate=false, dipilih=null)
         if (!isInputValid(false, null)) return;
 
         try {
@@ -295,11 +435,12 @@ public class BarangController implements Initializable {
 
             loadDataFromDB();
             clearForm(null);
+            showModernPopup("Berhasil Disimpan", "Barang \"" + nama + "\" berhasil ditambahkan.", PopupType.SUCCESS);
 
         } catch (NumberFormatException e) {
-            showAlert("Kesalahan Input", "Stok harus berupa angka bulat!");
+            showModernPopup("Kesalahan Input", "Stok harus berupa angka bulat!", PopupType.ERROR);
         } catch (SQLException e) {
-            showAlert("Error DB", "Gagal menambah data: " + e.getMessage());
+            showModernPopup("Error Database", "Gagal menambah data: " + e.getMessage(), PopupType.ERROR);
         }
     }
 
@@ -307,11 +448,9 @@ public class BarangController implements Initializable {
     void ubahBarang(ActionEvent event) {
         BarangModel dipilih = tabelBarang.getSelectionModel().getSelectedItem();
         if (dipilih == null) {
-            showAlert("Peringatan", "Silakan pilih salah satu data barang di tabel yang ingin diubah!");
+            showModernPopup("Peringatan", "Pilih salah satu data barang di tabel terlebih dahulu!", PopupType.WARNING);
             return;
         }
-
-        // Validasi: gambar boleh tidak dipilih ulang jika data lama sudah ada (isUpdate=true)
         if (!isInputValid(true, dipilih)) return;
 
         try {
@@ -340,11 +479,12 @@ public class BarangController implements Initializable {
 
             loadDataFromDB();
             clearForm(null);
+            showModernPopup("Berhasil Diperbarui", "Barang \"" + nama + "\" berhasil diubah.", PopupType.SUCCESS);
 
         } catch (NumberFormatException e) {
-            showAlert("Kesalahan Input", "Stok harus berupa angka bulat!");
+            showModernPopup("Kesalahan Input", "Stok harus berupa angka bulat!", PopupType.ERROR);
         } catch (SQLException e) {
-            showAlert("Error DB", "Gagal mengubah data: " + e.getMessage());
+            showModernPopup("Error Database", "Gagal mengubah data: " + e.getMessage(), PopupType.ERROR);
         }
     }
 
@@ -352,10 +492,11 @@ public class BarangController implements Initializable {
     void hapusBarang(ActionEvent event) {
         BarangModel dipilih = tabelBarang.getSelectionModel().getSelectedItem();
         if (dipilih == null) {
-            showAlert("Peringatan", "Silakan pilih data di tabel terlebih dahulu yang ingin dihapus!");
+            showModernPopup("Peringatan", "Pilih data di tabel terlebih dahulu!", PopupType.WARNING);
             return;
         }
         try {
+            String namaBarang = dipilih.getNama();
             String query = "DELETE FROM tb_barang WHERE id_barang=?";
             try (Connection conn = koneksi.getConnection();
                  PreparedStatement ps = conn.prepareStatement(query)) {
@@ -366,9 +507,10 @@ public class BarangController implements Initializable {
 
             loadDataFromDB();
             clearForm(null);
+            showModernPopup("Berhasil Dihapus", "Barang \"" + namaBarang + "\" telah dihapus.", PopupType.SUCCESS);
 
         } catch (SQLException e) {
-            showAlert("Error DB", "Gagal menghapus data: " + e.getMessage());
+            showModernPopup("Error Database", "Gagal menghapus data: " + e.getMessage(), PopupType.ERROR);
         }
     }
 
@@ -412,7 +554,7 @@ public class BarangController implements Initializable {
                 Files.copy(file.toPath(), tujuan, StandardCopyOption.REPLACE_EXISTING);
                 lblFilePath.setText(file.getName());
             } catch (IOException e) {
-                showAlert("Error", "Gagal menyalin file gambar: " + e.getMessage());
+                showModernPopup("Error", "Gagal menyalin file gambar: " + e.getMessage(), PopupType.ERROR);
             }
         }
     }
@@ -505,21 +647,9 @@ public class BarangController implements Initializable {
         );
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
-            if (!item.getStyleClass().contains("nav-item")) {
+            if (!item.getStyleClass().contains("nav-item"))
                 item.getStyleClass().add("nav-item");
-            }
         }
         selected.getStyleClass().add("nav-active");
-    }
-
-    // ═══════════════════════════════════════════
-    // HELPER
-    // ═══════════════════════════════════════════
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 }
