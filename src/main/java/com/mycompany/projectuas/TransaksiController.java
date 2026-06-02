@@ -716,16 +716,11 @@ public class TransaksiController implements Initializable {
         if (TransaksiModel.keranjang.isEmpty()) {
             return;
         }
-        if (tfTunai.getText().isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Peringatan");
-            alert.setHeaderText(null);
-            alert.setContentText("Silahkan isi Nominal Uang Pembayaran");
-            alert.showAndWait();
+        if (tfTunai.getText() == null || tfTunai.getText().isBlank() || tunai == 0) {
+            new Popup().showModernPopup("WARNING", "Silahkan Masukkan Nominal Tunai", Popup.PopupType.WARNING);
             return;
         }
 
-        CartItem ci = TransaksiModel.keranjang.values().iterator().next(); // ambil salah satu item untuk contoh
         if (kembalian >= 0) {
 
             String sqlTransaksi = String.format("INSERT INTO tb_transaksi "
