@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class koneksi {
-    private static final String URL = "jdbc:mysql://localhost:3306/db_enjoy_cave";
+    private static final String URL = "jdbc:sqlite:src/main/resources/db/db_enjoy_cafe.db";
+    // private static final String URL = "jdbc:mysql://localhost:3306/db_enjoy_cave";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 

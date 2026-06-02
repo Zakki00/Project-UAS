@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="900" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/transaksi.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.TransaksiController">
+<BorderPane prefHeight="900" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/transaksi.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.TransaksiController">
   <!-- sidebar -->
   <left>
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">

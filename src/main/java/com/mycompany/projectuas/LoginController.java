@@ -47,6 +47,7 @@ public class LoginController implements Initializable {
         passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
         loginBtn.setDefaultButton(true);
         loadRememberedCredentials();
+        
     }
 
     @FXML

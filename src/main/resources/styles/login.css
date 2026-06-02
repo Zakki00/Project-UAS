@@ -9,124 +9,125 @@
    ROOT — mengisi seluruh window
    ============================================================ */
 .root-bg {
-    -fx-background-color: #0b0f1a;
+  -fx-background-color: #0b0f1a;
 }
 
 /* ============================================================
    MAIN WRAPPER — kotak utama yang selalu center
    ============================================================ */
 .main-wrapper {
-    -fx-pref-width: 900;
-    -fx-max-width: 900;
-    -fx-pref-height: 540;
-    -fx-max-height: 540;
-    -fx-background-color: transparent;
+  -fx-pref-width: 900;
+  -fx-max-width: 900;
+  -fx-pref-height: 540;
+  -fx-max-height: 540;
+  -fx-background-color: transparent;
 }
 
 /* ============================================================
    PANELS CONTAINER — HBox layer bawah (left + placeholder)
    ============================================================ */
 .panels-container {
-    -fx-background-color: linear-gradient(to right, #0f1720 60%, #101828 100%);
-    -fx-background-radius: 22;
-    -fx-border-color: #1a2840;
-    -fx-border-radius: 22;
-    -fx-border-width: 1;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 50, 0.3, 0, 10);
+  -fx-background-color: linear-gradient(to right, #0f1720 60%, #101828 100%);
+  -fx-background-radius: 22;
+  -fx-border-color: #1a2840;
+  -fx-border-radius: 22;
+  -fx-border-width: 1;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.7), 50, 0.3, 0, 10);
 }
 
 /* ============================================================
    LEFT PANEL
    ============================================================ */
 .left-panel {
-    -fx-background-color: linear-gradient(to bottom, #0f1a28, #111d2e, #0d1520);
-    -fx-background-radius: 22 0 0 22;
-    -fx-pref-width: 290;
-    -fx-min-width: 290;
-    -fx-max-width: 290;
-    -fx-padding: 36 24 0 24;
-    -fx-border-color: transparent;
-    -fx-border-width: 0;
+  -fx-background-color: linear-gradient(to bottom, #0f1a28, #111d2e, #0d1520);
+  -fx-background-radius: 22 0 0 22;
+  -fx-pref-width: 290;
+  -fx-min-width: 290;
+  -fx-max-width: 290;
+  -fx-padding: 36 24 0 24;
+  -fx-border-color: transparent;
+  -fx-border-width: 0;
 }
 
 /* Placeholder kanan — ruang kosong untuk right panel overlap -->*/
 .right-placeholder {
-    -fx-pref-width: 610;
-    -fx-min-width: 610;
-    -fx-background-color: transparent;
+  -fx-pref-width: 610;
+  -fx-min-width: 610;
+  -fx-background-color: transparent;
 }
 
 /* ============================================================
    ICON
    ============================================================ */
 .icon-wrapper {
-    -fx-background-color: linear-gradient(145deg, #1e2d4a, #232f48);
-    -fx-background-radius: 26;
-    -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.5), 20, 0.3, 0, 4);
-    -fx-min-width: 88;
-    -fx-min-height: 88;
-    -fx-max-width: 88;
-    -fx-max-height: 88;
+  -fx-background-color: linear-gradient(to bottom right, #1e2d4a, #232f48);
+  -fx-background-radius: 26;
+  -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.5), 20, 0.3, 0, 4);
+  -fx-min-width: 88;
+  -fx-min-height: 88;
+  -fx-max-width: 88;
+  -fx-max-height: 88;
 }
 
 .store-icon {
-    -fx-font-size: 40px;
+  -fx-font-size: 40px;
+-fx-text-fill: white;
 }
 
 .brand-name {
-    -fx-font-size: 28px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #eaf0fb;
-    -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-    -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.5), 10, 0.3, 0, 2);
+  -fx-font-size: 28px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #eaf0fb;
+  -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.5), 10, 0.3, 0, 2);
 }
 
 .brand-tagline {
-    -fx-font-size: 11.5px;
-    -fx-text-fill: #00cec9;
-    -fx-font-weight: bold;
-    -fx-font-family: "Segoe UI", sans-serif;
+  -fx-font-size: 11.5px;
+  -fx-text-fill: #00cec9;
+  -fx-font-weight: bold;
+  -fx-font-family: "Segoe UI", sans-serif;
 }
 
 .accent-divider {
-    -fx-fill: linear-gradient(to right, #6c5ce7, #00cec9);
+  -fx-fill: linear-gradient(to right, #6c5ce7, #00cec9);
 }
 
 .feature-list {
-    -fx-padding: 0 2 0 2;
+  -fx-padding: 0 2 0 2;
 }
 
 .feature-item {
-    -fx-padding: 10 12 10 12;
-    -fx-background-color: #ffffff08;
-    -fx-background-radius: 10;
-    -fx-border-color: #ffffff0d;
-    -fx-border-radius: 10;
-    -fx-border-width: 1;
+  -fx-padding: 10 12 10 12;
+  -fx-background-color: #ffffff08;
+  -fx-background-radius: 10;
+  -fx-border-color: #ffffff0d;
+  -fx-border-radius: 10;
+  -fx-border-width: 1;
 }
 
 .feature-item:hover {
-    -fx-background-color: #6c5ce721;
-    -fx-border-color: #6c5ce759;
-    -fx-cursor: hand;
+  -fx-background-color: #6c5ce721;
+  -fx-border-color: #6c5ce759;
+  -fx-cursor: hand;
 }
 
 .feature-icon {
-    -fx-font-size: 14px;
-    -fx-text-fill: #6c5ce7;
-    -fx-min-width: 20;
+  -fx-font-size: 14px;
+  -fx-text-fill: #6c5ce7;
+  -fx-min-width: 20;
 }
 
 .feature-text {
-    -fx-font-size: 12px;
-    -fx-text-fill: #99aabb;
-    -fx-font-family: "Segoe UI", sans-serif;
+  -fx-font-size: 12px;
+  -fx-text-fill: #99aabb;
+  -fx-font-family: "Segoe UI", sans-serif;
 }
 
 .version-label {
-    -fx-font-size: 10px;
-    -fx-text-fill: #3a4a5a;
-    -fx-font-family: "Segoe UI", sans-serif;
+  -fx-font-size: 10px;
+  -fx-text-fill: #3a4a5a;
+  -fx-font-family: "Segoe UI", sans-serif;
 }
 
 /* ============================================================
@@ -134,240 +135,242 @@
    Ini VBox pembungkus yang menempel di sisi kanan wrapper
    ============================================================ */
 .right-panel-float {
-    -fx-pref-width: 560;
-    -fx-max-width: 560;
-    -fx-padding: 0 32 0 0;
-    -fx-background-color: transparent;
+  -fx-pref-width: 560;
+  -fx-max-width: 560;
+  -fx-padding: 0 32 0 0;
+  -fx-background-color: transparent;
 }
 
 /* ============================================================
    LOGIN CARD — kartu yang mengambang dengan shadow tebal
    ============================================================ */
 .login-card {
-    -fx-background-color: linear-gradient(to bottom, #1c2740, #162035);
-    -fx-background-radius: 18;
-    -fx-border-color: #6c5ce72e;
-    -fx-border-radius: 18;
-    -fx-border-width: 1;
-    -fx-padding: 36 34 24 34;
+  -fx-background-color: linear-gradient(to bottom, #1c2740, #162035);
+  -fx-background-radius: 18;
+  -fx-border-color: #6c5ce72e;
+  -fx-border-radius: 18;
+  -fx-border-width: 1;
+  -fx-padding: 36 34 24 34;
 
-    /* Shadow lebih tebal agar terkesan mengambang di atas left panel */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.75), 50, 0.35, -8, 0), dropshadow(gaussian, rgba(108, 92, 231, 0.2), 30, 0.15, 0, 0);
+  /* Shadow lebih tebal agar terkesan mengambang di atas left panel */
+  -fx-effect:
+    dropshadow(gaussian, rgba(0, 0, 0, 0.75), 50, 0.35, -8, 0),
+    dropshadow(gaussian, rgba(108, 92, 231, 0.2), 30, 0.15, 0, 0);
 
-    -fx-max-width: 560;
-    -fx-pref-width: 560;
+  -fx-max-width: 560;
+  -fx-pref-width: 560;
 }
 
 .card-header {
-    -fx-padding: 0 0 22 0;
+  -fx-padding: 0 0 22 0;
 }
 
 .card-title {
-    -fx-font-size: 24px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #eaf0fb;
-    -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-    -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.3), 6, 0.2, 0, 1);
+  -fx-font-size: 24px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #eaf0fb;
+  -fx-font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+  -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.3), 6, 0.2, 0, 1);
 }
 
 .card-subtitle {
-    -fx-font-size: 12px;
-    -fx-text-fill: #6a7f94;
-    -fx-font-family: "Segoe UI", sans-serif;
+  -fx-font-size: 12px;
+  -fx-text-fill: #6a7f94;
+  -fx-font-family: "Segoe UI", sans-serif;
 }
 
 /* ============================================================
    FORM FIELDS
    ============================================================ */
 .field-group {
-    -fx-padding: 0 0 14 0;
+  -fx-padding: 0 0 14 0;
 }
 
 .field-label {
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #8899aa;
-    -fx-font-family: "Segoe UI", sans-serif;
-    -fx-padding: 0 0 4 2;
+  -fx-font-size: 11px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #8899aa;
+  -fx-font-family: "Segoe UI", sans-serif;
+  -fx-padding: 0 0 4 2;
 }
 
 .input-wrapper {
-    -fx-background-color: #0d1624;
-    -fx-background-radius: 10;
-    -fx-border-color: #1e2d42;
-    -fx-border-radius: 10;
-    -fx-border-width: 1.5;
-    -fx-padding: 0 10 0 12;
-    -fx-min-height: 46;
+  -fx-background-color: #0d1624;
+  -fx-background-radius: 10;
+  -fx-border-color: #1e2d42;
+  -fx-border-radius: 10;
+  -fx-border-width: 1.5;
+  -fx-padding: 0 10 0 12;
+  -fx-min-height: 46;
 }
 
 .input-wrapper:focused {
-    -fx-border-color: #6c5ce7;
-    -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.35), 10, 0.2, 0, 0);
+  -fx-border-color: #6c5ce7;
+  -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.35), 10, 0.2, 0, 0);
 }
 
 .input-icon {
-    -fx-font-size: 13px;
-    -fx-text-fill: #445566;
-    -fx-min-width: 18;
+  -fx-font-size: 13px;
+  -fx-text-fill: #445566;
+  -fx-min-width: 18;
 }
 
 .text-input {
-    -fx-background-color: transparent;
-    -fx-text-fill: #eaf0fb;
-    -fx-prompt-text-fill: #3a4e62;
-    -fx-font-size: 13px;
-    -fx-font-family: "Segoe UI", sans-serif;
-    -fx-border-width: 0;
-    -fx-padding: 10 4 10 4;
+  -fx-background-color: transparent;
+  -fx-text-fill: #eaf0fb;
+  -fx-prompt-text-fill: #3a4e62;
+  -fx-font-size: 13px;
+  -fx-font-family: "Segoe UI", sans-serif;
+  -fx-border-width: 0;
+  -fx-padding: 10 4 10 4;
 }
 
 .text-input:focused {
-    -fx-background-color: transparent;
+  -fx-background-color: transparent;
 }
 
 .password-input {
-    -fx-font-size: 15px;
+  -fx-font-size: 15px;
 }
 
 .eye-btn {
-    -fx-background-color: transparent;
-    -fx-text-fill: #445566;
-    -fx-font-size: 13px;
-    -fx-cursor: hand;
-    -fx-padding: 4 2 4 2;
-    -fx-border-width: 0;
+  -fx-background-color: transparent;
+  -fx-text-fill: #445566;
+  -fx-font-size: 13px;
+  -fx-cursor: hand;
+  -fx-padding: 4 2 4 2;
+  -fx-border-width: 0;
 }
 
 .eye-btn:hover {
-    -fx-text-fill: #6c5ce7;
+  -fx-text-fill: #6c5ce7;
 }
 
 /* ============================================================
    OPTIONS ROW
    ============================================================ */
 .options-row {
-    -fx-padding: 0 0 16 0;
+  -fx-padding: 0 0 16 0;
 }
 
 .remember-check {
-    -fx-text-fill: #8899aa;
-    -fx-font-size: 12px;
-    -fx-font-family: "Segoe UI", sans-serif;
+  -fx-text-fill: #8899aa;
+  -fx-font-size: 12px;
+  -fx-font-family: "Segoe UI", sans-serif;
 }
 
 .remember-check .box {
-    -fx-background-color: #0d1624;
-    -fx-border-color: #2a3e54;
-    -fx-border-radius: 5;
-    -fx-background-radius: 5;
-    -fx-border-width: 1.5;
+  -fx-background-color: #0d1624;
+  -fx-border-color: #2a3e54;
+  -fx-border-radius: 5;
+  -fx-background-radius: 5;
+  -fx-border-width: 1.5;
 }
 
 .remember-check:selected .box {
-    -fx-background-color: #6c5ce7;
-    -fx-border-color: #6c5ce7;
+  -fx-background-color: #6c5ce7;
+  -fx-border-color: #6c5ce7;
 }
 
 .remember-check:selected .mark {
-    -fx-background-color: white;
+  -fx-background-color: white;
 }
 
 .forgot-link {
-    -fx-text-fill: #00cec9;
-    -fx-font-size: 12px;
-    -fx-font-family: "Segoe UI", sans-serif;
-    -fx-border-width: 0;
-    -fx-underline: false;
-    -fx-padding: 0;
+  -fx-text-fill: #00cec9;
+  -fx-font-size: 12px;
+  -fx-font-family: "Segoe UI", sans-serif;
+  -fx-border-width: 0;
+  -fx-underline: false;
+  -fx-padding: 0;
 }
 
 .forgot-link:hover {
-    -fx-text-fill: #00e5df;
-    -fx-underline: true;
+  -fx-text-fill: #00e5df;
+  -fx-underline: true;
 }
 
 /* ============================================================
    BUTTONS
    ============================================================ */
 .login-btn {
-    -fx-background-color: linear-gradient(to right, #6c5ce7, #8270f5);
-    -fx-text-fill: white;
-    -fx-font-size: 13px;
-    -fx-font-weight: bold;
-    -fx-font-family: "Segoe UI", sans-serif;
-    -fx-background-radius: 11;
-    -fx-cursor: hand;
-    -fx-padding: 13 0 13 0;
-    -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.6), 18, 0.3, 0, 4);
-    -fx-border-width: 0;
+  -fx-background-color: linear-gradient(to right, #6c5ce7, #8270f5);
+  -fx-text-fill: white;
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-font-family: "Segoe UI", sans-serif;
+  -fx-background-radius: 11;
+  -fx-cursor: hand;
+  -fx-padding: 13 0 13 0;
+  -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.6), 18, 0.3, 0, 4);
+  -fx-border-width: 0;
 }
 
 .login-btn:hover {
-    -fx-background-color: linear-gradient(to right, #7d6ff0, #9482f7);
-    -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.8), 24, 0.4, 0, 5);
-    -fx-scale-x: 1.01;
-    -fx-scale-y: 1.01;
+  -fx-background-color: linear-gradient(to right, #7d6ff0, #9482f7);
+  -fx-effect: dropshadow(gaussian, rgba(108, 92, 231, 0.8), 24, 0.4, 0, 5);
+  -fx-scale-x: 1.01;
+  -fx-scale-y: 1.01;
 }
 
 .login-btn:pressed {
-    -fx-scale-x: 0.99;
-    -fx-scale-y: 0.99;
-    -fx-background-color: linear-gradient(to right, #5a4bd4, #6c5ce7);
+  -fx-scale-x: 0.99;
+  -fx-scale-y: 0.99;
+  -fx-background-color: linear-gradient(to right, #5a4bd4, #6c5ce7);
 }
 
 .separator-row {
-    -fx-padding: 14 0 14 0;
+  -fx-padding: 14 0 14 0;
 }
 
 .separator-line .line {
-    -fx-border-color: #1e2d42;
-    -fx-border-width: 0.5;
+  -fx-border-color: #1e2d42;
+  -fx-border-width: 0.5;
 }
 
 .separator-text {
-    -fx-text-fill: #3a4e62;
-    -fx-font-size: 11px;
-    -fx-font-family: "Segoe UI", sans-serif;
+  -fx-text-fill: #3a4e62;
+  -fx-font-size: 11px;
+  -fx-font-family: "Segoe UI", sans-serif;
 }
 
 .guest-btn {
-    -fx-background-color: #ffffff08;
-    -fx-text-fill: #8899aa;
-    -fx-font-size: 12px;
-    -fx-font-family: "Segoe UI", sans-serif;
-    -fx-background-radius: 11;
-    -fx-border-color: #1e2d42;
-    -fx-border-radius: 11;
-    -fx-border-width: 1.5;
-    -fx-cursor: hand;
-    -fx-padding: 12 0 12 0;
+  -fx-background-color: #ffffff08;
+  -fx-text-fill: #8899aa;
+  -fx-font-size: 12px;
+  -fx-font-family: "Segoe UI", sans-serif;
+  -fx-background-radius: 11;
+  -fx-border-color: #1e2d42;
+  -fx-border-radius: 11;
+  -fx-border-width: 1.5;
+  -fx-cursor: hand;
+  -fx-padding: 12 0 12 0;
 }
 
 .guest-btn:hover {
-    -fx-background-color: #ffffff0f;
-    -fx-text-fill: #c0ccd8;
-    -fx-border-color: #2a3e54;
+  -fx-background-color: #ffffff0f;
+  -fx-text-fill: #c0ccd8;
+  -fx-border-color: #2a3e54;
 }
 
 .guest-btn:pressed {
-    -fx-background-color: #ffffff1a;
+  -fx-background-color: #ffffff1a;
 }
 
 /* ============================================================
    SECURITY BADGE
    ============================================================ */
 .security-badge {
-    -fx-padding: 14 0 2 0;
+  -fx-padding: 14 0 2 0;
 }
 
 .shield-icon {
-    -fx-font-size: 12px;
-    -fx-text-fill: #00cec9;
+  -fx-font-size: 12px;
+  -fx-text-fill: #00cec9;
 }
 
 .security-text {
-    -fx-font-size: 10px;
-    -fx-text-fill: #3a5060;
-    -fx-font-family: "Segoe UI", sans-serif;
+  -fx-font-size: 10px;
+  -fx-text-fill: #3a5060;
+  -fx-font-family: "Segoe UI", sans-serif;
 }

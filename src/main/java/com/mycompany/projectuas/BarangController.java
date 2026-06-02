@@ -230,9 +230,10 @@ public class BarangController implements Initializable {
         root.setStyle("-fx-background-color: transparent;");
         root.setPadding(new Insets(6));
 
-        Scene scene = new Scene(root, 322, 80);
+        Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         popupStage.setScene(scene);
+        popupStage.sizeToScene();
 
         // ── Posisi kanan bawah layar ──
         javafx.geometry.Rectangle2D screen = javafx.stage.Screen.getPrimary().getVisualBounds();
@@ -448,7 +449,7 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════
     private void loadDataFromDB() {
         masterData.clear();
-        String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_url FROM tb_barang";
+        String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_path FROM tb_barang";
         try (Connection conn = koneksi.getConnection();
                 PreparedStatement ps = conn.prepareStatement(query);
                 ResultSet rs = ps.executeQuery()) {
@@ -461,7 +462,7 @@ public class BarangController implements Initializable {
                         rs.getInt("harga"),
                         rs.getInt("stok"),
                         rs.getString("deskripsi"),
-                        rs.getString("image_url")));
+                        rs.getString("image_path")));
             }
         } catch (SQLException e) {
             showModernPopup("Error Database", "Gagal memuat data: " + e.getMessage(), PopupType.ERROR);
@@ -484,7 +485,7 @@ public class BarangController implements Initializable {
             String deskripsi = txtDeskripsi.getText();
             String gambar = lblFilePath.getText();
 
-            String query = "INSERT INTO tb_barang (nama_barang, kategori, harga, stok, deskripsi, image_url) VALUES (?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO tb_barang (nama_barang, kategori, harga, stok, deskripsi, image_path) VALUES (?, ?, ?, ?, ?, ?)";
             try (Connection conn = koneksi.getConnection();
                     PreparedStatement ps = conn.prepareStatement(query)) {
 
@@ -528,7 +529,7 @@ public class BarangController implements Initializable {
                     ? dipilih.getGambar()
                     : lblFilePath.getText();
 
-            String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_url=? WHERE id_barang=?";
+            String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_path=? WHERE id_barang=?";
             try (Connection conn = koneksi.getConnection();
                     PreparedStatement ps = conn.prepareStatement(query)) {
 

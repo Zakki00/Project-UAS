@@ -57,6 +57,7 @@ import javafx.util.Duration;
  * @author zakki mubarroq
  */
 public class LaporanController implements Initializable {
+
     // ── Sidebar ───────────────────────────────────────────
     @FXML
     private VBox sidebar;
@@ -171,8 +172,8 @@ public class LaporanController implements Initializable {
     @FXML
     private LineChart<String, Number> monthChart;
 
-    //=======Card View Shift
-        @FXML
+    // =======Card View Shift
+    @FXML
     private VBox cardPagi;
     @FXML
     private VBox cardMalam;
@@ -207,12 +208,11 @@ public class LaporanController implements Initializable {
     private Label lblJamMalam;
     @FXML
     private StackPane wrapperPagi;
-    @FXML 
+    @FXML
     private StackPane wrapperMalam;
 
     // @FXML
     // private StackPane wrapperMalam;
-
     // ----caharts--------------------------------------------
     @FXML
     private VBox vboxChart;
@@ -220,8 +220,6 @@ public class LaporanController implements Initializable {
     @FXML
     private VBox stockList;
 
-    
-    
     // ═════════════════════════════════════════════════════
     // INITIALIZE
     // ══════════════════════╗
@@ -235,7 +233,6 @@ public class LaporanController implements Initializable {
         SetupFrome();
         setActiveNav(navLaporan);
         setupTableLaporan();
-        
 
     }
 
@@ -315,8 +312,9 @@ public class LaporanController implements Initializable {
         int no = 1;
         for (Object[] row : results) {
             int idTransaksi = ((Number) row[0]).intValue();
-            LocalDate tanggalTransaksi = ((java.util.Date) row[1]).toInstant()
-                    .atZone(java.time.ZoneId.systemDefault())
+            String tanggalStr = (String) row[1];
+            LocalDate tanggalTransaksi = java.time.LocalDateTime
+                    .parse(tanggalStr.replace(" ", "T"))
                     .toLocalDate();
             String pelanggan = (String) row[2];
             String statusPembayaran = (String) row[3];
@@ -356,7 +354,6 @@ public class LaporanController implements Initializable {
                             + " data");
         }
     }
-
 
     // ── State ─────────────────────────────────────────────
     private boolean sidebarCollapsed = false;
@@ -474,7 +471,7 @@ public class LaporanController implements Initializable {
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
-        
+
     }
 
     @FXML
@@ -496,8 +493,9 @@ public class LaporanController implements Initializable {
         List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
-            if (!item.getStyleClass().contains("nav-item"))
+            if (!item.getStyleClass().contains("nav-item")) {
                 item.getStyleClass().add("nav-item");
+            }
         }
         selected.getStyleClass().add("nav-active");
     }
@@ -533,7 +531,8 @@ public class LaporanController implements Initializable {
         applyRoundedClip(wrapperPagi);
         applyRoundedClip(wrapperMalam);
     }
-     // ====================================================
+
+    // ====================================================
     // KPI
     // ====================================================
     private void loadKPI() {
@@ -574,35 +573,51 @@ public class LaporanController implements Initializable {
         List<Object[]> todayData = koneksi.ambilData("""
                     SELECT COALESCE(SUM(total_pembayaran), 0)
                     FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE()
+                    WHERE DATE(tanggal_transaksi) = DATE('now')
                 """);
 
         List<Object[]> yesterdayData = koneksi.ambilData("""
                     SELECT COALESCE(SUM(total_pembayaran), 0)
                     FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
+                    WHERE DATE(tanggal_transaksi) = DATE('now', '-1 day')
                 """);
 
-        double today = ((Number) todayData.get(0)[0]).doubleValue();
-        double yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
 
         kpiPenjualan.setText("Rp " + String.format("%,.0f", today));
         setPersenKPI(kpiPenjulanPersen, today, yesterday);
     }
 
     private void loadTotalTransaksi() {
-
-        double today = ((Number) koneksi.ambilData("""
+        List<Object[]> todayData = koneksi.ambilData("""
                     SELECT COUNT(*)
                     FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE()
-                """).get(0)[0]).doubleValue();
+                    WHERE DATE(tanggal_transaksi) = DATE('now')
+                """);
 
-        double yesterday = ((Number) koneksi.ambilData("""
+        List<Object[]> yesterdayData = koneksi.ambilData("""
                     SELECT COUNT(*)
                     FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
-                """).get(0)[0]).doubleValue();
+                    WHERE DATE(tanggal_transaksi) = DATE('now', '-1 day')
+                """);
+
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
 
         kpiTransaksi.setText(String.valueOf((int) today));
         setPersenKPI(kpiTransaksiPersen, today, yesterday);
@@ -610,31 +625,47 @@ public class LaporanController implements Initializable {
 
     private void loadProdukTerjual() {
 
-        double today = ((Number) koneksi.ambilData("""
+        List<Object[]> todayData = koneksi.ambilData("""
                     SELECT COALESCE(SUM(jumlah), 0)
                     FROM tb_detail_transaksi dt
                     JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
-                    WHERE DATE(t.tanggal_transaksi) = CURDATE()
-                """).get(0)[0]).doubleValue();
+                    WHERE DATE(t.tanggal_transaksi) = DATE('now')
+                """);
 
-        double yesterday = ((Number) koneksi.ambilData("""
+        List<Object[]> yesterdayData = koneksi.ambilData("""
                     SELECT COALESCE(SUM(jumlah), 0)
                     FROM tb_detail_transaksi dt
                     JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
-                    WHERE DATE(t.tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY
-                """).get(0)[0]).doubleValue();
+                    WHERE DATE(t.tanggal_transaksi) = DATE('now', '-1 day')
+                """);
 
-        kpiProduk.setText((int) today + " Unit");
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+
+           
+        }
+        kpiProduk.setText(String.valueOf((int) today) + " unit");
         setPersenKPI(kpiProdukPersen, today, yesterday);
+
     }
 
     private void loadStokMenipis() {
-        int stokMenipis = ((Number) koneksi.ambilData("""
+        List<Object[]> stokData = koneksi.ambilData("""
                     SELECT COUNT(*)
                     FROM tb_barang
                     WHERE stok <= 5
-                """).get(0)[0]).intValue();
+                """);
 
+        int stokMenipis = 0;
+        if (!stokData.isEmpty() && stokData.get(0)[0] != null) {
+            stokMenipis = ((Number) stokData.get(0)[0]).intValue();
+        }
         kpiStok.setText(stokMenipis + " Item");
         if (stokMenipis == 0) {
             kpiStokInfo.setText("Semua stok aman");
@@ -652,6 +683,7 @@ public class LaporanController implements Initializable {
             kpiStokInfo.setText("Stok kritis");
         }
     }
+
     // ══════════════════════════════════════════════
     // LOAD SHIFT DATA
     // ══════════════════════════════════════════════
@@ -691,7 +723,7 @@ public class LaporanController implements Initializable {
                 FROM tb_transaksi t
                 JOIN tb_user u ON t.id_user = u.id_user
                 JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                WHERE DATE(t.tanggal_transaksi) = CURDATE()
+                WHERE DATE(t.tanggal_transaksi) = DATE('now')
                 AND TIME(t.tanggal_transaksi) BETWEEN '""" + jamMulai + "' AND '" + jamSelesai + """
                 '
                 GROUP BY u.id_user, u.username, u.nama_lengkap
@@ -739,8 +771,7 @@ public class LaporanController implements Initializable {
 
     // ═════════════════════════════════════════════════════
     // setup tabel laporan
-    //======================================================
-
+    // ======================================================
     private void setupTableLaporan() {
         colNo.setCellValueFactory(
                 data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().no).asObject());
@@ -822,14 +853,14 @@ public class LaporanController implements Initializable {
     // ── Area chart: Penjualan 7 hari terakhir ────────────
     private void setupSalesChart() {
         String sql = """
-                SELECT
-                    DAYNAME(tanggal_transaksi) AS hari,
-                    SUM(total_pembayaran) AS total
-                FROM tb_transaksi
-                WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                AND status_pembayaran = 'Lunas'
-                GROUP BY DATE(tanggal_transaksi), DAYNAME(tanggal_transaksi)
-                ORDER BY DATE(tanggal_transaksi)
+               SELECT
+    strftime('%w', tanggal_transaksi) AS hari,
+    SUM(total_pembayaran) AS total
+FROM tb_transaksi
+WHERE tanggal_transaksi >= date('now', '-7 day')
+AND status_pembayaran = 'Lunas'
+GROUP BY strftime('%w', tanggal_transaksi)
+ORDER BY hari
                 """;
 
         List<Object[]> data = koneksi.ambilData(sql);
@@ -840,8 +871,9 @@ public class LaporanController implements Initializable {
         // fallback kalau data kosong
         if (data.isEmpty()) {
             String[] days = { "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min" };
-            for (String d : days)
+            for (String d : days) {
                 series.getData().add(new XYChart.Data<>(d, 0));
+            }
         } else {
             for (Object[] row : data) {
                 String hari = String.valueOf(row[0]);
@@ -871,8 +903,9 @@ public class LaporanController implements Initializable {
         long max = 1;
         for (Object[] row : data) {
             long val = ((Number) row[1]).longValue();
-            if (val > max)
+            if (val > max) {
                 max = val;
+            }
         }
 
         vboxChart.getChildren().clear();
@@ -916,12 +949,12 @@ public class LaporanController implements Initializable {
     private void setupTrxChart() {
         String sql = """
                 SELECT
-                    DAYNAME(tanggal_transaksi) AS hari,
+                    strftime('%w', tanggal_transaksi) AS hari,
                     COUNT(*) AS jumlah
                 FROM tb_transaksi
-                WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
-                GROUP BY DATE(tanggal_transaksi), DAYNAME(tanggal_transaksi)
-                ORDER BY DATE(tanggal_transaksi)
+                WHERE tanggal_transaksi >= date('now', '-7 day')
+                GROUP BY date(tanggal_transaksi)
+                ORDER BY date(tanggal_transaksi)
                 """;
 
         List<Object[]> data = koneksi.ambilData(sql);
@@ -931,8 +964,9 @@ public class LaporanController implements Initializable {
 
         if (data.isEmpty()) {
             String[] days = { "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min" };
-            for (String d : days)
+            for (String d : days) {
                 series.getData().add(new XYChart.Data<>(d, 0));
+            }
         } else {
             for (Object[] row : data) {
                 String hari = String.valueOf(row[0]);
@@ -951,14 +985,13 @@ public class LaporanController implements Initializable {
     private void setupMonthChart() {
         String sql = """
                 SELECT
-                    DATE_FORMAT(tanggal_transaksi, '%b') AS bulan,
-                    MONTH(tanggal_transaksi) AS no_bulan,
+                    strftime('%m', tanggal_transaksi) AS bulan,
                     SUM(total_pembayaran) AS total
                 FROM tb_transaksi
-                WHERE tanggal_transaksi >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+                WHERE tanggal_transaksi >= date('now', '-6 month')
                 AND status_pembayaran = 'Lunas'
-                GROUP BY MONTH(tanggal_transaksi), DATE_FORMAT(tanggal_transaksi, '%b')
-                ORDER BY no_bulan
+                GROUP BY strftime('%m', tanggal_transaksi)
+                ORDER BY bulan
                 """;
 
         List<Object[]> data = koneksi.ambilData(sql);
@@ -968,12 +1001,13 @@ public class LaporanController implements Initializable {
 
         if (data.isEmpty()) {
             String[] months = { "Jan", "Feb", "Mar", "Apr", "Mei", "Jun" };
-            for (String m : months)
+            for (String m : months) {
                 series.getData().add(new XYChart.Data<>(m, 0));
+            }
         } else {
             for (Object[] row : data) {
                 String bulan = String.valueOf(row[0]);
-                long total = ((Number) row[2]).longValue();
+                long total = ((Number) row[1]).longValue();
                 series.getData().add(new XYChart.Data<>(bulan, total));
             }
         }
@@ -1087,8 +1121,9 @@ public class LaporanController implements Initializable {
     // NOMINAL TEXTFIELD: format otomatis saat input
     private void onNominalChanged() {
 
-        if (isUpdating)
+        if (isUpdating) {
             return;
+        }
         isUpdating = true;
         String raw = tfNominal.getText().replaceAll("[^0-9]", "");
         if (raw.isEmpty()) {
@@ -1198,9 +1233,6 @@ public class LaporanController implements Initializable {
         }
     }
 
-
-   
-
     // ═════════════════════════════════════════════════════
     // OTHER HANDLERS
     // ═════════════════════════════════════════════════════
@@ -1213,7 +1245,7 @@ public class LaporanController implements Initializable {
     private void onLihatSemua() {
         System.out.println("Lihat semua transaksi");
     }
-    
+
     private void applyRoundedClip(StackPane pane) {
         Rectangle clip = new Rectangle();
 
@@ -1225,10 +1257,5 @@ public class LaporanController implements Initializable {
 
         pane.setClip(clip);
     }
-
-
-
-
-    
 
 }

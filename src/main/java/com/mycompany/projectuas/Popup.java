@@ -127,9 +127,10 @@ public class Popup {
                 root.setStyle("-fx-background-color: transparent;");
                 root.setPadding(new Insets(6));
 
-                Scene scene = new Scene(root, 322, 80);
+                Scene scene = new Scene(root);
                 scene.setFill(Color.TRANSPARENT);
                 popupStage.setScene(scene);
+                popupStage.sizeToScene();
 
                 // ── Posisi kanan bawah layar ──
                 javafx.geometry.Rectangle2D screen = javafx.stage.Screen.getPrimary().getVisualBounds();

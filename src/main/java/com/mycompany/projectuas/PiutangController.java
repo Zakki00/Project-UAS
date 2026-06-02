@@ -17,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -147,8 +146,6 @@ public class PiutangController implements Initializable {
     private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
 
     // ---------prepare data hutang dari database----------------
-   
-
 
     // -------------------ambil data hutang dari database----------------
     private void load_data_hutang(String namapelanggan) {
@@ -172,8 +169,9 @@ public class PiutangController implements Initializable {
             String status = String.valueOf(row[5]);
             String tanggal = String.valueOf(row[6]);
 
-            PiutangModel.dataHutang.add(new DataHutang(rowNo++, idTransaksi, namaPelanggan, totalPembayaran, uangPembayaran,
-                    kekurangan, status, tanggal));
+            PiutangModel.dataHutang
+                    .add(new DataHutang(rowNo++, idTransaksi, namaPelanggan, totalPembayaran, uangPembayaran,
+                            kekurangan, status, tanggal));
         }
     }
 
@@ -427,19 +425,19 @@ public class PiutangController implements Initializable {
 
                 + "SUM(CASE "
                 + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = CURDATE() "
+                + "AND DATE(tanggal_transaksi) = DATE('now') "
                 + "THEN 1 ELSE 0 END) AS transaksi_hari_ini, "
 
                 // total piutang kemarin
                 + "SUM(CASE "
                 + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY "
+                + "AND DATE(tanggal_transaksi) = DATE('now', '-1 day') "
                 + "THEN kekurangan ELSE 0 END) AS piutang_kemarin, "
 
                 // transaksi kemarin
                 + "COUNT(CASE "
                 + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY "
+                + "AND DATE(tanggal_transaksi) = DATE('now', '-1 day') "
                 + "THEN 1 END) AS transaksi_kemarin "
 
                 + "FROM tb_transaksi";
@@ -550,61 +548,51 @@ public class PiutangController implements Initializable {
 
         // 1. Validasi input
         if (tfTunai.getText().isEmpty() || kembalian < 0) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Pembayaran Tidak Valid");
-            alert.setHeaderText(null);
-            alert.setContentText("Pastikan jumlah tunai sudah benar dan cukup untuk melunasi hutang.");
-            alert.showAndWait();
+            new Popup().showModernPopup("ERROR",
+                    "Pembayaran tidak valid. Pastikan jumlah tunai mencukupi untuk melunasi hutang.",
+                    Popup.PopupType.ERROR);
             return;
         }
 
-        // 2. Konfirmasi user
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Konfirmasi Lunas");
-        confirm.setHeaderText(null);
-        confirm.setContentText("Tandai transaksi ini sebagai LUNAS?");
+        new Popup().showConfirmPopup("KONFIRMASI", "Apakah Anda yakin ingin menandai transaksi ini sebagai LUNAS?",
+                () -> {
+                    // 3. Ambil data aman
+                    String idTransaksi = lblIdTransaksi.getText();
+                    String kembalianStr = lblKembalian.getText().replaceAll("[^0-9]", "");
+                    String raw = tfTunai.getText();
+                    String clean = raw.replaceAll("[^0-9]", "");
+                    int tunai = Integer.parseInt(clean);
+                    // 4. Update database (HANYA SEKALI)
+                    String sql = "UPDATE tb_transaksi SET "
+                            + "uang_pembayaran = uang_pembayaran + " + tunai + ", "
+                            + "status_pembayaran = 'Lunas', "
+                            + "kembalian = " + kembalianStr + ", "
+                            + "kekurangan = 0 "
+                            + "WHERE id_transaksi = '" + idTransaksi + "'";
 
-        confirm.showAndWait().ifPresent(response -> {
-            if (response != javafx.scene.control.ButtonType.OK) {
-                return;
-            }
+                    koneksi.eksekusiQuery(sql);
 
-            // 3. Ambil data aman
-            String idTransaksi = lblIdTransaksi.getText();
-            String kembalianStr = lblKembalian.getText().replaceAll("[^0-9]", "");
-            String raw = tfTunai.getText();
-            String clean = raw.replaceAll("[^0-9]", "");
-            int tunai = Integer.parseInt(clean);
-            // 4. Update database (HANYA SEKALI)
-            String sql = "UPDATE tb_transaksi SET "
-                    + "uang_pembayaran = uang_pembayaran + " + tunai + ", "
-                    + "status_pembayaran = 'Lunas', "
-                    + "kembalian = " + kembalianStr + ", "
-                    + "kekurangan = 0 "
-                    + "WHERE id_transaksi = '" + idTransaksi + "'";
+                    System.out.println("Transaksi " + idTransaksi + " ditandai LUNAS");
 
-            koneksi.eksekusiQuery(sql);
+                    // 5. Reset state UI
+                    PiutangModel.dataBarang.clear();
+                    renderList();
 
-            System.out.println("Transaksi " + idTransaksi + " ditandai LUNAS");
+                    // 6. Reload data utama (INI YANG PENTING)
+                    load_data_hutang(tfPelanggan.getText());
+                    tableHutang.setItems(PiutangModel.dataHutang);
+                    tableHutang.refresh();
 
-            // 5. Reset state UI
-            PiutangModel.dataBarang.clear();
-            renderList();
+                    // 7. Update komponen lain
+                    updateSummary();
+                    loadKPI();
 
-            // 6. Reload data utama (INI YANG PENTING)
-            load_data_hutang(tfPelanggan.getText());
-            tableHutang.setItems(PiutangModel.dataHutang);
-            tableHutang.refresh();
-
-            // 7. Update komponen lain
-            updateSummary();
-            loadKPI();
-
-            clearform();
-            onClearSearch();
-            tfPelanggan.setDisable(false);
-
-        });
+                    clearform();
+                    onClearSearch();
+                    tfPelanggan.setDisable(false);
+                    new Popup().showModernPopup("SUKSES", "Transaksi berhasil ditandai sebagai LUNAS.", Popup.PopupType.SUCCESS);
+                });
+      
     }
 
     @FXML
@@ -642,6 +630,7 @@ public class PiutangController implements Initializable {
             tfTunai.setText("");
             isUpdating = false;
             updateSummary();
+            return;
         }
         long value = Long.parseLong(raw);
         tfTunai.setText("Rp " + FMT.format(value));

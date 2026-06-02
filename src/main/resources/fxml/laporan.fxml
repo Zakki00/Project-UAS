@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="886.0" prefWidth="913.0" style="root-pane" stylesheets="@../styles/laporan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.LaporanController">
+<BorderPane prefHeight="886.0" prefWidth="913.0" style="root-pane" stylesheets="@../styles/laporan.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.LaporanController">
   <!-- ═══════════════════════════════════════════
          LEFT — SIDEBAR
     ════════════════════════════════════════════ -->
