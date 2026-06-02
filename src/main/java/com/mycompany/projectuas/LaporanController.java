@@ -259,46 +259,34 @@ public class LaporanController implements Initializable {
                     WHERE 1=1
                 """);
 
-        // =========================
+        // Build parameterized filters
+        java.util.List<Object> params = new java.util.ArrayList<>();
+
         // FILTER STATUS PEMBAYARAN
-        // =========================
         if (cbStatusPembayaran.getValue() != null
                 && !cbStatusPembayaran.getValue().isEmpty()
                 && !cbStatusPembayaran.getValue().equals("Semua")) {
-
-            sql.append(" AND t.status_pembayaran = '")
-                    .append(cbStatusPembayaran.getValue())
-                    .append("'");
+            sql.append(" AND t.status_pembayaran = ?");
+            params.add(cbStatusPembayaran.getValue());
         }
 
-        // =========================
         // FILTER TANGGAL
-        // =========================
         if (dpTanggal.getValue() != null) {
-
-            sql.append(" AND DATE(t.tanggal_transaksi) = '")
-                    .append(dpTanggal.getValue())
-                    .append("'");
+            sql.append(" AND DATE(t.tanggal_transaksi) = ?");
+            params.add(dpTanggal.getValue().toString());
         }
 
-        // =========================
         // FILTER NAMA PELANGGAN
-        // =========================
         if (!tfNamaPelanggan.getText().trim().isEmpty()) {
-
-            sql.append(" AND t.pelanggan LIKE '%")
-                    .append(tfNamaPelanggan.getText().trim())
-                    .append("%'");
+            sql.append(" AND t.pelanggan LIKE ?");
+            params.add("%" + tfNamaPelanggan.getText().trim() + "%");
         }
 
-        // =========================
         // FILTER NOMINAL
-        // =========================
         String raw = tfNominal.getText().replaceAll("[^0-9]", "");
-
         if (!raw.isEmpty()) {
-            sql.append(" AND t.total_pembayaran >= ")
-                    .append(Long.parseLong(raw));
+            sql.append(" AND t.total_pembayaran >= ?");
+            params.add(Long.parseLong(raw));
         }
 
         // =========================
@@ -306,7 +294,8 @@ public class LaporanController implements Initializable {
         // =========================
         sql.append(" ORDER BY t.tanggal_transaksi DESC");
 
-        List<Object[]> results = koneksi.ambilData(sql.toString());
+        List<Object[]> results = params.isEmpty() ? koneksi.ambilData(sql.toString())
+                : koneksi.ambilData(sql.toString(), params.toArray());
 
         LaporanModel.dataLaporanTransaksi.clear();
         int no = 1;
@@ -648,7 +637,6 @@ public class LaporanController implements Initializable {
         if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
             yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
 
-           
         }
         kpiProduk.setText(String.valueOf((int) today) + " unit");
         setPersenKPI(kpiProdukPersen, today, yesterday);
@@ -853,15 +841,15 @@ public class LaporanController implements Initializable {
     // ── Area chart: Penjualan 7 hari terakhir ────────────
     private void setupSalesChart() {
         String sql = """
-               SELECT
-    strftime('%w', tanggal_transaksi) AS hari,
-    SUM(total_pembayaran) AS total
-FROM tb_transaksi
-WHERE tanggal_transaksi >= date('now', '-7 day')
-AND status_pembayaran = 'Lunas'
-GROUP BY strftime('%w', tanggal_transaksi)
-ORDER BY hari
-                """;
+                               SELECT
+                    strftime('%w', tanggal_transaksi) AS hari,
+                    SUM(total_pembayaran) AS total
+                FROM tb_transaksi
+                WHERE tanggal_transaksi >= date('now', '-7 day')
+                AND status_pembayaran = 'Lunas'
+                GROUP BY strftime('%w', tanggal_transaksi)
+                ORDER BY hari
+                                """;
 
         List<Object[]> data = koneksi.ambilData(sql);
 

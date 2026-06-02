@@ -146,8 +146,7 @@ public class TransaksiController implements Initializable {
     @FXML
     private Button btnQuick50;
 
-
-// ── Variables ──────────────────────────────────────────────
+    // ── Variables ──────────────────────────────────────────────
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
@@ -167,7 +166,6 @@ public class TransaksiController implements Initializable {
         TransaksiModel.keranjang.clear();
         TransaksiModel.semuaProduk.clear();
     }
-
 
     private boolean sidebarCollapsed = false;
     private static final double SIDEBAR_FULL = 220;
@@ -333,7 +331,6 @@ public class TransaksiController implements Initializable {
         }
     }
 
-    
     // ──data ────────────────────────────────────────
     private void loadproduk() {
         String sql = "SELECT * FROM tb_barang";
@@ -481,19 +478,23 @@ public class TransaksiController implements Initializable {
 
         // ── Bangun SQL dinamis ────────────────────────
         StringBuilder sql = new StringBuilder("SELECT * FROM tb_barang WHERE 1=1");
+        java.util.List<Object> params = new java.util.ArrayList<>();
 
         // tambah filter kategori hanya jika bukan "Semua Kategori"
         if (kat != null && !kat.equals("Semua Kategori")) {
-            sql.append(" AND kategori = '").append(kat).append("'");
+            sql.append(" AND kategori = ?");
+            params.add(kat);
         }
 
         // tambah filter nama hanya jika ada ketikan
         if (!query.isEmpty()) {
-            sql.append(" AND nama_barang LIKE '%").append(query).append("%'");
+            sql.append(" AND nama_barang LIKE ?");
+            params.add("%" + query + "%");
         }
 
         // ── Ambil data ────────────────────────────────
-        List<Object[]> hasil = koneksi.ambilData(sql.toString());
+        List<Object[]> hasil = params.isEmpty() ? koneksi.ambilData(sql.toString())
+                : koneksi.ambilData(sql.toString(), params.toArray());
         List<Produk> list = new ArrayList<>();
 
         for (Object[] row : hasil) {
@@ -723,31 +724,28 @@ public class TransaksiController implements Initializable {
 
         if (kembalian >= 0) {
 
-            String sqlTransaksi = String.format("INSERT INTO tb_transaksi "
+            String sqlTransaksi = "INSERT INTO tb_transaksi "
                     + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                    + "VALUES (%d, %d, %d, %d, %d, '%s',DATETIME('now'), '%s')",
+                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now'), ?)";
 
-                    session.id_user, TransaksiModel.total, tunai, kembalian, 0, "Lunas", "");
-
-            koneksi.eksekusiQuery(sqlTransaksi);
+            koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, kembalian, 0, "Lunas",
+                    "");
 
         } else {
 
-            String sqlTransaksi = String.format("INSERT INTO tb_transaksi "
+            String sqlTransaksi = "INSERT INTO tb_transaksi "
                     + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                    + "VALUES (%d, %d, %d, %d, %d, '%s', DATETIME('now'), '%s')",
+                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now'), ?)";
 
-                    session.id_user, TransaksiModel.total, tunai, 0, Math.abs(kembalian), "Belum Lunas", "");
-
-            koneksi.eksekusiQuery(sqlTransaksi);
+            koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, 0, Math.abs(kembalian),
+                    "Belum Lunas", "");
         }
 
         for (CartItem item : TransaksiModel.keranjang.values()) {
 
-            String sqlUpdateStok = "UPDATE tb_barang SET stok = stok - '" + item.qty + "' WHERE id_barang = '"
-                    + item.produk.id + "'";
+            String sqlUpdateStok = "UPDATE tb_barang SET stok = stok - ? WHERE id_barang = ?";
 
-            koneksi.eksekusiQuery(sqlUpdateStok);
+            koneksi.eksekusiQuery(sqlUpdateStok, item.qty, item.produk.id);
             System.out.println("Berhasil update stok barang ID: " + item.produk.id +
                     " qty: " + item.qty);
         }

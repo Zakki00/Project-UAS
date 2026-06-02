@@ -2,16 +2,17 @@ package com.mycompany.projectuas;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 public class koneksi {
     private static final String URL = "jdbc:sqlite:src/main/resources/db/db_enjoy_cafe.db";
-    // private static final String URL = "jdbc:mysql://localhost:3306/db_enjoy_cave";
+    // private static final String URL =
+    // "jdbc:mysql://localhost:3306/db_enjoy_cave";
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
 
@@ -28,34 +29,49 @@ public class koneksi {
     }
 
     public static void eksekusiQuery(String query) {
-        try (Connection connection = getConnection()) {
-            connection.createStatement().execute(query);
+        eksekusiQuery(query, new Object[] {});
+
+    }
+
+    public static void eksekusiQuery(String query, Object... params) {
+        try (Connection connection = getConnection(); PreparedStatement ps = connection.prepareStatement(query)) {
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ps.executeUpdate();
             System.out.println("Query berhasil dieksekusi!");
 
         } catch (SQLException e) {
             System.err.println("Gagal mengeksekusi query: " + e.getMessage());
-
         }
 
     }
-    
+
     public static List<Object[]> ambilData(String query) {
+        return ambilData(query, new Object[] {});
+    }
+
+    public static List<Object[]> ambilData(String query, Object... params) {
         List<Object[]> dataList = new ArrayList<>();
 
-        try (Connection connection = getConnection(); Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(query)) {
+        try (Connection connection = getConnection(); PreparedStatement ps = connection.prepareStatement(query)) {
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
 
-            ResultSetMetaData metaData = resultSet.getMetaData();
-            int columnCount = metaData.getColumnCount();
+            try (ResultSet resultSet = ps.executeQuery()) {
+                ResultSetMetaData metaData = resultSet.getMetaData();
+                int columnCount = metaData.getColumnCount();
 
-            while (resultSet.next()) {
-                Object[] rowData = new Object[columnCount];
+                while (resultSet.next()) {
+                    Object[] rowData = new Object[columnCount];
 
-                for (int i = 1; i <= columnCount; i++) {
-                    rowData[i - 1] = resultSet.getObject(i);
+                    for (int i = 1; i <= columnCount; i++) {
+                        rowData[i - 1] = resultSet.getObject(i);
+                    }
+
+                    dataList.add(rowData);
                 }
-
-                dataList.add(rowData);
             }
 
         } catch (SQLException e) {

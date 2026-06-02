@@ -10,6 +10,7 @@ module com.mycompany.projectuas {
     requires org.apache.poi.ooxml;
 
     opens com.mycompany.projectuas to javafx.fxml;
+    opens com.mycompany.Model to javafx.fxml, javafx.base;
 
     exports com.mycompany.projectuas;
 }

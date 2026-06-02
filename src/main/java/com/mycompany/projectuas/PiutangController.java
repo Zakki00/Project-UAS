@@ -152,12 +152,11 @@ public class PiutangController implements Initializable {
         PiutangModel.dataHutang.clear();
         String sql = "SELECT " + "t.id_transaksi, " + "t.pelanggan AS nama_pelanggan, " + "t.total_pembayaran, "
                 + "t.uang_pembayaran, " + "t.kekurangan, " + "t.status_pembayaran, " + "t.tanggal_transaksi "
-                + "FROM tb_transaksi t " + "WHERE t.status_pembayaran = 'Belum Lunas' " + "AND t.pelanggan LIKE '%"
-                + namapelanggan + "%'";
+                + "FROM tb_transaksi t " + "WHERE t.status_pembayaran = 'Belum Lunas' " + "AND t.pelanggan LIKE ?";
 
         int rowNo = 1;
 
-        List<Object[]> results = koneksi.ambilData(sql);
+        List<Object[]> results = koneksi.ambilData(sql, "%" + namapelanggan + "%");
         System.out.println("Hasil query Data Hutang: " + results.size() + " baris");
         for (Object[] row : results) {
 
@@ -177,9 +176,8 @@ public class PiutangController implements Initializable {
 
     private void load_data_barang(DataHutang dataHutang) {
         String sql = "SELECT " + "b.nama_barang, " + "b.harga, " + "td.jumlah " + "FROM tb_detail_transaksi td "
-                + "JOIN tb_barang b " + "ON td.id_barang = b.id_barang " + "WHERE td.id_transaksi = '"
-                + dataHutang.idTransaksi + "'";
-        List<Object[]> results = koneksi.ambilData(sql);
+                + "JOIN tb_barang b " + "ON td.id_barang = b.id_barang " + "WHERE td.id_transaksi = ?";
+        List<Object[]> results = koneksi.ambilData(sql, dataHutang.idTransaksi);
         System.out.println("Hasil query barang: " + results.size() + " baris");
         for (Object[] row : results) {
             String nama = String.valueOf(row[0]);
@@ -563,14 +561,15 @@ public class PiutangController implements Initializable {
                     String clean = raw.replaceAll("[^0-9]", "");
                     int tunai = Integer.parseInt(clean);
                     // 4. Update database (HANYA SEKALI)
+                    long kembalianNum = Long.parseLong(kembalianStr.isEmpty() ? "0" : kembalianStr);
                     String sql = "UPDATE tb_transaksi SET "
-                            + "uang_pembayaran = uang_pembayaran + " + tunai + ", "
+                            + "uang_pembayaran = uang_pembayaran + ?, "
                             + "status_pembayaran = 'Lunas', "
-                            + "kembalian = " + kembalianStr + ", "
+                            + "kembalian = ?, "
                             + "kekurangan = 0 "
-                            + "WHERE id_transaksi = '" + idTransaksi + "'";
+                            + "WHERE id_transaksi = ?";
 
-                    koneksi.eksekusiQuery(sql);
+                    koneksi.eksekusiQuery(sql, tunai, kembalianNum, idTransaksi);
 
                     System.out.println("Transaksi " + idTransaksi + " ditandai LUNAS");
 
@@ -590,9 +589,10 @@ public class PiutangController implements Initializable {
                     clearform();
                     onClearSearch();
                     tfPelanggan.setDisable(false);
-                    new Popup().showModernPopup("SUKSES", "Transaksi berhasil ditandai sebagai LUNAS.", Popup.PopupType.SUCCESS);
+                    new Popup().showModernPopup("SUKSES", "Transaksi berhasil ditandai sebagai LUNAS.",
+                            Popup.PopupType.SUCCESS);
                 });
-      
+
     }
 
     @FXML

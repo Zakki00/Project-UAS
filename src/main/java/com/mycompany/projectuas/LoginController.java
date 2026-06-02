@@ -40,14 +40,13 @@ public class LoginController implements Initializable {
     private boolean showingPassword = false;
     Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
 
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Sync PasswordField <-> TextField untuk show/hide password
         passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
         loginBtn.setDefaultButton(true);
         loadRememberedCredentials();
-        
+
     }
 
     @FXML
@@ -61,8 +60,8 @@ public class LoginController implements Initializable {
             return;
         }
 
-        String query = "SELECT * FROM tb_user WHERE username = '" + username + "' AND password = '" + password + "'";
-        List<Object[]> result = koneksi.ambilData(query);
+        String query = "SELECT * FROM tb_user WHERE username = ? AND password = ?";
+        List<Object[]> result = koneksi.ambilData(query, username, password);
 
         if (result.size() > 0) {
 

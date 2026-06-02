@@ -265,19 +265,17 @@ public class DetailTransaksiController implements Initializable {
     private void onSimpanTransaksi() {
         String pelanggan = tfPelanggan.getText().trim();
         if (pelanggan.isEmpty()) {
-           new Popup().showModernPopup("ERROR", "Silahkan Isi Nama Pelanggan", Popup.PopupType.ERROR);
+            new Popup().showModernPopup("ERROR", "Silahkan Isi Nama Pelanggan", Popup.PopupType.ERROR);
             return;
         }
         // method helper untuk tutup form
 
         for (CartItem ci : TransaksiModel.keranjang.values()) {
-            String sql_dtransaksi = "INSERT INTO tb_detail_transaksi (id_transaksi,id_barang,jumlah,harga) VALUES ('"
-                    + id_transaksi + "','" + ci.produk.id + "','" + ci.qty + "','" + ci.produk.harga + "')";
-            koneksi.eksekusiQuery(sql_dtransaksi);
+            String sql_dtransaksi = "INSERT INTO tb_detail_transaksi (id_transaksi,id_barang,jumlah,harga) VALUES (?,?,?,?)";
+            koneksi.eksekusiQuery(sql_dtransaksi, id_transaksi, ci.produk.id, ci.qty, ci.produk.harga);
         }
-        String sql_update_pelanggan = "UPDATE tb_transaksi SET pelanggan = '" + pelanggan + "' WHERE id_transaksi = '"
-                + id_transaksi + "'";
-        koneksi.eksekusiQuery(sql_update_pelanggan);
+        String sql_update_pelanggan = "UPDATE tb_transaksi SET pelanggan = ? WHERE id_transaksi = ?";
+        koneksi.eksekusiQuery(sql_update_pelanggan, pelanggan, id_transaksi);
 
         // TODO: simpan ke database
         System.out.println("=== SIMPAN TRANSAKSI ===");
@@ -299,8 +297,8 @@ public class DetailTransaksiController implements Initializable {
             tfPelanggan.clear();
             renderList();
             closeForm(btnBatal);
-            String sql_hapus_transaksi = "DELETE FROM tb_transaksi WHERE id_transaksi = '" + id_transaksi + "'";
-            koneksi.eksekusiQuery(sql_hapus_transaksi);
+            String sql_hapus_transaksi = "DELETE FROM tb_transaksi WHERE id_transaksi = ?";
+            koneksi.eksekusiQuery(sql_hapus_transaksi, id_transaksi);
         });
     }
 
