@@ -2,21 +2,17 @@ package com.mycompany.projectuas;
 
 import java.net.URL;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.PiutangModel;
 import com.mycompany.Model.PiutangModel.DataHutang;
-import com.mycompany.Model.PiutangModel.DataBarangHutang;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -312,6 +308,10 @@ public class PiutangController implements Initializable {
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
+        navigation nav = new navigation();
+        nav.navigateToProduk();
+        Stage stage = (Stage) navProduk.getScene().getWindow();
+        stage.close();
     }
 
     @FXML

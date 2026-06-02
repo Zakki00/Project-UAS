@@ -1,16 +1,14 @@
 package com.mycompany.projectuas;
+
 import java.net.URL;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.DetailTransaksiModel;
-import com.mycompany.Model.DetailTransaksiModel.ItemTransaksi;
-
-import com.mycompany.Model.TransaksiModel.CartItem;
 import com.mycompany.Model.TransaksiModel;
+import com.mycompany.Model.TransaksiModel.CartItem;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -65,7 +63,6 @@ public class DetailTransaksiController implements Initializable {
             id_transaksi = ((Number) row[0]).intValue();
         }
     }
-
 
     private VBox detailList;
 
@@ -224,7 +221,7 @@ public class DetailTransaksiController implements Initializable {
         row.getStyleClass().add("item-row");
         row.setAlignment(Pos.CENTER_LEFT);
 
-        return new HBox(12, lblNo, namaBox, lblHarga, lblQty, lblSub);
+        return row;
     }
 
     // ── Item row ──────────────────────────────────────
@@ -294,12 +291,8 @@ public class DetailTransaksiController implements Initializable {
         System.out.println("Pelanggan: " + pelanggan);
         DetailTransaksiModel.ItemTransaksi.listItem.forEach(
                 item -> System.out.printf("  %s x%d = Rp %s%n", item.nama, item.qty, FMT.format(item.subtotal())));
-
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Berhasil");
-        alert.setHeaderText(null);
-        alert.setContentText("✅ Transaksi berhasil disimpan!");
-        alert.showAndWait();
+                
+        new Popup().showSuccessPopup("Transaksi Berhasil", "Transaksi berhasil disimpan!");
 
         TransaksiModel.keranjang.clear();
         transaksiController.renderKeranjang();
@@ -323,4 +316,5 @@ public class DetailTransaksiController implements Initializable {
             }
         });
     }
+
 }

@@ -58,43 +58,77 @@ import javafx.util.Duration;
 
 public class BarangController implements Initializable {
 
-    @FXML private TextField txtNama;
-    @FXML private ComboBox<String> cmbKategori;
-    @FXML private TextField txtHarga;
-    @FXML private TextField txtStok;
-    @FXML private TextArea txtDeskripsi;
-    @FXML private Label lblFilePath;
-    @FXML private TextField txtCari;
+    @FXML
+    private TextField txtNama;
+    @FXML
+    private ComboBox<String> cmbKategori;
+    @FXML
+    private TextField txtHarga;
+    @FXML
+    private TextField txtStok;
+    @FXML
+    private TextArea txtDeskripsi;
+    @FXML
+    private Label lblFilePath;
+    @FXML
+    private TextField txtCari;
 
-    @FXML private TableView<BarangModel> tabelBarang;
-    @FXML private TableColumn<BarangModel, Integer> colId;
-    @FXML private TableColumn<BarangModel, String> colGambar;
-    @FXML private TableColumn<BarangModel, String> colNama;
-    @FXML private TableColumn<BarangModel, String> colKategori;
-    @FXML private TableColumn<BarangModel, Integer> colHarga;
-    @FXML private TableColumn<BarangModel, Integer> colStok;
-    @FXML private TableColumn<BarangModel, String> colDeskripsi;
-    @FXML private TableColumn<BarangModel, String> colStatus;
+    @FXML
+    private TableView<BarangModel> tabelBarang;
+    @FXML
+    private TableColumn<BarangModel, Integer> colId;
+    @FXML
+    private TableColumn<BarangModel, String> colGambar;
+    @FXML
+    private TableColumn<BarangModel, String> colNama;
+    @FXML
+    private TableColumn<BarangModel, String> colKategori;
+    @FXML
+    private TableColumn<BarangModel, Integer> colHarga;
+    @FXML
+    private TableColumn<BarangModel, Integer> colStok;
+    @FXML
+    private TableColumn<BarangModel, String> colDeskripsi;
+    @FXML
+    private TableColumn<BarangModel, String> colStatus;
 
-    @FXML private VBox sidebar;
-    @FXML private VBox logoBrand;
-    @FXML private Button toggleBtn;
-    @FXML private Label navLblDashboard;
-    @FXML private Label navLblProduk;
-    @FXML private Label navLblKasir;
-    @FXML private Label navLblPelanggan;
-    @FXML private Label navLblLaporan;
-    @FXML private Label navLblPengaturan;
-    @FXML private Label navLblPengaturan1;
-    @FXML private VBox userInfo;
+    @FXML
+    private VBox sidebar;
+    @FXML
+    private VBox logoBrand;
+    @FXML
+    private Button toggleBtn;
+    @FXML
+    private Label navLblDashboard;
+    @FXML
+    private Label navLblProduk;
+    @FXML
+    private Label navLblKasir;
+    @FXML
+    private Label navLblPelanggan;
+    @FXML
+    private Label navLblLaporan;
+    @FXML
+    private Label navLblPengaturan;
+    @FXML
+    private Label navLblPengaturan1;
+    @FXML
+    private VBox userInfo;
 
-    @FXML private HBox navDashboard;
-    @FXML private HBox navProduk;
-    @FXML private HBox navKasir;
-    @FXML private HBox navPelanggan;
-    @FXML private HBox navLaporan;
-    @FXML private HBox navPiutang;
-    @FXML private HBox navPengaturan;
+    @FXML
+    private HBox navDashboard;
+    @FXML
+    private HBox navProduk;
+    @FXML
+    private HBox navKasir;
+    @FXML
+    private HBox navPelanggan;
+    @FXML
+    private HBox navLaporan;
+    @FXML
+    private HBox navPiutang;
+    @FXML
+    private HBox navPengaturan;
 
     private ObservableList<BarangModel> masterData = FXCollections.observableArrayList();
     private FilteredList<BarangModel> filteredData;
@@ -104,7 +138,9 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════
     // MODERN POPUP TOAST
     // ═══════════════════════════════════════════
-    public enum PopupType { SUCCESS, ERROR, WARNING }
+    public enum PopupType {
+        SUCCESS, ERROR, WARNING
+    }
 
     private void showModernPopup(String title, String message, PopupType type) {
         Stage popupStage = new Stage(StageStyle.TRANSPARENT);
@@ -114,23 +150,23 @@ public class BarangController implements Initializable {
         String bgColor, iconText, borderColor;
         switch (type) {
             case SUCCESS:
-                bgColor     = "#1a1a2e";
-                iconText    = "✓";
+                bgColor = "#1a1a2e";
+                iconText = "✓";
                 borderColor = "#00d084";
                 break;
             case ERROR:
-                bgColor     = "#1a1a2e";
-                iconText    = "✕";
+                bgColor = "#1a1a2e";
+                iconText = "✕";
                 borderColor = "#ff4d6d";
                 break;
             case WARNING:
-                bgColor     = "#1a1a2e";
-                iconText    = "⚠";
+                bgColor = "#1a1a2e";
+                iconText = "⚠";
                 borderColor = "#ffd60a";
                 break;
             default:
-                bgColor     = "#1a1a2e";
-                iconText    = "ℹ";
+                bgColor = "#1a1a2e";
+                iconText = "ℹ";
                 borderColor = "#4cc9f0";
         }
 
@@ -139,17 +175,16 @@ public class BarangController implements Initializable {
         icon.setFont(Font.font("System", FontWeight.BOLD, 18));
         icon.setTextFill(Color.web(borderColor));
         icon.setStyle(
-            "-fx-background-color: transparent;" +
-            "-fx-border-color: " + borderColor + ";" +
-            "-fx-border-radius: 50;" +
-            "-fx-background-radius: 50;" +
-            "-fx-border-width: 2;" +
-            "-fx-min-width: 36px;" +
-            "-fx-min-height: 36px;" +
-            "-fx-max-width: 36px;" +
-            "-fx-max-height: 36px;" +
-            "-fx-alignment: center;"
-        );
+                "-fx-background-color: transparent;" +
+                        "-fx-border-color: " + borderColor + ";" +
+                        "-fx-border-radius: 50;" +
+                        "-fx-background-radius: 50;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-min-width: 36px;" +
+                        "-fx-min-height: 36px;" +
+                        "-fx-max-width: 36px;" +
+                        "-fx-max-height: 36px;" +
+                        "-fx-alignment: center;");
 
         // ── Teks ──
         Label lblTitle = new Label(title);
@@ -170,11 +205,10 @@ public class BarangController implements Initializable {
         progressBar.setPrefWidth(310);
         progressBar.setPrefHeight(3);
         progressBar.setStyle(
-            "-fx-accent: " + borderColor + ";" +
-            "-fx-background-color: #2a2a3e;" +
-            "-fx-background-radius: 0;" +
-            "-fx-border-radius: 0;"
-        );
+                "-fx-accent: " + borderColor + ";" +
+                        "-fx-background-color: #2a2a3e;" +
+                        "-fx-background-radius: 0;" +
+                        "-fx-border-radius: 0;");
 
         // ── Layout utama ──
         HBox content = new HBox(14, icon, textBox);
@@ -183,13 +217,12 @@ public class BarangController implements Initializable {
 
         VBox card = new VBox(0, content, progressBar);
         card.setStyle(
-            "-fx-background-color: " + bgColor + ";" +
-            "-fx-background-radius: 12;" +
-            "-fx-border-color: " + borderColor + ";" +
-            "-fx-border-width: 1;" +
-            "-fx-border-radius: 12;" +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0, 0, 6);"
-        );
+                "-fx-background-color: " + bgColor + ";" +
+                        "-fx-background-radius: 12;" +
+                        "-fx-border-color: " + borderColor + ";" +
+                        "-fx-border-width: 1;" +
+                        "-fx-border-radius: 12;" +
+                        "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0, 0, 6);");
         card.setMinWidth(310);
         card.setMaxWidth(310);
 
@@ -222,9 +255,8 @@ public class BarangController implements Initializable {
 
         // ── Progress bar countdown (3 detik) ──
         Timeline countdown = new Timeline(
-            new KeyFrame(Duration.ZERO,       new KeyValue(progressBar.progressProperty(), 1.0)),
-            new KeyFrame(Duration.seconds(3), new KeyValue(progressBar.progressProperty(), 0.0))
-        );
+                new KeyFrame(Duration.ZERO, new KeyValue(progressBar.progressProperty(), 1.0)),
+                new KeyFrame(Duration.seconds(3), new KeyValue(progressBar.progressProperty(), 0.0)));
         countdown.play();
 
         // ── Fade out lalu tutup ──
@@ -276,8 +308,10 @@ public class BarangController implements Initializable {
             @Override
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || item == null) setText(null);
-                else setText("Rp " + String.format("%,d", item).replace(',', '.'));
+                if (empty || item == null)
+                    setText(null);
+                else
+                    setText("Rp " + String.format("%,d", item).replace(',', '.'));
             }
         });
 
@@ -290,22 +324,27 @@ public class BarangController implements Initializable {
                 imageView.setFitHeight(50);
                 imageView.setPreserveRatio(true);
             }
+
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null || item.isBlank()) {
-                    setGraphic(null); setText(null);
+                    setGraphic(null);
+                    setText(null);
                 } else {
                     try {
                         var stream = getClass().getResourceAsStream("/image-barang/" + item);
                         if (stream != null) {
                             imageView.setImage(new Image(stream));
-                            setGraphic(imageView); setText(null);
+                            setGraphic(imageView);
+                            setText(null);
                         } else {
-                            setGraphic(null); setText(item);
+                            setGraphic(null);
+                            setText(item);
                         }
                     } catch (Exception e) {
-                        setGraphic(null); setText(null);
+                        setGraphic(null);
+                        setText(null);
                     }
                 }
             }
@@ -325,7 +364,8 @@ public class BarangController implements Initializable {
 
         // ── txtHarga format Rp otomatis ──
         txtHarga.textProperty().addListener((obs, oldVal, newVal) -> {
-            if (isUpdatingHarga) return;
+            if (isUpdatingHarga)
+                return;
             isUpdatingHarga = true;
             String angkaSaja = newVal.replaceAll("[^\\d]", "");
             if (angkaSaja.isEmpty()) {
@@ -350,7 +390,8 @@ public class BarangController implements Initializable {
                 cmbKategori.setValue(newSelection.getKategori());
                 txtStok.setText(String.valueOf(newSelection.getStok()));
                 txtDeskripsi.setText(newSelection.getDeskripsi());
-                lblFilePath.setText(newSelection.getGambar() != null ? newSelection.getGambar() : "Tidak ada file dipilih");
+                lblFilePath.setText(
+                        newSelection.getGambar() != null ? newSelection.getGambar() : "Tidak ada file dipilih");
 
                 isUpdatingHarga = true;
                 txtHarga.setText("Rp " + String.format("%,d", newSelection.getHarga()).replace(',', '.'));
@@ -363,9 +404,13 @@ public class BarangController implements Initializable {
     // ── Ambil angka murni dari txtHarga ──
     private int getHargaValue() {
         String angkaSaja = txtHarga.getText().replaceAll("[^\\d]", "");
-        if (angkaSaja.isEmpty()) return 0;
-        try { return Integer.parseInt(angkaSaja); }
-        catch (NumberFormatException e) { return 0; }
+        if (angkaSaja.isEmpty())
+            return 0;
+        try {
+            return Integer.parseInt(angkaSaja);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     // ═══════════════════════════════════════════
@@ -405,19 +450,18 @@ public class BarangController implements Initializable {
         masterData.clear();
         String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_url FROM tb_barang";
         try (Connection conn = koneksi.getConnection();
-             PreparedStatement ps = conn.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(query);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 masterData.add(new BarangModel(
-                    rs.getInt("id_barang"),
-                    rs.getString("nama_barang"),
-                    rs.getString("kategori"),
-                    rs.getInt("harga"),
-                    rs.getInt("stok"),
-                    rs.getString("deskripsi"),
-                    rs.getString("image_url")
-                ));
+                        rs.getInt("id_barang"),
+                        rs.getString("nama_barang"),
+                        rs.getString("kategori"),
+                        rs.getInt("harga"),
+                        rs.getInt("stok"),
+                        rs.getString("deskripsi"),
+                        rs.getString("image_url")));
             }
         } catch (SQLException e) {
             showModernPopup("Error Database", "Gagal memuat data: " + e.getMessage(), PopupType.ERROR);
@@ -429,19 +473,20 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════
     @FXML
     void tambahBarang(ActionEvent event) {
-        if (!isInputValid(false, null)) return;
+        if (!isInputValid(false, null))
+            return;
 
         try {
-            String nama      = txtNama.getText().trim();
-            String kategori  = cmbKategori.getValue();
-            int harga        = getHargaValue();
-            int stok         = Integer.parseInt(txtStok.getText().trim());
+            String nama = txtNama.getText().trim();
+            String kategori = cmbKategori.getValue();
+            int harga = getHargaValue();
+            int stok = Integer.parseInt(txtStok.getText().trim());
             String deskripsi = txtDeskripsi.getText();
-            String gambar    = lblFilePath.getText();
+            String gambar = lblFilePath.getText();
 
             String query = "INSERT INTO tb_barang (nama_barang, kategori, harga, stok, deskripsi, image_url) VALUES (?, ?, ?, ?, ?, ?)";
             try (Connection conn = koneksi.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(query)) {
+                    PreparedStatement ps = conn.prepareStatement(query)) {
 
                 ps.setString(1, nama);
                 ps.setString(2, kategori);
@@ -470,21 +515,22 @@ public class BarangController implements Initializable {
             showModernPopup("Peringatan", "Pilih salah satu data barang di tabel terlebih dahulu!", PopupType.WARNING);
             return;
         }
-        if (!isInputValid(true, dipilih)) return;
+        if (!isInputValid(true, dipilih))
+            return;
 
         try {
-            String nama      = txtNama.getText().trim();
-            String kategori  = cmbKategori.getValue();
-            int harga        = getHargaValue();
-            int stok         = Integer.parseInt(txtStok.getText().trim());
+            String nama = txtNama.getText().trim();
+            String kategori = cmbKategori.getValue();
+            int harga = getHargaValue();
+            int stok = Integer.parseInt(txtStok.getText().trim());
             String deskripsi = txtDeskripsi.getText();
-            String gambar    = lblFilePath.getText().equals("Tidak ada file dipilih")
-                               ? dipilih.getGambar()
-                               : lblFilePath.getText();
+            String gambar = lblFilePath.getText().equals("Tidak ada file dipilih")
+                    ? dipilih.getGambar()
+                    : lblFilePath.getText();
 
             String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_url=? WHERE id_barang=?";
             try (Connection conn = koneksi.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(query)) {
+                    PreparedStatement ps = conn.prepareStatement(query)) {
 
                 ps.setString(1, nama);
                 ps.setString(2, kategori);
@@ -518,7 +564,7 @@ public class BarangController implements Initializable {
             String namaBarang = dipilih.getNama();
             String query = "DELETE FROM tb_barang WHERE id_barang=?";
             try (Connection conn = koneksi.getConnection();
-                 PreparedStatement ps = conn.prepareStatement(query)) {
+                    PreparedStatement ps = conn.prepareStatement(query)) {
 
                 ps.setInt(1, dipilih.getId());
                 ps.executeUpdate();
@@ -550,7 +596,8 @@ public class BarangController implements Initializable {
     void cariBarang(KeyEvent event) {
         String keyword = txtCari.getText().toLowerCase();
         filteredData.setPredicate(barang -> {
-            if (keyword == null || keyword.isEmpty()) return true;
+            if (keyword == null || keyword.isEmpty())
+                return true;
             return barang.getNama().toLowerCase().contains(keyword)
                     || barang.getKategori().toLowerCase().contains(keyword);
         });
@@ -560,11 +607,9 @@ public class BarangController implements Initializable {
     void onPilihFoto(ActionEvent event) {
         FileChooser fc = new FileChooser();
         fc.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter(
-                "Gambar (*.png, *.jpg, *.jpeg, *.webp, *.jfif)",
-                "*.png", "*.jpg", "*.jpeg", "*.webp", "*.jfif"
-            )
-        );
+                new FileChooser.ExtensionFilter(
+                        "Gambar (*.png, *.jpg, *.jpeg, *.webp, *.jfif)",
+                        "*.png", "*.jpg", "*.jpeg", "*.webp", "*.jfif"));
 
         File file = fc.showOpenDialog(txtNama.getScene().getWindow());
         if (file != null) {
@@ -625,7 +670,7 @@ public class BarangController implements Initializable {
     @FXML
     void onNavProduk() {
         setActiveNav(navProduk);
-        System.out.println("ℹ️ Sudah di halaman Produk");
+
     }
 
     @FXML
@@ -637,7 +682,10 @@ public class BarangController implements Initializable {
         stage.close();
     }
 
-    @FXML void onNavPelanggan() { setActiveNav(navPelanggan); }
+    @FXML
+    void onNavPelanggan() {
+        setActiveNav(navPelanggan);
+    }
 
     @FXML
     void onNavLaporan() {
@@ -657,13 +705,15 @@ public class BarangController implements Initializable {
         stage.close();
     }
 
-    @FXML void onNavPengaturan() { setActiveNav(navPengaturan); }
+    @FXML
+    void onNavPengaturan() {
+        setActiveNav(navPengaturan);
+    }
 
     private void setActiveNav(HBox selected) {
         java.util.List<HBox> all = java.util.List.of(
-            navDashboard, navProduk, navKasir,
-            navPelanggan, navLaporan, navPiutang, navPengaturan
-        );
+                navDashboard, navProduk, navKasir,
+                navPelanggan, navLaporan, navPiutang, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))

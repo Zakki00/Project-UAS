@@ -243,6 +243,10 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
+        navigation nav = new navigation();
+        nav.navigateToProduk();
+        Stage stage = (Stage) navProduk.getScene().getWindow();
+        stage.close();
     }
 
     @FXML

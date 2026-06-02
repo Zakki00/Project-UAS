@@ -220,10 +220,24 @@ public class LaporanController implements Initializable {
     @FXML
     private VBox stockList;
 
-    // ── State ─────────────────────────────────────────────
-    private boolean sidebarCollapsed = false;
-    private static final double SIDEBAR_FULL = 220;
-    private static final double SIDEBAR_MINI = 60;
+    
+    
+    // ═════════════════════════════════════════════════════
+    // INITIALIZE
+    // ══════════════════════╗
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        loadLaporanTransaksi();
+        loadKPI();
+        setupCharts();
+        setupStockList();
+        setupNavHover();
+        SetupFrome();
+        setActiveNav(navLaporan);
+        setupTableLaporan();
+        
+
+    }
 
     // ── Data ───────────────────────────────────────
     private static final NumberFormat FMT = NumberFormat.getInstance(
@@ -343,22 +357,11 @@ public class LaporanController implements Initializable {
         }
     }
 
-    // ═════════════════════════════════════════════════════
-    // INITIALIZE
-    // ══════════════════════╗
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        loadLaporanTransaksi();
-        loadKPI();
-        setupCharts();
-        setupStockList();
-        setupNavHover();
-        SetupFrome();
-        setActiveNav(navLaporan);
-        setupTableLaporan();
-        
 
-    }
+    // ── State ─────────────────────────────────────────────
+    private boolean sidebarCollapsed = false;
+    private static final double SIDEBAR_FULL = 220;
+    private static final double SIDEBAR_MINI = 60;
 
     // ═════════════════════════════════════════════════════
     // SIDEBAR TOGGLE (animasi smooth)
@@ -447,6 +450,11 @@ public class LaporanController implements Initializable {
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
+        navigation nav = new navigation();
+        nav.navigateToProduk();
+        Stage stage = (Stage) navProduk.getScene().getWindow();
+        stage.close();
+
     }
 
     @FXML
@@ -466,7 +474,7 @@ public class LaporanController implements Initializable {
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
-
+        
     }
 
     @FXML
