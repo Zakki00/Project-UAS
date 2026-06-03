@@ -675,6 +675,22 @@
     -fx-background-color: #2E3250;
 }
 
+
+
+/* METODE PEMBAYARAN */
+.btn-pembayaran-active {
+    -fx-background-color: #6C63FF;
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 7 0 7 0;
+}
+
 /* ── SUMMARY ─────────────────────────────────────────── */
 .summary-box {
     -fx-background-color: #252840;
@@ -746,17 +762,13 @@
 }
 
 /* ── METODE PEMBAYARAN ───────────────────────────────── */
-.pay-method-active {
+.button.pay-method-active {
     -fx-background-color: #6C63FF;
     -fx-border-color: #6C63FF;
     -fx-border-width: 1;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
-    -fx-text-fill: #FFFFFF;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-    -fx-padding: 7 0 7 0;
+    -fx-text-fill: white;
 }
 
 .pay-method {

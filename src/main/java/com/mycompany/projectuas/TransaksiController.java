@@ -118,6 +118,8 @@ public class TransaksiController implements Initializable {
     private Label lblShift;
 
     @FXML
+    private VBox totalBox;
+    @FXML
     private Label lblSubtotal;
     @FXML
     private Label lblDiskon;
@@ -135,6 +137,12 @@ public class TransaksiController implements Initializable {
     @FXML
     private Label lblNoTrx;
 
+    @FXML
+    private Button btnQris;
+    @FXML
+    private Button btnTunai;
+    @FXML
+    private HBox QuickBox;
     @FXML
     private Button btnBayar;
     @FXML
@@ -163,10 +171,9 @@ public class TransaksiController implements Initializable {
         updateSummary();
         lblNamaKasir.setText("Budi S.");
         lblShift.setText("Shift Siang");
-        lblNoTrx.setText(String.format("#TRX-%04d", TransaksiModel.noTrx));
+        // lblNoTrx.setText(String.format("#TRX-%04d", TransaksiModel.noTrx));
         setupForm();
-        TransaksiModel.keranjang.clear();
-        TransaksiModel.semuaProduk.clear();
+        setupMetodeBayar();
     }
 
     private boolean sidebarCollapsed = false;
@@ -654,8 +661,38 @@ public class TransaksiController implements Initializable {
     }
 
     // ═════════════════════════════════════════════════════
-    // HANDLERS
+    // METODE PEMBAYARAN LAIN
     // ═════════════════════════════════════════════════════
+    boolean pembayaraanQris = false;
+
+    void setupMetodeBayar() {
+        System.out.println(btnQris.getStyleClass());
+        btnTunai.getStyleClass().add("pay-method-active");
+        btnQris.setOnAction(e -> {
+            TransaksiModel.metodeBayar = "QRIS";
+            pembayaraanQris = true;
+            btnQris.getStyleClass().add("pay-method-active");
+            btnTunai.getStyleClass().remove("pay-method-active");
+            tunaiBox.setVisible(false);
+            tunaiBox.setManaged(false);
+            QuickBox.setVisible(false);
+            QuickBox.setManaged(false);
+        });
+        btnTunai.setOnAction(e -> {
+            TransaksiModel.metodeBayar = "Tunai";
+            pembayaraanQris = false;
+            btnQris.getStyleClass().remove("pay-method-active");
+            btnTunai.getStyleClass().add("pay-method-active");
+            tunaiBox.setVisible(true);
+            tunaiBox.setManaged(true);
+            QuickBox.setVisible(true);
+            QuickBox.setManaged(true);
+        });
+    }
+
+    // ═════════════════════════════════════════════════════
+    // HANDLERS
+    // ══════════════════════════════════════════════════
     @FXML
     private void onDiskonChanged() {
         updateSummary();
@@ -719,28 +756,46 @@ public class TransaksiController implements Initializable {
         if (TransaksiModel.keranjang.isEmpty()) {
             return;
         }
-        if (tfTunai.getText() == null || tfTunai.getText().isBlank() || tunai == 0) {
-            new Popup().showModernPopup("WARNING", "Silahkan Masukkan Nominal Tunai", Popup.PopupType.WARNING);
-            return;
-        }
 
-        if (kembalian >= 0) {
-
+        if (pembayaraanQris) {
             String sqlTransaksi = "INSERT INTO tb_transaksi "
                     + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                     + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
 
-            koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, kembalian, 0, "Lunas",
+            koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, TransaksiModel.total, 0, 0,
+                    "Lunas",
                     "");
 
         } else {
+            if (tfTunai.getText() == null || tfTunai.getText().isBlank() || tunai == 0) {
+                new Popup().showModernPopup(
+                        "WARNING",
+                        "Silahkan Masukkan Nominal Tunai",
+                        Popup.PopupType.WARNING);
+                return;
+            } else {
+                if (kembalian >= 0) {
 
-            String sqlTransaksi = "INSERT INTO tb_transaksi "
-                    + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
+                    String sqlTransaksi = "INSERT INTO tb_transaksi "
+                            + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                            + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
 
-            koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, 0, Math.abs(kembalian),
-                    "Belum Lunas", "");
+                    koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, kembalian, 0,
+                            "Lunas",
+                            "");
+
+                } else {
+
+                    String sqlTransaksi = "INSERT INTO tb_transaksi "
+                            + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                            + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
+
+                    koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, 0,
+                            Math.abs(kembalian),
+                            "Belum Lunas", "");
+                }
+            }
+           
         }
 
         for (CartItem item : TransaksiModel.keranjang.values()) {

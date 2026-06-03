@@ -542,31 +542,50 @@ public class LaporanController implements Initializable {
             persen = ((today - yesterday) / yesterday) * 100;
         }
 
-        String icon = persen >= 0 ? "▲ +" : "▼ -";
-        String text = icon + String.format("%.1f", Math.abs(persen));
+        String icon;
+        String status;
+
+        if (persen > 0) {
+            icon = "▲ +";
+            status = "lebih besar dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #22c55e;
+                    """);
+            // merah
+        } else if (persen < 0) {
+            icon = "▼ -";
+            status = "lebih kecil dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #ef4444;
+                    """);
+            // hijau
+        } else {
+            icon = "■ ";
+            status = "tidak berubah dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                     -fx-text-fill: #9ca3af;
+                    """);
+            // abu-abu
+        }
+
+        String text = icon + String.format("%.1f%% %s", Math.abs(persen), status);
 
         label.setText(text);
-
-        // warna langsung di sini
-        if (persen > 0) {
-            label.setStyle("-fx-text-fill: #22c55e;"); // hijau
-        } else if (persen < 0) {
-            label.setStyle("-fx-text-fill: #ef4444;"); // merah
-        } else {
-            label.setStyle("-fx-text-fill: #9ca3af;"); // abu-abu
-        }
     }
 
     private void loadTotalPenjualan() {
 
         List<Object[]> todayData = koneksi.ambilData("""
-                    SELECT COALESCE(SUM(total_pembayaran), 0)
+                    SELECT COALESCE(SUM(uang_pembayaran), 0)
                     FROM tb_transaksi
                     WHERE DATE(tanggal_transaksi) = DATE('now','localtime')
                 """);
 
         List<Object[]> yesterdayData = koneksi.ambilData("""
-                    SELECT COALESCE(SUM(total_pembayaran), 0)
+                    SELECT COALESCE(SUM(uang_pembayaran), 0)
                     FROM tb_transaksi
                     WHERE DATE(tanggal_transaksi) = DATE('now', '-1 day')
                 """);
@@ -707,7 +726,7 @@ public class LaporanController implements Initializable {
                     u.nama_lengkap,
                     COUNT(t.id_transaksi)        AS total_trx,
                     SUM(dt.jumlah)               AS total_item,
-                    SUM(t.total_pembayaran)      AS total_pendapatan
+                    SUM(t.uang_pembayaran)      AS total_pendapatan
                 FROM tb_transaksi t
                 JOIN tb_user u ON t.id_user = u.id_user
                 JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi

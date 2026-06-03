@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="972.0" prefWidth="1181.0" style="root-pane" stylesheets="@../styles/piutang.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PiutangController">
+<BorderPane prefHeight="972.0" prefWidth="1181.0" styleClass="root-pane" stylesheets="@../styles/piutang.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PiutangController">
   <left>
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
       <children>
@@ -152,7 +152,7 @@
                 </VBox>
                 <VBox spacing="6" styleClass="kpi-card, kpi-yellow" HBox.hgrow="ALWAYS">
                   <children>
-                    <Label styleClass="kpi-label" text="Transaksi Yang Belum Lunas Hari Ini"/>
+                    <Label styleClass="kpi-label" text="Total Piutang Yang Masuk Hari Ini"/>
                     <Label fx:id="kpiHariIni" styleClass="kpi-value" text="0"/>
                     <Label fx:id="lblDeltaHariIni" styleClass="kpi-delta-down" text="▼ -3% vs kemarin"/>
                   </children>

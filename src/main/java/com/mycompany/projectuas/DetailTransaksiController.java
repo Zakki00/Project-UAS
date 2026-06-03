@@ -73,9 +73,7 @@ public class DetailTransaksiController implements Initializable {
         setupLayout();
         renderList();
 
-        if (!TransaksiModel.keranjang.values().isEmpty()) {
-            System.out.println("data ada");
-        }
+        buildSummaryRow("asdas", "asdasd", false);
     }
 
     // ── Dummy data ────────────────────────────────────
@@ -96,28 +94,6 @@ public class DetailTransaksiController implements Initializable {
     // ═════════════════════════════════════════════════
     private void renderList() {
         detailList.getChildren().clear();
-
-        if (TransaksiModel.keranjang.isEmpty()) {
-            // Empty state
-            VBox empty = new VBox(8);
-            empty.setAlignment(Pos.CENTER);
-            empty.setPadding(new Insets(60, 0, 60, 0));
-
-            Label icon = new Label("🛒");
-            icon.getStyleClass().add("empty-icon");
-
-            Label text = new Label("Belum ada item");
-            text.getStyleClass().add("empty-text");
-
-            Label sub = new Label("Tambahkan produk dari halaman kasir");
-            sub.getStyleClass().add("empty-sub");
-
-            empty.getChildren().addAll(icon, text, sub);
-            detailList.getChildren().add(empty);
-            btnSimpan.setDisable(true);
-            return;
-        }
-
         // Table header
         detailList.getChildren().add(buildTableHeader());
 
@@ -228,13 +204,15 @@ public class DetailTransaksiController implements Initializable {
     private void updateSummary() {
         // TransaksiModel.subtotal = listItem.stream()
         // .mapToLong(ItemTransaksi::subtotal).sum();
-        long pajak = (long) (TransaksiModel.subtotal * 0.11);
+       
         // long total = TransaksiModel.subtotal + pajak;
 
         lblSubtotal.setText("Rp " + FMT.format(TransaksiModel.subtotal));
-        lblPajak.setText("Rp " + FMT.format(pajak));
+       
         lblTotal.setText("Rp " + FMT.format(TransaksiModel.total));
         Label lbel_total = new Label("Total");
+        lbel_total.getStyleClass().add("summary-total");
+        lblTotal.getStyleClass().add("summary-total");
 
     }
 

@@ -1,9 +1,14 @@
 -- Active: 1780404766479@@127.0.0.1@3306
 
-SELECT * FROM tb_detail_transaksi JOIN tb_transaksi ON tb_detail_transaksi.id_transaksi = tb_transaksi.id_transaksi ;
 
-DROP DATABASEs IF EXISTS db_enjoy_cafe;
-CREATE DATABASE db_enjoy_cave;
+DROP TABLE IF EXISTS tb_detail_transaksi;
+
+DROP TABLE IF EXISTS tb_transaksi;
+
+DROP TABLE IF EXISTS tb_barang;
+DROP TABLE IF EXISTS tb_paket_ps;
+
+DROP TABLE IF EXISTS tb_user;
 
 -- USER
 CREATE TABLE
@@ -135,31 +140,3 @@ VALUES
 -- =====================
 -- TRANSAKSI
 -- =====================
-INSERT INTO
-    tb_transaksi (
-        id_user,
-        total_pembayaran,
-        uang_pembayaran,
-        kembalian,
-        kekurangan,
-        status_pembayaran,
-        pelanggan
-    )
-VALUES
-    (1, 22000, 25000, 3000, 0, 'lunas', 'Andi'),
-    (2, 15000, 10000, 0, 5000, 'Belum Lunas', 'Budi');
-
--- =====================
--- DETAIL TRANSAKSI
--- =====================
--- Transaksi 1 (Andi)
-INSERT INTO
-    tb_detail_transaksi (id_transaksi, id_barang, id_paket, jumlah, harga)
-VALUES
-    (1, NULL, 2, 1, 22000);
-
--- Transaksi 2 (Budi)
-INSERT INTO
-    tb_detail_transaksi (id_transaksi, id_barang, id_paket, jumlah, harga)
-VALUES
-    (2, 1, NULL, 1, 12000);

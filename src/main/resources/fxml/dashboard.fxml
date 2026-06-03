@@ -19,223 +19,224 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="900" prefWidth="1080" style="root-pane" stylesheets="@../styles/dashboard.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.DashboardController">
-    <!-- ═══════════════════════════════════════════
+<BorderPane prefHeight="900" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/dashboard.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.DashboardController">
+  <!-- ═══════════════════════════════════════════
          LEFT — SIDEBAR
     ════════════════════════════════════════════ -->
-    <left>
-        <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
-            <!-- Logo Row -->
-            <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
-                <Label styleClass="logo-icon" text="🏪" />
-                <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
-                    <Label styleClass="logo-title" text="StoreMS" />
-                    <Label styleClass="logo-sub" text="Manajemen Toko" />
-                </VBox>
-            </HBox>
-            <Separator styleClass="sidebar-divider" />
-            <!-- Navigation Menu -->
-            <VBox fx:id="navMenu" spacing="2" styleClass="nav-menu" VBox.vgrow="ALWAYS">
-                <VBox.margin>
-                    <Insets bottom="10" top="10" />
-                </VBox.margin>
-                <!-- Dashboard (active) -->
-                <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
-                    <Rectangle height="0" styleClass="nav-active-bar" width="3" />
-                    <Label styleClass="nav-icon" text="⊞" />
-                    <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard" />
-                </HBox>
-                <!-- Produk -->
-                <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
-                    <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-                    <Label styleClass="nav-icon" text="📦" />
-                    <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
-                </HBox>
-                <!-- Kasir -->
-                <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
-                    <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-                    <Label styleClass="nav-icon" text="🛒" />
-                    <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
-                </HBox>
-                <!-- Pelanggan -->
-                <HBox fx:id="navPelanggan" alignment="CENTER_LEFT" onMouseClicked="#onNavPelanggan" spacing="10" styleClass="nav-item">
-                    <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-                    <Label styleClass="nav-icon" text="👥" />
-                    <Label fx:id="navLblPelanggan" styleClass="nav-label" text="Pelanggan" />
-                </HBox>
-                <!-- Laporan -->
-                <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
-                    <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-                    <Label styleClass="nav-icon" text="📈" />
-                    <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan" />
-                </HBox>
-                <!-- Pengaturan -->
-                <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
-                    <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-                    <Label styleClass="nav-icon" text="💰" />
-                    <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Piutang" />
-                </HBox>
-                <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
-                    <children>
-                        <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-                        <Label styleClass="nav-icon" text="⚙️" />
-                        <Label fx:id="navLblPengaturan1" styleClass="nav-label" text="Pengaturan" />
-                    </children>
-                </HBox>
-            </VBox>
-            <Separator styleClass="sidebar-divider" />
-            <!-- User Profile -->
-            <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
-                <Label styleClass="user-avatar" text="A" />
-                <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
-                    <Label styleClass="user-name" text="Admin" />
-                    <Label styleClass="user-role" text="Administrator" />
-                </VBox>
-            </HBox>
-            <!-- Toggle Button -->
-            <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀" />
+  <left>
+    <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
+      <!-- Logo Row -->
+      <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
+        <Label styleClass="logo-icon" text="🏪"/>
+        <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
+          <Label styleClass="logo-title" text="StoreMS"/>
+          <Label styleClass="logo-sub" text="Manajemen Toko"/>
         </VBox>
-    </left>
-    <!-- ═══════════════════════════════════════════
+      </HBox>
+      <Separator styleClass="sidebar-divider"/>
+      <!-- Navigation Menu -->
+      <VBox fx:id="navMenu" spacing="2" styleClass="nav-menu" VBox.vgrow="ALWAYS">
+        <VBox.margin>
+          <Insets bottom="10" top="10"/>
+        </VBox.margin>
+        <!-- Dashboard (active) -->
+        <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
+          <Rectangle height="0" styleClass="nav-active-bar" width="3"/>
+          <Label styleClass="nav-icon" text="⊞"/>
+          <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard"/>
+        </HBox>
+        <!-- Produk -->
+        <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
+          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+          <Label styleClass="nav-icon" text="📦"/>
+          <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk"/>
+        </HBox>
+        <!-- Kasir -->
+        <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
+          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+          <Label styleClass="nav-icon" text="🛒"/>
+          <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi"/>
+        </HBox>
+        <!-- Pelanggan -->
+        <HBox fx:id="navPelanggan" alignment="CENTER_LEFT" onMouseClicked="#onNavPelanggan" spacing="10" styleClass="nav-item">
+          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+          <Label styleClass="nav-icon" text="👥"/>
+          <Label fx:id="navLblPelanggan" styleClass="nav-label" text="Pelanggan"/>
+        </HBox>
+        <!-- Laporan -->
+        <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
+          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+          <Label styleClass="nav-icon" text="📈"/>
+          <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan"/>
+        </HBox>
+        <!-- Pengaturan -->
+        <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
+          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+          <Label styleClass="nav-icon" text="💰"/>
+          <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Piutang"/>
+        </HBox>
+        <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
+          <children>
+            <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+            <Label styleClass="nav-icon" text="⚙️"/>
+            <Label fx:id="navLblPengaturan1" styleClass="nav-label" text="Pengaturan"/>
+          </children>
+        </HBox>
+      </VBox>
+      <Separator styleClass="sidebar-divider"/>
+      <!-- User Profile -->
+      <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
+        <Label styleClass="user-avatar" text="A"/>
+        <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
+          <Label styleClass="user-name" text="Admin"/>
+          <Label styleClass="user-role" text="Administrator"/>
+        </VBox>
+      </HBox>
+      <!-- Toggle Button -->
+      <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀"/>
+    </VBox>
+  </left>
+
+  <!-- ═══════════════════════════════════════════
          CENTER — MAIN CONTENT
     ════════════════════════════════════════════ -->
-    <center>
-        <VBox styleClass="main-content">
-            <!-- TOP BAR -->
-            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
-                <VBox spacing="1" HBox.hgrow="ALWAYS">
-                    <Label styleClass="page-title" text="Dashboard" />
-                    <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
-                </VBox>
-                <!-- Search -->
-                <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
-                    <Label styleClass="search-icon" text="🔍" />
-                    <TextField promptText="Cari..." styleClass="search-field" />
-                </HBox>
-                <!-- Notif -->
-                <StackPane styleClass="notif-wrapper">
-                    <Button onAction="#onNotif" styleClass="notif-btn" text="🔔" />
-                    <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />
-                </StackPane>
-                <!-- Avatar -->
-                <Label styleClass="topbar-avatar" text="A" />
-            </HBox>
-            <!-- SCROLLABLE BODY -->
-            <ScrollPane fitToWidth="true" styleClass="body-scroll" VBox.vgrow="ALWAYS">
-                <VBox spacing="16" styleClass="body-content">
-                    <padding>
-                        <Insets bottom="16" left="16" right="16" top="16" />
-                    </padding>
-                    <!-- ── KPI CARDS ROW ── -->
-                    <HBox spacing="14">
-                        <!-- Total Penjualan -->
-                        <VBox spacing="6" styleClass="kpi-card, kpi-purple" HBox.hgrow="ALWAYS">
-                            <Label styleClass="kpi-label" text="Total Penjualan" />
-                            <Label fx:id="kpiPenjualan" styleClass="kpi-value" text="Rp 4.280.000" />
-                            <Label fx:id="kpiPenjulanPersen" styleClass="kpi-delta-up" text="▲ +12% vs kemarin" />
-                        </VBox>
-                        <!-- Transaksi -->
-                        <VBox spacing="6" styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS">
-                            <Label styleClass="kpi-label" text="Transaksi Hari Ini" />
-                            <Label fx:id="kpiTransaksi" styleClass="kpi-value" text="128" />
-                            <Label fx:id="kpiTransaksiPersen" styleClass="kpi-delta-up" text="▲ +8% vs kemarin" />
-                        </VBox>
-                        <!-- Produk Terjual -->
-                        <VBox spacing="6" styleClass="kpi-card, kpi-yellow" HBox.hgrow="ALWAYS">
-                            <Label styleClass="kpi-label" text="Produk Terjual" />
-                            <Label fx:id="kpiProduk" styleClass="kpi-value" text="312 unit" />
-                            <Label fx:id="kpiProdukPersen" styleClass="kpi-delta-down" text="▼ -3% vs kemarin" />
-                        </VBox>
-                        <!-- Stok Menipis -->
-                        <VBox spacing="6" styleClass="kpi-card, kpi-red" HBox.hgrow="ALWAYS">
-                            <Label styleClass="kpi-label" text="Stok Menipis" />
-                            <Label fx:id="kpiStok" styleClass="kpi-value" text="7 Item" />
-                            <Label fx:id="kpiStokInfo" styleClass="kpi-delta-down" text="▼ Perlu restock" />
-                        </VBox>
-                    </HBox>
-                    <!-- ── CHARTS ROW ── -->
-                    <HBox spacing="14">
-                        <!-- Area Chart -->
-                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
-                            <HBox alignment="CENTER_LEFT">
-                                <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="card-title" text="Grafik Penjualan" />
-                                    <Label styleClass="card-sub" text="7 hari terakhir" />
-                                </VBox>
-                                <HBox spacing="6">
-                                    <Button styleClass="period-btn-active" text="Mingguan" />
-                                    <Button styleClass="period-btn" text="Bulanan" />
-                                </HBox>
-                            </HBox>
-                            <AreaChart fx:id="salesChart" maxHeight="180" prefHeight="180" styleClass="sales-chart">
-                                <xAxis>
-                                    <CategoryAxis styleClass="chart-axis" />
-                                </xAxis>
-                                <yAxis>
-                                    <NumberAxis styleClass="chart-axis" />
-                                </yAxis>
-                            </AreaChart>
-                        </VBox>
-                        <!-- Bar Chart -->
-                        <VBox prefWidth="240" spacing="10" styleClass="card">
-                            <Label styleClass="card-title" text="Transaksi / Hari" />
-                            <Label styleClass="card-sub" text="Jumlah transaksi" />
-                            <BarChart fx:id="trxChart" legendVisible="false" maxHeight="180" prefHeight="180" styleClass="trx-chart">
-                                <xAxis>
-                                    <CategoryAxis styleClass="chart-axis" />
-                                </xAxis>
-                                <yAxis>
-                                    <NumberAxis styleClass="chart-axis" />
-                                </yAxis>
-                            </BarChart>
-                        </VBox>
-                    </HBox>
-                    <!-- ── BOTTOM ROW ── -->
-                    <HBox alignment="TOP_LEFT" spacing="14">
-                        <!-- Transactions Table -->
-                        <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
-                            <HBox alignment="CENTER_LEFT">
-                                <VBox spacing="2" HBox.hgrow="ALWAYS">
-                                    <Label styleClass="card-title" text="Transaksi Terbaru" />
-                                    <Label styleClass="card-sub" text="Hari ini" />
-                                </VBox>
-                                <Button onAction="#onLihatSemua" styleClass="btn-outline" text="Lihat semua →" />
-                            </HBox>
-                            <TableView fx:id="trxTable" maxHeight="220" prefHeight="220" styleClass="trx-table">
-                                <columns>
-                                    <TableColumn fx:id="colId" prefWidth="120" text="ID Transaksi" />
-                                    <TableColumn fx:id="colItem" prefWidth="180" text="Item" />
-                                    <TableColumn fx:id="colKasir" prefWidth="90" text="Kasir" />
-                                    <TableColumn fx:id="colWaktu" prefWidth="70" text="Waktu" />
-                                    <TableColumn fx:id="colTotal" prefWidth="110" text="Total" />
-                                </columns>
-                            </TableView>
-                        </VBox>
-                        <!-- Right column -->
-                        <VBox prefWidth="310" spacing="14">
-                            <!-- Line chart 6 bulan -->
-                            <VBox spacing="8" styleClass="card">
-                                <Label styleClass="card-title" text="Tren 6 Bulan" />
-                                <Label styleClass="card-sub" text="Omzet (juta Rp)" />
-                                <LineChart fx:id="monthChart" createSymbols="false" legendVisible="false" maxHeight="110" prefHeight="110" styleClass="month-chart">
-                                    <xAxis>
-                                        <CategoryAxis styleClass="chart-axis" />
-                                    </xAxis>
-                                    <yAxis>
-                                        <NumberAxis styleClass="chart-axis" />
-                                    </yAxis>
-                                </LineChart>
-                            </VBox>
-                            <!-- Stok Menipis -->
-                            <VBox spacing="10" styleClass="card">
-                                <Label styleClass="card-title" text="⚠ Stok Menipis" />
-                                <Label styleClass="card-sub" text="Perlu segera restock" />
-                                <VBox fx:id="stockList" spacing="10" />
-                            </VBox>
-                        </VBox>
-                    </HBox>
-                </VBox>
-            </ScrollPane>
+  <center>
+    <VBox styleClass="main-content">
+      <!-- TOP BAR -->
+      <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
+        <VBox spacing="1" HBox.hgrow="ALWAYS">
+          <Label styleClass="page-title" text="Dashboard"/>
+          <Label styleClass="page-date" text="Senin, 16 Juni 2025"/>
         </VBox>
-    </center>
+        <!-- Search -->
+        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
+          <Label styleClass="search-icon" text="🔍"/>
+          <TextField promptText="Cari..." styleClass="search-field"/>
+        </HBox>
+        <!-- Notif -->
+        <StackPane styleClass="notif-wrapper">
+          <Button onAction="#onNotif" styleClass="notif-btn" text="🔔"/>
+          <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT"/>
+        </StackPane>
+        <!-- Avatar -->
+        <Label styleClass="topbar-avatar" text="A"/>
+      </HBox>
+      <!-- SCROLLABLE BODY -->
+      <ScrollPane fitToWidth="true" styleClass="body-scroll" VBox.vgrow="ALWAYS">
+        <VBox spacing="16" styleClass="body-content">
+          <padding>
+            <Insets bottom="16" left="16" right="16" top="16"/>
+          </padding>
+          <!-- ── KPI CARDS ROW ── -->
+          <HBox spacing="14">
+            <!-- Total Penjualan -->
+            <VBox spacing="6" styleClass="kpi-card, kpi-purple" HBox.hgrow="ALWAYS">
+              <Label styleClass="kpi-label" text="Total Penjualan"/>
+              <Label fx:id="kpiPenjualan" styleClass="kpi-value" text="Rp 4.280.000"/>
+              <Label fx:id="kpiPenjulanPersen" styleClass="kpi-delta-up" text="▲ +12% vs kemarin"/>
+            </VBox>
+            <!-- Transaksi -->
+            <VBox spacing="6" styleClass="kpi-card, kpi-green" HBox.hgrow="ALWAYS">
+              <Label styleClass="kpi-label" text="Transaksi Hari Ini"/>
+              <Label fx:id="kpiTransaksi" styleClass="kpi-value" text="128"/>
+              <Label fx:id="kpiTransaksiPersen" styleClass="kpi-delta-up" text="▲ +8% vs kemarin"/>
+            </VBox>
+            <!-- Produk Terjual -->
+            <VBox spacing="6" styleClass="kpi-card, kpi-yellow" HBox.hgrow="ALWAYS">
+              <Label styleClass="kpi-label" text="Produk Terjual"/>
+              <Label fx:id="kpiProduk" styleClass="kpi-value" text="312 unit"/>
+              <Label fx:id="kpiProdukPersen" styleClass="kpi-delta-down" text="▼ -3% vs kemarin"/>
+            </VBox>
+            <!-- Stok Menipis -->
+            <VBox spacing="6" styleClass="kpi-card, kpi-red" HBox.hgrow="ALWAYS">
+              <Label styleClass="kpi-label" text="Stok Menipis"/>
+              <Label fx:id="kpiStok" styleClass="kpi-value" text="7 Item"/>
+              <Label fx:id="kpiStokInfo" styleClass="kpi-delta-down" text="▼ Perlu restock"/>
+            </VBox>
+          </HBox>
+          <!-- ── CHARTS ROW ── -->
+          <HBox spacing="14">
+            <!-- Area Chart -->
+            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+              <HBox alignment="CENTER_LEFT">
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                  <Label styleClass="card-title" text="Grafik Penjualan"/>
+                  <Label styleClass="card-sub" text="7 hari terakhir"/>
+                </VBox>
+                <HBox spacing="6">
+                  <Button styleClass="period-btn-active" text="Mingguan"/>
+                  <Button styleClass="period-btn" text="Bulanan"/>
+                </HBox>
+              </HBox>
+              <AreaChart fx:id="salesChart" maxHeight="180" prefHeight="180" styleClass="sales-chart">
+                <xAxis>
+                  <CategoryAxis styleClass="chart-axis"/>
+                </xAxis>
+                <yAxis>
+                  <NumberAxis styleClass="chart-axis"/>
+                </yAxis>
+              </AreaChart>
+            </VBox>
+            <!-- Bar Chart -->
+            <VBox prefWidth="240" spacing="10" styleClass="card">
+              <Label styleClass="card-title" text="Transaksi / Hari"/>
+              <Label styleClass="card-sub" text="Jumlah transaksi"/>
+              <BarChart fx:id="trxChart" legendVisible="false" maxHeight="180" prefHeight="180" styleClass="trx-chart">
+                <xAxis>
+                  <CategoryAxis styleClass="chart-axis"/>
+                </xAxis>
+                <yAxis>
+                  <NumberAxis styleClass="chart-axis"/>
+                </yAxis>
+              </BarChart>
+            </VBox>
+          </HBox>
+          <!-- ── BOTTOM ROW ── -->
+          <HBox alignment="TOP_LEFT" spacing="14">
+            <!-- Transactions Table -->
+            <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+              <HBox alignment="CENTER_LEFT">
+                <VBox spacing="2" HBox.hgrow="ALWAYS">
+                  <Label styleClass="card-title" text="Transaksi Terbaru"/>
+                  <Label styleClass="card-sub" text="Hari ini"/>
+                </VBox>
+                <Button onAction="#onLihatSemua" styleClass="btn-outline" text="Lihat semua →"/>
+              </HBox>
+              <TableView fx:id="trxTable" maxHeight="220" prefHeight="220" styleClass="trx-table">
+                <columns>
+                  <TableColumn fx:id="colId" prefWidth="120" text="ID Transaksi"/>
+                  <TableColumn fx:id="colItem" prefWidth="180" text="Item"/>
+                  <TableColumn fx:id="colKasir" prefWidth="90" text="Kasir"/>
+                  <TableColumn fx:id="colWaktu" prefWidth="70" text="Waktu"/>
+                  <TableColumn fx:id="colTotal" prefWidth="110" text="Total"/>
+                </columns>
+              </TableView>
+            </VBox>
+            <!-- Right column -->
+            <VBox prefWidth="310" spacing="14">
+              <!-- Line chart 6 bulan -->
+              <VBox spacing="8" styleClass="card">
+                <Label styleClass="card-title" text="Tren 6 Bulan"/>
+                <Label styleClass="card-sub" text="Omzet (juta Rp)"/>
+                <LineChart fx:id="monthChart" createSymbols="false" legendVisible="false" maxHeight="110" prefHeight="110" styleClass="month-chart">
+                  <xAxis>
+                    <CategoryAxis styleClass="chart-axis"/>
+                  </xAxis>
+                  <yAxis>
+                    <NumberAxis styleClass="chart-axis"/>
+                  </yAxis>
+                </LineChart>
+              </VBox>
+              <!-- Stok Menipis -->
+              <VBox spacing="10" styleClass="card">
+                <Label styleClass="card-title" text="⚠ Stok Menipis"/>
+                <Label styleClass="card-sub" text="Perlu segera restock"/>
+                <VBox fx:id="stockList" spacing="10"/>
+              </VBox>
+            </VBox>
+          </HBox>
+        </VBox>
+      </ScrollPane>
+    </VBox>
+  </center>
 </BorderPane>

@@ -211,7 +211,7 @@ public class PiutangController implements Initializable {
         setupLayout();
         SetupRowClick();
         renderList();
-        loadKPI();
+        renderListKPI();
         setupForm();
         setActiveNav(navPiutang);
     }
@@ -410,125 +410,145 @@ public class PiutangController implements Initializable {
 
     // ═══════════════════════════════════════════════
     // LOAD DATA KPI
-    private void loadKPI() {
 
-        String sql = "SELECT "
-                + "SUM(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "THEN kekurangan ELSE 0 END) AS total_piutang, "
-
-                + "COUNT(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "THEN 1 END) AS jumlah_transaksi, "
-
-                + "SUM(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = DATE('now','localtime') "
-                + "THEN 1 ELSE 0 END) AS transaksi_hari_ini, "
-
-                // total piutang kemarin
-                + "SUM(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = DATE('now', '-1 day') "
-                + "THEN kekurangan ELSE 0 END) AS piutang_kemarin, "
-
-                // transaksi kemarin
-                + "COUNT(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = DATE('now', '-1 day') "
-                + "THEN 1 END) AS transaksi_kemarin "
-
-                + "FROM tb_transaksi";
-
-        List<Object[]> results = koneksi.ambilData(sql);
-
-        if (!results.isEmpty()) {
-
-            Object[] row = results.get(0);
-
-            long totalPiutang = row[0] != null
-                    ? ((Number) row[0]).longValue()
-                    : 0;
-
-            int jumlahTransaksi = row[1] != null
-                    ? ((Number) row[1]).intValue()
-                    : 0;
-
-            int transaksiHariIni = row[2] != null
-                    ? ((Number) row[2]).intValue()
-                    : 0;
-
-            long piutangKemarin = row[3] != null
-                    ? ((Number) row[3]).longValue()
-                    : 0;
-
-            int transaksiKemarin = row[4] != null
-                    ? ((Number) row[4]).intValue()
-                    : 0;
-
-            // ================= KPI VALUE =================
-
-            kpiTotalPiutang.setText(
-                    "Rp " + FMT.format(totalPiutang));
-
-            kpiJumlahTransaksi.setText(
-                    String.valueOf(jumlahTransaksi));
-
-            kpiHariIni.setText(
-                    String.valueOf(transaksiHariIni));
-
-            // ================= DELTA =================
-
-            setDeltaLabel(
-                    lblDeltaPiutang,
-                    totalPiutang,
-                    piutangKemarin);
-
-            setDeltaLabel(
-                    lblDeltaTransaksi,
-                    jumlahTransaksi,
-                    transaksiKemarin);
-
-            setDeltaLabel(
-                    lblDeltaHariIni,
-                    transaksiHariIni,
-                    transaksiKemarin);
-        }
+    void renderListKPI() {
+        loadTotalPiutang();
+        loadJumlahTransaksiYangBelumLunas();
+        loadTransaksiYangBelumLunasHariIni();
     }
 
-    private void setDeltaLabel(Label label,
-            double today,
-            double yesterday) {
+    private void setPersenKPI(Label label, double today, double yesterday) {
+
+        double persen;
 
         if (yesterday == 0) {
-
-            label.setText("▲ 100% vs kemarin");
-            label.getStyleClass().removeAll(
-                    "kpi-delta-up",
-                    "kpi-delta-down");
-
-            label.getStyleClass().add("kpi-delta-up");
-            return;
+            persen = today > 0 ? 100 : 0;
+        } else {
+            persen = ((today - yesterday) / yesterday) * 100;
         }
 
-        double percent = ((today - yesterday) / yesterday) * 100;
+        String icon;
+        String status;
 
-        String arrow = percent >= 0 ? "▲" : "▼";
+        if (persen > 0) {
+            icon = "▲ +";
+            status = "lebih besar dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #ef4444;
+                    """);
+            // merah
+        } else if (persen < 0) {
+            icon = "▼ -";
+            status = "lebih kecil dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #22c55e;
+                    """);
+            // hijau
+        } else {
+            icon = "■ ";
+            status = "tidak berubah dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #9ca3af;
+                    """);
+            // abu-abu
+        }
 
-        String text = arrow + " "
-                + String.format("%.0f", Math.abs(percent))
-                + "% vs kemarin";
+        String text = icon + String.format("%.1f%% %s", Math.abs(persen), status);
 
         label.setText(text);
+    }
 
-        label.getStyleClass().removeAll(
-                "kpi-delta-up",
-                "kpi-delta-down");
+    private void loadTotalPiutang() {
 
-        label.getStyleClass().add(
-                percent >= 0
-                        ? "kpi-delta-up"
-                        : "kpi-delta-down");
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime')
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime','-1 day')
+                """);
+
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
+
+        kpiTotalPiutang.setText("Rp " + String.format("%,.0f", today));
+        setPersenKPI(lblDeltaPiutang, today, yesterday);
+    }
+
+    private void loadJumlahTransaksiYangBelumLunas() {
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COUNT(*)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime')
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                     SELECT COUNT(*)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime','-1 day')
+                """);
+
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
+
+        kpiJumlahTransaksi.setText(String.valueOf((int) today));
+        setPersenKPI(lblDeltaTransaksi, today, yesterday);
+    }
+
+    private void loadTransaksiYangBelumLunasHariIni() {
+
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                    FROM tb_transaksi
+                    WHERE status_pembayaran = 'Belum Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime')
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                    FROM tb_transaksi
+                    WHERE status_pembayaran = 'Belum Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime','-1 day')
+                """);
+
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
+
+        kpiHariIni.setText("Rp " + String.format("%,.0f", today));
+        setPersenKPI(lblDeltaHariIni, today, yesterday);
+
     }
 
     // ═══════════════════════════════════════════════
@@ -584,7 +604,7 @@ public class PiutangController implements Initializable {
 
                     // 7. Update komponen lain
                     updateSummary();
-                    loadKPI();
+                    renderListKPI();
 
                     clearform();
                     onClearSearch();
