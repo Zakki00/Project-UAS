@@ -1,4 +1,7 @@
 DROP DATABASE db_enjoy_cave;
+
+
+
 CREATE DATABASE IF NOT EXISTS db_enjoy_cave;
 
 

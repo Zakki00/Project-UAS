@@ -27,7 +27,7 @@
         <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
             <!-- Logo Row -->
             <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
-                <Label styleClass="logo-icon" text="🏪" />
+                <Label styleClass="logo-icon" text="☕" />
                 <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
                     <Label styleClass="logo-title" text="StoreMS" />
                     <Label styleClass="logo-sub" text="Manajemen Toko" />
@@ -80,6 +80,13 @@
                         <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
                         <Label styleClass="nav-icon" text="⚙️" />
                         <Label fx:id="navLblPengaturan1" styleClass="nav-label" text="Pengaturan" />
+                    </children>
+                </HBox>
+                <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavKaryawan" spacing="10" styleClass="nav-item, nav-active">
+                    <children>
+                        <Rectangle height="0" styleClass="nav-active-bar" width="3" />
+                        <Label styleClass="nav-icon" text="⊞" />
+                        <Label fx:id="navLblKaryawan" styleClass="nav-label" text="Karyawan" />
                     </children>
                 </HBox>
             </VBox>

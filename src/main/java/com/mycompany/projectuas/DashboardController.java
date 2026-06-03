@@ -47,6 +47,7 @@ public class DashboardController implements Initializable {
     private Button toggleBtn;
     @FXML
     private VBox navMenu;
+    
 
     // Nav items
     @FXML
@@ -63,6 +64,8 @@ public class DashboardController implements Initializable {
     private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
+    @FXML
+    private HBox navKaryawan;
 
     // Nav labels (semua label teks nav)
     @FXML
@@ -77,6 +80,8 @@ public class DashboardController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navLblKaryawan;
 
     // ── KPI ───────────────────────────────────────────────
     @FXML
@@ -181,7 +186,7 @@ public class DashboardController implements Initializable {
 
     private void setNavLabelsVisible(boolean visible) {
         List<Label> labels = List.of(navLblDashboard, navLblProduk, navLblKasir, navLblPelanggan, navLblLaporan,
-                navLblPengaturan);
+                navLblPengaturan, navLblKaryawan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -252,9 +257,17 @@ public class DashboardController implements Initializable {
         setActiveNav(navPengaturan);
 
     }
+    @FXML
+    private void onNavKaryawan(){
+        setActiveNav(navKaryawan);
+        navigation nav = new navigation();
+        nav.navigationToKaryawan();
+        Stage stage = (Stage) navKaryawan.getScene().getWindow();
+        stage.close();
+    }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan,navKaryawan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -264,7 +277,7 @@ public class DashboardController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan, navKaryawan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
