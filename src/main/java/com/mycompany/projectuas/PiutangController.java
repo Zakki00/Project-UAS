@@ -423,7 +423,7 @@ public class PiutangController implements Initializable {
 
                 + "SUM(CASE "
                 + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = DATE('now') "
+                + "AND DATE(tanggal_transaksi) = DATE('now','localtime') "
                 + "THEN 1 ELSE 0 END) AS transaksi_hari_ini, "
 
                 // total piutang kemarin

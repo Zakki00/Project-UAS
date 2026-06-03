@@ -153,6 +153,8 @@ public class TransaksiController implements Initializable {
     // ═════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        TransaksiModel.keranjang.clear();
+        TransaksiModel.semuaProduk.clear();
         loadproduk();
         setupKategori();
         setupSearch();
@@ -726,7 +728,7 @@ public class TransaksiController implements Initializable {
 
             String sqlTransaksi = "INSERT INTO tb_transaksi "
                     + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now'), ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
 
             koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, kembalian, 0, "Lunas",
                     "");
@@ -735,7 +737,7 @@ public class TransaksiController implements Initializable {
 
             String sqlTransaksi = "INSERT INTO tb_transaksi "
                     + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now'), ?)";
+                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
 
             koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, 0, Math.abs(kembalian),
                     "Belum Lunas", "");

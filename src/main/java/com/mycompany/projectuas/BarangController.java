@@ -529,7 +529,7 @@ public class BarangController implements Initializable {
                     ? dipilih.getGambar()
                     : lblFilePath.getText();
 
-            String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_path=? WHERE id_barang=?";
+            String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_path =? WHERE id_barang=?";
             try (Connection conn = koneksi.getConnection();
                     PreparedStatement ps = conn.prepareStatement(query)) {
 

@@ -562,7 +562,7 @@ public class LaporanController implements Initializable {
         List<Object[]> todayData = koneksi.ambilData("""
                     SELECT COALESCE(SUM(total_pembayaran), 0)
                     FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = DATE('now')
+                    WHERE DATE(tanggal_transaksi) = DATE('now','localtime')
                 """);
 
         List<Object[]> yesterdayData = koneksi.ambilData("""
@@ -589,7 +589,7 @@ public class LaporanController implements Initializable {
         List<Object[]> todayData = koneksi.ambilData("""
                     SELECT COUNT(*)
                     FROM tb_transaksi
-                    WHERE DATE(tanggal_transaksi) = DATE('now')
+                    WHERE DATE(tanggal_transaksi) = DATE('now','localtime')
                 """);
 
         List<Object[]> yesterdayData = koneksi.ambilData("""
@@ -618,7 +618,7 @@ public class LaporanController implements Initializable {
                     SELECT COALESCE(SUM(jumlah), 0)
                     FROM tb_detail_transaksi dt
                     JOIN tb_transaksi t ON dt.id_transaksi = t.id_transaksi
-                    WHERE DATE(t.tanggal_transaksi) = DATE('now')
+                    WHERE DATE(t.tanggal_transaksi) = DATE('now','localtime')
                 """);
 
         List<Object[]> yesterdayData = koneksi.ambilData("""
@@ -711,7 +711,7 @@ public class LaporanController implements Initializable {
                 FROM tb_transaksi t
                 JOIN tb_user u ON t.id_user = u.id_user
                 JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                WHERE DATE(t.tanggal_transaksi) = DATE('now')
+                WHERE DATE(t.tanggal_transaksi) = DATE('now','localtime')
                 AND TIME(t.tanggal_transaksi) BETWEEN '""" + jamMulai + "' AND '" + jamSelesai + """
                 '
                 GROUP BY u.id_user, u.username, u.nama_lengkap
@@ -845,7 +845,7 @@ public class LaporanController implements Initializable {
                     strftime('%w', tanggal_transaksi) AS hari,
                     SUM(total_pembayaran) AS total
                 FROM tb_transaksi
-                WHERE tanggal_transaksi >= date('now', '-7 day')
+                WHERE tanggal_transaksi >= date('now','localtime', '-7 day')
                 AND status_pembayaran = 'Lunas'
                 GROUP BY strftime('%w', tanggal_transaksi)
                 ORDER BY hari
@@ -940,7 +940,7 @@ public class LaporanController implements Initializable {
                     strftime('%w', tanggal_transaksi) AS hari,
                     COUNT(*) AS jumlah
                 FROM tb_transaksi
-                WHERE tanggal_transaksi >= date('now', '-7 day')
+                WHERE tanggal_transaksi >= date('now','localtime', '-7 day')
                 GROUP BY date(tanggal_transaksi)
                 ORDER BY date(tanggal_transaksi)
                 """;

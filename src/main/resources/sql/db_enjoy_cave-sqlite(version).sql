@@ -1,5 +1,7 @@
 -- Active: 1780404766479@@127.0.0.1@3306
 
+SELECT * FROM tb_detail_transaksi JOIN tb_transaksi ON tb_detail_transaksi.id_transaksi = tb_transaksi.id_transaksi ;
+
 DROP DATABASEs IF EXISTS db_enjoy_cafe;
 CREATE DATABASE db_enjoy_cave;
 

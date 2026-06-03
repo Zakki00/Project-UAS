@@ -138,8 +138,8 @@ CREATE TABLE tb_paket_ps (
     status TEXT DEFAULT 'aktif' CHECK (
         status IN ('aktif', 'nonaktif')
     ),
-    created_at TEXT DEFAULT(datetime('now')),
-    updated_at TEXT DEFAULT(datetime('now'))
+    created_at TEXT DEFAULT(datetime('now','localtime')),
+    updated_at TEXT DEFAULT(datetime('now','localtime'))
 );
 
 -- TRANSAKSI
@@ -151,7 +151,7 @@ CREATE TABLE tb_transaksi (
     kembalian INTEGER,
     kekurangan INTEGER,
     status_pembayaran TEXT NOT NULL,
-    tanggal_transaksi TEXT DEFAULT(datetime('now')),
+    tanggal_transaksi TEXT DEFAULT(datetime('now','localtime')),
     pelanggan TEXT,
     FOREIGN KEY (id_user) REFERENCES tb_user (id_user)
 );
