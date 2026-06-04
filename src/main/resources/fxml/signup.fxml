@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.mycompany.projectuas.SignupController"
+           styleClass="signup-root"
+           stylesheets="@../styles/signup.css">
+  <!-- Background dekorasi -->
+  <Rectangle styleClass="bg-circle-1" width="400" height="400"
+                 arcWidth="400" arcHeight="400"/>
+  <Rectangle styleClass="bg-circle-2" width="300" height="300"
+                 arcWidth="300" arcHeight="300"
+                 StackPane.alignment="BOTTOM_RIGHT"/>
+  <!-- Card utama -->
+  <VBox styleClass="signup-card" spacing="0"
+            maxWidth="440" maxHeight="620"
+            StackPane.alignment="CENTER">
+    <!-- Header -->
+    <VBox styleClass="signup-header" spacing="6" alignment="CENTER">
+      <padding>
+        <Insets top="36" right="36" bottom="24" left="36"/>
+      </padding>
+      <Label styleClass="signup-logo" text="🏪"/>
+      <Label styleClass="signup-title" text="Buat Akun Baru"/>
+      <Label styleClass="signup-sub"
+                         text="Daftarkan diri Anda ke StoreMS"/>
+    </VBox>
+    <!-- Form -->
+    <VBox styleClass="signup-form" spacing="16">
+      <padding>
+        <Insets top="8" right="36" bottom="24" left="36"/>
+      </padding>
+      <!-- Nama Lengkap -->
+      <VBox spacing="6">
+        <Label styleClass="field-label" text="Nama Lengkap"/>
+        <HBox styleClass="field-box" alignment="CENTER_LEFT" spacing="10">
+          <Label styleClass="field-icon" text="👤"/>
+          <TextField fx:id="tfNamaLengkap"
+                                         styleClass="field-input"
+                                         promptText="Masukkan nama lengkap..."
+                                         HBox.hgrow="ALWAYS"/>
+        </HBox>
+        <Label fx:id="errNama" styleClass="field-error" text=""
+                               managed="false" visible="false"/>
+      </VBox>
+      <!-- Username -->
+      <VBox spacing="6">
+        <Label styleClass="field-label" text="Username"/>
+        <HBox styleClass="field-box" alignment="CENTER_LEFT" spacing="10">
+          <Label styleClass="field-icon" text="👤"/>
+          <TextField fx:id="tfUsername"
+                                         styleClass="field-input"
+                                         promptText="Masukkan username..."
+                                         HBox.hgrow="ALWAYS"/>
+        </HBox>
+        <Label fx:id="errUsername" styleClass="field-error" text=""
+                               managed="false" visible="false"/>
+      </VBox>
+      <!-- Password -->
+      <VBox spacing="6">
+        <Label styleClass="field-label" text="Password"/>
+        <HBox fx:id="boxPassword" styleClass="field-box"
+                              alignment="CENTER_LEFT" spacing="10">
+          <Label styleClass="field-icon" text="🔒"/>
+          <PasswordField fx:id="pfPassword"
+                                             styleClass="field-input"
+                                             promptText="Masukkan password..."
+                                             HBox.hgrow="ALWAYS"/>
+          <Button fx:id="btnShowPass" styleClass="btn-eye"
+                                      text="👁" onAction="#onTogglePassword"/>
+        </HBox>
+        <Label fx:id="errPassword" styleClass="field-error" text=""
+                               managed="false" visible="false"/>
+      </VBox>
+      <!-- Tombol Daftar -->
+      <Button fx:id="btnDaftar" styleClass="btn-daftar"
+                          text="Buat Akun" maxWidth="Infinity"
+                          onAction="#onDaftar"/>
+      <!-- Divider OR -->
+      <HBox alignment="CENTER" spacing="12">
+        <Rectangle styleClass="divider-line" height="1"
+                                   HBox.hgrow="ALWAYS"/>
+        <Label styleClass="divider-text" text="atau"/>
+        <Rectangle styleClass="divider-line" height="1"
+                                   HBox.hgrow="ALWAYS"/>
+      </HBox>
+      <!-- Login with Google -->
+      <!-- Login with Google -->
+      <Button fx:id="btnGoogle" styleClass="btn-google"
+              maxWidth="Infinity" onAction="#onLoginGoogle">
+        <graphic>
+          <HBox alignment="CENTER" spacing="10">
+            <!-- Logo Google asli dari file -->
+            <ImageView fitWidth="20" fitHeight="20" preserveRatio="true">
+              <image>
+                <Image url="@../image/google_logo.png"/>
+              </image>
+            </ImageView>
+            <Label styleClass="google-text" text="Daftar dengan Google"/>
+          </HBox>
+        </graphic>
+      </Button>
+    </VBox>
+    <!-- Footer -->
+    <HBox alignment="CENTER" spacing="4" styleClass="signup-footer">
+      <padding>
+        <Insets bottom="28"/>
+      </padding>
+      <Label styleClass="footer-text" text="Sudah punya akun?"/>
+      <Hyperlink fx:id="lnkLogin" styleClass="footer-link"
+                             text="Masuk sekarang" onAction="#onGoLogin"/>
+    </HBox>
+  </VBox>
+</StackPane>

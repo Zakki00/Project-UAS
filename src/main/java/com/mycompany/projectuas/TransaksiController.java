@@ -134,8 +134,6 @@ public class TransaksiController implements Initializable {
     private Label lblKembalian;
     @FXML
     private VBox tunaiBox;
-    @FXML
-    private Label lblNoTrx;
 
     @FXML
     private Button btnQris;
@@ -795,7 +793,7 @@ public class TransaksiController implements Initializable {
                             "Belum Lunas", "");
                 }
             }
-           
+
         }
 
         for (CartItem item : TransaksiModel.keranjang.values()) {

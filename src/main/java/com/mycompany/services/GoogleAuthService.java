@@ -243,7 +243,7 @@ public class GoogleAuthService {
 
                         user = fetchedUser;
                         sendHtml(exchange,
-                                buildSuccessHtml(fetchedUser.getName(), fetchedUser.getPicture()), 200);
+                                buildSuccessHtml(fetchedUser.getName(), fetchedUser.getProfilePictureUrl()), 200);
                         setResult(LoginResult.SUCCESS);
                         return;
 

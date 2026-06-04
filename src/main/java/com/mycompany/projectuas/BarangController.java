@@ -301,7 +301,7 @@ public class BarangController implements Initializable {
         colKategori.setCellValueFactory(new PropertyValueFactory<>("kategori"));
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
         colDeskripsi.setCellValueFactory(new PropertyValueFactory<>("deskripsi"));
-        tabelBarang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabelBarang.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         // ── Kolom harga format Rp ──
         colHarga.setCellValueFactory(new PropertyValueFactory<>("harga"));
@@ -553,9 +553,8 @@ public class BarangController implements Initializable {
             } catch (SQLException e) {
                 showModernPopup("Error Database", "Gagal mengubah data: " + e.getMessage(), PopupType.ERROR);
             }
-        }); 
+        });
 
-        
     }
 
     @FXML
@@ -585,7 +584,7 @@ public class BarangController implements Initializable {
                 showModernPopup("Error Database", "Gagal menghapus data: " + e.getMessage(), PopupType.ERROR);
             }
         });
-       
+
     }
 
     @FXML

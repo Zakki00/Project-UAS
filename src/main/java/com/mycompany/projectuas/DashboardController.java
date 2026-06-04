@@ -385,7 +385,7 @@ public class DashboardController implements Initializable {
                 new TransaksiItem("#TRX-0124", "Beng-Beng x4", "Siti R.", "10:33", "Rp 16.000"));
 
         trxTable.setItems(data);
-        trxTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        trxTable.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
     }
 
     // ═════════════════════════════════════════════════════
