@@ -21,8 +21,6 @@ public class SignupController implements Initializable {
 
     // ── FXML refs ──────────────────────────────────
     @FXML
-    private TextField tfNamaLengkap;
-    @FXML
     private TextField tfUsername;
     @FXML
     private PasswordField pfPassword;
@@ -30,8 +28,7 @@ public class SignupController implements Initializable {
     private HBox boxPassword;
     @FXML
     private Button btnShowPass;
-    @FXML
-    private Button btnDaftar;
+   
     @FXML
     private Button btnGoogle;
     @FXML
@@ -47,7 +44,7 @@ public class SignupController implements Initializable {
     // ── State ──────────────────────────────────────
     private boolean passwordVisible = false;
     private TextField tfPasswordVisible; // untuk show/hide password
-
+    GoogleUser googleUser = new GoogleUser();
     koneksi db = new koneksi();
 
     // ═══════════════════════════════════════════════
@@ -56,7 +53,6 @@ public class SignupController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // bersihkan error saat user mulai ketik
-        tfNamaLengkap.textProperty().addListener((o, ov, nv) -> clearError(errNama));
         tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errUsername));
         pfPassword.textProperty().addListener((o, ov, nv) -> clearError(errPassword));
     }
@@ -98,53 +94,21 @@ public class SignupController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════════
-    // DAFTAR
-    // ═══════════════════════════════════════════════
-    @FXML
-    private void onDaftar() {
-        if (!validasi())
-            return;
-
-        String nama = tfNamaLengkap.getText().trim();
-        String username = tfUsername.getText().trim();
-        String password = hashPassword(pfPassword.getText().trim());
-
-        // cek username sudah dipakai
-        String cekSql = "SELECT id_user FROM tb_user WHERE username = '"
-                + username + "'";
-        if (!koneksi.ambilData(cekSql).isEmpty()) {
-            showError(errUsername, "Username sudah digunakan!");
-            return;
-        }
-
-        // simpan ke database
-        String sql = "INSERT INTO tb_user (username, password, nama_lengkap) "
-                + "VALUES ('" + username + "', '"
-                + password + "', '" + nama + "')";
-
-        try {
-            koneksi.eksekusiQuery(sql);
-            showAlert("Berhasil", "Akun berhasil dibuat! Silakan login.");
-            goToLogin();
-        } catch (Exception e) {
-            showAlert("Gagal", "Terjadi kesalahan: " + e.getMessage());
-        }
-    }
+    
 
     // ═══════════════════════════════════════════════
     // LOGIN WITH GOOGLE
     // ═══════════════════════════════════════════════
     @FXML
     private void onLoginGoogle() {
-       
+
         String username = tfUsername.getText().trim();
         String password = pfPassword.getText().trim();
 
         // VALIDASI USERNAME
         if (username.isEmpty() || username.equals("Masukkan username...")) {
             showError(errUsername, "Username tidak boleh kosong!");
-            
+
             return;
         }
 
@@ -183,10 +147,26 @@ public class SignupController implements Initializable {
             showError(errPassword, "Password harus mengandung angka!");
             return;
         }
-        
+
         try {
             GoogleAuthService auth = new GoogleAuthService();
+            
             GoogleUser user = auth.login();
+
+            // cek username sudah dipakai
+            String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
+            if (!koneksi.ambilData(cekSql).isEmpty()) {
+                showError(errUsername, "Username sudah digunakan!");
+                return;
+            }
+
+            // simpan ke database
+            String sql = "INSERT INTO tb_user (username, password, nama_lengkap) "
+                    + "VALUES ( ?, ?, ?)";
+
+            koneksi.eksekusiQuery(sql, username, hashPassword(password), googleUser.getName());
+            showAlert("Berhasil", "Akun berhasil dibuat! Silakan login.");
+            goToLogin();
 
             System.out.println(user.getEmail());
         } catch (Exception e) {
@@ -205,52 +185,11 @@ public class SignupController implements Initializable {
     private void goToLogin() {
         navigation nav = new navigation();
         nav.navigateToLogin();
-        Stage stage = (Stage) btnDaftar.getScene().getWindow();
+        Stage stage = (Stage) btnGoogle.getScene().getWindow();
         stage.close();
     }
 
-    // ═══════════════════════════════════════════════
-    // VALIDASI
-    // ═══════════════════════════════════════════════
-    private boolean validasi() {
-        boolean valid = true;
-
-        String nama = tfNamaLengkap.getText().trim();
-        String username = tfUsername.getText().trim();
-        String password = pfPassword.getText().trim();
-
-        // nama lengkap
-        if (nama.isEmpty()) {
-            showError(errNama, "Nama lengkap tidak boleh kosong!");
-            valid = false;
-        } else if (nama.length() < 3) {
-            showError(errNama, "Nama minimal 3 karakter!");
-            valid = false;
-        }
-
-        // username
-        if (username.isEmpty()) {
-            showError(errUsername, "Username tidak boleh kosong!");
-            valid = false;
-        } else if (username.length() < 4) {
-            showError(errUsername, "Username minimal 4 karakter!");
-            valid = false;
-        } else if (!username.matches("[a-zA-Z0-9_]+")) {
-            showError(errUsername, "Username hanya boleh huruf, angka, dan _");
-            valid = false;
-        }
-
-        // password
-        if (password.isEmpty()) {
-            showError(errPassword, "Password tidak boleh kosong!");
-            valid = false;
-        } else if (password.length() < 6) {
-            showError(errPassword, "Password minimal 6 karakter!");
-            valid = false;
-        }
-
-        return valid;
-    }
+  
 
     // ═══════════════════════════════════════════════
     // HELPERS
