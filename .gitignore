@@ -5,3 +5,6 @@ output/
 *.class
 /output/
 *.exe
+
+# Ignore Google OAuth client credentials
+src/main/resources/google/credentials.json
