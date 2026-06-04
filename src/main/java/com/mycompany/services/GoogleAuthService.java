@@ -1,4 +1,4 @@
-package com.mycompany.service;
+package com.mycompany.services;
 
 import java.io.File;
 import java.io.IOException;

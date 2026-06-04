@@ -1,5 +1,6 @@
 -- Active: 1780404766479@@127.0.0.1@3306
 
+SELECT * FROM tb_user;
 
 DROP TABLE IF EXISTS tb_detail_transaksi;
 

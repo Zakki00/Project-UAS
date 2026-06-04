@@ -4,6 +4,9 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ResourceBundle;
 
+import com.mycompany.Model.GoogleUser;
+import com.mycompany.services.GoogleAuthService;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -134,10 +137,61 @@ public class SignupController implements Initializable {
     // ═══════════════════════════════════════════════
     @FXML
     private void onLoginGoogle() {
-        // TODO: implementasi OAuth Google
-        // untuk sekarang tampilkan info
-        showAlert("Google Sign-In",
-                "Fitur login dengan Google akan segera hadir!");
+       
+        String username = tfUsername.getText().trim();
+        String password = pfPassword.getText().trim();
+
+        // VALIDASI USERNAME
+        if (username.isEmpty() || username.equals("Masukkan username...")) {
+            showError(errUsername, "Username tidak boleh kosong!");
+            
+            return;
+        }
+
+        if (username.length() < 4) {
+            showError(errUsername, "Username minimal 4 karakter!");
+            return;
+        }
+
+        if (!username.matches("[a-zA-Z0-9_]+")) {
+            showError(errUsername, "Username tidak valid!");
+            return;
+        }
+
+        // VALIDASI PASSWORD
+        if (password.isEmpty() || password.equals("Masukkan password...")) {
+            showError(errPassword, "Password tidak boleh kosong!");
+            return;
+        }
+
+        if (password.length() < 6) {
+            showError(errPassword, "Password minimal 6 karakter!");
+            return;
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            showError(errPassword, "Password harus mengandung huruf besar!");
+            return;
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            showError(errPassword, "Password harus mengandung huruf kecil!");
+            return;
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            showError(errPassword, "Password harus mengandung angka!");
+            return;
+        }
+        
+        try {
+            GoogleAuthService auth = new GoogleAuthService();
+            GoogleUser user = auth.login();
+
+            System.out.println(user.getEmail());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // ═══════════════════════════════════════════════
