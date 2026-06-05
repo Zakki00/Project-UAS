@@ -180,9 +180,7 @@ public class SignupController implements Initializable {
                                 hashPassword(password),
                                 user.getName());
 
-                        popupHelper.showSuccessPopup(
-                                "Akun Berhasil Dibuat!",
-                                "Selamat datang, " + user.getName() + "!");
+                        popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat", "Selamat datang, " + user.getName() + "!", user);
 
                         System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
                         goToLogin();
@@ -201,11 +199,11 @@ public class SignupController implements Initializable {
                             Popup.PopupType.WARNING, primaryStage);
                 },
 
-                // Timeout 30 detik
+                // Timeout 120 detik
                 () -> {
                     popupHelper.showModernPopup(
                             "Waktu Habis",
-                            "Login tidak diselesaikan dalam 30 detik.",
+                            "Login tidak diselesaikan dalam 120 detik.",
                             Popup.PopupType.WARNING, primaryStage);
                 });
     }

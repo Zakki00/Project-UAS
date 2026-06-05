@@ -12,6 +12,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
 import javafx.animation.ScaleTransition;
+import javafx.scene.image.*;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -23,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -520,7 +522,186 @@ public class Popup {
         popup.show();
     }
 
-       public class LoginProgressDialog {
+    public void showGoogleSuccessPopup(String title, String message, GoogleUser user) {
+        Stage popup = new Stage(StageStyle.TRANSPARENT);
+        popup.initModality(Modality.APPLICATION_MODAL);
+
+        // === FOTO PROFIL ===
+        ImageView avatar = new ImageView();
+        avatar.setFitWidth(80);
+        avatar.setFitHeight(80);
+        avatar.setPreserveRatio(true);
+
+        // Clip bulat
+        Circle clip = new Circle(40, 40, 40);
+        avatar.setClip(clip);
+
+        // Border foto
+        Circle avatarBorder = new Circle(42);
+        avatarBorder.setFill(Color.TRANSPARENT);
+        avatarBorder.setStroke(Color.web("#00d084"));
+        avatarBorder.setStrokeWidth(2);
+
+        // Load foto dari URL Google
+        try {
+            Image img = new Image(user.getProfilePictureUrl(), true); // true = background load
+            avatar.setImage(img);
+        } catch (Exception e) {
+            // Fallback: inisial nama
+        }
+
+        // === CENTANG DI POJOK KANAN BAWAH (seperti Chrome) ===
+        Circle badgeBg = new Circle(14);
+        badgeBg.setFill(Color.web("#00d084"));
+        badgeBg.setStroke(Color.web("#1a1a2e"));
+        badgeBg.setStrokeWidth(2.5);
+
+        SVGPath checkPath = new SVGPath();
+        checkPath.setContent("M6,10 L10,14 L18,6");
+        checkPath.setStroke(Color.web("#0a2e1e"));
+        checkPath.setStrokeWidth(2.2);
+        checkPath.setFill(Color.TRANSPARENT);
+        checkPath.setStrokeLineCap(StrokeLineCap.ROUND);
+        checkPath.setStrokeLineJoin(StrokeLineJoin.ROUND);
+
+        // Animasi draw centang
+        checkPath.getStrokeDashArray().add(40.0);
+        checkPath.setStrokeDashOffset(40.0);
+        KeyValue kvCheck = new KeyValue(checkPath.strokeDashOffsetProperty(), 0, Interpolator.EASE_OUT);
+        KeyFrame kfCheck = new KeyFrame(Duration.millis(400), kvCheck);
+        Timeline checkTimeline = new Timeline(kfCheck);
+        checkTimeline.setDelay(Duration.millis(400));
+        checkTimeline.play();
+
+        StackPane badge = new StackPane(badgeBg, checkPath);
+        badge.setPrefSize(28, 28);
+        badge.setMaxSize(28, 28);
+
+        // === GABUNG FOTO + BADGE ===
+        StackPane avatarStack = new StackPane();
+        avatarStack.setPrefSize(90, 90);
+        avatarStack.setMaxSize(90, 90);
+
+        StackPane.setAlignment(avatar, Pos.CENTER);
+        StackPane.setAlignment(avatarBorder, Pos.CENTER);
+        StackPane.setAlignment(badge, Pos.BOTTOM_RIGHT);
+        badge.setTranslateX(4);
+        badge.setTranslateY(4);
+
+        avatarStack.getChildren().addAll(avatarBorder, avatar, badge);
+
+        // Animasi pop badge masuk
+        badge.setScaleX(0);
+        badge.setScaleY(0);
+        ScaleTransition badgePop = new ScaleTransition(Duration.millis(300), badge);
+        badgePop.setFromX(0);
+        badgePop.setToX(1.0);
+        badgePop.setFromY(0);
+        badgePop.setToY(1.0);
+        badgePop.setInterpolator(Interpolator.SPLINE(0.34, 0.0, 0.64, 1.0));
+        badgePop.setDelay(Duration.millis(300));
+        badgePop.play();
+
+        // Pulse animation border
+        ScaleTransition pulse = new ScaleTransition(Duration.seconds(2), avatarBorder);
+        pulse.setFromX(1.0);
+        pulse.setToX(1.06);
+        pulse.setFromY(1.0);
+        pulse.setToY(1.06);
+        pulse.setAutoReverse(true);
+        pulse.setCycleCount(Animation.INDEFINITE);
+        pulse.play();
+
+        // === TEXT ===
+        Label titleLabel = new Label(title);
+        titleLabel.setStyle(
+                "-fx-text-fill: #f0f0f0;"
+                        + "-fx-font-size: 16px;"
+                        + "-fx-font-weight: bold;");
+
+        Label msgLabel = new Label(message);
+        msgLabel.setStyle(
+                "-fx-text-fill: #7878a0;"
+                        + "-fx-font-size: 13px;");
+        msgLabel.setWrapText(true);
+        msgLabel.setTextAlignment(TextAlignment.CENTER);
+        msgLabel.setAlignment(Pos.CENTER);
+        msgLabel.setMaxWidth(240);
+
+        // Email label
+        Label emailLabel = new Label(user.getEmail());
+        emailLabel.setStyle(
+                "-fx-text-fill: #00d084;"
+                        + "-fx-font-size: 12px;");
+        emailLabel.setTextAlignment(TextAlignment.CENTER);
+        emailLabel.setAlignment(Pos.CENTER);
+
+        // === TOMBOL ===
+        Button btnOk = new Button("Oke, Mengerti");
+        btnOk.setStyle(
+                "-fx-background-color: #00d084;"
+                        + "-fx-text-fill: #0a2e1e;"
+                        + "-fx-font-size: 14px;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-background-radius: 10;"
+                        + "-fx-cursor: hand;"
+                        + "-fx-padding: 10 0 10 0;");
+        btnOk.setMaxWidth(Double.MAX_VALUE);
+        btnOk.setOnAction(e -> popup.close());
+        btnOk.setOnMouseEntered(e -> btnOk.setStyle(btnOk.getStyle().replace("#00d084", "#00b874")));
+        btnOk.setOnMouseExited(e -> btnOk.setStyle(btnOk.getStyle().replace("#00b874", "#00d084")));
+
+        // === LAYOUT ===
+        VBox card = new VBox(8, avatarStack, titleLabel, emailLabel, msgLabel);
+        card.setAlignment(Pos.CENTER);
+        card.setPadding(new Insets(36, 32, 28, 32));
+        VBox.setMargin(btnOk, new Insets(16, 0, 0, 0));
+        card.getChildren().add(btnOk);
+        card.setStyle(
+                "-fx-background-color: #1a1a2e;"
+                        + "-fx-background-radius: 20;"
+                        + "-fx-border-color: rgba(0,208,132,0.25);"
+                        + "-fx-border-radius: 20;"
+                        + "-fx-border-width: 1;"
+                        + "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 30, 0, 0, 8);");
+        card.setMaxWidth(300);
+
+        StackPane root = new StackPane(card);
+        root.setStyle("-fx-background-color: transparent;");
+        root.setPadding(new Insets(20));
+
+        Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
+        popup.setScene(scene);
+
+        // === ANIMASI MASUK ===
+        card.setOpacity(0);
+        card.setScaleX(0.8);
+        card.setScaleY(0.8);
+        card.setTranslateY(16);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(350), card);
+        fadeIn.setFromValue(0);
+        fadeIn.setToValue(1);
+
+        ScaleTransition scaleIn = new ScaleTransition(Duration.millis(400), card);
+        scaleIn.setFromX(0.8);
+        scaleIn.setToX(1.0);
+        scaleIn.setFromY(0.8);
+        scaleIn.setToY(1.0);
+        scaleIn.setInterpolator(Interpolator.SPLINE(0.34, 0.0, 0.64, 1.0));
+
+        TranslateTransition slideIn = new TranslateTransition(Duration.millis(350), card);
+        slideIn.setFromY(16);
+        slideIn.setToY(0);
+
+        ParallelTransition enter = new ParallelTransition(fadeIn, scaleIn, slideIn);
+        enter.play();
+
+        popup.show();
+    }
+
+    public class LoginProgressDialog {
 
         private static final int TIMEOUT_SECONDS = 120; // 2 menit
         private static final double DIALOG_WIDTH = 320;
