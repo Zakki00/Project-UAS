@@ -751,6 +751,7 @@ public class TransaksiController implements Initializable {
     // Proses bayar
     @FXML
     private void onProsesBayar() {
+        Stage ownerStage = (Stage) btnBayar.getScene().getWindow();
         if (TransaksiModel.keranjang.isEmpty()) {
             return;
         }
@@ -769,7 +770,7 @@ public class TransaksiController implements Initializable {
                 new Popup().showModernPopup(
                         "WARNING",
                         "Silahkan Masukkan Nominal Tunai",
-                        Popup.PopupType.WARNING);
+                        Popup.PopupType.WARNING, ownerStage);
                 return;
             } else {
                 if (kembalian >= 0) {

@@ -5,7 +5,7 @@ import java.security.MessageDigest;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.GoogleUser;
-import com.mycompany.services.GoogleAuthService;
+import com.mycompany.projectuas.Popup.LoginProgressDialog;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -108,7 +108,6 @@ public class SignupController implements Initializable {
         // VALIDASI USERNAME
         if (username.isEmpty() || username.equals("Masukkan username...")) {
             showError(errUsername, "Username tidak boleh kosong!");
-
             return;
         }
 
@@ -148,30 +147,67 @@ public class SignupController implements Initializable {
             return;
         }
 
-        try {
-            GoogleAuthService auth = new GoogleAuthService();
-            
-            GoogleUser user = auth.login();
+        // Ambil Stage dari node manapun yang ada di scene (tidak perlu field
+        // primaryStage)
+        Stage primaryStage = (Stage) tfUsername.getScene().getWindow();
 
-            // cek username sudah dipakai
-            String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
-            if (!koneksi.ambilData(cekSql).isEmpty()) {
-                showError(errUsername, "Username sudah digunakan!");
-                return;
-            }
+        Popup popupHelper = new Popup();
+        Popup.LoginProgressDialog progressDialog = popupHelper.new LoginProgressDialog(primaryStage);
 
-            // simpan ke database
-            String sql = "INSERT INTO tb_user (username, password, nama_lengkap) "
-                    + "VALUES ( ?, ?, ?)";
+        progressDialog.show(
+                // ✅ Login Google sukses
+                user -> {
+                    googleUser = user;
 
-            koneksi.eksekusiQuery(sql, username, hashPassword(password), googleUser.getName());
-            showAlert("Berhasil", "Akun berhasil dibuat! Silakan login.");
-            goToLogin();
+                    try {
+                        // Pakai email Google sebagai username default (bagian sebelum @)
+                        String usernameGoogle = user.getEmail().split("@")[0];
 
-            System.out.println(user.getEmail());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                        // Cek apakah akun sudah terdaftar
+                        String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
+                        if (!koneksi.ambilData(cekSql, usernameGoogle).isEmpty()) {
+                            // Akun sudah ada → langsung ke halaman login
+                            System.out.println("Akun sudah ada, langsung login: " + user.getEmail());
+                            goToLogin();
+                            return;
+                        }
+
+                        // Akun belum ada → daftar otomatis dengan data dari Google
+                        String sql = "INSERT INTO tb_user (username, password, nama_lengkap) "
+                                + "VALUES (?, ?, ?)";
+                        koneksi.eksekusiQuery(sql,
+                                username,
+                                hashPassword(password),
+                                user.getName());
+
+                        popupHelper.showSuccessPopup(
+                                "Akun Berhasil Dibuat!",
+                                "Selamat datang, " + user.getName() + "!");
+
+                        System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
+                        goToLogin();
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        popupHelper.showModernPopup("Error", "Gagal menyimpan akun.", Popup.PopupType.ERROR, primaryStage);
+                    }
+                },
+
+                //Browser ditutup sebelum login selesai
+                () -> {
+                    popupHelper.showModernPopup(
+                            "Login Dibatalkan",
+                            "Browser ditutup sebelum login selesai.",
+                            Popup.PopupType.WARNING, primaryStage);
+                },
+
+                // Timeout 30 detik
+                () -> {
+                    popupHelper.showModernPopup(
+                            "Waktu Habis",
+                            "Login tidak diselesaikan dalam 30 detik.",
+                            Popup.PopupType.WARNING, primaryStage);
+                });
     }
 
     // ═══════════════════════════════════════════════

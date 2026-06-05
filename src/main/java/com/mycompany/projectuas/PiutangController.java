@@ -563,12 +563,12 @@ public class PiutangController implements Initializable {
 
     @FXML
     private void onLunas() {
-
+        Stage ownerStage = (Stage) btnLunas.getScene().getWindow();
         // 1. Validasi input
         if (tfTunai.getText().isEmpty() || kembalian < 0) {
             new Popup().showModernPopup("ERROR",
                     "Pembayaran tidak valid. Pastikan jumlah tunai mencukupi untuk melunasi hutang.",
-                    Popup.PopupType.ERROR);
+                    Popup.PopupType.ERROR, ownerStage);
             return;
         }
 
@@ -610,7 +610,7 @@ public class PiutangController implements Initializable {
                     onClearSearch();
                     tfPelanggan.setDisable(false);
                     new Popup().showModernPopup("SUKSES", "Transaksi berhasil ditandai sebagai LUNAS.",
-                            Popup.PopupType.SUCCESS);
+                            Popup.PopupType.SUCCESS, ownerStage);
                 });
 
     }

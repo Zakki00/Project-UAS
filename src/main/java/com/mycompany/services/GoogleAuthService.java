@@ -11,6 +11,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -28,6 +29,8 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
+import javafx.application.Platform;
+
 public class GoogleAuthService {
 
     // Fallback timeout — hanya aktif jika browser crash / ditutup paksa
@@ -37,10 +40,74 @@ public class GoogleAuthService {
     private String authUrl;
     private final String redirectUri = "http://localhost:8080/callback";
 
+    // Callback ke UI (opsional) — dipanggil saat ada perubahan status login
+    // onSuccess -> GoogleUser
+    // onCancelled -> null
+    // onTimeout -> null
+    private Consumer<GoogleUser> onSuccess;
+    private Runnable onCancelled;
+    private Runnable onTimeout;
+
+    // =========================================================================
+    // Setter Callback (opsional, untuk integrasi JavaFX)
+    // =========================================================================
+
+    public void setOnSuccess(Consumer<GoogleUser> onSuccess) {
+        this.onSuccess = onSuccess;
+    }
+
+    public void setOnCancelled(Runnable onCancelled) {
+        this.onCancelled = onCancelled;
+    }
+
+    public void setOnTimeout(Runnable onTimeout) {
+        this.onTimeout = onTimeout;
+    }
+
     // =========================================================================
     // Public API
     // =========================================================================
 
+    /**
+     * Jalankan login di background thread agar tidak memblokir JavaFX thread.
+     * Callback (onSuccess/onCancelled/onTimeout) dipanggil di JavaFX thread.
+     *
+     * Contoh pemakaian:
+     * GoogleAuthService auth = new GoogleAuthService();
+     * auth.setOnSuccess(user -> { ... });
+     * auth.setOnCancelled(() -> { ... });
+     * auth.setOnTimeout(() -> { ... });
+     * auth.loginAsync();
+     */
+    public void loginAsync() {
+        Thread t = new Thread(() -> {
+            try {
+                GoogleUser user = login();
+                if (onSuccess != null)
+                    Platform.runLater(() -> onSuccess.accept(user));
+            } catch (LoginCancelledException e) {
+                System.out.println("[GoogleAuth] " + e.getMessage());
+                if (e.getMessage().contains("timeout")) {
+                    if (onTimeout != null)
+                        Platform.runLater(onTimeout);
+                } else {
+                    if (onCancelled != null)
+                        Platform.runLater(onCancelled);
+                }
+            } catch (Exception e) {
+                System.err.println("[GoogleAuth] Error: " + e.getMessage());
+                e.printStackTrace();
+                if (onCancelled != null)
+                    Platform.runLater(onCancelled);
+            }
+        }, "google-auth-thread");
+        t.setDaemon(true);
+        t.start();
+    }
+
+    /**
+     * Login sinkronus (blocking). Gunakan loginAsync() untuk JavaFX.
+     */
     public GoogleUser login() throws Exception {
         InputStream in = getClass().getResourceAsStream("/google/credentials.json");
         if (in == null)
@@ -117,9 +184,9 @@ public class GoogleAuthService {
     // =========================================================================
 
     private enum LoginResult {
-        SUCCESS, // user berhasil login
-        CANCELLED, // user menutup browser (beacon JS terkirim)
-        TIMEOUT // browser crash / ditutup paksa (beacon tidak sempat terkirim)
+        SUCCESS,
+        CANCELLED,
+        TIMEOUT
     }
 
     public static class LoginCancelledException extends Exception {
@@ -192,12 +259,6 @@ public class GoogleAuthService {
             }
         }
 
-        // ---------------------------------------------------------------------
-        // Handler 1: / — Landing page
-        // Kuncinya: beacon TIDAK dipasang di sini.
-        // Halaman ini hanya menampilkan tombol, user klik sendiri -> redirect.
-        // Dengan begitu beforeunload hanya trigger saat user benar-benar tutup tab.
-        // ---------------------------------------------------------------------
         private class LandingHandler implements HttpHandler {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -205,9 +266,6 @@ public class GoogleAuthService {
             }
         }
 
-        // ---------------------------------------------------------------------
-        // Handler 2: /callback — Google redirect ke sini setelah user login
-        // ---------------------------------------------------------------------
         private class CallbackHandler implements HttpHandler {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -260,9 +318,6 @@ public class GoogleAuthService {
             }
         }
 
-        // ---------------------------------------------------------------------
-        // Handler 3: /cancel — dipanggil beacon JS saat tab ditutup
-        // ---------------------------------------------------------------------
         private class CancelHandler implements HttpHandler {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -297,19 +352,6 @@ public class GoogleAuthService {
     // HTML Builders
     // =========================================================================
 
-    /**
-     * SOLUSI UTAMA:
-     *
-     * Sebelumnya: redirect otomatis via setTimeout → beforeunload trigger saat
-     * pindah ke Google → beacon /cancel terkirim → sesi mati sebelum login.
-     *
-     * Sekarang: TIDAK ada redirect otomatis. User klik tombol sendiri.
-     * beforeunload hanya trigger saat user benar-benar menutup tab,
-     * bukan saat navigasi ke Google.
-     *
-     * Flag isRedirecting di-set true saat tombol diklik → beforeunload
-     * mengabaikan event ini → beacon TIDAK dikirim saat pindah ke Google.
-     */
     private String buildLandingHtml(String googleAuthUrl) {
         String escapedUrl = googleAuthUrl.replace("\\", "\\\\").replace("'", "\\'");
         return "<!DOCTYPE html>" +
@@ -321,34 +363,25 @@ public class GoogleAuthService {
                 +
                 buildCommonStyle() +
                 "<style>" +
-                ".btn-google {" +
-                "  display: inline-flex; align-items: center; gap: 10px;" +
+                ".btn-google { display: inline-flex; align-items: center; gap: 10px;" +
                 "  background: #fff; border: 1.5px solid #dadce0; border-radius: 8px;" +
                 "  padding: 10px 20px; font-size: 15px; font-weight: 500; color: #3c4043;" +
                 "  font-family: inherit; cursor: pointer; margin-top: 1.5rem;" +
-                "  transition: background 0.15s, box-shadow 0.15s;" +
-                "}" +
+                "  transition: background 0.15s, box-shadow 0.15s; }" +
                 ".btn-google:hover { background: #f8f9fa; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }" +
                 ".btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }" +
                 "</style>" +
                 "<script>" +
-
-                // Flag: apakah user sedang redirect ke Google (bukan tutup tab)
                 "var isRedirecting = false;" +
-
-                // Beacon hanya dikirim jika BUKAN redirect
                 "window.addEventListener('beforeunload', function() {" +
                 "  if (!isRedirecting) {" +
                 "    navigator.sendBeacon('http://localhost:8080/cancel', 'cancelled');" +
                 "  }" +
                 "});" +
-
-                // Saat tombol diklik: set flag dulu, baru navigasi
                 "function goToGoogle() {" +
-                "  isRedirecting = true;" + // tandai ini adalah navigasi, bukan tutup tab
+                "  isRedirecting = true;" +
                 "  window.location.href = '" + escapedUrl + "';" +
                 "}" +
-
                 "</script>" +
                 "</head><body>" +
                 "<div class='card'>" +
@@ -356,7 +389,6 @@ public class GoogleAuthService {
                 "<h1>Masuk ke Aplikasi</h1>" +
                 "<p class='subtitle'>Klik tombol di bawah untuk melanjutkan<br>dengan akun Google Anda.</p>" +
                 "<button class='btn-google' onclick='goToGoogle()'>" +
-                // Google G logo SVG
                 "<svg viewBox='0 0 18 18' xmlns='http://www.w3.org/2000/svg'>" +
                 "<path d='M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z' fill='#4285F4'/>"
                 +
@@ -385,7 +417,6 @@ public class GoogleAuthService {
                 "<link href='https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap' rel='stylesheet'>"
                 +
                 buildCommonStyle() +
-                // Login sudah sukses, nonaktifkan beacon
                 "<script>window.onbeforeunload = null;</script>" +
                 "</head><body>" +
                 "<div class='card'>" +
@@ -433,21 +464,19 @@ public class GoogleAuthService {
                 "  display: flex; align-items: center; justify-content: center; background: #f4f4f0; }" +
                 ".card { background: #fff; border: 1px solid rgba(0,0,0,0.08); border-radius: 20px;" +
                 "  padding: 2.5rem 2rem; text-align: center; max-width: 360px; width: 90%; }" +
-                ".g-logo { display: flex; align-items: center; justify-content: center;" +
-                "  gap: 6px; margin-bottom: 1.5rem; }" +
+                ".g-logo { display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 1.5rem; }"
+                +
                 ".g-dot { width: 8px; height: 8px; border-radius: 50%; }" +
                 ".avatar-wrap { position: relative; width: 100px; margin: 0 auto 1.25rem; }" +
-                ".avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover;" +
-                "  display: block; border: 3px solid #eafaf1; }" +
-                ".badge { position: absolute; bottom: 0; right: 0; width: 24px; height: 24px;" +
-                "  border-radius: 50%; background: #eafaf1; display: flex; align-items: center;" +
-                "  justify-content: center; border: 2px solid #fff; }" +
+                ".avatar { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; display: block; border: 3px solid #eafaf1; }"
+                +
+                ".badge { position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; border-radius: 50%; background: #eafaf1; display: flex; align-items: center; justify-content: center; border: 2px solid #fff; }"
+                +
                 ".badge-svg { width: 25px; height: 25px; }" +
-                ".badge-svg circle { fill: none; stroke: #1a9e5c; stroke-width: 3;" +
-                "  stroke-dasharray: 100; stroke-dashoffset: 100; animation: ring 1.5s ease forwards 1s; }" +
-                ".badge-svg path { fill: none; stroke: #1a9e5c; stroke-width: 3; stroke-linecap: round;" +
-                "  stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50;" +
-                "  animation: check 1.4s ease forwards 1.6s; }" +
+                ".badge-svg circle { fill: none; stroke: #1a9e5c; stroke-width: 3; stroke-dasharray: 100; stroke-dashoffset: 100; animation: ring 1.5s ease forwards 1s; }"
+                +
+                ".badge-svg path { fill: none; stroke: #1a9e5c; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: check 1.4s ease forwards 1.6s; }"
+                +
                 "@keyframes ring { to { stroke-dashoffset: 0; } }" +
                 "@keyframes check { to { stroke-dashoffset: 0; } }" +
                 "h1 { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 0.5rem; }" +

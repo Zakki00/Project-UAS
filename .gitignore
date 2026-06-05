@@ -1,10 +1,16 @@
 target/
 output/
+
 *.class
 *.jar
-*.class
-/output/
 *.exe
 
-# Ignore Google OAuth client credentials
+.vscode/
+.idea/
+*.iml
+
+# Google OAuth
 src/main/resources/google/credentials.json
+
+# Google OAuth token
+tokens/StoredCredential
