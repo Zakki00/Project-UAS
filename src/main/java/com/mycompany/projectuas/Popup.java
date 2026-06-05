@@ -520,30 +520,9 @@ public class Popup {
         popup.show();
     }
 
-    /**
-     * Popup dialog JavaFX yang muncul saat proses login Google berlangsung.
-     *
-     * Fitur:
-     * - Memblokir interaksi ke window utama (modal)
-     * - Countdown 30 detik
-     * - Arc progress melingkar mengikuti hitungan mundur
-     * - Menutup otomatis saat login sukses / timeout / dibatalkan
-     *
-     * Cara pakai:
-     *
-     * LoginProgressDialog dialog = new LoginProgressDialog(primaryStage);
-     * dialog.show(user -> {
-     * // login sukses, user berisi data GoogleUser
-     * System.out.println("Login sebagai: " + user.getName());
-     * }, () -> {
-     * // login dibatalkan (browser ditutup)
-     * }, () -> {
-     * // login timeout (browser crash / tidak ada aksi 30 detik)
-     * });
-     */
-    public class LoginProgressDialog {
+       public class LoginProgressDialog {
 
-        private static final int TIMEOUT_SECONDS = 30;
+        private static final int TIMEOUT_SECONDS = 120; // 2 menit
         private static final double DIALOG_WIDTH = 320;
         private static final double DIALOG_HEIGHT = 300;
 
@@ -634,6 +613,7 @@ public class Popup {
             lblStatus.setFont(Font.font("System", FontWeight.SEMI_BOLD, 14));
             lblStatus.setTextFill(Color.web(COLOR_TEXT_MAIN));
             lblStatus.setTextAlignment(TextAlignment.CENTER);
+            lblStatus.setAlignment(Pos.CENTER); // ← tambahkan ini
             lblStatus.setWrapText(true);
             lblStatus.setMaxWidth(DIALOG_WIDTH - 56);
             VBox.setMargin(lblStatus, new Insets(0, 0, 6, 0));
@@ -643,6 +623,7 @@ public class Popup {
             lblSub.setFont(Font.font("System", 12));
             lblSub.setTextFill(Color.web(COLOR_TEXT_SUB));
             lblSub.setTextAlignment(TextAlignment.CENTER);
+            lblSub.setAlignment(Pos.CENTER); // ← tambahkan ini
             lblSub.setWrapText(true);
             lblSub.setMaxWidth(DIALOG_WIDTH - 56);
             VBox.setMargin(lblSub, new Insets(0, 0, 12, 0));
@@ -652,6 +633,7 @@ public class Popup {
             lblHint.setFont(Font.font("System", 11));
             lblHint.setTextFill(Color.web(COLOR_TEXT_HINT));
             lblHint.setTextAlignment(TextAlignment.CENTER);
+            lblHint.setAlignment(Pos.CENTER); // ← tambahkan ini
             lblHint.setWrapText(true);
             lblHint.setMaxWidth(DIALOG_WIDTH - 56);
 

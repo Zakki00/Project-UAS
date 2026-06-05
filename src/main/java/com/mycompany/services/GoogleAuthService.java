@@ -34,7 +34,7 @@ import javafx.application.Platform;
 public class GoogleAuthService {
 
     // Fallback timeout — hanya aktif jika browser crash / ditutup paksa
-    private static final long LOGIN_TIMEOUT_MS = 30_000; // 30 detik
+    private static final long LOGIN_TIMEOUT_MS = 120_000; // 2 menit
 
     private GoogleAuthorizationCodeFlow flow;
     private String authUrl;
