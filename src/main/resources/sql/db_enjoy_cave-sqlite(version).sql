@@ -17,7 +17,8 @@ CREATE TABLE
         id_user INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        nama_lengkap TEXT NOT NULL
+        nama_lengkap TEXT NOT NULL,
+        email TEXT
     );
 
 -- BARANG

@@ -28,7 +28,7 @@ public class SignupController implements Initializable {
     private HBox boxPassword;
     @FXML
     private Button btnShowPass;
-   
+
     @FXML
     private Button btnGoogle;
     @FXML
@@ -94,8 +94,6 @@ public class SignupController implements Initializable {
         }
     }
 
-    
-
     // ═══════════════════════════════════════════════
     // LOGIN WITH GOOGLE
     // ═══════════════════════════════════════════════
@@ -108,6 +106,13 @@ public class SignupController implements Initializable {
         // VALIDASI USERNAME
         if (username.isEmpty() || username.equals("Masukkan username...")) {
             showError(errUsername, "Username tidak boleh kosong!");
+            return;
+        }
+        Stage stage = (Stage) tfUsername.getScene().getWindow();
+        // Cek apakah akun sudah terdaftar
+        String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
+        if (!koneksi.ambilData(cekSql, username).isEmpty()) {
+            showError(errUsername, "Username Sudah Di Gunakan");
             return;
         }
 
@@ -146,6 +151,7 @@ public class SignupController implements Initializable {
             showError(errPassword, "Password harus mengandung angka!");
             return;
         }
+      
 
         // Ambil Stage dari node manapun yang ada di scene (tidak perlu field
         // primaryStage)
@@ -155,43 +161,37 @@ public class SignupController implements Initializable {
         Popup.LoginProgressDialog progressDialog = popupHelper.new LoginProgressDialog(primaryStage);
 
         progressDialog.show(
-                // ✅ Login Google sukses
+
                 user -> {
                     googleUser = user;
 
                     try {
-                        // Pakai email Google sebagai username default (bagian sebelum @)
-                        String usernameGoogle = user.getEmail().split("@")[0];
 
-                        // Cek apakah akun sudah terdaftar
-                        String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
-                        if (!koneksi.ambilData(cekSql, usernameGoogle).isEmpty()) {
-                            // Akun sudah ada → langsung ke halaman login
-                            System.out.println("Akun sudah ada, langsung login: " + user.getEmail());
-                            goToLogin();
-                            return;
-                        }
+                      
 
                         // Akun belum ada → daftar otomatis dengan data dari Google
-                        String sql = "INSERT INTO tb_user (username, password, nama_lengkap) "
-                                + "VALUES (?, ?, ?)";
+                        String sql = "INSERT INTO tb_user (username, password, nama_lengkap,email) "
+                                + "VALUES (?, ?, ?,?)";
                         koneksi.eksekusiQuery(sql,
                                 username,
                                 hashPassword(password),
-                                user.getName());
+                                user.getName(),
+                                user.getEmail());
 
-                        popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat", "Selamat datang, " + user.getName() + "!", user);
+                        popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
+                                "Selamat datang, " + user.getName() + "!", user);
 
                         System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
                         goToLogin();
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        popupHelper.showModernPopup("Error", "Gagal menyimpan akun.", Popup.PopupType.ERROR, primaryStage);
+                        popupHelper.showModernPopup("Error", "Gagal menyimpan akun.", Popup.PopupType.ERROR,
+                                primaryStage);
                     }
                 },
 
-                //Browser ditutup sebelum login selesai
+                // Browser ditutup sebelum login selesai
                 () -> {
                     popupHelper.showModernPopup(
                             "Login Dibatalkan",
@@ -222,8 +222,6 @@ public class SignupController implements Initializable {
         Stage stage = (Stage) btnGoogle.getScene().getWindow();
         stage.close();
     }
-
-  
 
     // ═══════════════════════════════════════════════
     // HELPERS

@@ -22,6 +22,7 @@ import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.DriveScopes;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mycompany.Model.GoogleUser;
@@ -126,7 +127,11 @@ public class GoogleAuthService {
                 new ApacheHttpTransport(),
                 GsonFactory.getDefaultInstance(),
                 clientSecrets,
-                Arrays.asList("openid", "email", "profile"))
+                Arrays.asList(
+                        "openid",
+                        "email",
+                        "profile",
+                        DriveScopes.DRIVE_FILE))
                 .setAccessType("offline")
                 .setDataStoreFactory(dataStoreFactory)
                 .build();
