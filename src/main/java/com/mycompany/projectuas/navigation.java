@@ -46,6 +46,9 @@ public class navigation {
     public void navigateToPiutang() {
         navigateTo("piutang.fxml", "Piutang");
     }
+    public void navigataeToPengaturan(){
+        navigateTo("pengaturan.fxml", "Pengaturan");
+    }
 
     public void navigateToLogin() {
         try {

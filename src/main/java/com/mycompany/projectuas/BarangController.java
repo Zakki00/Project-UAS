@@ -301,7 +301,7 @@ public class BarangController implements Initializable {
         colKategori.setCellValueFactory(new PropertyValueFactory<>("kategori"));
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
         colDeskripsi.setCellValueFactory(new PropertyValueFactory<>("deskripsi"));
-        tabelBarang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabelBarang.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
         // ── Kolom harga format Rp ──
         colHarga.setCellValueFactory(new PropertyValueFactory<>("harga"));
@@ -519,39 +519,42 @@ public class BarangController implements Initializable {
         if (!isInputValid(true, dipilih))
             return;
 
-        try {
-            String nama = txtNama.getText().trim();
-            String kategori = cmbKategori.getValue();
-            int harga = getHargaValue();
-            int stok = Integer.parseInt(txtStok.getText().trim());
-            String deskripsi = txtDeskripsi.getText();
-            String gambar = lblFilePath.getText().equals("Tidak ada file dipilih")
-                    ? dipilih.getGambar()
-                    : lblFilePath.getText();
+        new Popup().showConfirmPopup("UBAH BARANG", "Apakah Anda Yakin Ingin Merubah Data Barang Ini?", () -> {
+            try {
+                String nama = txtNama.getText().trim();
+                String kategori = cmbKategori.getValue();
+                int harga = getHargaValue();
+                int stok = Integer.parseInt(txtStok.getText().trim());
+                String deskripsi = txtDeskripsi.getText();
+                String gambar = lblFilePath.getText().equals("Tidak ada file dipilih")
+                        ? dipilih.getGambar()
+                        : lblFilePath.getText();
 
-            String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_path =? WHERE id_barang=?";
-            try (Connection conn = koneksi.getConnection();
-                    PreparedStatement ps = conn.prepareStatement(query)) {
+                String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_path =? WHERE id_barang=?";
+                try (Connection conn = koneksi.getConnection();
+                        PreparedStatement ps = conn.prepareStatement(query)) {
 
-                ps.setString(1, nama);
-                ps.setString(2, kategori);
-                ps.setInt(3, harga);
-                ps.setInt(4, stok);
-                ps.setString(5, deskripsi);
-                ps.setString(6, gambar);
-                ps.setInt(7, dipilih.getId());
-                ps.executeUpdate();
+                    ps.setString(1, nama);
+                    ps.setString(2, kategori);
+                    ps.setInt(3, harga);
+                    ps.setInt(4, stok);
+                    ps.setString(5, deskripsi);
+                    ps.setString(6, gambar);
+                    ps.setInt(7, dipilih.getId());
+                    ps.executeUpdate();
+                }
+
+                loadDataFromDB();
+                clearForm(null);
+                showModernPopup("Berhasil Diperbarui", "Barang \"" + nama + "\" berhasil diubah.", PopupType.SUCCESS);
+
+            } catch (NumberFormatException e) {
+                showModernPopup("Kesalahan Input", "Stok harus berupa angka bulat!", PopupType.ERROR);
+            } catch (SQLException e) {
+                showModernPopup("Error Database", "Gagal mengubah data: " + e.getMessage(), PopupType.ERROR);
             }
+        });
 
-            loadDataFromDB();
-            clearForm(null);
-            showModernPopup("Berhasil Diperbarui", "Barang \"" + nama + "\" berhasil diubah.", PopupType.SUCCESS);
-
-        } catch (NumberFormatException e) {
-            showModernPopup("Kesalahan Input", "Stok harus berupa angka bulat!", PopupType.ERROR);
-        } catch (SQLException e) {
-            showModernPopup("Error Database", "Gagal mengubah data: " + e.getMessage(), PopupType.ERROR);
-        }
     }
 
     @FXML
@@ -561,23 +564,27 @@ public class BarangController implements Initializable {
             showModernPopup("Peringatan", "Pilih data di tabel terlebih dahulu!", PopupType.WARNING);
             return;
         }
-        try {
-            String namaBarang = dipilih.getNama();
-            String query = "DELETE FROM tb_barang WHERE id_barang=?";
-            try (Connection conn = koneksi.getConnection();
-                    PreparedStatement ps = conn.prepareStatement(query)) {
 
-                ps.setInt(1, dipilih.getId());
-                ps.executeUpdate();
+        new Popup().showConfirmPopup("HAPUS BARANG", "Apakah Anda Yakin Ingin Menghapus Data Barang Ini?", () -> {
+            try {
+                String namaBarang = dipilih.getNama();
+                String query = "DELETE FROM tb_barang WHERE id_barang=?";
+                try (Connection conn = koneksi.getConnection();
+                        PreparedStatement ps = conn.prepareStatement(query)) {
+
+                    ps.setInt(1, dipilih.getId());
+                    ps.executeUpdate();
+                }
+
+                loadDataFromDB();
+                clearForm(null);
+                showModernPopup("Berhasil Dihapus", "Barang \"" + namaBarang + "\" telah dihapus.", PopupType.SUCCESS);
+
+            } catch (SQLException e) {
+                showModernPopup("Error Database", "Gagal menghapus data: " + e.getMessage(), PopupType.ERROR);
             }
+        });
 
-            loadDataFromDB();
-            clearForm(null);
-            showModernPopup("Berhasil Dihapus", "Barang \"" + namaBarang + "\" telah dihapus.", PopupType.SUCCESS);
-
-        } catch (SQLException e) {
-            showModernPopup("Error Database", "Gagal menghapus data: " + e.getMessage(), PopupType.ERROR);
-        }
     }
 
     @FXML

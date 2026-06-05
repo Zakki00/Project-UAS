@@ -1,5 +1,6 @@
 -- Active: 1780404766479@@127.0.0.1@3306
 
+SELECT * FROM tb_user;
 
 DROP TABLE IF EXISTS tb_detail_transaksi;
 
@@ -16,7 +17,8 @@ CREATE TABLE
         id_user INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
-        nama_lengkap TEXT NOT NULL
+        nama_lengkap TEXT NOT NULL,
+        email TEXT
     );
 
 -- BARANG

@@ -88,7 +88,7 @@
         </VBox>
         <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
           <Label styleClass="search-icon" text="🔍"/>
-          <TextField promptText="Cari..." styleClass="search-field"/>
+          <TextField fx:id="txtCari" promptText="Cari..." styleClass="search-field"/>
         </HBox>
         <StackPane styleClass="notif-wrapper">
           <Button styleClass="notif-btn" text="🔔"/>

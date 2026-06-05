@@ -1,7 +1,16 @@
 target/
 output/
+
 *.class
 *.jar
-*.class
-/output/
 *.exe
+
+.vscode/
+.idea/
+*.iml
+
+# Google OAuth
+src/main/resources/google/credentials.json
+
+# Google OAuth token
+tokens/StoredCredential

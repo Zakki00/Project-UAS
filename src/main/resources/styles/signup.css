@@ -5,3 +5,209 @@
 .mainFxmlClass {
 
 }
+/* ═══════════════════════════════════════════════
+   StoreMS — signup.css
+════════════════════════════════════════════════ */
+
+/* ROOT */
+.signup-root {
+    -fx-background-color: #0F1117;
+}
+
+/* Dekorasi background */
+.bg-circle-1 {
+    -fx-fill: rgba(108, 99, 255, 0.08);
+    -fx-translate-x: -200;
+    -fx-translate-y: -150;
+}
+
+.bg-circle-2 {
+    -fx-fill: rgba(0, 212, 255, 0.06);
+    -fx-translate-x: 150;
+    -fx-translate-y: 120;
+}
+
+/* ── CARD ────────────────────────────────────── */
+.signup-card {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 30, 0, 0, 8);
+}
+
+/* ── HEADER ──────────────────────────────────── */
+.signup-header {
+    -fx-border-color: transparent transparent #2E3250 transparent;
+    -fx-border-width: 1;
+}
+
+.signup-logo {
+    -fx-font-size: 40px;
+    -fx-padding: 0 0 4 0;
+}
+
+.signup-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.signup-sub {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+}
+
+/* ── FIELD ───────────────────────────────────── */
+.field-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 0.5;
+}
+
+.field-box {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 0 12 0 12;
+    -fx-pref-height: 46;
+}
+
+.field-box:focused-within {
+    -fx-border-color: #6C63FF;
+    -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.25), 8, 0, 0, 0);
+}
+
+.field-icon {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 14px;
+    -fx-min-width: 20;
+}
+
+.field-input {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #8B8FA8;
+    -fx-font-size: 13px;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-pref-height: 46;
+}
+
+.field-input:focused {
+    -fx-background-color: transparent;
+}
+
+/* Error label */
+.field-error {
+    -fx-text-fill: #FF5C7C;
+    -fx-font-size: 10px;
+    -fx-padding: 0 0 0 4;
+}
+
+/* Eye button */
+.btn-eye {
+    -fx-background-color: transparent;
+    -fx-border-width: 0;
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-padding: 0 4 0 4;
+}
+
+.btn-eye:hover {
+    -fx-text-fill: #6C63FF;
+}
+
+/* ── TOMBOL DAFTAR ───────────────────────────── */
+.btn-daftar {
+    -fx-background-color: #6C63FF;
+    -fx-border-width: 0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-height: 46;
+    -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.45), 12, 0, 0, 4);
+}
+
+.btn-daftar:hover {
+    -fx-background-color: #5a52e0;
+    -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.65), 16, 0, 0, 6);
+}
+
+.btn-daftar:pressed {
+    -fx-background-color: #4a42d0;
+    -fx-effect: none;
+}
+
+/* ── DIVIDER OR ──────────────────────────────── */
+.divider-line {
+    -fx-fill: #2E3250;
+}
+
+.divider-text {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+}
+
+/* ── GOOGLE BUTTON ───────────────────────────── */
+.btn-google {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #DADCE0;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-pref-height: 46;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 8, 0, 0, 2);
+}
+
+.btn-google:hover {
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #C0C4CC;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 12, 0, 0, 3);
+}
+
+.btn-google:pressed {
+    -fx-background-color: #F1F3F4;
+    -fx-effect: none;
+}
+
+.google-text {
+    -fx-text-fill: #3C4043;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Roboto", "Segoe UI", sans-serif;
+}
+
+/* ── FOOTER ──────────────────────────────────── */
+.signup-footer {
+    -fx-border-color: #2E3250 transparent transparent transparent;
+    -fx-border-width: 1;
+    -fx-padding: 16 0 0 0;
+}
+
+.footer-text {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+}
+
+.footer-link {
+    -fx-text-fill: #6C63FF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-underline: false;
+    -fx-border-width: 0;
+    -fx-cursor: hand;
+}
+
+.footer-link:hover {
+    -fx-text-fill: #A5B4FC;
+}   

@@ -242,8 +242,9 @@ public class DetailTransaksiController implements Initializable {
     @FXML
     private void onSimpanTransaksi() {
         String pelanggan = tfPelanggan.getText().trim();
+        Stage ownerStage = (Stage) btnSimpan.getScene().getWindow();
         if (pelanggan.isEmpty()) {
-            new Popup().showModernPopup("ERROR", "Silahkan Isi Nama Pelanggan", Popup.PopupType.ERROR);
+            new Popup().showModernPopup("ERROR", "Silahkan Isi Nama Pelanggan", Popup.PopupType.ERROR, ownerStage);
             return;
         }
         // method helper untuk tutup form

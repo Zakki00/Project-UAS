@@ -134,8 +134,6 @@ public class TransaksiController implements Initializable {
     private Label lblKembalian;
     @FXML
     private VBox tunaiBox;
-    @FXML
-    private Label lblNoTrx;
 
     @FXML
     private Button btnQris;
@@ -753,6 +751,7 @@ public class TransaksiController implements Initializable {
     // Proses bayar
     @FXML
     private void onProsesBayar() {
+        Stage ownerStage = (Stage) btnBayar.getScene().getWindow();
         if (TransaksiModel.keranjang.isEmpty()) {
             return;
         }
@@ -771,7 +770,7 @@ public class TransaksiController implements Initializable {
                 new Popup().showModernPopup(
                         "WARNING",
                         "Silahkan Masukkan Nominal Tunai",
-                        Popup.PopupType.WARNING);
+                        Popup.PopupType.WARNING, ownerStage);
                 return;
             } else {
                 if (kembalian >= 0) {
@@ -795,7 +794,7 @@ public class TransaksiController implements Initializable {
                             "Belum Lunas", "");
                 }
             }
-           
+
         }
 
         for (CartItem item : TransaksiModel.keranjang.values()) {
