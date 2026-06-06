@@ -27,6 +27,17 @@ CREATE TABLE tb_barang(
     image_path VARCHAR(255)
 );
 
+CREATE TABLE tb_paket_ps (
+    id_paket INT AUTO_INCREMENT PRIMARY KEY,
+    nama_paket VARCHAR(100) NOT NULL,
+    durasi_jam INT NOT NULL,
+    harga DECIMAL(12, 2) NOT NULL,
+    deskripsi TEXT,
+    status ENUM('aktif', 'nonaktif') DEFAULT 'aktif',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 
 CREATE TABLE tb_transaksi (
     id_transaksi INT AUTO_INCREMENT PRIMARY KEY,
@@ -47,10 +58,12 @@ CREATE Table tb_detail_transaksi (
     id_detail INT AUTO_INCREMENT PRIMARY KEY,
     id_transaksi INT NOT NULL,
     id_barang INT NOT NULL,
+    id_paket INT NOT NULL,
     jumlah INT NOT NULL,
     harga DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (id_transaksi) REFERENCES tb_transaksi (id_transaksi),
-    FOREIGN KEY (id_barang) REFERENCES tb_barang (id_barang)
+    FOREIGN KEY (id_barang) REFERENCES tb_barang (id_barang),
+    FOREIGN KEY (id_paket) REFERENCES tb_paket_ps (id_paket)
 );
 
 INSERT INTO tb_user (username, password,nama_lengkap) VALUES

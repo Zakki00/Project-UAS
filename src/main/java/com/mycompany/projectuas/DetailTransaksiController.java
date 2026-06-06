@@ -1,24 +1,20 @@
 package com.mycompany.projectuas;
+
 import java.net.URL;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.DetailTransaksiModel;
-import com.mycompany.Model.DetailTransaksiModel.ItemTransaksi;
-
-import com.mycompany.Model.TransaksiModel.CartItem;
 import com.mycompany.Model.TransaksiModel;
+import com.mycompany.Model.TransaksiModel.CartItem;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -65,7 +61,6 @@ public class DetailTransaksiController implements Initializable {
             id_transaksi = ((Number) row[0]).intValue();
         }
     }
-
 
     private VBox detailList;
 
@@ -224,7 +219,7 @@ public class DetailTransaksiController implements Initializable {
         row.getStyleClass().add("item-row");
         row.setAlignment(Pos.CENTER_LEFT);
 
-        return new HBox(12, lblNo, namaBox, lblHarga, lblQty, lblSub);
+        return row;
     }
 
     // ── Item row ──────────────────────────────────────
@@ -270,13 +265,8 @@ public class DetailTransaksiController implements Initializable {
     private void onSimpanTransaksi() {
         String pelanggan = tfPelanggan.getText().trim();
         if (pelanggan.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Peringatan");
-            alert.setHeaderText(null);
-            alert.setContentText("Nama pelanggan tidak boleh kosong!");
-            alert.showAndWait();
+           new Popup().showModernPopup("ERROR", "Silahkan Isi Nama Pelanggan", Popup.PopupType.ERROR);
             return;
-
         }
         // method helper untuk tutup form
 
@@ -295,11 +285,7 @@ public class DetailTransaksiController implements Initializable {
         DetailTransaksiModel.ItemTransaksi.listItem.forEach(
                 item -> System.out.printf("  %s x%d = Rp %s%n", item.nama, item.qty, FMT.format(item.subtotal())));
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Berhasil");
-        alert.setHeaderText(null);
-        alert.setContentText("✅ Transaksi berhasil disimpan!");
-        alert.showAndWait();
+        new Popup().showSuccessPopup("Transaksi Berhasil", "Transaksi berhasil disimpan!");
 
         TransaksiModel.keranjang.clear();
         transaksiController.renderKeranjang();
@@ -309,18 +295,13 @@ public class DetailTransaksiController implements Initializable {
 
     @FXML
     private void onBatalTransaksi() {
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Konfirmasi");
-        confirm.setHeaderText(null);
-        confirm.setContentText("Yakin ingin membatalkan transaksi?");
-        confirm.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                tfPelanggan.clear();
-                renderList();
-                closeForm(btnBatal);
-                String sql_hapus_transaksi = "DELETE FROM tb_transaksi WHERE id_transaksi = '" + id_transaksi + "'";
-                koneksi.eksekusiQuery(sql_hapus_transaksi);
-            }
+        new Popup().showConfirmPopup("Cancel Transaksi", "Apakah Anda Yakin Ingin Membatalkan Transaksi", () -> {
+            tfPelanggan.clear();
+            renderList();
+            closeForm(btnBatal);
+            String sql_hapus_transaksi = "DELETE FROM tb_transaksi WHERE id_transaksi = '" + id_transaksi + "'";
+            koneksi.eksekusiQuery(sql_hapus_transaksi);
         });
     }
+
 }

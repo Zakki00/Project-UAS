@@ -180,6 +180,109 @@
     -fx-text-fill: #FFFFFF;
 }
 
+
+
+/* ── TOP BAR ─────────────────────────────────────────────── */
+.topbar {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0 20 0 20;
+    -fx-min-height: 54;
+    -fx-max-height: 54;
+}
+
+.page-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.page-date {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+}
+
+.search-box {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 6 14 6 14;
+    -fx-pref-width: 180;
+}
+
+.search-icon {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+}
+
+.search-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #FFFFFF;
+    -fx-prompt-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+    -fx-border-width: 0;
+    -fx-padding: 0;
+    -fx-pref-width: 130;
+}
+
+.search-field:focused {
+    -fx-background-color: transparent;
+}
+
+.notif-wrapper {
+    -fx-pref-width: 36;
+    -fx-pref-height: 36;
+}
+
+.notif-btn {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 15px;
+    -fx-pref-width: 36;
+    -fx-pref-height: 36;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.notif-btn:hover {
+    -fx-background-color: #2E3250;
+}
+
+.notif-badge {
+    -fx-background-color: #FF5C7C;
+    -fx-background-radius: 50;
+    -fx-min-width: 8;
+    -fx-min-height: 8;
+    -fx-max-width: 8;
+    -fx-max-height: 8;
+    -fx-translate-x: -2;
+    -fx-translate-y: 2;
+}
+
+.topbar-avatar {
+    -fx-min-width: 34;
+    -fx-min-height: 34;
+    -fx-max-width: 34;
+    -fx-max-height: 34;
+    -fx-background-color: rgba(108, 99, 255, 0.25);
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 2;
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-text-fill: #6C63FF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
 /* ═══════════════════════════════════════════════════════
    StoreMS — kasir.css
    Dark Mode  |  com.mycompany.projectuts
