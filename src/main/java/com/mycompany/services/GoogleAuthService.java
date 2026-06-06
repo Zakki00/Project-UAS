@@ -38,6 +38,8 @@ public class GoogleAuthService {
     private static final long LOGIN_TIMEOUT_MS = 120_000; // 2 menit
 
     private GoogleAuthorizationCodeFlow flow;
+    private static Credential credential;
+
     private String authUrl;
     private final String redirectUri = "http://localhost:8080/callback";
 
@@ -301,7 +303,11 @@ public class GoogleAuthService {
                         GoogleTokenResponse tokenResponse = flow.newTokenRequest(code)
                                 .setRedirectUri(redirectUri)
                                 .execute();
-                        Credential credential = flow.createAndStoreCredential(tokenResponse, "user");
+                        credential = flow.createAndStoreCredential(
+                                tokenResponse,
+                                "user");
+
+                        System.out.println("Credential tersimpan = " + (credential != null));
                         GoogleUser fetchedUser = getUserInfo(credential);
 
                         user = fetchedUser;
@@ -321,8 +327,10 @@ public class GoogleAuthService {
                         "Terjadi kesalahan saat proses login.<br>Silakan tutup tab ini dan coba lagi."), 200);
                 setResult(LoginResult.CANCELLED);
             }
+            
         }
-
+        
+       
         private class CancelHandler implements HttpHandler {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
@@ -498,4 +506,36 @@ public class GoogleAuthService {
                 "<span class='g-dot' style='background:#34A853'></span>" +
                 "</div>";
     }
+    
+    public static Credential getCredential() {
+        return credential;
+    }
+    
+    public static Credential loadCredential() throws Exception {
+
+        InputStream in = GoogleAuthService.class.getResourceAsStream(
+                "/google/credentials.json");
+
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
+                GsonFactory.getDefaultInstance(),
+                new InputStreamReader(in));
+
+        FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(new File("tokens"));
+
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                new ApacheHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                clientSecrets,
+                Arrays.asList(
+                        "openid",
+                        "email",
+                        "profile",
+                        DriveScopes.DRIVE_FILE))
+                .setAccessType("offline")
+                .setDataStoreFactory(dataStoreFactory)
+                .build();
+
+        return flow.loadCredential("user");
+    }
+
 }

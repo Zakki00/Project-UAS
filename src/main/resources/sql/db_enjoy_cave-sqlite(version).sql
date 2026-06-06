@@ -18,6 +18,7 @@ CREATE TABLE
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
         nama_lengkap TEXT NOT NULL,
+        role TEXT NOT NULL,
         email TEXT
     );
 
@@ -78,15 +79,6 @@ CREATE TABLE
 
     -- =====================
     -- input data awal
-
--- =====================
--- USER
--- =====================
-INSERT INTO
-    tb_user (username, password, nama_lengkap)
-VALUES
-    ('admin', 'admin123', 'Administrator Utama'),
-    ('rizky', '12345', 'Rizky Pratama');
 
 -- =====================
 -- BARANG

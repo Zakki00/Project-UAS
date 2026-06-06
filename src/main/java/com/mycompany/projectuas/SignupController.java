@@ -5,7 +5,6 @@ import java.security.MessageDigest;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.GoogleUser;
-import com.mycompany.projectuas.Popup.LoginProgressDialog;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,6 +19,9 @@ import javafx.stage.Stage;
 public class SignupController implements Initializable {
 
     // ── FXML refs ──────────────────────────────────
+
+    @FXML
+    private TextField tfnama;
     @FXML
     private TextField tfUsername;
     @FXML
@@ -28,14 +30,15 @@ public class SignupController implements Initializable {
     private HBox boxPassword;
     @FXML
     private Button btnShowPass;
-
     @FXML
-    private Button btnGoogle;
+    private Button loginBtn;
+
     @FXML
     private Hyperlink lnkLogin;
-
     @FXML
-    private Label errNama;
+    private HBox boxmasuksekarang;
+    @FXML
+    private Label errnama;
     @FXML
     private Label errUsername;
     @FXML
@@ -44,7 +47,6 @@ public class SignupController implements Initializable {
     // ── State ──────────────────────────────────────
     private boolean passwordVisible = false;
     private TextField tfPasswordVisible; // untuk show/hide password
-    GoogleUser googleUser = new GoogleUser();
     koneksi db = new koneksi();
 
     // ═══════════════════════════════════════════════
@@ -53,6 +55,23 @@ public class SignupController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // bersihkan error saat user mulai ketik
+        setupform();
+
+    }
+
+    void setupform() {
+       
+
+        if (session.id_user == 0) {
+            boxmasuksekarang.setVisible(false);
+            boxmasuksekarang.setManaged(false);
+        } else {
+            boxmasuksekarang.setVisible(true);
+            boxmasuksekarang.setManaged(true);
+        }
+        
+        tfnama.setText(session.googleUser.getName());
+        tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errnama));
         tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errUsername));
         pfPassword.textProperty().addListener((o, ov, nv) -> clearError(errPassword));
     }
@@ -95,24 +114,27 @@ public class SignupController implements Initializable {
     }
 
     // ═══════════════════════════════════════════════
-    // LOGIN WITH GOOGLE
+    // REGISTER ACCOUNT
     // ═══════════════════════════════════════════════
     @FXML
-    private void onLoginGoogle() {
-
+    private void handleLogin() {
+        GoogleUser googleUser = new GoogleUser();
+        String nama = tfnama.getText().trim();
         String username = tfUsername.getText().trim();
         String password = pfPassword.getText().trim();
-
+        // VALIDASI NAMA
+        if (nama.isEmpty() || username.equals("Masukkan username...")) {
+            showError(errnama, "Username tidak boleh kosong!");
+            return;
+        }
         // VALIDASI USERNAME
         if (username.isEmpty() || username.equals("Masukkan username...")) {
             showError(errUsername, "Username tidak boleh kosong!");
             return;
         }
-        Stage stage = (Stage) tfUsername.getScene().getWindow();
-        // Cek apakah akun sudah terdaftar
         String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
         if (!koneksi.ambilData(cekSql, username).isEmpty()) {
-            showError(errUsername, "Username Sudah Di Gunakan");
+            showError(errUsername, "Username sudah digunakan");
             return;
         }
 
@@ -122,7 +144,7 @@ public class SignupController implements Initializable {
         }
 
         if (!username.matches("[a-zA-Z0-9_]+")) {
-            showError(errUsername, "Username tidak valid!");
+            showError(errUsername, "Username hanya boleh huruf, angka, dan underscore");
             return;
         }
 
@@ -151,61 +173,29 @@ public class SignupController implements Initializable {
             showError(errPassword, "Password harus mengandung angka!");
             return;
         }
-      
 
-        // Ambil Stage dari node manapun yang ada di scene (tidak perlu field
-        // primaryStage)
         Stage primaryStage = (Stage) tfUsername.getScene().getWindow();
-
         Popup popupHelper = new Popup();
-        Popup.LoginProgressDialog progressDialog = popupHelper.new LoginProgressDialog(primaryStage);
+        String role = "Admin";
 
-        progressDialog.show(
+        try {
+            String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role,email) VALUES (?, ?, ?, ?, ?)";
+            koneksi.eksekusiQuery(sql,
+                    username,
+                    hashPassword(password),
+                    nama,
+                    role,
+                    googleUser.getEmail()
+                );
 
-                user -> {
-                    googleUser = user;
-
-                    try {
-
-                      
-
-                        // Akun belum ada → daftar otomatis dengan data dari Google
-                        String sql = "INSERT INTO tb_user (username, password, nama_lengkap,email) "
-                                + "VALUES (?, ?, ?,?)";
-                        koneksi.eksekusiQuery(sql,
-                                username,
-                                hashPassword(password),
-                                user.getName(),
-                                user.getEmail());
-
-                        popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
-                                "Selamat datang, " + user.getName() + "!", user);
-
-                        System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
-                        goToLogin();
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        popupHelper.showModernPopup("Error", "Gagal menyimpan akun.", Popup.PopupType.ERROR,
-                                primaryStage);
-                    }
-                },
-
-                // Browser ditutup sebelum login selesai
-                () -> {
-                    popupHelper.showModernPopup(
-                            "Login Dibatalkan",
-                            "Browser ditutup sebelum login selesai.",
-                            Popup.PopupType.WARNING, primaryStage);
-                },
-
-                // Timeout 120 detik
-                () -> {
-                    popupHelper.showModernPopup(
-                            "Waktu Habis",
-                            "Login tidak diselesaikan dalam 120 detik.",
-                            Popup.PopupType.WARNING, primaryStage);
-                });
+            popupHelper.showModernPopup("Akun Dibuat", "Akun Anda berhasil didaftarkan.", Popup.PopupType.SUCCESS,
+                    primaryStage);
+            goToLogin();
+        } catch (Exception e) {
+            e.printStackTrace();
+            popupHelper.showModernPopup("Error", "Gagal menyimpan akun.", Popup.PopupType.ERROR,
+                    primaryStage);
+        }
     }
 
     // ═══════════════════════════════════════════════
@@ -219,7 +209,7 @@ public class SignupController implements Initializable {
     private void goToLogin() {
         navigation nav = new navigation();
         nav.navigateToLogin();
-        Stage stage = (Stage) btnGoogle.getScene().getWindow();
+        Stage stage = (Stage) tfUsername.getScene().getWindow();
         stage.close();
     }
 

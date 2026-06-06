@@ -5,10 +5,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -38,6 +35,15 @@
       <VBox spacing="6">
         <Label fx:id="errNama" managed="false" styleClass="field-error" text="" visible="false" />
       </VBox>
+      <!-- nama -->
+       <VBox spacing="6">
+        <Label styleClass="field-label" text="Username" />
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="field-box">
+          <Label styleClass="field-icon" text="👤" />
+          <TextField fx:id="tfnama" promptText="Masukkan nama..." styleClass="field-input" HBox.hgrow="ALWAYS" />
+        </HBox>
+        <Label fx:id="errnama" managed="false" styleClass="field-error" text="" visible="false" />
+      </VBox>
       <!-- Username -->
       <VBox spacing="6">
         <Label styleClass="field-label" text="Username" />
@@ -57,36 +63,15 @@
         </HBox>
         <Label fx:id="errPassword" managed="false" styleClass="field-error" text="" visible="false" />
       </VBox>
-         <VBox prefHeight="14.0" prefWidth="326.0" />
-         <Separator prefWidth="200.0" />
-      <!-- Divider OR -->
-      <HBox alignment="CENTER" spacing="12">
-        <Rectangle height="1" styleClass="divider-line" HBox.hgrow="ALWAYS" />
-        <Rectangle height="1" styleClass="divider-line" HBox.hgrow="ALWAYS" />
-      </HBox>
-      <!-- Login with Google -->
-      <!-- Login with Google -->
-      <Button fx:id="btnGoogle" maxWidth="Infinity" onAction="#onLoginGoogle" styleClass="btn-google">
-        <graphic>
-          <HBox alignment="CENTER" spacing="10">
-            <!-- Logo Google asli dari file -->
-            <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
-              <image>
-                <Image url="@../image/google_logo.png" />
-              </image>
-            </ImageView>
-            <Label styleClass="google-text" text="Daftar dengan Google" />
-          </HBox>
-        </graphic>
-      </Button>
+         <Button fx:id="loginBtn" maxWidth="Infinity" onAction="#handleLogin" styleClass="login-btn" text="Daftarkan Akun" />
+       <!-- Footer -->
+       <HBox fx:id="boxmasuksekarang" alignment="CENTER" spacing="4" styleClass="signup-footer">
+         <padding>
+           <Insets bottom="28" />
+         </padding>
+         <Label styleClass="footer-text" text="Sudah punya akun?" />
+         <Hyperlink fx:id="lnkLogin" onAction="#onGoLogin" styleClass="footer-link" text="Masuk sekarang" />
+       </HBox>
     </VBox>
-    <!-- Footer -->
-    <HBox alignment="CENTER" spacing="4" styleClass="signup-footer">
-      <padding>
-        <Insets bottom="28" />
-      </padding>
-      <Label styleClass="footer-text" text="Sudah punya akun?" />
-      <Hyperlink fx:id="lnkLogin" onAction="#onGoLogin" styleClass="footer-link" text="Masuk sekarang" />
-    </HBox>
   </VBox>
 </StackPane>

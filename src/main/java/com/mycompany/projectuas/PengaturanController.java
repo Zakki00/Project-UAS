@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.mycompany.services.BackupService;
+import com.mycompany.services.GoogleDriveService;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -334,7 +335,7 @@ public class PengaturanController implements Initializable {
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
-  
+
     // ========================================
     // MAIN CONTENT
     // ========================================
@@ -437,27 +438,27 @@ public class PengaturanController implements Initializable {
         // String password = pfEditPassword.getText().trim();
 
         // if (nama.isEmpty() || username.isEmpty()) {
-        //     showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
-        //     return;
+        // showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
+        // return;
         // }
 
         // String sql;
         // if (!password.isEmpty()) {
-        //     String hashed = hashSHA256(password);
-        //     sql = "UPDATE tb_user SET nama_lengkap='" + nama
-        //             + "', username='" + username
-        //             + "', password='" + hashed + "' WHERE id_user=1";
+        // String hashed = hashSHA256(password);
+        // sql = "UPDATE tb_user SET nama_lengkap='" + nama
+        // + "', username='" + username
+        // + "', password='" + hashed + "' WHERE id_user=1";
         // } else {
-        //     sql = "UPDATE tb_user SET nama_lengkap='" + nama
-        //             + "', username='" + username + "' WHERE id_user=1";
+        // sql = "UPDATE tb_user SET nama_lengkap='" + nama
+        // + "', username='" + username + "' WHERE id_user=1";
         // }
 
         // if (koneksi.eksekusi(sql)) {
-        //     loadInfoAkun();
-        //     onBatalEdit();
-        //     showAlert("Berhasil", "Profil berhasil diperbarui!");
+        // loadInfoAkun();
+        // onBatalEdit();
+        // showAlert("Berhasil", "Profil berhasil diperbarui!");
         // } else {
-        //     showAlert("Gagal", "Terjadi kesalahan saat menyimpan!");
+        // showAlert("Gagal", "Terjadi kesalahan saat menyimpan!");
         // }
     }
 
@@ -470,37 +471,52 @@ public class PengaturanController implements Initializable {
     // BACKUP HANDLERS
     // ══════════════════════════════════════
     @FXML
-private void onBackup() {
+    private void onBackup() {
 
-    backupProgressBox.setVisible(true);
-    backupProgressBox.setManaged(true);
+        backupProgressBox.setVisible(true);
+        backupProgressBox.setManaged(true);
 
-    lblBackupStatus.setText("Membuat salinan database...");
-    pbBackup.setProgress(-1);
+        lblBackupStatus.setText("Membuat salinan database...");
+        pbBackup.setProgress(-1);
 
-    BackupService backupService = new BackupService();
+        BackupService backupService = new BackupService();
 
-    boolean berhasil = backupService.backupLocal();
+        boolean berhasil = backupService.backupLocal();
 
-    if (berhasil) {
+        if (berhasil) {
 
-        pbBackup.setProgress(1);
+            lblBackupStatus.setText("Mengupload ke Google Drive...");
 
-        lblBackupStatus.setText("✅ Backup lokal berhasil");
+            GoogleDriveService driveService = new GoogleDriveService();
 
-        String now = java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern(
-                        "dd-MM-yyyy HH:mm"));
+            boolean berhasilBackupDrive = driveService.uploadBackup();
 
-        lblBackupTerakhir.setText(now);
+            if (berhasilBackupDrive) {
 
-    } else {
+                pbBackup.setProgress(1);
 
-        pbBackup.setProgress(0);
+                lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
 
-        lblBackupStatus.setText("❌ Backup gagal");
+                String now = java.time.LocalDateTime.now()
+                        .format(java.time.format.DateTimeFormatter.ofPattern(
+                                "dd-MM-yyyy HH:mm"));
+
+                lblBackupTerakhir.setText(now);
+
+            } else {
+
+                pbBackup.setProgress(0);
+
+                lblBackupStatus.setText("❌ Upload Google Drive gagal");
+            }
+
+        } else {
+
+            pbBackup.setProgress(0);
+
+            lblBackupStatus.setText("❌ Backup lokal gagal");
+        }
     }
-}
 
     @FXML
     private void onToggleBackupOtomatis() {
