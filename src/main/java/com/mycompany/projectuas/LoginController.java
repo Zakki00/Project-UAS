@@ -59,7 +59,21 @@ public class LoginController implements Initializable {
         passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
         loginBtn.setDefaultButton(true);
         loadRememberedCredentials();
+        setupform();
 
+    }
+    void setupform(){
+        String role_admin = prefs.get("Role", null);
+        if(role_admin == null){
+            System.out.print("Role saat ini" + role_admin);
+            btnGoogle.setVisible(true);
+            btnGoogle.setManaged(true);
+        }else{
+            btnGoogle.setVisible(false);
+            btnGoogle.setManaged(false);
+            System.out.print("Role saat ini" + role_admin);
+        }
+            
     }
 
     @FXML
@@ -82,6 +96,7 @@ public class LoginController implements Initializable {
                         session.googleUser = user; // simpan ke session
                         String cekSql = "SELECT id_user, username, nama_lengkap, role, email FROM tb_user WHERE email = ?";
                         List<Object[]> hasil = koneksi.ambilData(cekSql, user.getEmail());
+                        System.out.println("data admin berdasarkan email" + hasil.size());
 
                         if (!hasil.isEmpty()) {
                             Object[] row = hasil.get(0);
@@ -92,7 +107,7 @@ public class LoginController implements Initializable {
                             session.role = (String) row[3];
                             session.email = (String) row[4];
                             navigation nav = new navigation();
-                            nav.navigateToSignup();
+                            nav.navigateToDashboard();
                             Stage stage = (Stage) btnGoogle.getScene().getWindow();
                             stage.close();
                         } else {

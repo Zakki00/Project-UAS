@@ -3,6 +3,7 @@ package com.mycompany.projectuas;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 import com.mycompany.Model.GoogleUser;
 
@@ -47,6 +48,7 @@ public class SignupController implements Initializable {
     // ── State ──────────────────────────────────────
     private boolean passwordVisible = false;
     private TextField tfPasswordVisible; // untuk show/hide password
+    Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
     koneksi db = new koneksi();
 
     // ═══════════════════════════════════════════════
@@ -60,9 +62,8 @@ public class SignupController implements Initializable {
     }
 
     void setupform() {
-       
-
-        if (session.id_user == 0) {
+        String role_admin = prefs.get("Role", null);
+        if (role_admin == null) {
             boxmasuksekarang.setVisible(false);
             boxmasuksekarang.setManaged(false);
         } else {
@@ -177,6 +178,8 @@ public class SignupController implements Initializable {
         Stage primaryStage = (Stage) tfUsername.getScene().getWindow();
         Popup popupHelper = new Popup();
         String role = "Admin";
+      
+   
 
         try {
             String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role,email) VALUES (?, ?, ?, ?, ?)";
@@ -191,6 +194,9 @@ public class SignupController implements Initializable {
             popupHelper.showModernPopup("Akun Dibuat", "Akun Anda berhasil didaftarkan.", Popup.PopupType.SUCCESS,
                     primaryStage);
             goToLogin();
+            prefs.put("Role", role);
+
+
         } catch (Exception e) {
             e.printStackTrace();
             popupHelper.showModernPopup("Error", "Gagal menyimpan akun.", Popup.PopupType.ERROR,
