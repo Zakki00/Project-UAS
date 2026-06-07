@@ -579,7 +579,7 @@ public class LaporanController implements Initializable {
     private void loadTotalPenjualan() {
 
         List<Object[]> todayData = koneksi.ambilData("""
-                    SELECT COALESCE(SUM(uang_pembayaran), 0)
+                    SELECT COALESCE(SUM(total_pembayaran - kekurangan), 0)
                     FROM tb_transaksi
                     WHERE DATE(tanggal_transaksi) = DATE('now','localtime')
                 """);
@@ -724,9 +724,9 @@ public class LaporanController implements Initializable {
                 SELECT
                     u.username,
                     u.nama_lengkap,
-                    COUNT(t.id_transaksi)        AS total_trx,
-                    SUM(dt.jumlah)               AS total_item,
-                    SUM(t.uang_pembayaran)      AS total_pendapatan
+                    COUNT(t.id_transaksi)                      AS total_trx,
+                    SUM(dt.jumlah)                             AS total_item,
+                    SUM(t.total_pembayaran - t.kekurangan)      AS total_pendapatan
                 FROM tb_transaksi t
                 JOIN tb_user u ON t.id_user = u.id_user
                 JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi

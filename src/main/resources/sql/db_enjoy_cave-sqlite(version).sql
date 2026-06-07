@@ -11,7 +11,6 @@ DROP TABLE IF EXISTS tb_paket_ps;
 
 DROP TABLE IF EXISTS tb_user;
 
--- USER
 CREATE TABLE
     tb_user (
         id_user INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -74,63 +73,4 @@ CREATE TABLE
         FOREIGN KEY (id_transaksi) REFERENCES tb_transaksi (id_transaksi),
         FOREIGN KEY (id_barang) REFERENCES tb_barang (id_barang),
         FOREIGN KEY (id_paket) REFERENCES tb_paket_ps (id_paket)
-    );
-
-
-    -- =====================
-    -- input data awal
-
--- =====================
--- BARANG
--- =====================
-INSERT INTO
-    tb_barang (
-        nama_barang,
-        harga,
-        kategori,
-        stok,
-        deskripsi,
-        image_path
     )
-VALUES
-    (
-        'Snack Chitato',
-        12000,
-        'Makanan',
-        50,
-        'Keripik kentang rasa sapi panggang',
-        NULL
-    ),
-    (
-        'Aqua 600ml',
-        5000,
-        'Minuman',
-        100,
-        'Air mineral botol',
-        NULL
-    );
-
--- =====================
--- PAKET PS
--- =====================
-INSERT INTO
-    tb_paket_ps (nama_paket, durasi_jam, harga, deskripsi, status)
-VALUES
-    (
-        'Paket Hemat PS2 Jam',
-        2,
-        10000,
-        'Main PS selama 2 jam',
-        'aktif'
-    ),
-    (
-        'Paket Malam PS5 Jam',
-        5,
-        22000,
-        'Cocok untuk main lama',
-        'aktif'
-    );
-
--- =====================
--- TRANSAKSI
--- =====================

@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import java.io.IOException;
 
@@ -51,7 +52,7 @@ public class LoginController implements Initializable {
     private Button togglePasswordBtn;
 
     private boolean showingPassword = false;
-    Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+    Preferences prefs = Preferences.userNodeForPackage(session.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -62,18 +63,28 @@ public class LoginController implements Initializable {
         setupform();
 
     }
-    void setupform(){
-        String role_admin = prefs.get("Role", null);
-        if(role_admin == null){
-            System.out.print("Role saat ini" + role_admin);
+
+    void setupform() {
+        // String sql_admin = "SELECT * FROM tb_user WHERE role = 'Admin'";
+        String Admin = prefs.get("Admin",null);
+        if (Admin == null) {
+            System.out.print("Admin Belum Di Daftarkan Sebagai Pemilik Aplikasi" + Admin);
             btnGoogle.setVisible(true);
             btnGoogle.setManaged(true);
-        }else{
+            try {
+                prefs.clear();
+            } catch (BackingStoreException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Admin Di Daftarkan Sebagai Pemilik Aplikasi");
             btnGoogle.setVisible(false);
             btnGoogle.setManaged(false);
-            System.out.print("Role saat ini" + role_admin);
+
+
+
         }
-            
+
     }
 
     @FXML
@@ -107,23 +118,25 @@ public class LoginController implements Initializable {
                             session.role = (String) row[3];
                             session.email = (String) row[4];
                             navigation nav = new navigation();
+                            prefs.put("Admin", "Admin");
                             nav.navigateToDashboard();
                             Stage stage = (Stage) btnGoogle.getScene().getWindow();
                             stage.close();
+                            
+                            // // ── Tampilkan popup sukses dengan nama user ─────────────────
+                            popupHelper.showGoogleSuccessPopup("Selamat Datang Kembali",
+                                    "Selamat datang, " + user.getName() + "!", user);
+
+                            System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
                         } else {
 
                             navigation nav = new navigation();
                             nav.navigateToSignup();
                             Stage stage = (Stage) btnGoogle.getScene().getWindow();
                             stage.close();
-
+                           
                         }
 
-                        // // ── Tampilkan popup sukses dengan nama user ─────────────────
-                        popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
-                                "Selamat datang, " + user.getName() + "!", user);
-
-                        System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
 
                     } catch (Exception e) {
                         e.printStackTrace();

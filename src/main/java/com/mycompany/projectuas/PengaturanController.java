@@ -10,7 +10,8 @@ import java.util.ResourceBundle;
 
 import com.mycompany.services.BackupService;
 import com.mycompany.services.GoogleDriveService;
-
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -181,6 +182,8 @@ public class PengaturanController implements Initializable {
     private boolean sidebarCollapsed = false;
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
+
+    Preferences prefs = Preferences.userNodeForPackage(session.class);
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
@@ -465,6 +468,16 @@ public class PengaturanController implements Initializable {
     @FXML
     private void onDisconnectGoogle() {
         showAlert("Info", "Akun Google berhasil diputus.");
+        try {
+            prefs.clear();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        }
+        navigation nav = new navigation();
+        nav.navigateToLogin();
+        Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
+        stage.close();
+        
     }
 
     // ══════════════════════════════════════

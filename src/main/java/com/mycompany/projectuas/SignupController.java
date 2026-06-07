@@ -48,7 +48,7 @@ public class SignupController implements Initializable {
     // ── State ──────────────────────────────────────
     private boolean passwordVisible = false;
     private TextField tfPasswordVisible; // untuk show/hide password
-    Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+    Preferences prefs = Preferences.userNodeForPackage(session.class);
     koneksi db = new koneksi();
 
     // ═══════════════════════════════════════════════
@@ -62,15 +62,15 @@ public class SignupController implements Initializable {
     }
 
     void setupform() {
-        String role_admin = prefs.get("Role", null);
-        if (role_admin == null) {
+        String sql_admin = "SELECT * tb_user WHERE role = Admin";
+        if (koneksi.ambilData(sql_admin).isEmpty()) {
             boxmasuksekarang.setVisible(false);
             boxmasuksekarang.setManaged(false);
         } else {
             boxmasuksekarang.setVisible(true);
             boxmasuksekarang.setManaged(true);
         }
-        
+
         tfnama.setText(session.googleUser.getName());
         tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errnama));
         tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errUsername));
@@ -119,7 +119,7 @@ public class SignupController implements Initializable {
     // ═══════════════════════════════════════════════
     @FXML
     private void handleLogin() {
-        GoogleUser googleUser = new GoogleUser();
+        GoogleUser googleUser = session.googleUser; // ← ini yang bener
         String nama = tfnama.getText().trim();
         String username = tfUsername.getText().trim();
         String password = pfPassword.getText().trim();
@@ -178,8 +178,7 @@ public class SignupController implements Initializable {
         Stage primaryStage = (Stage) tfUsername.getScene().getWindow();
         Popup popupHelper = new Popup();
         String role = "Admin";
-      
-   
+        prefs.put("Admin", role);
 
         try {
             String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role,email) VALUES (?, ?, ?, ?, ?)";
@@ -188,14 +187,17 @@ public class SignupController implements Initializable {
                     hashPassword(password),
                     nama,
                     role,
-                    googleUser.getEmail()
-                );
+                    googleUser.getEmail());
 
-            popupHelper.showModernPopup("Akun Dibuat", "Akun Anda berhasil didaftarkan.", Popup.PopupType.SUCCESS,
-                    primaryStage);
-            goToLogin();
-            prefs.put("Role", role);
+            popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
+                    "Selamat datang, " + googleUser.getName() + "!", googleUser);
 
+            System.out.println("Google User: " + googleUser.getEmail() + " - " + googleUser.getName());
+
+            navigation nav = new navigation();
+            nav.navigateToLogin();
+            Stage stage = (Stage) loginBtn.getScene().getWindow();
+            stage.close();
 
         } catch (Exception e) {
             e.printStackTrace();
