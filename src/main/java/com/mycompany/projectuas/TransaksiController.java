@@ -286,6 +286,10 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
+        navigation nav = new navigation();
+        nav.navigataeToPengaturan();
+        Stage stage = (Stage) navPengaturan.getScene().getWindow();
+        stage.close();
 
     }
 

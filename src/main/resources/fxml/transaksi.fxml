@@ -112,7 +112,7 @@
           <children>
             <VBox spacing="1" HBox.hgrow="ALWAYS">
               <children>
-                <Label styleClass="page-title" text="Dashboard" />
+                <Label styleClass="page-title" text="Transaksi" />
                 <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
               </children>
             </VBox>
@@ -142,6 +142,7 @@
               <Label styleClass="panel-title" text="Daftar Produk" HBox.hgrow="ALWAYS" />
               <!-- Filter kategori -->
               <ComboBox fx:id="cbKategori" prefWidth="160" promptText="Semua Kategori" styleClass="combo-kategori" />
+                     <Button fx:id="btnPS" maxWidth="Infinity" prefHeight="32.0" prefWidth="145.0" styleClass="pay-method" text="Play Staysion" textFill="#fc0000" />
             </HBox>
             <!-- Search bar -->
             <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">

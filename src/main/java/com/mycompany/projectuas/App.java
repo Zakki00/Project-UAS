@@ -1,7 +1,9 @@
 package com.mycompany.projectuas;
 
 import java.io.IOException;
-
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.File;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,7 +19,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        scene = new Scene(loadFXML("login"), 1080, 900);
+        initDatabase();
+        scene = new Scene(loadFXML("pengaturan"), 1080, 900);
         stage.setScene(scene);
         stage.show();
         koneksi.koneksi();
@@ -35,5 +38,23 @@ public class App extends Application {
     public static void main(String[] args) {
         launch();
     }
+    private void initDatabase() {
+    try {
+        String appData = System.getenv("APPDATA");
+        File dbFolder = new File(appData + "\\ProjectUAS\\db");
+        if (!dbFolder.exists()) dbFolder.mkdirs();
+
+        File dbFile = new File(dbFolder, "db_enjoy_cafe.db");
+        if (!dbFile.exists()) {
+            // Copy dari dalam JAR ke AppData
+            try (InputStream in = getClass().getResourceAsStream("/db/db_enjoy_cafe.db");
+                 OutputStream out = new java.io.FileOutputStream(dbFile)) {
+                in.transferTo(out);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
 }

@@ -8,13 +8,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.mycompany.services.BackupService;
+// import com.mycompany.services.BackupService;
 import com.mycompany.services.GoogleDriveService;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -484,52 +485,34 @@ public class PengaturanController implements Initializable {
     // BACKUP HANDLERS
     // ══════════════════════════════════════
     @FXML
-    private void onBackup() {
+   private void onBackup() {
+    backupProgressBox.setVisible(true);
+    backupProgressBox.setManaged(true);
+    lblBackupStatus.setText("Mengupload ke Google Drive...");
+    pbBackup.setProgress(-1);
 
-        backupProgressBox.setVisible(true);
-        backupProgressBox.setManaged(true);
+    Thread t = new Thread(() -> {
+        GoogleDriveService driveService = new GoogleDriveService();
+        boolean berhasil = driveService.uploadBackup();
 
-        lblBackupStatus.setText("Membuat salinan database...");
-        pbBackup.setProgress(-1);
-
-        BackupService backupService = new BackupService();
-
-        boolean berhasil = backupService.backupLocal();
-
-        if (berhasil) {
-
-            lblBackupStatus.setText("Mengupload ke Google Drive...");
-
-            GoogleDriveService driveService = new GoogleDriveService();
-
-            boolean berhasilBackupDrive = driveService.uploadBackup();
-
-            if (berhasilBackupDrive) {
-
+        Platform.runLater(() -> {
+            if (berhasil) {
                 pbBackup.setProgress(1);
-
                 lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
 
                 String now = java.time.LocalDateTime.now()
-                        .format(java.time.format.DateTimeFormatter.ofPattern(
-                                "dd-MM-yyyy HH:mm"));
-
+                        .format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
                 lblBackupTerakhir.setText(now);
 
             } else {
-
                 pbBackup.setProgress(0);
-
                 lblBackupStatus.setText("❌ Upload Google Drive gagal");
             }
-
-        } else {
-
-            pbBackup.setProgress(0);
-
-            lblBackupStatus.setText("❌ Backup lokal gagal");
-        }
-    }
+        });
+    }, "backup-thread");
+    t.setDaemon(true);
+    t.start();
+}
 
     @FXML
     private void onToggleBackupOtomatis() {

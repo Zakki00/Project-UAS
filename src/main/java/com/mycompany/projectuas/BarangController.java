@@ -716,6 +716,10 @@ public class BarangController implements Initializable {
     @FXML
     void onNavPengaturan() {
         setActiveNav(navPengaturan);
+        navigation nav = new navigation();
+        nav.navigataeToPengaturan();
+        Stage stage = (Stage) navPengaturan.getScene().getWindow();
+        stage.close();
     }
 
     private void setActiveNav(HBox selected) {
