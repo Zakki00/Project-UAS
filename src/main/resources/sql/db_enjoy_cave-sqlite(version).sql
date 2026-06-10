@@ -1,4 +1,4 @@
--- Active: 1780404766479@@127.0.0.1@3306
+-- Active: 1781109314966@@127.0.0.1@3306
 
 SELECT * FROM tb_user;
 
@@ -34,12 +34,7 @@ CREATE TABLE
     );
 
 -- PAKET PS
-CREATE TABLE
-    tb_paket_ps (
-        id_paket_ps INTEGER PRIMARY KEY AUTOINCREMENT,
-        durasi_jam INTEGER NOT NULL,
-        harga REAL NOT NULL,
-    );
+
 
 -- TRANSAKSI
 CREATE TABLE
@@ -55,6 +50,13 @@ CREATE TABLE
         pelanggan TEXT,
         FOREIGN KEY (id_user) REFERENCES tb_user (id_user)
     );
+CREATE TABLE tb_paket_ps (
+    id_paket_ps INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_transaksi INTEGER NOT NULL,
+    durasi INTEGER NOT NULL,
+    harga REAL NOT NULL,
+    FOREIGN KEY (id_transaksi) REFERENCES tb_transaksi (id_transaksi)
+);
 
 -- DETAIL TRANSAKSI
 CREATE TABLE

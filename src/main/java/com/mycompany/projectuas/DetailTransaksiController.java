@@ -9,6 +9,7 @@ import java.util.ResourceBundle;
 import com.mycompany.Model.DetailTransaksiModel;
 import com.mycompany.Model.TransaksiModel;
 import com.mycompany.Model.TransaksiModel.CartItem;
+import com.mycompany.Model.TransaksiModel.ItemPs;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -102,6 +103,10 @@ public class DetailTransaksiController implements Initializable {
         for (CartItem ci : TransaksiModel.keranjang.values()) {
             detailList.getChildren().add(setdatatransaksi(ci, no));
             no++;
+        }
+        if (TransaksiModel.pesananPs != null) {
+            detailList.getChildren().add(
+                    setDataPs(TransaksiModel.pesananPs, no));
         }
 
         // Summary
@@ -198,6 +203,49 @@ public class DetailTransaksiController implements Initializable {
         return row;
     }
 
+    private HBox setDataPs(ItemPs ps, int no) {
+
+    Label lblNo = new Label(String.valueOf(no));
+    lblNo.getStyleClass().add("item-no");
+    lblNo.setPrefWidth(40);
+
+    Label lblNama = new Label("Rental PlayStation");
+    lblNama.getStyleClass().add("item-nama");
+
+    Label lblKat = new Label(
+            ps.durasiJam + " Jam " +
+            ps.durasiMenit + " Menit");
+    lblKat.getStyleClass().add("item-kategori");
+
+    VBox namaBox = new VBox(2, lblNama, lblKat);
+    HBox.setHgrow(namaBox, Priority.ALWAYS);
+
+    Label lblHarga = new Label(
+            "Rp " + FMT.format(ps.harga));
+    lblHarga.setPrefWidth(130);
+    lblHarga.setAlignment(Pos.CENTER_RIGHT);
+
+    Label lblQty = new Label("x1");
+    lblQty.setPrefWidth(60);
+    lblQty.setAlignment(Pos.CENTER);
+
+    Label lblSub = new Label(
+            "Rp " + FMT.format(ps.harga));
+    lblSub.setPrefWidth(120);
+    lblSub.setAlignment(Pos.CENTER_RIGHT);
+
+    HBox row = new HBox(
+            12,
+            lblNo,
+            namaBox,
+            lblHarga,
+            lblQty,
+            lblSub);
+
+    row.getStyleClass().add("item-row");
+
+    return row;
+}
     // ── Item row ──────────────────────────────────────
 
     // ── Summary ───────────────────────────────────────
@@ -276,6 +324,8 @@ public class DetailTransaksiController implements Initializable {
             tfPelanggan.clear();
             renderList();
             closeForm(btnBatal);
+            String sql_hapus_pesanan_ps = "DELETE FROM tb_paket_ps WHERE  id_transaksi = ?";
+            koneksi.eksekusiQuery(sql_hapus_pesanan_ps,id_transaksi);
             String sql_hapus_transaksi = "DELETE FROM tb_transaksi WHERE id_transaksi = ?";
             koneksi.eksekusiQuery(sql_hapus_transaksi, id_transaksi);
         });

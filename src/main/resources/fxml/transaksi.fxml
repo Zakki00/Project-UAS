@@ -142,8 +142,8 @@
               <Label styleClass="panel-title" text="Daftar Produk" HBox.hgrow="ALWAYS" />
               <!-- Filter kategori -->
               <ComboBox fx:id="cbKategori" prefWidth="160" promptText="Semua Kategori" styleClass="combo-kategori" />
-              <Button fx:id="btnPS" maxWidth="Infinity" onAction="#onRentalPs" prefHeight="32.0" prefWidth="145.0" styleClass="pay-method" text="Play Staysion" textFill="#fc0000" />
-              <Button fx:id="btnProduk" maxWidth="Infinity" prefHeight="32.0" prefWidth="145.0" styleClass="pay-method" text="Produk" textFill="#fc0000" />
+              <Button fx:id="btnPS" maxWidth="Infinity" onAction="#onRentalPs" prefHeight="32.0" prefWidth="145.0" styleClass="btn-menu" text="Play Staysion" textFill="#fc0000" />
+              <Button fx:id="btnProduk" maxWidth="Infinity" prefHeight="32.0" prefWidth="145.0" styleClass="btn-menu" text="Produk" textFill="#fc0000" />
             </HBox>
             <!-- Search bar -->
             <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">

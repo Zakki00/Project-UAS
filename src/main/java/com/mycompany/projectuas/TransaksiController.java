@@ -138,7 +138,8 @@ public class TransaksiController implements Initializable {
     private Label lblKembalian;
     @FXML
     private VBox tunaiBox;
-
+    @FXML
+    private Button btnPS;
     @FXML
     private Button btnQris;
     @FXML
@@ -197,7 +198,8 @@ public class TransaksiController implements Initializable {
         lblShift.setText("Shift Siang");
         // lblNoTrx.setText(String.format("#TRX-%04d", TransaksiModel.noTrx));
         setupForm();
-        // setupMetodeBayar();
+        setupMetodeBayar();
+        setupMenu();
       
     }
 
@@ -410,6 +412,7 @@ public class TransaksiController implements Initializable {
         btnQuick50.setDisable(true);
         boxRentalPs.setVisible(false);
         boxRentalPs.setManaged(false);
+      
     }
 
     // ═════════════════════════════════════════════════════
@@ -758,6 +761,27 @@ public class TransaksiController implements Initializable {
             QuickBox.setManaged(true);
         });
     }
+    void setupMenu(){
+        btnProduk.getStyleClass().add("btn-menu-active");
+        btnProduk.setOnAction(e ->{
+            btnProduk.getStyleClass().add("btn-menu-active");
+            btnPS.getStyleClass().remove("btn-menu-active");
+            boxRentalPs.setVisible(false);
+            boxRentalPs.setManaged(false);
+            scrolpane.setVisible(true);
+            scrolpane.setManaged(true);
+
+        });
+        btnPS.setOnAction(e ->{
+            boxRentalPs.setVisible(true);
+            boxRentalPs.setManaged(true);
+            scrolpane.setVisible(false);
+            scrolpane.setManaged(false);
+            btnProduk.getStyleClass().remove("btn-menu-active");
+            btnPS.getStyleClass().add("btn-menu-active");
+
+        });
+    }
 
     // ═════════════════════════════════════════════════════
     // HANDLERS
@@ -879,6 +903,27 @@ public class TransaksiController implements Initializable {
             System.out.println("Berhasil update stok barang ID: " + item.produk.id +
                     " qty: " + item.qty);
         }
+
+
+        String sql_idtransaksi = "SELECT * FROM tb_transaksi ORDER BY id_transaksi DESC LIMIT 1";
+
+        List<Object[]>  id_transaksi = koneksi.ambilData(sql_idtransaksi);
+
+        if (TransaksiModel.pesananPs != null) {
+
+            int totalMenit = (TransaksiModel.pesananPs.durasiJam * 60)
+                    + TransaksiModel.pesananPs.durasiMenit;
+
+            String sql = "INSERT INTO tb_paket_ps "
+                    + "(id_transaksi, durasi, harga) "
+                    + "VALUES (?, ?, ?)";
+
+            koneksi.eksekusiQuery(
+                    sql,
+                    id_transaksi,
+                    totalMenit,
+                    TransaksiModel.pesananPs.harga);
+        }
         // Update stok di database
 
         semuaProduk.clear();
@@ -920,11 +965,7 @@ public class TransaksiController implements Initializable {
 
 @FXML
 private void onRentalPs(){
-    boxRentalPs.setVisible(true);
-    boxRentalPs.setManaged(true);
-    scrolpane.setVisible(false);
-    scrolpane.setManaged(false);
-
+   
 }
 
 
@@ -1172,7 +1213,7 @@ private HBox buildItemPs(ItemPs itemPs) {
             itemPs.durasiJam + " Jam "
                     + itemPs.durasiMenit + " Menit");
 
-    lblDurasi.getStyleClass().add("lbl-durasi");
+    lblDurasi.getStyleClass().add("lbl-qty");
 
     // ==================================================
     // BUTTON PLUS
