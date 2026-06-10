@@ -36,14 +36,9 @@ CREATE TABLE
 -- PAKET PS
 CREATE TABLE
     tb_paket_ps (
-        id_paket INTEGER PRIMARY KEY AUTOINCREMENT,
-        nama_paket TEXT NOT NULL,
+        id_paket_ps INTEGER PRIMARY KEY AUTOINCREMENT,
         durasi_jam INTEGER NOT NULL,
         harga REAL NOT NULL,
-        deskripsi TEXT,
-        status TEXT DEFAULT 'aktif' CHECK (status IN ('aktif', 'nonaktif')),
-        created_at TEXT DEFAULT (datetime ('now')),
-        updated_at TEXT DEFAULT (datetime ('now'))
     );
 
 -- TRANSAKSI
@@ -67,10 +62,10 @@ CREATE TABLE
         id_detail INTEGER PRIMARY KEY AUTOINCREMENT,
         id_transaksi INTEGER NOT NULL,
         id_barang INTEGER,
-        id_paket INTEGER,
+        id_paket_ps INTEGER,
         jumlah INTEGER NOT NULL,
         harga REAL NOT NULL,
         FOREIGN KEY (id_transaksi) REFERENCES tb_transaksi (id_transaksi),
         FOREIGN KEY (id_barang) REFERENCES tb_barang (id_barang),
-        FOREIGN KEY (id_paket) REFERENCES tb_paket_ps (id_paket)
+        FOREIGN KEY (id_paket_ps) REFERENCES tb_paket_ps (id_paket_ps)
     )

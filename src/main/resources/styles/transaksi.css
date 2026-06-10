@@ -890,3 +890,225 @@
     -fx-font-size: 10px;
     -fx-font-weight: bold;
 }
+
+
+/* pesanan ps */
+
+/* ═══════════════════════════════════════════════
+   StoreMS — rental_ps.css
+════════════════════════════════════════════════ */
+
+.rental-root {
+    -fx-background-color: #1A1D2E;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 16;
+    -fx-background-radius: 16;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 24, 0, 0, 8);
+}
+
+/* ── HEADER ──────────────────────────────────── */
+.rental-header {
+    -fx-border-color: transparent transparent #2E3250 transparent;
+    -fx-border-width: 1;
+}
+
+.rental-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+.rental-sub {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+}
+
+/* ── SECTION ─────────────────────────────────── */
+.rental-section {
+    -fx-background-color: transparent;
+}
+
+.section-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-letter-spacing: 1;
+}
+
+/* ── PRESET BUTTONS ──────────────────────────── */
+.preset-btn {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-pref-height: 56;
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+}
+
+.preset-btn:hover {
+    -fx-border-color: #6C63FF;
+    -fx-background-color: rgba(108, 99, 255, 0.10);
+}
+
+.preset-btn-active {
+    -fx-background-color: rgba(108, 99, 255, 0.20);
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-height: 56;
+    -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.3), 8, 0, 0, 0);
+}
+
+/* ── DIVIDER ─────────────────────────────────── */
+.divider-line {
+    -fx-fill: #2E3250;
+}
+
+.divider-text {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+}
+
+/* ── CUSTOM SPINNER ──────────────────────────── */
+.spinner-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+}
+
+.spinner-hint {
+    -fx-text-fill: #2E3250;
+    -fx-font-size: 9px;
+    -fx-alignment: CENTER;
+}
+
+.spinner-sep {
+    -fx-text-fill: #2E3250;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-padding: 14 0 0 0;
+}
+
+.spinner-box {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 8 12 8 12;
+}
+
+.spinner-btn {
+    -fx-background-color: #2E3250;
+    -fx-border-color: #3a3f6a;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-pref-width: 30;
+    -fx-pref-height: 30;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.spinner-btn:hover {
+    -fx-background-color: #6C63FF;
+    -fx-border-color: #6C63FF;
+}
+
+.spinner-value {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+}
+
+/* ── SUMMARY ─────────────────────────────────── */
+.rental-summary {
+    -fx-background-color: rgba(108, 99, 255, 0.06);
+    -fx-border-color: rgba(108, 99, 255, 0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 14 16 14 16;
+    -fx-margin: 0 24 0 24;
+}
+
+.summary-label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+}
+
+.summary-value {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.summary-harga {
+    -fx-text-fill: #00D4FF;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* ── SEP ─────────────────────────────────────── */
+.rental-sep {
+    -fx-background-color: #2E3250;
+}
+
+/* ── FOOTER ──────────────────────────────────── */
+.rental-footer {
+    -fx-background-color: transparent;
+}
+
+.btn-batal-rental {
+    -fx-background-color: transparent;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+    -fx-pref-height: 44;
+}
+
+.btn-batal-rental:hover {
+    -fx-background-color: #252840;
+    -fx-text-fill: #FFFFFF;
+}
+
+.btn-konfirmasi {
+    -fx-background-color: #6C63FF;
+    -fx-border-width: 0;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-height: 44;
+    -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.4), 10, 0, 0, 3);
+}
+
+.btn-konfirmasi:hover {
+    -fx-background-color: #5a52e0;
+}
+
+.btn-konfirmasi:disabled {
+    -fx-background-color: #2E3250;
+    -fx-text-fill: #8B8FA8;
+    -fx-effect: none;
+}
