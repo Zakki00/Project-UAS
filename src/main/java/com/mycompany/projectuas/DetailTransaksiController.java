@@ -296,10 +296,45 @@ public class DetailTransaksiController implements Initializable {
             return;
         }
         // method helper untuk tutup form
+        System.out.println("Jumlah keranjang = " + TransaksiModel.keranjang.size());
 
         for (CartItem ci : TransaksiModel.keranjang.values()) {
-            String sql_dtransaksi = "INSERT INTO tb_detail_transaksi (id_transaksi,id_barang,jumlah,harga) VALUES (?,?,?,?)";
-            koneksi.eksekusiQuery(sql_dtransaksi, id_transaksi, ci.produk.id, ci.qty, ci.produk.harga);
+
+            String sql_dtransaksi = "INSERT INTO tb_detail_transaksi " +
+                    "(id_transaksi,id_barang,jumlah,harga) " +
+                    "VALUES (?,?,?,?)";
+
+            koneksi.eksekusiQuery(
+                    sql_dtransaksi,
+                    id_transaksi,
+                    ci.produk.id,
+                    ci.qty,
+                    ci.produk.harga);
+        }
+
+        // simpan detail rental PS
+        if (TransaksiModel.pesananPs != null) {
+
+            String sqlCariPaket = "SELECT id_paket_ps FROM tb_paket_ps " +
+                    "WHERE id_transaksi = ?";
+
+            List<Object[]> dataPaket = koneksi.ambilData(sqlCariPaket, id_transaksi);
+
+            if (!dataPaket.isEmpty()) {
+
+                int idPaketPs = ((Number) dataPaket.get(0)[0]).intValue();
+
+                String sqlDetailPs = "INSERT INTO tb_detail_transaksi " +
+                        "(id_transaksi,id_paket_ps,jumlah,harga) " +
+                        "VALUES (?,?,?,?)";
+
+                koneksi.eksekusiQuery(
+                        sqlDetailPs,
+                        id_transaksi,
+                        idPaketPs,
+                        1,
+                        TransaksiModel.pesananPs.harga);
+            }
         }
         String sql_update_pelanggan = "UPDATE tb_transaksi SET pelanggan = ? WHERE id_transaksi = ?";
         koneksi.eksekusiQuery(sql_update_pelanggan, pelanggan, id_transaksi);

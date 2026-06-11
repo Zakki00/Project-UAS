@@ -905,11 +905,13 @@ public class TransaksiController implements Initializable {
         }
 
 
-        String sql_idtransaksi = "SELECT * FROM tb_transaksi ORDER BY id_transaksi DESC LIMIT 1";
+        String sql_idtransaksi = "SELECT id_transaksi FROM tb_transaksi ORDER BY id_transaksi DESC LIMIT 1";
 
-        List<Object[]>  id_transaksi = koneksi.ambilData(sql_idtransaksi);
+        List<Object[]> data = koneksi.ambilData(sql_idtransaksi);
 
-        if (TransaksiModel.pesananPs != null) {
+        if (!data.isEmpty() && TransaksiModel.pesananPs != null) {
+
+            int idTransaksi = ((Number) data.get(0)[0]).intValue();
 
             int totalMenit = (TransaksiModel.pesananPs.durasiJam * 60)
                     + TransaksiModel.pesananPs.durasiMenit;
@@ -920,7 +922,7 @@ public class TransaksiController implements Initializable {
 
             koneksi.eksekusiQuery(
                     sql,
-                    id_transaksi,
+                    idTransaksi,
                     totalMenit,
                     TransaksiModel.pesananPs.harga);
         }
@@ -938,8 +940,8 @@ public class TransaksiController implements Initializable {
         navigation nav = new navigation();
         Stage stage = (Stage) btnBayar.getScene().getWindow();
         nav.detailTransaksi(stage, this);
-        TransaksiModel.keranjang.clear();
-        TransaksiModel.pesananPs = null;
+        // TransaksiModel.keranjang.clear();
+        // TransaksiModel.pesananPs = null;
 
     }
 

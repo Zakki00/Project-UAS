@@ -9,8 +9,7 @@ import javafx.collections.ObservableList;
 public class PiutangModel {
     public final static ObservableList<DataHutang> dataHutang = FXCollections.observableArrayList();
     public final static List<DataBarangHutang> dataBarang = new ArrayList<>();
-    public static DaftarPaketPS daftarpaketps;
-
+    public static DaftarPaketPS daftarpaketps ;
     public static class DataHutang {
 
         public int no;

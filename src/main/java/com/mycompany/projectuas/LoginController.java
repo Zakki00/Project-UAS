@@ -68,7 +68,7 @@ public class LoginController implements Initializable {
         String sql_admin = "SELECT * FROM tb_user WHERE role = 'Admin'";
         List<Object[]> admin = koneksi.ambilData(sql_admin);
         String Admin = prefs.get("Admin",null);
-        if (Admin == null && admin.isEmpty()) {
+        if (Admin == null || admin.isEmpty()) {
             System.out.print("Admin Belum Di Daftarkan Sebagai Pemilik Aplikasi" + Admin);
             btnGoogle.setVisible(true);
             btnGoogle.setManaged(true);

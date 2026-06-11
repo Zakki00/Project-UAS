@@ -7,7 +7,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.PiutangModel;
+import com.mycompany.Model.PiutangModel.DaftarPaketPS;
 import com.mycompany.Model.PiutangModel.DataHutang;
+import com.mycompany.Model.TransaksiModel.ItemPs;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -175,15 +177,52 @@ public class PiutangController implements Initializable {
     }
 
     private void load_data_barang(DataHutang dataHutang) {
-        String sql = "SELECT " + "b.nama_barang, " + "b.harga, " + "td.jumlah " + "FROM tb_detail_transaksi td "
-                + "JOIN tb_barang b " + "ON td.id_barang = b.id_barang " + "WHERE td.id_transaksi = ?";
+
+        PiutangModel.dataBarang.clear(); // bersihkan data lama
+
+        String sql = """
+                SELECT b.nama_barang,
+                       b.harga,
+                       td.jumlah
+                FROM tb_detail_transaksi td
+                JOIN tb_barang b
+                ON td.id_barang = b.id_barang
+                WHERE td.id_transaksi = ?
+                """;
+
         List<Object[]> results = koneksi.ambilData(sql, dataHutang.idTransaksi);
-        System.out.println("Hasil query barang: " + results.size() + " baris");
+
         for (Object[] row : results) {
             String nama = String.valueOf(row[0]);
             long harga = ((Number) row[1]).longValue();
             int qty = ((Number) row[2]).intValue();
-            PiutangModel.dataBarang.add(new PiutangModel.DataBarangHutang(nama, harga, qty));
+
+            PiutangModel.dataBarang.add(
+                    new PiutangModel.DataBarangHutang(nama, harga, qty));
+        }
+
+    }
+
+    private void loaddataPaketPS(DataHutang dataHutang) {
+
+     PiutangModel.daftarpaketps = null;
+
+        String sql = """
+                SELECT durasi, harga
+                FROM tb_paket_ps
+                WHERE id_transaksi = ?
+                """;
+        List<Object[]> results = koneksi.ambilData(sql, dataHutang.idTransaksi);
+
+        if (!results.isEmpty()) {
+            Object[] row = results.get(0);
+
+            PiutangModel.daftarpaketps = new DaftarPaketPS(
+                    (int) row[0], // durasi
+                    (long) row[1] // harga
+            );
+        } else {
+            PiutangModel.daftarpaketps = null;
         }
     }
 
@@ -414,6 +453,33 @@ public class PiutangController implements Initializable {
         colTanggal_Transaksi.setCellValueFactory(d -> new SimpleStringProperty((d.getValue().tanggal_transaksi)));
 
         tableHutang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    void SetupRowClick() {
+        tableHutang.setOnMouseClicked(e -> {
+            DataHutang selected = tableHutang.getSelectionModel().getSelectedItem();
+
+            if (selected != null) {
+
+                lblIdTransaksi.setText(selected.idTransaksi);
+                lblNamaPelanggan.setText(selected.namaPelanggan);
+                lblJumlahHutang.setText("Rp " + FMT.format(selected.kekurangan));
+
+                load_data_barang(selected);
+                loaddataPaketPS(selected);
+                renderList();
+
+                tfPelanggan.setDisable(true);
+                tfTunai.setDisable(false);
+
+                btnQuick5.setDisable(false);
+                btnQuick10.setDisable(false);
+                btnQuick20.setDisable(false);
+                btnQuick50.setDisable(false);
+                System.out.println("ID Transaksi = " + selected.idTransaksi);
+                System.out.println("Jumlah barang = " + PiutangModel.dataBarang.size());
+            }
+        });
     }
 
     // ═══════════════════════════════════════════════
@@ -675,26 +741,6 @@ public class PiutangController implements Initializable {
         }
     }
 
-    void SetupRowClick() {
-        tableHutang.setOnMouseClicked(e -> {
-            DataHutang selected = tableHutang.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                lblIdTransaksi.setText(selected.idTransaksi);
-                lblNamaPelanggan.setText(selected.namaPelanggan);
-                lblJumlahHutang.setText("Rp " + FMT.format(selected.kekurangan));
-                load_data_barang(selected);
-                renderList();
-                tfPelanggan.setDisable(true);
-                tfTunai.setDisable(false);
-                PiutangModel.dataBarang.clear();
-                btnQuick5.setDisable(false);
-                btnQuick10.setDisable(false);
-                btnQuick20.setDisable(false);
-                btnQuick50.setDisable(false);
-            }
-        });
-    }
-
     // ── Setup layout scroll content ───────────────────
     private void setupLayout() {
         detailList = new VBox(10);
@@ -740,6 +786,11 @@ public class PiutangController implements Initializable {
             for (PiutangModel.DataBarangHutang barang : PiutangModel.dataBarang) {
                 detailList.getChildren().add(setdatabarang(barang, no));
                 no++;
+            }
+            if (PiutangModel.daftarpaketps != null) {
+                detailList.getChildren().add(
+                        setdataPS(PiutangModel.daftarpaketps, no));
+                no++; 
             }
             // Summary
             updateSummary();
@@ -829,6 +880,41 @@ public class PiutangController implements Initializable {
         lblQty.setAlignment(Pos.CENTER);
 
         HBox row = new HBox(5, lblNo, lblNama, lblHarga, lblQty);
+        row.getStyleClass().add("item-row");
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        return row;
+    }
+
+    private HBox setdataPS(PiutangModel.DaftarPaketPS PaketPS, int no) {
+        // cell data
+        Label lblNo = new Label(String.valueOf(no));
+        Label lblNama = new Label("Paket Play Station");
+        Label lblHarga = new Label("Rp " + FMT.format(PaketPS.harga));
+
+        // No urut
+        lblNo.getStyleClass().add("item-no");
+        lblNo.setPrefWidth(30);
+        lblNo.setMinWidth(30);
+        lblNo.setMaxWidth(30);
+        lblNo.setAlignment(Pos.CENTER);
+
+        // Nama produk
+
+        lblNama.getStyleClass().add("item-nama");
+        lblNama.setPrefWidth(100);
+        lblNama.setMinWidth(100);
+        lblNama.setMaxWidth(100);
+        lblNama.setAlignment(Pos.CENTER_LEFT);
+
+        // Harga
+        lblHarga.getStyleClass().add("item-harga");
+        lblHarga.setPrefWidth(90);
+        lblHarga.setMinWidth(90);
+        lblHarga.setMaxWidth(90);
+        lblHarga.setAlignment(Pos.CENTER);
+
+        HBox row = new HBox(5, lblNo, lblNama, lblHarga);
         row.getStyleClass().add("item-row");
         row.setAlignment(Pos.CENTER_LEFT);
 
