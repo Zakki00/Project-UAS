@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -163,6 +164,10 @@ public class LaporanController implements Initializable {
     @FXML
     private TableColumn<LaporanModel.LaporanTransaksiItem, String> colStatus;
     @FXML
+    private TableColumn<LaporanTransaksiItem, String> colJumlahItem;
+    @FXML
+    private TableColumn<LaporanTransaksiItem, String> colDurasiPs;
+    @FXML
     private TableColumn<LaporanModel.LaporanTransaksiItem, LocalDate> colTanggalTransaksi;
     // ── Charts ────────────────────────────────────────────
     @FXML
@@ -216,6 +221,8 @@ public class LaporanController implements Initializable {
     // ----caharts--------------------------------------------
     @FXML
     private VBox vboxChart;
+    @FXML
+    private VBox vboxChartPs;
     // ── Stock list ────────────────────────────────────────
     @FXML
     private VBox stockList;
@@ -253,9 +260,13 @@ public class LaporanController implements Initializable {
                         t.kembalian,
                         t.kekurangan,
                         u.username,
-                        u.nama_lengkap
+                        u.nama_lengkap,
+                        COUNT(DISTINCT CASE WHEN dt.id_barang IS NOT NULL THEN dt.id_detail END) AS jumlah_item,
+                        COALESCE(SUM(DISTINCT pp.durasi), 0) AS total_durasi_ps
                     FROM tb_transaksi t
                     JOIN tb_user u ON t.id_user = u.id_user
+                    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+                    LEFT JOIN tb_paket_ps pp ON t.id_transaksi = pp.id_transaksi
                     WHERE 1=1
                 """);
 
@@ -289,9 +300,9 @@ public class LaporanController implements Initializable {
             params.add(Long.parseLong(raw));
         }
 
-        // =========================
-        // ORDER
-        // =========================
+        // GROUP BY wajib karena pakai agregasi
+        sql.append(
+                " GROUP BY t.id_transaksi, t.tanggal_transaksi, t.pelanggan, t.status_pembayaran, t.total_pembayaran, t.uang_pembayaran, t.kembalian, t.kekurangan, u.username, u.nama_lengkap");
         sql.append(" ORDER BY t.tanggal_transaksi DESC");
 
         List<Object[]> results = params.isEmpty() ? koneksi.ambilData(sql.toString())
@@ -313,6 +324,9 @@ public class LaporanController implements Initializable {
             long kekurangan = ((Number) row[7]).longValue();
             String username = (String) row[8];
             String namaLengkap = (String) row[9];
+            int jumlahItem = ((Number) row[10]).intValue(); // ← TAMBAH
+            int totalDurasiPs = ((Number) row[11]).intValue(); // ← TAMBAH
+
             LaporanModel.dataLaporanTransaksi.add(
                     new LaporanTransaksiItem(
                             no++,
@@ -325,22 +339,16 @@ public class LaporanController implements Initializable {
                             kembalian,
                             kekurangan,
                             statusPembayaran,
-                            tanggalTransaksi));
+                            tanggalTransaksi,
+                            jumlahItem, // ← TAMBAH
+                            totalDurasiPs)); // ← TAMBAH
         }
         TableLaporan.setItems(LaporanModel.dataLaporanTransaksi);
-        // =========================
-        // LOG
-        // =========================
+
         if (results.isEmpty()) {
-
             System.out.println("Tidak ada data laporan transaksi.");
-
         } else {
-
-            System.out.println(
-                    "Laporan transaksi berhasil dimuat: "
-                            + results.size()
-                            + " data");
+            System.out.println("Laporan transaksi berhasil dimuat: " + results.size() + " data");
         }
     }
 
@@ -847,6 +855,17 @@ public class LaporanController implements Initializable {
         colUser.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().username));
         colNamalengkap.setCellValueFactory(
                 data -> new javafx.beans.property.SimpleStringProperty(data.getValue().namaLengkap));
+        colJumlahItem.setCellValueFactory(
+                data -> new SimpleStringProperty(
+                        data.getValue().jumlahItem > 0
+                                ? data.getValue().jumlahItem + " item"
+                                : "-"));
+
+        colDurasiPs.setCellValueFactory(
+                data -> new SimpleStringProperty(
+                        data.getValue().totalDurasiPs > 0
+                                ? data.getValue().totalDurasiPs + " menit"
+                                : "-"));
 
         TableLaporan.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
@@ -859,42 +878,70 @@ public class LaporanController implements Initializable {
         setupTrxChart();
         setupMonthChart();
         loadBarChart();
+        loadBarChartPs();
     }
 
     // ── Area chart: Penjualan 7 hari terakhir ────────────
+
+    // ── Area chart: Penjualan 7 hari terakhir ────────────
     private void setupSalesChart() {
+
         String sql = """
-                               SELECT
-                    strftime('%w', tanggal_transaksi) AS hari,
+                SELECT
+                    date(tanggal_transaksi) AS tanggal,
                     SUM(total_pembayaran) AS total
                 FROM tb_transaksi
                 WHERE tanggal_transaksi >= date('now','localtime', '-7 day')
                 AND status_pembayaran = 'Lunas'
-                GROUP BY strftime('%w', tanggal_transaksi)
-                ORDER BY hari
-                                """;
+                GROUP BY date(tanggal_transaksi)
+                ORDER BY date(tanggal_transaksi)
+                """;
 
         List<Object[]> data = koneksi.ambilData(sql);
+
+        String[] namaHari = {
+                "Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"
+        };
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Penjualan");
 
-        // fallback kalau data kosong
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
         if (data.isEmpty()) {
-            String[] days = { "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min" };
-            for (String d : days) {
-                series.getData().add(new XYChart.Data<>(d, 0));
+
+            for (int i = 6; i >= 0; i--) {
+
+                LocalDate tanggal = LocalDate.now().minusDays(i);
+
+                String label = namaHari[tanggal.getDayOfWeek().getValue() % 7]
+                        + "\n"
+                        + tanggal.format(
+                                DateTimeFormatter.ofPattern("dd/MM"));
+
+                series.getData().add(new XYChart.Data<>(label, 0));
             }
+
         } else {
+
             for (Object[] row : data) {
-                String hari = String.valueOf(row[0]);
+
+                LocalDate tanggal = LocalDate.parse(String.valueOf(row[0]), formatter);
+
+                String label = namaHari[tanggal.getDayOfWeek().getValue() % 7]
+                        + "\n"
+                        + tanggal.format(
+                                DateTimeFormatter.ofPattern("dd/MM"));
+
                 long total = ((Number) row[1]).longValue();
-                series.getData().add(new XYChart.Data<>(hari, total));
+
+                series.getData().add(new XYChart.Data<>(label, total));
             }
         }
 
         salesChart.getData().clear();
         salesChart.getData().add(series);
+
         salesChart.setLegendVisible(false);
         salesChart.setAnimated(true);
     }
@@ -956,6 +1003,86 @@ public class LaporanController implements Initializable {
         }
     }
 
+    private void loadBarChartPs() {
+        String sql = """
+                SELECT pp.durasi, COUNT(pp.id_paket_ps) AS total
+                FROM tb_paket_ps pp
+                GROUP BY pp.durasi
+                ORDER BY total DESC
+                LIMIT 5
+                """;
+
+        List<Object[]> data = koneksi.ambilData(sql);
+
+        long max = 1;
+        for (Object[] row : data) {
+            long val = ((Number) row[1]).longValue();
+            if (val > max)
+                max = val;
+        }
+
+        vboxChartPs.getChildren().clear();
+
+        // Tambah judul
+        Label judul = new Label("Top 5 Durasi PS Terbanyak");
+        judul.setStyle("-fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-font-size: 13px;");
+        vboxChartPs.getChildren().add(judul);
+
+        String[] colors = { "#6C63FF", "#00D4FF", "#00E5A0", "#FFD166", "#FF5C7C" };
+
+        if (data.isEmpty()) {
+            Label kosong = new Label("Belum ada data PS");
+            kosong.setStyle("-fx-text-fill: #888;");
+            vboxChartPs.getChildren().add(kosong);
+            return;
+        }
+
+        for (int i = 0; i < data.size(); i++) {
+            Object[] row = data.get(i);
+            int durasi = ((Number) row[0]).intValue(); // dalam menit
+            long total = ((Number) row[1]).longValue();
+            double pct = (double) total / max;
+
+            // Format durasi: jam & menit
+            String labelDurasi;
+            if (durasi >= 60) {
+                int jam = durasi / 60;
+                int menit = durasi % 60;
+                labelDurasi = menit > 0
+                        ? jam + " jam " + menit + " mnt"
+                        : jam + " jam";
+            } else {
+                labelDurasi = durasi + " mnt";
+            }
+
+            // ── Nama durasi ──
+            Label lblNama = new Label(labelDurasi);
+            lblNama.getStyleClass().add("bar-nama");
+            lblNama.setPrefWidth(140);
+            lblNama.setMinWidth(140);
+            lblNama.setMaxWidth(140);
+
+            // ── Total sesi ──
+            Label lblTotal = new Label(total + "x");
+            lblTotal.getStyleClass().add("bar-total");
+
+            // ── Progress bar ──
+            ProgressBar pb = new ProgressBar(pct);
+            pb.getStyleClass().add("bar-progress");
+            pb.setPrefHeight(12);
+            pb.setMaxWidth(Double.MAX_VALUE);
+            pb.setStyle("-fx-accent: " + colors[i % colors.length] + ";");
+            HBox.setHgrow(pb, Priority.ALWAYS);
+
+            // ── Row ──
+            HBox row2 = new HBox(10, lblNama, pb, lblTotal);
+            row2.setAlignment(Pos.CENTER_LEFT);
+            row2.getStyleClass().add("bar-row");
+
+            vboxChartPs.getChildren().add(row2);
+        }
+    }
+
     // ── Bar chart: Jumlah transaksi per hari ─────────────
     private void setupTrxChart() {
         String sql = """
@@ -970,19 +1097,20 @@ public class LaporanController implements Initializable {
 
         List<Object[]> data = koneksi.ambilData(sql);
 
+        String[] namaHari = { "Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab" };
+
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Transaksi");
 
         if (data.isEmpty()) {
-            String[] days = { "Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min" };
-            for (String d : days) {
+            for (String d : namaHari) {
                 series.getData().add(new XYChart.Data<>(d, 0));
             }
         } else {
             for (Object[] row : data) {
-                String hari = String.valueOf(row[0]);
+                int hariIdx = Integer.parseInt(String.valueOf(row[0]));
                 int jumlah = ((Number) row[1]).intValue();
-                series.getData().add(new XYChart.Data<>(hari, jumlah));
+                series.getData().add(new XYChart.Data<>(namaHari[hariIdx], jumlah));
             }
         }
 
@@ -1009,17 +1137,21 @@ public class LaporanController implements Initializable {
 
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Omzet");
-
+        String[] namaBulan = { "", "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+                "Jul", "Ags", "Sep", "Okt", "Nov", "Des" };
         if (data.isEmpty()) {
-            String[] months = { "Jan", "Feb", "Mar", "Apr", "Mei", "Jun" };
-            for (String m : months) {
+            // Tambah map bulan
+
+            // Ganti bagian parsing:
+            for (String m : namaBulan) {
                 series.getData().add(new XYChart.Data<>(m, 0));
             }
         } else {
+            // Ganti bagian parsing:
             for (Object[] row : data) {
-                String bulan = String.valueOf(row[0]);
+                int bulanIdx = Integer.parseInt(String.valueOf(row[0]));
                 long total = ((Number) row[1]).longValue();
-                series.getData().add(new XYChart.Data<>(bulan, total));
+                series.getData().add(new XYChart.Data<>(namaBulan[bulanIdx], total));
             }
         }
 

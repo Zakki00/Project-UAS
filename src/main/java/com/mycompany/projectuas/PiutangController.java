@@ -216,11 +216,10 @@ public class PiutangController implements Initializable {
 
         if (!results.isEmpty()) {
             Object[] row = results.get(0);
+            int durasi = ((Number) row[0]).intValue();
+            long harga = ((Number) row[1]).longValue();
 
-            PiutangModel.daftarpaketps = new DaftarPaketPS(
-                    (int) row[0], // durasi
-                    (long) row[1] // harga
-            );
+            PiutangModel.daftarpaketps = new DaftarPaketPS(durasi, harga);
         } else {
             PiutangModel.daftarpaketps = null;
         }

@@ -8,7 +8,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.io.File;
 import javax.swing.JOptionPane;
 
 public class koneksi {
@@ -25,9 +25,12 @@ public class koneksi {
     private static String getDbPath() {
         String appData = System.getenv("APPDATA");
         if (appData != null && !appData.isEmpty()) {
-            return appData + "\\ProjectUAS\\db\\db_enjoy_cafe.db";
+            File appDataDb = new File(appData + "\\ProjectUAS\\db\\db_enjoy_cafe.db");
+            if (appDataDb.exists()) {
+                return appDataDb.getAbsolutePath();
+            }
         }
-        // Fallback non-Windows / development
+        // Fallback: development di VSCode
         return "src/main/resources/db/db_enjoy_cafe.db";
     }
     

@@ -17,47 +17,55 @@ public class LaporanModel {
  
     public static class LaporanTransaksiItem {
 
-    public int no;
-    public int idTransaksi;
+        public int no;
+        public int idTransaksi;
 
-    public String username;
-    public String namaLengkap;
-    public String pelanggan;
+        public String username;
+        public String namaLengkap;
+        public String pelanggan;
 
-    public long totalPembayaran;
-    public long uangPembayaran;
-    public long kembalian;
-    public long kekurangan;
+        public long totalPembayaran;
+        public long uangPembayaran;
+        public long kembalian;
+        public long kekurangan;
 
-    public String statusPembayaran;
-    public LocalDate tanggalTransaksi;
+        public String statusPembayaran;
+        public LocalDate tanggalTransaksi;
 
-    public LaporanTransaksiItem(
-            int no,
-            int idTransaksi,
-            String username,
-            String namaLengkap,
-            String pelanggan,
-            long totalPembayaran,
-            long uangPembayaran,
-            long kembalian,
-            long kekurangan,
-            String statusPembayaran,
-            LocalDate tanggalTransaksi
-    ) {
-        this.no = no;
-        this.idTransaksi = idTransaksi;
-        this.username = username;
-        this.namaLengkap = namaLengkap;
-        this.pelanggan = pelanggan;
-        this.totalPembayaran = totalPembayaran;
-        this.uangPembayaran = uangPembayaran;
-        this.kembalian = kembalian;
-        this.kekurangan = kekurangan;
-        this.statusPembayaran = statusPembayaran;
-        this.tanggalTransaksi = tanggalTransaksi;
+        // ← TAMBAH INI
+        public int jumlahItem; // total item barang dibeli
+        public int totalDurasiPs; // total durasi PS (menit), 0 kalau tidak ada
+
+        public LaporanTransaksiItem(
+                int no,
+                int idTransaksi,
+                String username,
+                String namaLengkap,
+                String pelanggan,
+                long totalPembayaran,
+                long uangPembayaran,
+                long kembalian,
+                long kekurangan,
+                String statusPembayaran,
+                LocalDate tanggalTransaksi,
+                int jumlahItem, // ← TAMBAH
+                int totalDurasiPs // ← TAMBAH
+        ) {
+            this.no = no;
+            this.idTransaksi = idTransaksi;
+            this.username = username;
+            this.namaLengkap = namaLengkap;
+            this.pelanggan = pelanggan;
+            this.totalPembayaran = totalPembayaran;
+            this.uangPembayaran = uangPembayaran;
+            this.kembalian = kembalian;
+            this.kekurangan = kekurangan;
+            this.statusPembayaran = statusPembayaran;
+            this.tanggalTransaksi = tanggalTransaksi;
+            this.jumlahItem = jumlahItem; // ← TAMBAH
+            this.totalDurasiPs = totalDurasiPs; // ← TAMBAH
+        }
     }
-}
 
 // ═══════════════════════════════════════════════
 // MODEL CHART 1 & 2 — Harian (Area + Bar)
