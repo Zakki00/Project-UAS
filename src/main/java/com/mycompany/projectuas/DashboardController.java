@@ -212,6 +212,7 @@ public class DashboardController implements Initializable {
         loadKPI();
         setupCharts();
         setupStockList();
+        loadShiftData();
     }
 
     // ═══════════════════════════════════════════════════════
@@ -549,12 +550,42 @@ public class DashboardController implements Initializable {
     // SHIFT DATA
     // ═══════════════════════════════════════════════════════
     private void loadShiftData() {
-        loadShift("06:00:00", "12:00:00",
-                lblUsernamePagi, lblNamaPagi, lblTrxPagi,
-                lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
-        loadShift("12:00:00", "21:00:00",
-                lblUsernameMalam, lblNamaMalam, lblTrxMalam,
-                lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
+        int jamSekarang = java.time.LocalTime.now().getHour();
+
+        if (jamSekarang >= 6 && jamSekarang < 12) {
+            // Shift pagi aktif — tampilkan hanya card pagi
+            cardPagi.setVisible(true);
+            cardPagi.setManaged(true);
+            cardMalam.setVisible(false);
+            cardMalam.setManaged(false);
+            loadShift("06:00:00", "12:00:00",
+                    lblUsernamePagi, lblNamaPagi, lblTrxPagi,
+                    lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
+
+        } else if (jamSekarang >= 12 && jamSekarang < 21) {
+            // Shift malam aktif — tampilkan hanya card malam
+            cardPagi.setVisible(false);
+            cardPagi.setManaged(false);
+            cardMalam.setVisible(true);
+            cardMalam.setManaged(true);
+            loadShift("12:00:00", "21:00:00",
+                    lblUsernameMalam, lblNamaMalam, lblTrxMalam,
+                    lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
+
+        } else {
+            // Di luar jam shift — tampilkan keduanya
+            cardPagi.setVisible(true);
+            cardPagi.setManaged(true);
+            cardMalam.setVisible(true);
+            cardMalam.setManaged(true);
+            loadShift("06:00:00", "12:00:00",
+                    lblUsernamePagi, lblNamaPagi, lblTrxPagi,
+                    lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
+            loadShift("12:00:00", "21:00:00",
+                    lblUsernameMalam, lblNamaMalam, lblTrxMalam,
+                    lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
+        }
+
         updateStatusDot();
     }
 
