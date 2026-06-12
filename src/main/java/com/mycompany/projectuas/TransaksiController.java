@@ -1022,7 +1022,14 @@ private void onPreset4() {
     setPreset(2, 0, 4);
 } // 2 jam
 
+private void resetPresetStyle() {
+    for (Button b : new Button[] { btnPreset1, btnPreset2, btnPreset3, btnPreset4 }) {
+        b.getStyleClass().setAll("preset-btn");
+    }
+}
+
 private void setPreset(int j, int m, int presetNo) {
+
     jam = j;
     menit = m;
     activePreset = presetNo;
@@ -1030,18 +1037,15 @@ private void setPreset(int j, int m, int presetNo) {
     lblJam.setText(String.valueOf(jam));
     lblMenit.setText(String.valueOf(menit));
 
-    // highlight tombol preset aktif
     resetPresetStyle();
+
     Button[] btns = { btnPreset1, btnPreset2, btnPreset3, btnPreset4 };
-    btns[presetNo - 1].getStyleClass().setAll("preset-btn-active");
+
+    btns[presetNo - 1]
+            .getStyleClass()
+            .add("preset-btn-active");
 
     updateDisplay();
-}
-
-private void resetPresetStyle() {
-    for (Button b : new Button[] { btnPreset1, btnPreset2, btnPreset3, btnPreset4 }) {
-        b.getStyleClass().setAll("preset-btn");
-    }
 }
 
 // ═══════════════════════════════════════════════
