@@ -186,18 +186,13 @@ public class TransaksiController implements Initializable {
     // ═════════════════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        TransaksiModel.keranjang.clear();
-        TransaksiModel.semuaProduk.clear();
+        setupForm();
         loadproduk();
         setupKategori();
         setupSearch();
         renderProduk(semuaProduk);
         setActiveNav(navKasir);
         updateSummary();
-        lblNamaKasir.setText("Budi S.");
-        lblShift.setText("Shift Siang");
-        // lblNoTrx.setText(String.format("#TRX-%04d", TransaksiModel.noTrx));
-        setupForm();
         setupMetodeBayar();
         setupMenu();
       
@@ -403,6 +398,9 @@ public class TransaksiController implements Initializable {
 
     // setupa form
     private void setupForm() {
+        TransaksiModel.keranjang.clear();
+        TransaksiModel.pesananPs = null;
+        TransaksiModel.semuaProduk.clear();
         btnBayar.setDisable(true);
         tfTunai.setDisable(true);
         lblKembalian.setText("Rp 0");
