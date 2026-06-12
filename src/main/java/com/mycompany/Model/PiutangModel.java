@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 public class PiutangModel {
     public final static ObservableList<DataHutang> dataHutang = FXCollections.observableArrayList();
     public final static List<DataBarangHutang> dataBarang = new ArrayList<>();
-
+    public static DaftarPaketPS daftarpaketps ;
     public static class DataHutang {
 
         public int no;
@@ -46,5 +46,16 @@ public class PiutangModel {
             this.harga_barang = harga_barang;
             this.qty = qty;
         }
+    }
+
+    public static class DaftarPaketPS {
+        public int durasi;
+        public long harga;
+
+        public DaftarPaketPS(int durasi, long harga){
+            this.durasi = durasi;
+            this.harga = harga;
+        }
+        
     }
 }

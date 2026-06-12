@@ -8,9 +8,11 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
+import javax.swing.JOptionPane;
 
 public class koneksi {
-    private static final String URL = "jdbc:sqlite:src/main/resources/db/db_enjoy_cafe.db";
+    private static final String URL = "jdbc:sqlite:" + getDbPath();
     // private static final String URL =
     // "jdbc:mysql://localhost:3306/db_enjoy_cave";
     private static final String USERNAME = "root";
@@ -20,7 +22,20 @@ public class koneksi {
         return DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
+    private static String getDbPath() {
+        String appData = System.getenv("APPDATA");
+        if (appData != null && !appData.isEmpty()) {
+            File appDataDb = new File(appData + "\\ProjectUAS\\db\\db_enjoy_cafe.db");
+            if (appDataDb.exists()) {
+                return appDataDb.getAbsolutePath();
+            }
+        }
+        // Fallback: development di VSCode
+        return "src/main/resources/db/db_enjoy_cafe.db";
+    }
+    
     public static void koneksi() {
+        
         try (Connection connection = getConnection()) {
             System.out.println("Koneksi berhasil! Database: " + connection.getCatalog());
         } catch (SQLException e) {

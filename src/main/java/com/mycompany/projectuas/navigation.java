@@ -27,6 +27,10 @@ public class navigation {
         }
     }
 
+    public void navigateToSignup() {
+       navigateTo("signup.fxml", "Signup");
+    }
+
     public void navigateToDashboard() {
         navigateTo("dashboard.fxml", "Dashboard");
     }
@@ -46,7 +50,8 @@ public class navigation {
     public void navigateToPiutang() {
         navigateTo("piutang.fxml", "Piutang");
     }
-    public void navigataeToPengaturan(){
+
+    public void navigataeToPengaturan() {
         navigateTo("pengaturan.fxml", "Pengaturan");
     }
 

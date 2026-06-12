@@ -11,7 +11,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.11.0</version>
         <configuration>
-          <release>21</release>
+          <release>26</release>
         </configuration>
       </plugin>
       <plugin>
@@ -53,6 +53,9 @@
         </executions>
         <configuration>
           <mainClass>com.mycompany.projectuas.App</mainClass>
+          <options>
+            <option>--add-modules java.desktop</option>
+          </options>
         </configuration>
       </plugin>
       <plugin>
@@ -108,7 +111,7 @@
   </dependencies>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.target>21</maven.compiler.target>
-    <maven.compiler.source>21</maven.compiler.source>
+    <maven.compiler.target>26</maven.compiler.target>
+    <maven.compiler.source>26</maven.compiler.source>
   </properties>
 </project>

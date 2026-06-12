@@ -245,7 +245,35 @@
 .eye-btn:hover {
   -fx-text-fill: #6c5ce7;
 }
+/* ── GOOGLE BUTTON ───────────────────────────── */
+.btn-google {
+  -fx-background-color: #FFFFFF;
+  -fx-border-color: #DADCE0;
+  -fx-border-width: 1;
+  -fx-border-radius: 10;
+  -fx-background-radius: 10;
+  -fx-cursor: hand;
+  -fx-pref-height: 46;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.10), 8, 0, 0, 2);
+}
 
+.btn-google:hover {
+  -fx-background-color: #F8F9FA;
+  -fx-border-color: #C0C4CC;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 12, 0, 0, 3);
+}
+
+.btn-google:pressed {
+  -fx-background-color: #F1F3F4;
+  -fx-effect: none;
+}
+
+.google-text {
+  -fx-text-fill: #3C4043;
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-font-family: "Roboto", "Segoe UI", sans-serif;
+}
 /* ============================================================
    OPTIONS ROW
    ============================================================ */

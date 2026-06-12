@@ -960,9 +960,7 @@
     -fx-background-insets: 0;
 }
 
-/* ═══════════════════════════════════════════════
-   Shift Card — Pagi & Malam
-════════════════════════════════════════════════ */
+
 /* ═══════════════════════════════════════════════
    Shift Card — Pagi & Malam
 ════════════════════════════════════════════════ */
@@ -1223,4 +1221,14 @@
 
 .shift-malam-icon {
     -fx-font-size: 22px;
+}
+
+/* lable pie chart */
+.chart-pie-label {
+    -fx-fill: #ffffff;
+    -fx-font-size: 11px;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #8B8FA8;
 }

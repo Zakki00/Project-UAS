@@ -2,12 +2,23 @@ package com.mycompany.projectuas;
 
 import java.net.URL;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+import java.io.IOException;
 
+import com.mycompany.Model.GoogleUser;
+import com.mycompany.services.GoogleAuthService;
+import com.mycompany.services.GoogleDriveService;
+import com.mysql.cj.Session;
+
+import javafx.scene.Parent;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -21,8 +32,10 @@ import javafx.stage.Stage;
  * resources/fxml/login.fxml
  */
 public class LoginController implements Initializable {
+    GoogleUser googleUser = new GoogleUser();
     session session = new session();
-
+    @FXML
+    private Button btnGoogle;
     @FXML
     private TextField usernameField;
     @FXML
@@ -39,7 +52,7 @@ public class LoginController implements Initializable {
     private Button togglePasswordBtn;
 
     private boolean showingPassword = false;
-    Preferences prefs = Preferences.userNodeForPackage(LoginController.class);
+    Preferences prefs = Preferences.userNodeForPackage(session.class);
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -47,7 +60,109 @@ public class LoginController implements Initializable {
         passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
         loginBtn.setDefaultButton(true);
         loadRememberedCredentials();
+        setupform();
 
+    }
+
+    void setupform() {
+        String sql_admin = "SELECT * FROM tb_user WHERE role = 'Admin'";
+        List<Object[]> admin = koneksi.ambilData(sql_admin);
+        String Admin = prefs.get("Admin",null);
+        if (Admin == null || admin.isEmpty()) {
+            System.out.print("Admin Belum Di Daftarkan Sebagai Pemilik Aplikasi" + Admin);
+            btnGoogle.setVisible(true);
+            btnGoogle.setManaged(true);
+            try {
+                prefs.clear();
+            } catch (BackingStoreException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Admin Di Daftarkan Sebagai Pemilik Aplikasi");
+            btnGoogle.setVisible(false);
+            btnGoogle.setManaged(false);
+
+
+
+        }
+
+    }
+
+    @FXML
+    private void onLoginGoogle() {
+        Stage primaryStage = (Stage) btnGoogle.getScene().getWindow();
+
+        Popup popupHelper = new Popup();
+        Popup.LoginProgressDialog progressDialog = popupHelper.new LoginProgressDialog(primaryStage);
+
+        progressDialog.show(
+
+                user -> {
+                    System.out.println("DEBUG: SUCCESS CALLBACK MASUK");
+                    googleUser = user;
+
+                    try {
+                        GoogleDriveService service = new GoogleDriveService();
+                        boolean restore = service.restoreBackup();
+                        System.out.println("Restore = " + restore);
+                        session.googleUser = user; // simpan ke session
+                        String cekSql = "SELECT id_user, username, nama_lengkap, role, email FROM tb_user WHERE email = ?";
+                        List<Object[]> hasil = koneksi.ambilData(cekSql, user.getEmail());
+                        System.out.println("data admin berdasarkan email" + hasil.size());
+
+                        if (!hasil.isEmpty()) {
+                            Object[] row = hasil.get(0);
+
+                            session.id_user = (int) row[0];
+                            session.username = (String) row[1];
+                            session.nama = (String) row[2];
+                            session.role = (String) row[3];
+                            session.email = (String) row[4];
+                            navigation nav = new navigation();
+                            prefs.put("Admin", "Admin");
+                            nav.navigateToDashboard();
+                            Stage stage = (Stage) btnGoogle.getScene().getWindow();
+                            stage.close();
+                            
+                            // // ── Tampilkan popup sukses dengan nama user ─────────────────
+                            popupHelper.showGoogleSuccessPopup("Selamat Datang Kembali",
+                                    "Selamat datang, " + user.getName() + "!", user);
+
+                            System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
+                        } else {
+
+                            navigation nav = new navigation();
+                            nav.navigateToSignup();
+                            Stage stage = (Stage) btnGoogle.getScene().getWindow();
+                            stage.close();
+                           
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        popupHelper.showModernPopup(
+                                "Error",
+                                "Gagal memverifikasi akun.",
+                                Popup.PopupType.ERROR, primaryStage);
+                    }
+                },
+
+                // Browser ditutup sebelum login selesai
+                () -> {
+                    popupHelper.showModernPopup(
+                            "Login Dibatalkan",
+                            "Browser ditutup sebelum login selesai.",
+                            Popup.PopupType.WARNING, primaryStage);
+                },
+
+                // Timeout 120 detik
+                () -> {
+                    popupHelper.showModernPopup(
+                            "Waktu Habis",
+                            "Login tidak diselesaikan dalam 120 detik.",
+                            Popup.PopupType.WARNING, primaryStage);
+                });
     }
 
     @FXML

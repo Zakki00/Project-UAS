@@ -1,4 +1,4 @@
--- Active: 1780404766479@@127.0.0.1@3306
+-- Active: 1781220730953@@127.0.0.1@3306
 
 SELECT * FROM tb_user;
 
@@ -11,13 +11,13 @@ DROP TABLE IF EXISTS tb_paket_ps;
 
 DROP TABLE IF EXISTS tb_user;
 
--- USER
 CREATE TABLE
     tb_user (
         id_user INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         password TEXT NOT NULL,
         nama_lengkap TEXT NOT NULL,
+        role TEXT NOT NULL,
         email TEXT
     );
 
@@ -34,17 +34,7 @@ CREATE TABLE
     );
 
 -- PAKET PS
-CREATE TABLE
-    tb_paket_ps (
-        id_paket INTEGER PRIMARY KEY AUTOINCREMENT,
-        nama_paket TEXT NOT NULL,
-        durasi_jam INTEGER NOT NULL,
-        harga REAL NOT NULL,
-        deskripsi TEXT,
-        status TEXT DEFAULT 'aktif' CHECK (status IN ('aktif', 'nonaktif')),
-        created_at TEXT DEFAULT (datetime ('now')),
-        updated_at TEXT DEFAULT (datetime ('now'))
-    );
+
 
 -- TRANSAKSI
 CREATE TABLE
@@ -60,6 +50,13 @@ CREATE TABLE
         pelanggan TEXT,
         FOREIGN KEY (id_user) REFERENCES tb_user (id_user)
     );
+CREATE TABLE tb_paket_ps (
+    id_paket_ps INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_transaksi INTEGER NOT NULL,
+    durasi INTEGER NOT NULL,
+    harga REAL NOT NULL,
+    FOREIGN KEY (id_transaksi) REFERENCES tb_transaksi (id_transaksi)
+);
 
 -- DETAIL TRANSAKSI
 CREATE TABLE
@@ -67,78 +64,10 @@ CREATE TABLE
         id_detail INTEGER PRIMARY KEY AUTOINCREMENT,
         id_transaksi INTEGER NOT NULL,
         id_barang INTEGER,
-        id_paket INTEGER,
+        id_paket_ps INTEGER,
         jumlah INTEGER NOT NULL,
         harga REAL NOT NULL,
         FOREIGN KEY (id_transaksi) REFERENCES tb_transaksi (id_transaksi),
         FOREIGN KEY (id_barang) REFERENCES tb_barang (id_barang),
-        FOREIGN KEY (id_paket) REFERENCES tb_paket_ps (id_paket)
-    );
-
-
-    -- =====================
-    -- input data awal
-
--- =====================
--- USER
--- =====================
-INSERT INTO
-    tb_user (username, password, nama_lengkap)
-VALUES
-    ('admin', 'admin123', 'Administrator Utama'),
-    ('rizky', '12345', 'Rizky Pratama');
-
--- =====================
--- BARANG
--- =====================
-INSERT INTO
-    tb_barang (
-        nama_barang,
-        harga,
-        kategori,
-        stok,
-        deskripsi,
-        image_path
+        FOREIGN KEY (id_paket_ps) REFERENCES tb_paket_ps (id_paket_ps)
     )
-VALUES
-    (
-        'Snack Chitato',
-        12000,
-        'Makanan',
-        50,
-        'Keripik kentang rasa sapi panggang',
-        NULL
-    ),
-    (
-        'Aqua 600ml',
-        5000,
-        'Minuman',
-        100,
-        'Air mineral botol',
-        NULL
-    );
-
--- =====================
--- PAKET PS
--- =====================
-INSERT INTO
-    tb_paket_ps (nama_paket, durasi_jam, harga, deskripsi, status)
-VALUES
-    (
-        'Paket Hemat PS2 Jam',
-        2,
-        10000,
-        'Main PS selama 2 jam',
-        'aktif'
-    ),
-    (
-        'Paket Malam PS5 Jam',
-        5,
-        22000,
-        'Cocok untuk main lama',
-        'aktif'
-    );
-
--- =====================
--- TRANSAKSI
--- =====================

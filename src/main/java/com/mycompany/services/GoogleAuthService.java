@@ -9,6 +9,8 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -38,6 +40,8 @@ public class GoogleAuthService {
     private static final long LOGIN_TIMEOUT_MS = 120_000; // 2 menit
 
     private GoogleAuthorizationCodeFlow flow;
+    private static Credential credential;
+
     private String authUrl;
     private final String redirectUri = "http://localhost:8080/callback";
 
@@ -106,20 +110,111 @@ public class GoogleAuthService {
         t.start();
     }
 
+    private static final Path LOG_FILE = Path.of(System.getProperty("user.home"), "projectuas-debug.log");
+
+    private void openBrowser(String url) {
+        try {
+            writeLog("Trying to open browser for URL: " + url);
+
+            if (java.awt.Desktop.isDesktopSupported()
+                    && java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
+                java.awt.Desktop.getDesktop().browse(new URI(url));
+                writeLog("Desktop.browse() succeeded");
+                return;
+            }
+
+            String os = System.getProperty("os.name").toLowerCase();
+            writeLog("OS detected: " + os);
+
+            Process browserProcess;
+            if (os.contains("win")) {
+                browserProcess = new ProcessBuilder("cmd", "/c", "start", "", url).start();
+            } else if (os.contains("mac")) {
+                browserProcess = new ProcessBuilder("open", url).start();
+            } else {
+                browserProcess = new ProcessBuilder("xdg-open", url).start();
+            }
+            writeLog("Browser process started, PID: " + browserProcess.pid());
+        } catch (Exception e) {
+            writeLog("openBrowser failed: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            try {
+                if (java.awt.Desktop.isDesktopSupported()
+                        && java.awt.Desktop.getDesktop().isSupported(java.awt.Desktop.Action.BROWSE)) {
+                    writeLog("Retry fallback Desktop.browse()");
+                    java.awt.Desktop.getDesktop().browse(new URI(url));
+                    writeLog("Fallback Desktop.browse() succeeded");
+                }
+            } catch (Exception ex) {
+                writeLog("Fallback also failed: " + ex.getClass().getSimpleName() + " - " + ex.getMessage());
+            }
+        }
+    }
+
+    private void writeLog(String message) {
+        try {
+            Files.writeString(
+                    LOG_FILE,
+                    "[" + java.time.LocalDateTime.now() + "] " + message + "\n",
+                    java.nio.file.StandardOpenOption.CREATE,
+                    java.nio.file.StandardOpenOption.APPEND);
+        } catch (Exception e) {
+            try {
+                Path fallback = Path.of(System.getProperty("user.home"), "Desktop", "projectuas-debug.log");
+                Files.writeString(
+                        fallback,
+                        "[" + java.time.LocalDateTime.now() + "] " + message + "\n",
+                        java.nio.file.StandardOpenOption.CREATE,
+                        java.nio.file.StandardOpenOption.APPEND);
+            } catch (Exception ignored) {
+                System.err.println("[GoogleAuth] writeLog failed: " + e.getMessage());
+            }
+        }
+    }
+
+    // HAPUS semua isi resolveTokenFolder() dan ganti dengan ini:
+    private File resolveTokenFolder() {
+        String appData = System.getenv("APPDATA");
+        File folder = (appData != null && !appData.isEmpty())
+                ? new File(appData + "\\ProjectUAS\\tokens")
+                : new File(System.getProperty("user.home") + "/ProjectUAS/tokens");
+        if (!folder.exists())
+            folder.mkdirs();
+        writeLog("Token folder: " + folder.getAbsolutePath());
+        return folder;
+    }
+
+    private boolean tryCreateFolder(File folder) {
+        try {
+            if (folder.exists()) {
+                return folder.isDirectory() && folder.canWrite();
+            }
+            return folder.mkdirs();
+        } catch (Exception e) {
+            writeLog("tryCreateFolder failed for " + folder.getAbsolutePath() + ": " + e.getClass().getSimpleName()
+                    + " - " + e.getMessage());
+            return false;
+        }
+    }
+
     /**
      * Login sinkronus (blocking). Gunakan loginAsync() untuk JavaFX.
      */
     public GoogleUser login() throws Exception {
+        writeLog("=== LOGIN DIMULAI ===");
+
         InputStream in = getClass().getResourceAsStream("/google/credentials.json");
-        if (in == null)
+        if (in == null) {
+            writeLog("ERROR: credentials.json tidak ditemukan!");
             throw new IllegalStateException("credentials.json tidak ditemukan di resources/google/");
+        }
+        writeLog("credentials.json ditemukan");
 
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
                 GsonFactory.getDefaultInstance(), new InputStreamReader(in));
+        writeLog("clientSecrets loaded");
 
-        File tokenFolder = new File("tokens");
-        if (!tokenFolder.exists())
-            tokenFolder.mkdirs();
+        File tokenFolder = resolveTokenFolder();
+        writeLog("tokenFolder: " + tokenFolder.getAbsolutePath());
 
         FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(tokenFolder);
 
@@ -127,45 +222,47 @@ public class GoogleAuthService {
                 new ApacheHttpTransport(),
                 GsonFactory.getDefaultInstance(),
                 clientSecrets,
-                Arrays.asList(
-                        "openid",
-                        "email",
-                        "profile",
-                        DriveScopes.DRIVE_FILE))
+                Arrays.asList("openid", "email", "profile", DriveScopes.DRIVE_FILE))
                 .setAccessType("offline")
                 .setDataStoreFactory(dataStoreFactory)
                 .build();
+        writeLog("flow dibuat");
 
         authUrl = flow.newAuthorizationUrl()
                 .setRedirectUri(redirectUri)
                 .build();
+        writeLog("authUrl: " + authUrl);
 
-        OAuthServer server = new OAuthServer(8080, flow, redirectUri, authUrl);
-        server.start();
+        try {
+            OAuthServer server = new OAuthServer(8080, flow, redirectUri, authUrl);
+            server.start();
+            writeLog("OAuthServer started di port 8080");
 
-        String landingUrl = "http://localhost:8080/";
-        if (java.awt.Desktop.isDesktopSupported()) {
-            java.awt.Desktop.getDesktop().browse(new URI(landingUrl));
-        } else {
-            System.out.println("Buka URL berikut di browser Anda: " + landingUrl);
-        }
+            String landingUrl = "http://localhost:8080/";
+            openBrowser(landingUrl);
+            writeLog("openBrowser() selesai dipanggil");
 
-        System.out.println("[GoogleAuth] Menunggu login Google...");
+            LoginResult result = server.awaitResult(LOGIN_TIMEOUT_MS);
+            writeLog("awaitResult selesai: " + result);
+            server.stop();
 
-        LoginResult result = server.awaitResult(LOGIN_TIMEOUT_MS);
-        server.stop();
-
-        switch (result) {
-            case SUCCESS:
-                GoogleUser user = server.getUser();
-                if (user == null)
-                    throw new LoginCancelledException("Login gagal: tidak dapat mengambil info akun.");
-                return user;
-            case CANCELLED:
-                throw new LoginCancelledException("Login dibatalkan: browser ditutup.");
-            case TIMEOUT:
-            default:
-                throw new LoginCancelledException("Login timeout. Silakan coba lagi.");
+            switch (result) {
+                case SUCCESS:
+                    GoogleUser user = server.getUser();
+                    if (user == null)
+                        throw new LoginCancelledException("Login gagal: tidak dapat mengambil info akun.");
+                    return user;
+                case CANCELLED:
+                    throw new LoginCancelledException("Login dibatalkan: browser ditutup.");
+                case TIMEOUT:
+                default:
+                    throw new LoginCancelledException("Login timeout. Silakan coba lagi.");
+            }
+        } catch (LoginCancelledException e) {
+            throw e;
+        } catch (Exception e) {
+            writeLog("EXCEPTION di login(): " + e.getClass().getName() + " - " + e.getMessage());
+            throw e;
         }
     }
 
@@ -301,7 +398,11 @@ public class GoogleAuthService {
                         GoogleTokenResponse tokenResponse = flow.newTokenRequest(code)
                                 .setRedirectUri(redirectUri)
                                 .execute();
-                        Credential credential = flow.createAndStoreCredential(tokenResponse, "user");
+                        credential = flow.createAndStoreCredential(
+                                tokenResponse,
+                                "user");
+
+                        System.out.println("Credential tersimpan = " + (credential != null));
                         GoogleUser fetchedUser = getUserInfo(credential);
 
                         user = fetchedUser;
@@ -321,6 +422,7 @@ public class GoogleAuthService {
                         "Terjadi kesalahan saat proses login.<br>Silakan tutup tab ini dan coba lagi."), 200);
                 setResult(LoginResult.CANCELLED);
             }
+
         }
 
         private class CancelHandler implements HttpHandler {
@@ -498,4 +600,43 @@ public class GoogleAuthService {
                 "<span class='g-dot' style='background:#34A853'></span>" +
                 "</div>";
     }
+
+    public static Credential getCredential() {
+        return credential;
+    }
+
+    public static Credential loadCredential() throws Exception {
+
+        InputStream in = GoogleAuthService.class.getResourceAsStream(
+                "/google/credentials.json");
+
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(
+                GsonFactory.getDefaultInstance(),
+                new InputStreamReader(in));
+
+        // GANTI dengan ini:
+        String appData = System.getenv("APPDATA");
+        File tokenFolder = (appData != null && !appData.isEmpty())
+                ? new File(appData + "\\ProjectUAS\\tokens")
+                : new File(System.getProperty("user.home") + "/ProjectUAS/tokens");
+        if (!tokenFolder.exists())
+            tokenFolder.mkdirs();
+        FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(tokenFolder);
+
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                new ApacheHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                clientSecrets,
+                Arrays.asList(
+                        "openid",
+                        "email",
+                        "profile",
+                        DriveScopes.DRIVE_FILE))
+                .setAccessType("offline")
+                .setDataStoreFactory(dataStoreFactory)
+                .build();
+
+        return flow.loadCredential("user");
+    }
+
 }

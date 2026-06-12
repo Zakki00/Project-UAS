@@ -301,7 +301,7 @@ public class BarangController implements Initializable {
         colKategori.setCellValueFactory(new PropertyValueFactory<>("kategori"));
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
         colDeskripsi.setCellValueFactory(new PropertyValueFactory<>("deskripsi"));
-        tabelBarang.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+        tabelBarang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         // ── Kolom harga format Rp ──
         colHarga.setCellValueFactory(new PropertyValueFactory<>("harga"));
@@ -334,9 +334,25 @@ public class BarangController implements Initializable {
                     setText(null);
                 } else {
                     try {
+                        Image img = null;
+
+                        // Coba baca dari dalam JAR dulu
                         var stream = getClass().getResourceAsStream("/image-barang/" + item);
                         if (stream != null) {
-                            imageView.setImage(new Image(stream));
+                            img = new Image(stream);
+                        } else {
+                            // Fallback: baca dari AppData
+                            String appData = System.getenv("APPDATA");
+                            File imgFile = (appData != null && !appData.isEmpty())
+                                    ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
+                                    : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
+                            if (imgFile.exists()) {
+                                img = new Image(imgFile.toURI().toString());
+                            }
+                        }
+
+                        if (img != null) {
+                            imageView.setImage(img);
                             setGraphic(imageView);
                             setText(null);
                         } else {
@@ -622,9 +638,19 @@ public class BarangController implements Initializable {
         File file = fc.showOpenDialog(txtNama.getScene().getWindow());
         if (file != null) {
             try {
-                Path tujuan = Path.of("src/main/resources/image-barang/" + file.getName());
+                // Simpan ke AppData
+                String appData = System.getenv("APPDATA");
+                File imgFolder = (appData != null && !appData.isEmpty())
+                        ? new File(appData + "\\ProjectUAS\\image-barang")
+                        : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang");
+
+                if (!imgFolder.exists())
+                    imgFolder.mkdirs();
+
+                Path tujuan = Path.of(imgFolder.getAbsolutePath(), file.getName());
                 Files.copy(file.toPath(), tujuan, StandardCopyOption.REPLACE_EXISTING);
                 lblFilePath.setText(file.getName());
+
             } catch (IOException e) {
                 showModernPopup("Error", "Gagal menyalin file gambar: " + e.getMessage(), PopupType.ERROR);
             }
@@ -716,6 +742,10 @@ public class BarangController implements Initializable {
     @FXML
     void onNavPengaturan() {
         setActiveNav(navPengaturan);
+        navigation nav = new navigation();
+        nav.navigataeToPengaturan();
+        Stage stage = (Stage) navPengaturan.getScene().getWindow();
+        stage.close();
     }
 
     private void setActiveNav(HBox selected) {

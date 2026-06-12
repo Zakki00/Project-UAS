@@ -10,6 +10,7 @@ import java.util.Map;
 public class TransaksiModel {
     public static final Map<Integer, CartItem> keranjang = new LinkedHashMap<>();
     public static final List<Produk> semuaProduk = new ArrayList<>();
+    public static ItemPs pesananPs;
     public static Long subtotal;
     public static Long total;
     public static String metodeBayar = "TUNAI";
@@ -45,6 +46,21 @@ public class TransaksiModel {
 
         public long subtotal() {
             return (long) produk.harga * qty;
+        }
+    }
+
+   
+    public static class ItemPs {
+        public int id;
+        public int durasiJam;
+        public int durasiMenit;
+        public long harga;
+
+        public ItemPs(int id, int durasiJam, int durasiMenit, long harga) {
+            this.id = id;
+            this.durasiJam = durasiJam;
+            this.durasiMenit = durasiMenit;
+            this.harga = harga;
         }
     }
 }

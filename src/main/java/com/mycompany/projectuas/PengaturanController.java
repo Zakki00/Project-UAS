@@ -8,11 +8,14 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.mycompany.services.BackupService;
-
+// import com.mycompany.services.BackupService;
+import com.mycompany.services.GoogleDriveService;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -181,6 +184,8 @@ public class PengaturanController implements Initializable {
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
 
+    Preferences prefs = Preferences.userNodeForPackage(session.class);
+
     // ═════════════════════════════════════════════════════
     // INITIALIZE
     // ═════════════════════════════════════════════════════
@@ -334,7 +339,7 @@ public class PengaturanController implements Initializable {
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
-  
+
     // ========================================
     // MAIN CONTENT
     // ========================================
@@ -437,69 +442,76 @@ public class PengaturanController implements Initializable {
         // String password = pfEditPassword.getText().trim();
 
         // if (nama.isEmpty() || username.isEmpty()) {
-        //     showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
-        //     return;
+        // showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
+        // return;
         // }
 
         // String sql;
         // if (!password.isEmpty()) {
-        //     String hashed = hashSHA256(password);
-        //     sql = "UPDATE tb_user SET nama_lengkap='" + nama
-        //             + "', username='" + username
-        //             + "', password='" + hashed + "' WHERE id_user=1";
+        // String hashed = hashSHA256(password);
+        // sql = "UPDATE tb_user SET nama_lengkap='" + nama
+        // + "', username='" + username
+        // + "', password='" + hashed + "' WHERE id_user=1";
         // } else {
-        //     sql = "UPDATE tb_user SET nama_lengkap='" + nama
-        //             + "', username='" + username + "' WHERE id_user=1";
+        // sql = "UPDATE tb_user SET nama_lengkap='" + nama
+        // + "', username='" + username + "' WHERE id_user=1";
         // }
 
         // if (koneksi.eksekusi(sql)) {
-        //     loadInfoAkun();
-        //     onBatalEdit();
-        //     showAlert("Berhasil", "Profil berhasil diperbarui!");
+        // loadInfoAkun();
+        // onBatalEdit();
+        // showAlert("Berhasil", "Profil berhasil diperbarui!");
         // } else {
-        //     showAlert("Gagal", "Terjadi kesalahan saat menyimpan!");
+        // showAlert("Gagal", "Terjadi kesalahan saat menyimpan!");
         // }
     }
 
     @FXML
     private void onDisconnectGoogle() {
         showAlert("Info", "Akun Google berhasil diputus.");
+        try {
+            prefs.clear();
+        } catch (BackingStoreException e) {
+            e.printStackTrace();
+        }
+        navigation nav = new navigation();
+        nav.navigateToLogin();
+        Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
+        stage.close();
+        
     }
 
     // ══════════════════════════════════════
     // BACKUP HANDLERS
     // ══════════════════════════════════════
     @FXML
-private void onBackup() {
-
+   private void onBackup() {
     backupProgressBox.setVisible(true);
     backupProgressBox.setManaged(true);
-
-    lblBackupStatus.setText("Membuat salinan database...");
+    lblBackupStatus.setText("Mengupload ke Google Drive...");
     pbBackup.setProgress(-1);
 
-    BackupService backupService = new BackupService();
+    Thread t = new Thread(() -> {
+        GoogleDriveService driveService = new GoogleDriveService();
+        boolean berhasil = driveService.uploadBackup();
 
-    boolean berhasil = backupService.backupLocal();
+        Platform.runLater(() -> {
+            if (berhasil) {
+                pbBackup.setProgress(1);
+                lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
 
-    if (berhasil) {
+                String now = java.time.LocalDateTime.now()
+                        .format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+                lblBackupTerakhir.setText(now);
 
-        pbBackup.setProgress(1);
-
-        lblBackupStatus.setText("✅ Backup lokal berhasil");
-
-        String now = java.time.LocalDateTime.now()
-                .format(java.time.format.DateTimeFormatter.ofPattern(
-                        "dd-MM-yyyy HH:mm"));
-
-        lblBackupTerakhir.setText(now);
-
-    } else {
-
-        pbBackup.setProgress(0);
-
-        lblBackupStatus.setText("❌ Backup gagal");
-    }
+            } else {
+                pbBackup.setProgress(0);
+                lblBackupStatus.setText("❌ Upload Google Drive gagal");
+            }
+        });
+    }, "backup-thread");
+    t.setDaemon(true);
+    t.start();
 }
 
     @FXML
