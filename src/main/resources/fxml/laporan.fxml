@@ -7,6 +7,7 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.LineChart?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
@@ -22,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="900.0" prefWidth="1000.0" styleClass="root-pane" stylesheets="@../styles/laporan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.LaporanController">
+<BorderPane prefHeight="3000.0" prefWidth="1000.0" styleClass="root-pane" stylesheets="@../styles/laporan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.LaporanController">
   <!-- ═══════════════════════════════════════════
          LEFT — SIDEBAR
     ════════════════════════════════════════════ -->
@@ -322,6 +323,42 @@
               </VBox.margin>
             </TableView>
           </VBox>
+               <HBox spacing="14">
+                  <children>
+                     <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                        <children>
+                           <Label styleClass="card-title" text="💸 Piutang Hari Ini" />
+                           <Label styleClass="card-sub" text="Transaksi belum lunas" />
+                           <Label fx:id="kpiPiutangJumlah" styleClass="kpi-value" text="0 Transaksi" />
+                           <Label fx:id="kpiPiutangNominal" styleClass="kpi-delta-down" text="Rp 0" />
+                           <PieChart fx:id="piePiutang" legendVisible="true" maxHeight="200" prefHeight="200" />
+                        </children>
+                     </VBox>
+                     <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                        <children>
+                           <Label styleClass="card-title" text="🏅 Terlaris Minggu Ini" />
+                           <Label styleClass="card-sub" text="Per kategori produk" />
+                           <VBox fx:id="vboxTerlarisMinggu" spacing="10" />
+                        </children>
+                     </VBox>
+                     <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                        <children>
+                           <Label styleClass="card-title" text="💡 Rata-rata Transaksi" />
+                           <Label styleClass="card-sub" text="Nilai rata-rata per pelanggan hari ini" />
+                           <Label fx:id="kpiRataRata" styleClass="kpi-value" text="Rp 0" />
+                           <Label fx:id="kpiRataRataInfo" styleClass="kpi-delta-up" text="-" />
+                           <LineChart fx:id="lineRataRata" createSymbols="false" legendVisible="false" maxHeight="200" prefHeight="200" styleClass="month-chart">
+                              <xAxis>
+                                 <CategoryAxis styleClass="chart-axis" />
+                              </xAxis>
+                              <yAxis>
+                                 <NumberAxis styleClass="chart-axis" />
+                              </yAxis>
+                           </LineChart>
+                        </children>
+                     </VBox>
+                  </children>
+               </HBox>
           <!-- ── CHARTS ROW ── -->
           <HBox spacing="14">
             <!-- Area Chart -->
@@ -406,6 +443,42 @@
                      <Insets top="10.0" />
                   </VBox.margin>
           </HBox>
+               <VBox prefHeight="155.0" prefWidth="362.0" spacing="10" styleClass="card">
+                  <children>
+                     <Label styleClass="card-title" text="📊 Omzet per Kategori" />
+                     <Label styleClass="card-sub" text="30 hari terakhir" />
+                     <VBox fx:id="vboxKategori" spacing="10" />
+                  </children>
+               </VBox>
+               <HBox prefHeight="270.0" prefWidth="826.0" spacing="10.0">
+                  <children>
+                     <VBox prefHeight="270.0" prefWidth="446.0" spacing="10.0" HBox.hgrow="ALWAYS">
+                        <children>
+                           <VBox spacing="10" styleClass="card" HBox.hgrow="ALWAYS">
+                              <children>
+                                 <Label styleClass="card-title" text="🍩 Komposisi Pendapatan" />
+                                 <Label styleClass="card-sub" text="Produk vs Rental PS (30 hari)" />
+                                 <PieChart fx:id="pieKomposisi" legendVisible="true" maxHeight="220" prefHeight="220" />
+                              </children>
+                           </VBox>
+                        </children>
+                     </VBox>
+                     <VBox spacing="10" styleClass="card">
+                        <children>
+                           <Label styleClass="card-title" text="🕐 Transaksi per Jam" />
+                           <Label styleClass="card-sub" text="Pola ramai hari ini" />
+                           <BarChart fx:id="jamChart" legendVisible="false" maxHeight="180" prefHeight="180" styleClass="trx-chart">
+                              <xAxis>
+                                 <CategoryAxis styleClass="chart-axis" />
+                              </xAxis>
+                              <yAxis>
+                                 <NumberAxis styleClass="chart-axis" />
+                              </yAxis>
+                           </BarChart>
+                        </children>
+                     </VBox>
+                  </children>
+               </HBox>
         </VBox>
       </ScrollPane>
     </VBox>
