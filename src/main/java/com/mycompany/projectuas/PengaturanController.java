@@ -193,6 +193,7 @@ public class PengaturanController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         setupPengaturan();
         setupNavHover();
+        setActiveNav(navPengaturan);
     }
 
     // ═════════════════════════════════════════════════════
