@@ -1123,6 +1123,19 @@ public class LaporanController implements Initializable {
             if (piePiutang.getData().size() >= 2) {
                 piePiutang.getData().get(0).getNode().setStyle("-fx-pie-color: #00E5A0;");
                 piePiutang.getData().get(1).getNode().setStyle("-fx-pie-color: #FF5C7C;");
+
+                // Fix warna legend
+                javafx.scene.chart.PieChart.Data d0 = piePiutang.getData().get(0);
+                javafx.scene.chart.PieChart.Data d1 = piePiutang.getData().get(1);
+
+                piePiutang.lookupAll(".chart-legend-item-symbol").forEach(node -> {
+                    String text = ((javafx.scene.control.Label) node.getParent()).getText();
+                    if (text != null && text.startsWith("Lunas (")) {
+                        node.setStyle("-fx-background-color: #00E5A0;");
+                    } else if (text != null && text.startsWith("Belum Lunas (")) {
+                        node.setStyle("-fx-background-color: #FF5C7C;");
+                    }
+                });
             }
         });
     }
@@ -1246,8 +1259,23 @@ public class LaporanController implements Initializable {
         pieKomposisi.setLabelsVisible(true);
         String[] colors = { "#6C63FF", "#00D4FF" };
         Platform.runLater(() -> {
-            for (int i = 0; i < pieKomposisi.getData().size(); i++) {
-                pieKomposisi.getData().get(i).getNode().setStyle("-fx-pie-color: " + colors[i % colors.length] + ";");
+            if (pieKomposisi.getData().size() >= 2) {
+                pieKomposisi.getData().get(0).getNode().setStyle("-fx-pie-color: #00E5A0;");
+                pieKomposisi.getData().get(1).getNode().setStyle("-fx-pie-color: #FF5C7C;");
+
+                // Fix warna legend
+                javafx.scene.chart.PieChart.Data d0 = pieKomposisi.getData().get(0);
+                javafx.scene.chart.PieChart.Data d1 = pieKomposisi.getData().get(1);
+
+                pieKomposisi.lookupAll(".chart-legend-item-symbol").forEach(node -> {
+                    String text = ((javafx.scene.control.Label) node.getParent()).getText();
+
+                    if ("Produk".equals(text)) {
+                        node.setStyle("-fx-background-color: #6C63FF;");
+                    } else if ("Rental PS".equals(text)) {
+                        node.setStyle("-fx-background-color: #00D4FF;");
+                    }
+                });
             }
         });
         VBox summaryBox = new VBox(10);

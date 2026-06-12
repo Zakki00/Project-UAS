@@ -553,31 +553,31 @@ public class DashboardController implements Initializable {
         int jamSekarang = java.time.LocalTime.now().getHour();
 
         if (jamSekarang >= 6 && jamSekarang < 12) {
-            // Shift pagi aktif — tampilkan hanya card pagi
-            cardPagi.setVisible(true);
-            cardPagi.setManaged(true);
-            cardMalam.setVisible(false);
-            cardMalam.setManaged(false);
+            // Shift pagi aktif
+            wrapperPagi.setVisible(true);
+            wrapperPagi.setManaged(true);
+            wrapperMalam.setVisible(false);
+            wrapperMalam.setManaged(false);
             loadShift("06:00:00", "12:00:00",
                     lblUsernamePagi, lblNamaPagi, lblTrxPagi,
                     lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
 
         } else if (jamSekarang >= 12 && jamSekarang < 21) {
-            // Shift malam aktif — tampilkan hanya card malam
-            cardPagi.setVisible(false);
-            cardPagi.setManaged(false);
-            cardMalam.setVisible(true);
-            cardMalam.setManaged(true);
+            // Shift malam aktif
+            wrapperPagi.setVisible(false);
+            wrapperPagi.setManaged(false);
+            wrapperMalam.setVisible(true);
+            wrapperMalam.setManaged(true);
             loadShift("12:00:00", "21:00:00",
                     lblUsernameMalam, lblNamaMalam, lblTrxMalam,
                     lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
 
         } else {
-            // Di luar jam shift — tampilkan keduanya
-            cardPagi.setVisible(true);
-            cardPagi.setManaged(true);
-            cardMalam.setVisible(true);
-            cardMalam.setManaged(true);
+            // Di luar jam shift
+            wrapperPagi.setVisible(true);
+            wrapperPagi.setManaged(true);
+            wrapperMalam.setVisible(true);
+            wrapperMalam.setManaged(true);
             loadShift("06:00:00", "12:00:00",
                     lblUsernamePagi, lblNamaPagi, lblTrxPagi,
                     lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
@@ -937,11 +937,29 @@ public class DashboardController implements Initializable {
         piePiutang.getData().add(new PieChart.Data("Belum Lunas (" + jBelum + ")", jBelum));
         piePiutang.setAnimated(true);
         piePiutang.setLabelsVisible(true);
+        piePiutang.setMinWidth(280);
+        piePiutang.setMinWidth(280);
+        piePiutang.setPrefWidth(280);
+        piePiutang.setPrefHeight(280);
+        piePiutang.setMinHeight(280);
         animateScaleFadeIn(piePiutang, 150);
         Platform.runLater(() -> {
             if (piePiutang.getData().size() >= 2) {
                 piePiutang.getData().get(0).getNode().setStyle("-fx-pie-color: #00E5A0;");
                 piePiutang.getData().get(1).getNode().setStyle("-fx-pie-color: #FF5C7C;");
+
+                // Fix warna legend
+                javafx.scene.chart.PieChart.Data d0 = piePiutang.getData().get(0);
+                javafx.scene.chart.PieChart.Data d1 = piePiutang.getData().get(1);
+
+                piePiutang.lookupAll(".chart-legend-item-symbol").forEach(node -> {
+                    String text = ((javafx.scene.control.Label) node.getParent()).getText();
+                    if (text != null && text.startsWith("Lunas (")) {
+                        node.setStyle("-fx-background-color: #00E5A0;");
+                    } else if (text != null && text.startsWith("Belum Lunas (")) {
+                        node.setStyle("-fx-background-color: #FF5C7C;");
+                    }
+                });
             }
         });
     }
@@ -1066,8 +1084,23 @@ public class DashboardController implements Initializable {
         String[] colors = { "#6C63FF", "#00D4FF" };
         final double gt = grandTotal;
         Platform.runLater(() -> {
-            for (int i = 0; i < pieKomposisi.getData().size(); i++) {
-                pieKomposisi.getData().get(i).getNode().setStyle("-fx-pie-color: " + colors[i % colors.length] + ";");
+            if (pieKomposisi.getData().size() >= 2) {
+                pieKomposisi.getData().get(0).getNode().setStyle("-fx-pie-color: #6C63FF;");
+                pieKomposisi.getData().get(1).getNode().setStyle("-fx-pie-color: #00D4FF;");
+
+                // Fix warna legend
+                javafx.scene.chart.PieChart.Data d0 = pieKomposisi.getData().get(0);
+                javafx.scene.chart.PieChart.Data d1 = pieKomposisi.getData().get(1);
+
+                pieKomposisi.lookupAll(".chart-legend-item-symbol").forEach(node -> {
+                    String text = ((javafx.scene.control.Label) node.getParent()).getText();
+
+                    if ("Produk".equals(text)) {
+                        node.setStyle("-fx-background-color: #6C63FF;");
+                    } else if ("Rental PS".equals(text)) {
+                        node.setStyle("-fx-background-color: #00D4FF;");
+                    }
+                });
             }
         });
         // Summary box kanan
