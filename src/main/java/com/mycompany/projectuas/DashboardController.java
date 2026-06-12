@@ -64,8 +64,6 @@ public class DashboardController implements Initializable {
     @FXML
     private HBox navKasir;
     @FXML
-    private HBox navPelanggan;
-    @FXML
     private HBox navLaporan;
     @FXML
     private HBox navPiutang;
@@ -79,8 +77,7 @@ public class DashboardController implements Initializable {
     private Label navLblProduk;
     @FXML
     private Label navLblKasir;
-    @FXML
-    private Label navLblPelanggan;
+    
     @FXML
     private Label navLblLaporan;
     @FXML
@@ -314,7 +311,7 @@ public class DashboardController implements Initializable {
     private void setNavLabelsVisible(boolean visible) {
         List<Label> labels = List.of(
                 navLblDashboard, navLblProduk, navLblKasir,
-                navLblPelanggan, navLblLaporan, navLblPengaturan);
+                navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -323,7 +320,7 @@ public class DashboardController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -351,12 +348,6 @@ public class DashboardController implements Initializable {
         new navigation().navigateToTransaksi();
         ((Stage) navKasir.getScene().getWindow()).close();
     }
-
-    @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
-    }
-
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
@@ -379,7 +370,7 @@ public class DashboardController implements Initializable {
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -389,7 +380,7 @@ public class DashboardController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));

@@ -85,8 +85,6 @@ public class TransaksiController implements Initializable {
     @FXML
     private HBox navKasir;
     @FXML
-    private HBox navPelanggan;
-    @FXML
     private HBox navLaporan;
     @FXML
     private HBox navPiutang;
@@ -285,11 +283,6 @@ public class TransaksiController implements Initializable {
     }
 
     @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
-    }
-
-    @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
         navigation nav = new navigation();
@@ -347,7 +340,7 @@ public class TransaksiController implements Initializable {
         Insets normalPad = new Insets(10, 14, 10, 0);
         Insets pad = collapsed ? collapsedPad : normalPad;
 
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPiutang,
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPiutang,
                 navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
@@ -356,7 +349,7 @@ public class TransaksiController implements Initializable {
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPiutang,
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPiutang,
                 navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");

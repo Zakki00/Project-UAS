@@ -85,8 +85,7 @@ public class LaporanController implements Initializable {
     private HBox navProduk;
     @FXML
     private HBox navKasir;
-    @FXML
-    private HBox navPelanggan;
+   
     @FXML
     private HBox navLaporan;
     @FXML
@@ -383,7 +382,7 @@ public class LaporanController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -412,11 +411,6 @@ public class LaporanController implements Initializable {
         setActiveNav(navKasir);
         new navigation().navigateToTransaksi();
         ((Stage) navKasir.getScene().getWindow()).close();
-    }
-
-    @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
     }
 
     @FXML

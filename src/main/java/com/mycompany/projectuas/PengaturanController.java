@@ -135,8 +135,6 @@ public class PengaturanController implements Initializable {
     @FXML
     private HBox navKasir;
     @FXML
-    private HBox navPelanggan;
-    @FXML
     private HBox navLaporan;
     @FXML
     private HBox navPiutang;
@@ -259,7 +257,7 @@ public class PengaturanController implements Initializable {
         Insets normalPad = new Insets(10, 14, 10, 0);
         Insets pad = collapsed ? collapsedPad : normalPad;
 
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -295,11 +293,6 @@ public class PengaturanController implements Initializable {
     }
 
     @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
-    }
-
-    @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
         navigation nav = new navigation();
@@ -324,7 +317,7 @@ public class PengaturanController implements Initializable {
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -334,7 +327,7 @@ public class PengaturanController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
