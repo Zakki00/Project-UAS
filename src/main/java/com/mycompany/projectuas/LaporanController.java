@@ -433,7 +433,7 @@ public class LaporanController implements Initializable {
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -443,7 +443,7 @@ public class LaporanController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
