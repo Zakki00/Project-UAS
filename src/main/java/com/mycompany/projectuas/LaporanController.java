@@ -1102,11 +1102,17 @@ public class LaporanController implements Initializable {
     // ═══════════════════════════════════════════════════════
 
     /** Pie: Lunas vs Belum Lunas hari ini */
-    private void loadPiePiutang() {
-        List<Object[]> lunas = koneksi.ambilData(
-                "SELECT COUNT(*) FROM tb_transaksi WHERE status_pembayaran = 'Lunas' AND DATE(tanggal_transaksi) = DATE('now','localtime')");
-        List<Object[]> belum = koneksi.ambilData(
-                "SELECT COUNT(*) FROM tb_transaksi WHERE status_pembayaran != 'Lunas' AND DATE(tanggal_transaksi) = DATE('now','localtime')");
+     private void loadPiePiutang() {
+        List<Object[]> lunas = koneksi.ambilData("""
+                    SELECT COUNT(*) FROM tb_transaksi
+                    WHERE status_pembayaran = 'Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime')
+                """);
+        List<Object[]> belum = koneksi.ambilData("""
+                    SELECT COUNT(*) FROM tb_transaksi
+                    WHERE status_pembayaran != 'Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime')
+                """);
         int jLunas = (!lunas.isEmpty() && lunas.get(0)[0] != null) ? ((Number) lunas.get(0)[0]).intValue() : 0;
         int jBelum = (!belum.isEmpty() && belum.get(0)[0] != null) ? ((Number) belum.get(0)[0]).intValue() : 0;
         piePiutang.getData().clear();
@@ -1118,6 +1124,11 @@ public class LaporanController implements Initializable {
         piePiutang.getData().add(new PieChart.Data("Belum Lunas (" + jBelum + ")", jBelum));
         piePiutang.setAnimated(true);
         piePiutang.setLabelsVisible(true);
+        piePiutang.setMinWidth(280);
+        piePiutang.setMinWidth(280);
+        piePiutang.setPrefWidth(280);
+        piePiutang.setPrefHeight(280);
+        piePiutang.setMinHeight(280);
         animateScaleFadeIn(piePiutang, 150);
         Platform.runLater(() -> {
             if (piePiutang.getData().size() >= 2) {
@@ -1258,10 +1269,11 @@ public class LaporanController implements Initializable {
         pieKomposisi.setAnimated(true);
         pieKomposisi.setLabelsVisible(true);
         String[] colors = { "#6C63FF", "#00D4FF" };
+        final double gt = grandTotal;
         Platform.runLater(() -> {
             if (pieKomposisi.getData().size() >= 2) {
-                pieKomposisi.getData().get(0).getNode().setStyle("-fx-pie-color: #00E5A0;");
-                pieKomposisi.getData().get(1).getNode().setStyle("-fx-pie-color: #FF5C7C;");
+                pieKomposisi.getData().get(0).getNode().setStyle("-fx-pie-color: #6C63FF;");
+                pieKomposisi.getData().get(1).getNode().setStyle("-fx-pie-color: #00D4FF;");
 
                 // Fix warna legend
                 javafx.scene.chart.PieChart.Data d0 = pieKomposisi.getData().get(0);
@@ -1278,11 +1290,11 @@ public class LaporanController implements Initializable {
                 });
             }
         });
+        // Summary box kanan
         VBox summaryBox = new VBox(10);
         summaryBox.setAlignment(Pos.CENTER);
         summaryBox.setUserData("komposisi-summary");
         HBox.setHgrow(summaryBox, Priority.ALWAYS);
-        final double gt = grandTotal;
         for (int i = 0; i < data.size(); i++) {
             String kategori = data.get(i)[0].toString();
             double total = ((Number) data.get(i)[1]).doubleValue();

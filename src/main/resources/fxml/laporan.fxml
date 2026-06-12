@@ -61,12 +61,6 @@
           <Label styleClass="nav-icon" text="🛒" />
           <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
         </HBox>
-        <!-- Pelanggan -->
-        <HBox fx:id="navPelanggan" alignment="CENTER_LEFT" onMouseClicked="#onNavPelanggan" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="👥" />
-          <Label fx:id="navLblPelanggan" styleClass="nav-label" text="Pelanggan" />
-        </HBox>
         <!-- Laporan -->
         <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />

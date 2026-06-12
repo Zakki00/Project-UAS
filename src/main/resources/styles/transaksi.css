@@ -399,6 +399,7 @@
 .produk-grid {
   -fx-background-color: transparent;
 }
+
 .btn-menu {
   -fx-background-color: #252840;
   -fx-border-color: #2e3250;
@@ -410,6 +411,7 @@
   -fx-cursor: hand;
   -fx-padding: 7 0 7 0;
 }
+
 .btn-menu-active {
   -fx-background-color: #6c63ff;
   -fx-border-color: #6c63ff;
@@ -1103,12 +1105,14 @@
   -fx-background-color: #252840;
   -fx-text-fill: #ffffff;
 }
+
 .preset-btn-active {
   -fx-background-color: #6C63FF;
 
   -fx-alignment: CENTER;
   -fx-text-alignment: CENTER;
 }
+
 .btn-konfirmasi {
   -fx-background-color: #6c63ff;
   -fx-border-width: 0;

@@ -53,12 +53,6 @@
           <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
         </HBox>
 
-        <HBox fx:id="navPelanggan" alignment="CENTER_LEFT" onMouseClicked="#onNavPelanggan" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="👥" />
-          <Label fx:id="navLblPelanggan" styleClass="nav-label" text="Pelanggan" />
-        </HBox>
-
         <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
           <Label styleClass="nav-icon" text="📈" />
@@ -140,21 +134,20 @@
 
     <!-- Avatar lingkaran besar di tengah -->
     <VBox alignment="CENTER" styleClass="avatar-box-large">
-        <Label fx:id="lblAvatarInisial" styleClass="avatar-inisial-large" text="A"/>
+        <Label fx:id="lblAvatarInisial" styleClass="avatar-inisial-large" text="A" />
     </VBox>
 
     <!-- Teks di tengah -->
     <VBox alignment="CENTER" spacing="6">
-        <Label fx:id="lblNamaAkun"     styleClass="profile-nama"     text="Admin"/>
-        <Label fx:id="lblUsernameAkun" styleClass="profile-username" text="@admin"/>
+        <Label fx:id="lblNamaAkun" styleClass="profile-nama" text="Admin" />
+        <Label fx:id="lblUsernameAkun" styleClass="profile-username" text="@admin" />
         <HBox alignment="CENTER">
-            <Label fx:id="lblRoleAkun" styleClass="profile-role-badge" text="Administrator"/>
+            <Label fx:id="lblRoleAkun" styleClass="profile-role-badge" text="Administrator" />
         </HBox>
     </VBox>
 
     <!-- Tombol edit di tengah -->
-    <Button onAction="#onEditProfil" styleClass="btn-edit-profile"
-            text="✏  Edit Profil"/>
+    <Button onAction="#onEditProfil" styleClass="btn-edit-profile" text="✏  Edit Profil" />
 
 </VBox>
 
