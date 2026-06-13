@@ -1,9 +1,12 @@
 package com.mycompany.projectuas;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.File;
+
+import com.mycompany.services.AutoBackupService;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,6 +27,7 @@ public class App extends Application {
         stage.setScene(scene);
         stage.show();
         koneksi.koneksi();
+        AutoBackupService.start();
     }
 
     static void setRoot(String fxml) throws IOException {

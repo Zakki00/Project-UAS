@@ -101,8 +101,6 @@ public class LaporanController implements Initializable {
     @FXML
     private Label navLblKasir;
     @FXML
-    private Label navLblPelanggan;
-    @FXML
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
@@ -373,7 +371,7 @@ public class LaporanController implements Initializable {
     private void setNavLabelsVisible(boolean visible) {
         List<Label> labels = List.of(
                 navLblDashboard, navLblProduk, navLblKasir,
-                navLblPelanggan, navLblLaporan, navLblPengaturan);
+                navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);

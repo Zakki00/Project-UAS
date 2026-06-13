@@ -7,11 +7,11 @@ package com.mycompany.projectuas;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-
-// import com.mycompany.services.BackupService;
-import com.mycompany.services.GoogleDriveService;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import com.mycompany.services.GoogleDriveService;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -183,6 +183,7 @@ public class PengaturanController implements Initializable {
     private static final double SIDEBAR_MINI = 60;
 
     Preferences prefs = Preferences.userNodeForPackage(session.class);
+    private Timeline autoBackupTimeline;
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
@@ -192,6 +193,7 @@ public class PengaturanController implements Initializable {
         setupPengaturan();
         setupNavHover();
         setActiveNav(navPengaturan);
+        
     }
 
     // ═════════════════════════════════════════════════════
@@ -271,6 +273,10 @@ public class PengaturanController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
+        navigation nav = new navigation();
+        nav.navigateToDashboard();
+        Stage stage = (Stage) navDashboard.getScene().getWindow();
+        stage.close();
 
     }
 
@@ -320,8 +326,9 @@ public class PengaturanController implements Initializable {
         List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
-            if (!item.getStyleClass().contains("nav-item"))
+            if (!item.getStyleClass().contains("nav-item")) {
                 item.getStyleClass().add("nav-item");
+            }
         }
         selected.getStyleClass().add("nav-active");
     }
@@ -337,17 +344,21 @@ public class PengaturanController implements Initializable {
     // ========================================
     // MAIN CONTENT
     // ========================================
-
     koneksi db = new koneksi();
 
     // ── setup di initialize() ──────────────
     private void setupPengaturan() {
-        // interval combo
         cbInterval.setItems(FXCollections.observableArrayList(
-                "1 Jam", "6 Jam", "12 Jam", "24 Jam", "3 Hari", "7 Hari"));
-        cbInterval.setValue("24 Jam");
+                "24 Jam", "3 Hari", "7 Hari"));
 
-        // load info akun dari session/db
+        // Load dari preferences
+        boolean backupAktif = prefs.getBoolean("backup_otomatis", false);
+        String interval = prefs.get("backup_interval", "24 Jam");
+
+        cbBackupOtomatis.setSelected(backupAktif);
+        cbInterval.setValue(interval);
+        cbInterval.setDisable(!backupAktif);
+
         loadInfoAkun();
     }
 
@@ -362,8 +373,8 @@ public class PengaturanController implements Initializable {
             lblUsernameAkun.setText("@" + username);
             lblAvatarInisial.setText(
                     nama.length() > 0
-                            ? String.valueOf(nama.charAt(0)).toUpperCase()
-                            : "A");
+                    ? String.valueOf(nama.charAt(0)).toUpperCase()
+                    : "A");
             tfEditNama.setText(nama);
             tfEditUsername.setText(username);
         }
@@ -397,7 +408,7 @@ public class PengaturanController implements Initializable {
     }
 
     private void showPanel(VBox panel) {
-        VBox[] panels = { panelAkun, panelBackup, panelDatabase, panelTentang };
+        VBox[] panels = {panelAkun, panelBackup, panelDatabase, panelTentang};
         for (VBox p : panels) {
             p.setVisible(false);
             p.setManaged(false);
@@ -407,11 +418,11 @@ public class PengaturanController implements Initializable {
     }
 
     private void setActiveTab(Button active) {
-        Button[] tabs = { tabAkun, tabBackup, tabDatabase, tabTentang };
+        Button[] tabs = {tabAkun, tabBackup, tabDatabase, tabTentang};
         for (Button t : tabs) {
             t.getStyleClass().setAll("tab-btn");
         }
-        active.getStyleClass().setAll("tab-btn-active");
+        active.getStyleClass().setAll("tab-btn-active");    
     }
 
     // ══════════════════════════════════════
@@ -439,7 +450,6 @@ public class PengaturanController implements Initializable {
         // showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
         // return;
         // }
-
         // String sql;
         // if (!password.isEmpty()) {
         // String hashed = hashSHA256(password);
@@ -450,7 +460,6 @@ public class PengaturanController implements Initializable {
         // sql = "UPDATE tb_user SET nama_lengkap='" + nama
         // + "', username='" + username + "' WHERE id_user=1";
         // }
-
         // if (koneksi.eksekusi(sql)) {
         // loadInfoAkun();
         // onBatalEdit();
@@ -472,51 +481,52 @@ public class PengaturanController implements Initializable {
         nav.navigateToLogin();
         Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
         stage.close();
-        
+
     }
 
     // ══════════════════════════════════════
     // BACKUP HANDLERS
     // ══════════════════════════════════════
     @FXML
-   private void onBackup() {
-    backupProgressBox.setVisible(true);
-    backupProgressBox.setManaged(true);
-    lblBackupStatus.setText("Mengupload ke Google Drive...");
-    pbBackup.setProgress(-1);
+    private void onBackup() {
+        backupProgressBox.setVisible(true);
+        backupProgressBox.setManaged(true);
+        lblBackupStatus.setText("Mengupload ke Google Drive...");
+        pbBackup.setProgress(-1);
 
-    Thread t = new Thread(() -> {
-        GoogleDriveService driveService = new GoogleDriveService();
-        boolean berhasil = driveService.uploadBackup();
+        Thread t = new Thread(() -> {
+            GoogleDriveService driveService = new GoogleDriveService();
+            boolean berhasil = driveService.uploadBackup();
 
-        Platform.runLater(() -> {
-            if (berhasil) {
-                pbBackup.setProgress(1);
-                lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
+            Platform.runLater(() -> {
+                if (berhasil) {
+                    pbBackup.setProgress(1);
+                    lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
 
-                String now = java.time.LocalDateTime.now()
-                        .format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-                lblBackupTerakhir.setText(now);
+                    String now = java.time.LocalDateTime.now()
+                            .format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+                    lblBackupTerakhir.setText(now);
 
-            } else {
-                pbBackup.setProgress(0);
-                lblBackupStatus.setText("❌ Upload Google Drive gagal");
-            }
-        });
-    }, "backup-thread");
-    t.setDaemon(true);
-    t.start();
-}
+                } else {
+                    pbBackup.setProgress(0);
+                    lblBackupStatus.setText("❌ Upload Google Drive gagal");
+                }
+            });
+        }, "backup-thread");
+        t.setDaemon(true);
+        t.start();
+    }
 
     @FXML
     private void onToggleBackupOtomatis() {
         boolean aktif = cbBackupOtomatis.isSelected();
         cbInterval.setDisable(!aktif);
-        System.out.println("Backup otomatis: " + (aktif ? "Aktif" : "Nonaktif"));
     }
 
     @FXML
     private void onSimpanBackupSetting() {
+        prefs.putBoolean("backup_otomatis", cbBackupOtomatis.isSelected());
+        prefs.put("backup_interval", cbInterval.getValue());
         showAlert("Berhasil", "Pengaturan backup disimpan!");
     }
 
@@ -526,8 +536,9 @@ public class PengaturanController implements Initializable {
         dc.setTitle("Pilih Folder Backup");
         java.io.File folder = dc.showDialog(
                 tfLokasiBackup.getScene().getWindow());
-        if (folder != null)
+        if (folder != null) {
             tfLokasiBackup.setText(folder.getAbsolutePath());
+        }
     }
 
     @FXML
@@ -538,8 +549,9 @@ public class PengaturanController implements Initializable {
                 new javafx.stage.FileChooser.ExtensionFilter("SQL File", "*.sql"));
         java.io.File file = fc.showOpenDialog(
                 tfFileRestore.getScene().getWindow());
-        if (file != null)
+        if (file != null) {
             tfFileRestore.setText(file.getAbsolutePath());
+        }
     }
 
     @FXML
@@ -601,17 +613,22 @@ public class PengaturanController implements Initializable {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
             byte[] hash = md.digest(input.getBytes("UTF-8"));
             StringBuilder hex = new StringBuilder();
-            for (byte b : hash)
+            for (byte b : hash) {
                 hex.append(String.format("%02x", b));
+            }
             return hex.toString();
         } catch (Exception e) {
             return input;
         }
     }
 
+    //===================================
+    // FITUR BACKUP OTOMATIS 1X/24JAM
+    //===================================
+   
+
     // ======================
     // OTHER HANDLES
-
     @FXML
     private void onNotif() {
         System.out.println("Notifikasi dibuka");

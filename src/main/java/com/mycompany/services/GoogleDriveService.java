@@ -10,7 +10,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
 
 public class GoogleDriveService {
-
+    
     // =========================================================================
     // Path Helper
     // =========================================================================
@@ -103,6 +103,7 @@ public class GoogleDriveService {
     // =========================================================================
 
     public boolean restoreBackup() {
+        
         try {
             Credential credential = GoogleAuthService.loadCredential();
             if (credential == null) {
@@ -144,6 +145,51 @@ public class GoogleDriveService {
 
             System.out.println("Restore berhasil ke: " + localDb.getAbsolutePath());
             return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        
+    }
+    //=======================================
+    // METHODE UNTUK CEK FILE DB DI DRIVE
+    //=======================================
+    public boolean isBackupExpired(long intervalJam) {
+        try {
+            Credential credential = GoogleAuthService.loadCredential();
+
+            if (credential == null) {
+                System.out.println("Credential NULL");
+                return false;
+            }
+
+            Drive drive = new Drive.Builder(
+                    new ApacheHttpTransport(),
+                    GsonFactory.getDefaultInstance(),
+                    credential)
+                    .setApplicationName("Enjoy Cafe POS")
+                    .build();
+
+            FileList result = drive.files()
+                    .list()
+                    .setQ("name='db_enjoy_cafe.db' and trashed=false")
+                    .setFields("files(id,name,modifiedTime)")
+                    .execute();
+
+            if (result.getFiles().isEmpty()) {
+                System.out.println("Backup tidak ditemukan.");
+                return true;
+            }
+
+            com.google.api.services.drive.model.File file = result.getFiles().get(0);
+            long terakhirBackup = file.getModifiedTime().getValue();
+            long sekarang = System.currentTimeMillis();
+            long selisihJam = (sekarang - terakhirBackup) / (1000 * 60 * 60);
+
+            System.out.println("Backup terakhir = " + selisihJam + " jam lalu");
+
+            return selisihJam >= intervalJam; // <-- pakai parameter, bukan hardcode 24
 
         } catch (Exception e) {
             e.printStackTrace();
