@@ -194,6 +194,12 @@
                           <Label styleClass="shift-pagi-stat-label" text="Item Terjual" HBox.hgrow="ALWAYS" />
                           <Label fx:id="lblItemPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
                         </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-pagi-stat-row">
+                                       <children>
+                                          <Label styleClass="shift-pagi-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="lblPaketPSPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
+                                       </children>
+                                    </HBox>
                       </children>
                     </VBox>
                     <!-- Pendapatan -->
@@ -244,6 +250,12 @@
                           <Label styleClass="shift-malam-stat-label" text="Item Terjual" HBox.hgrow="ALWAYS" />
                           <Label fx:id="lblItemMalam" styleClass="shift-malam-stat-value" text="0 unit" />
                         </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-malam-stat-row">
+                                       <children>
+                                          <Label styleClass="shift-malam-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="lblPaketPSMalam" styleClass="shift-malam-stat-value" text="0 unit" />
+                                       </children>
+                                    </HBox>
                       </children>
                     </VBox>
                     <!-- Pendapatan -->

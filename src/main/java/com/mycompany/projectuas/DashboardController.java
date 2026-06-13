@@ -33,6 +33,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -118,6 +119,7 @@ public class DashboardController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // FXML — SHIFT CARDS
     // ═══════════════════════════════════════════════════════
+    
     @FXML
     private VBox cardPagi;
     @FXML
@@ -210,6 +212,7 @@ public class DashboardController implements Initializable {
         setupCharts();
         setupStockList();
         loadShiftData();
+        
     }
 
     // ═══════════════════════════════════════════════════════
@@ -542,7 +545,8 @@ public class DashboardController implements Initializable {
     // ═══════════════════════════════════════════════════════
     private void loadShiftData() {
         int jamSekarang = java.time.LocalTime.now().getHour();
-
+        applyRoundedClip(wrapperPagi);
+        applyRoundedClip(wrapperMalam);
         if (jamSekarang >= 6 && jamSekarang < 12) {
             // Shift pagi aktif
             wrapperPagi.setVisible(true);
@@ -1217,6 +1221,14 @@ public class DashboardController implements Initializable {
         animateFadeIn(jamChart, 300);
     }
 
+     private void applyRoundedClip(StackPane pane) {
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(pane.widthProperty());
+        clip.heightProperty().bind(pane.heightProperty());
+        clip.setArcWidth(20);
+        clip.setArcHeight(20);
+        pane.setClip(clip);
+    }
     // ═══════════════════════════════════════════════════════
     // OTHER HANDLERS
     // ═══════════════════════════════════════════════════════

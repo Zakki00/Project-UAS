@@ -203,6 +203,10 @@ public class LaporanController implements Initializable {
     @FXML
     private Label lblItemPagi;
     @FXML
+    private Label lblPaketPSPagi;
+    @FXML
+    private Label lblPaketPSMalam;
+    @FXML
     private Label lblPendapatanPagi;
     @FXML
     private Label lblStatusPagi;
@@ -763,51 +767,74 @@ public class LaporanController implements Initializable {
     // SHIFT DATA
     // ═══════════════════════════════════════════════════════
     private void loadShiftData() {
-        loadShift("06:00:00", "12:00:00",
-                lblUsernamePagi, lblNamaPagi, lblTrxPagi,
-                lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
-        loadShift("12:00:00", "21:00:00",
-                lblUsernameMalam, lblNamaMalam, lblTrxMalam,
-                lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
+        loadShift(
+                "06:00:00",
+                "12:00:00",
+                lblTrxPagi,
+                lblItemPagi,
+                lblPaketPSPagi,
+                lblPendapatanPagi,
+                lblJamPagi,
+                "06:00 — 12:00");
+
+        loadShift(
+                "12:00:00",
+                "23:00:00",
+                lblTrxMalam,
+                lblItemMalam,
+                lblPaketPSMalam,
+                lblPendapatanMalam,
+                lblJamMalam,
+                "12:00 — 21:00");
         updateStatusDot();
     }
 
     private void loadShift(String jamMulai, String jamSelesai,
-            Label lblUsername, Label lblNama, Label lblTrx,
-            Label lblItem, Label lblPendapatan, Label lblStatus,
-            Label lblJam, String jamText) {
+            Label lblTrx,
+            Label lblItem,
+            Label lblPaketPS,
+            Label lblPendapatan,
+            Label lblJam,
+            String jamText) {
+
         String sql = """
-                SELECT u.username, u.nama_lengkap,
-                    COUNT(t.id_transaksi) AS total_trx,
-                    SUM(dt.jumlah) AS total_item,
-                    SUM(t.total_pembayaran - t.kekurangan) AS total_pendapatan
-                FROM tb_transaksi t
-                JOIN tb_user u ON t.id_user = u.id_user
-                JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                WHERE DATE(t.tanggal_transaksi) = DATE('now','localtime')
-                AND TIME(t.tanggal_transaksi) BETWEEN '""" + jamMulai + "' AND '" + jamSelesai + """
-                    '
-                    GROUP BY u.id_user, u.username, u.nama_lengkap
-                    ORDER BY total_pendapatan DESC LIMIT 1
+                    SELECT
+                        COUNT(DISTINCT t.id_transaksi) AS total_trx,
+                        COALESCE(SUM(dt.jumlah),0) AS total_item,
+                        COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
+                        COALESCE(SUM(t.uang_pembayaran - t.kembalian),0) AS pendapatan
+                    FROM tb_transaksi t
+                    LEFT JOIN tb_detail_transaksi dt
+                        ON t.id_transaksi = dt.id_transaksi
+                    LEFT JOIN tb_paket_ps ps
+                        ON t.id_transaksi = ps.id_transaksi
+                    WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                      AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
                 """;
-        List<Object[]> data = koneksi.ambilData(sql);
+
+        List<Object[]> data = koneksi.ambilData(
+                sql,
+                jamMulai,
+                jamSelesai);
+
         lblJam.setText(jamText);
+
         if (data.isEmpty()) {
-            lblUsername.setText("Tidak ada kasir");
-            lblNama.setText("-");
             lblTrx.setText("0");
             lblItem.setText("0 unit");
+            lblPaketPS.setText("0");
             lblPendapatan.setText("Rp 0");
-        } else {
-            Object[] row = data.get(0);
-            lblUsername.setText(String.valueOf(row[0]));
-            lblNama.setText(String.valueOf(row[1]));
-            lblTrx.setText(String.valueOf(((Number) row[2]).intValue()));
-            lblItem.setText(((Number) row[3]).intValue() + " unit");
-            lblPendapatan.setText("Rp " + FMT.format(((Number) row[4]).longValue()));
+            return;
         }
-    }
 
+        Object[] row = data.get(0);
+
+        lblTrx.setText(String.valueOf(((Number) row[0]).intValue()));
+        lblItem.setText(((Number) row[1]).intValue() + " unit");
+        lblPaketPS.setText(String.valueOf(((Number) row[2]).intValue()));
+        lblPendapatan.setText("Rp " + FMT.format(((Number) row[3]).longValue()));
+    }
+    
     private void updateStatusDot() {
         int jam = java.time.LocalTime.now().getHour();
         boolean pagiAktif = jam >= 6 && jam < 12;
