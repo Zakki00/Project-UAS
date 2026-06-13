@@ -26,6 +26,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PopupControl;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -95,6 +96,8 @@ public class PengaturanController implements Initializable {
     @FXML
     private VBox backupProgressBox;
     @FXML
+    private Button btnRestore;
+    @FXML
     private Label lblBackupStatus;
     @FXML
     private ProgressBar pbBackup;
@@ -142,6 +145,8 @@ public class PengaturanController implements Initializable {
     private HBox userRow;
     @FXML
     private Button toggleBtn;
+    @FXML
+    private Button btnSimpanSeting;
     @FXML
     private VBox navMenu;
 
@@ -510,17 +515,19 @@ public class PengaturanController implements Initializable {
 
     @FXML
     private void onDisconnectGoogle() {
-        showAlert("Info", "Akun Google berhasil diputus.");
-        try {
-            prefs.clear();
-        } catch (BackingStoreException e) {
-            e.printStackTrace();
-        }
-        navigation nav = new navigation();
-        nav.navigateToLogin();
-        Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
-        stage.close();
-
+        Popup popup = new Popup();
+        popup.showConfirmPopup("Log Out", "Apakah Anda Yakin Keluar Dari Akun " + session.email, 
+        ()->{
+                    try {
+                        prefs.clear();
+                    } catch (BackingStoreException e) {
+                        e.printStackTrace();
+                    }
+                    navigation nav = new navigation();
+                    nav.navigateToLogin();
+                    Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
+                    stage.close();
+        } );        
     }
 
     // ══════════════════════════════════════
@@ -607,7 +614,9 @@ public class PengaturanController implements Initializable {
     private void onSimpanBackupSetting() {
         prefs.putBoolean("backup_otomatis", cbBackupOtomatis.isSelected());
         prefs.put("backup_interval", cbInterval.getValue());
-        showAlert("Berhasil", "Pengaturan backup disimpan!");
+        Stage stage = (Stage) btnSimpanSeting.getScene().getWindow();
+        Popup popup = new Popup();
+        popup.showModernPopup("Simpan Pengaturan", "Simpan Pengaturan. Backup Otomatis Akan Di Lakukan Setiap: " + prefs.get("backup_interval", "") + " Sekali", Popup.PopupType.SUCCESS, stage);
     }
 
     @FXML
@@ -673,15 +682,18 @@ public class PengaturanController implements Initializable {
                     }));
                     selesai.play();
                     lblBackupStatus.setText("✅ Restore berhasil dari Google Drive");
-                    showAlert("Berhasil", "✅ Data berhasil dipulihkan!\nRestart aplikasi untuk menerapkan perubahan.");
+                    Popup popup = new Popup();
+                    popup.showSuccessPopup("Berhasil","Restore Data Dari Googl Drive Berhasil Di Lakukan");
                 } else {
                     selesai.setOnFinished(ev -> Platform.runLater(() -> {
                         pbBackup.setStyle("-fx-accent: #FF5C7C;");
                         pbBackup.applyCss();
                     }));
                     selesai.play();
+                    Stage stage = (Stage) btnRestore.getScene().getWindow();
+                    Popup popup = new Popup();
+                    popup.showModernPopup("EROR", "Gagal Melakukan Restore Database", Popup.PopupType.ERROR,stage);
                     lblBackupStatus.setText("❌ Restore dari Google Drive gagal");
-                    showAlert("Gagal", "❌ Gagal memulihkan data.\nPastikan koneksi internet tersedia.");
                 }
             });
         }, "restore-thread");

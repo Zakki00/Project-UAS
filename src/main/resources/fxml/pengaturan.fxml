@@ -195,7 +195,7 @@
                      <HBox prefHeight="0.0" prefWidth="764.0" spacing="10.0">
                         <children>
                     <Button fx:id="btnBackup" onAction="#onBackup" prefWidth="180.0" styleClass="btn-backup" text="💾 Backup Sekarang" />
-                   <Button onAction="#onRestore" prefHeight="31.0" prefWidth="180.0" styleClass="btn-restore" text="🔄 Pulihkan" />
+                   <Button fx:id="btnRestore" onAction="#onRestore" prefHeight="31.0" prefWidth="180.0" styleClass="btn-restore" text="🔄 Pulihkan" />
                         </children>
                      </HBox>
             </VBox>
@@ -214,7 +214,7 @@
                 <HBox alignment="CENTER_LEFT" spacing="8" />
               </HBox>
               <HBox alignment="CENTER_RIGHT" />
-              <Button onAction="#onSimpanBackupSetting" prefWidth="180.0" styleClass="btn-save" text="💾 Simpan Pengaturan" />
+              <Button fx:id="btnSimpanSeting" onAction="#onSimpanBackupSetting" prefWidth="180.0" styleClass="btn-save" text="💾 Simpan Pengaturan" />
             </VBox>
           </VBox>
           <!-- ══════════════════════════════════════
