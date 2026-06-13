@@ -194,6 +194,52 @@ public class GoogleDriveService {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }   
+    }
+
+    //=======================================
+    //  MENDAPTKAN WAKTU TERKAHIR BACKUP
+    //=======================================
+
+    public String getLastBackupTime() {
+
+        try {
+
+            Credential credential = GoogleAuthService.loadCredential();
+
+            Drive drive = new Drive.Builder(
+                    new ApacheHttpTransport(),
+                    GsonFactory.getDefaultInstance(),
+                    credential)
+                    .setApplicationName("Enjoy Cafe POS")
+                    .build();
+
+            FileList result = drive.files()
+                    .list()
+                    .setQ("name='db_enjoy_cafe.db' and trashed=false")
+                    .setFields("files(modifiedTime)")
+                    .execute();
+
+            if (result.getFiles().isEmpty()) {
+                return "Belum pernah backup";
+            }
+
+            long waktuBackup = result.getFiles()
+                    .get(0)
+                    .getModifiedTime()
+                    .getValue();
+
+            java.time.LocalDateTime tanggal = java.time.Instant.ofEpochMilli(waktuBackup)
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDateTime();
+
+            return tanggal.format(
+                    java.time.format.DateTimeFormatter
+                            .ofPattern("dd-MM-yyyy HH:mm"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "-";
         }
     }
 }

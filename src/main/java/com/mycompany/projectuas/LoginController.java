@@ -56,15 +56,19 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Sync PasswordField <-> TextField untuk show/hide password
-        passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
-        loginBtn.setDefaultButton(true);
         loadRememberedCredentials();
         setupform();
 
     }
+    
 
     void setupform() {
+
+        // Sync PasswordField <-> TextField untuk show/hide password
+        passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
+        loginBtn.setDefaultButton(true);
+
+        //seleksi data 
         String sql_admin = "SELECT * FROM tb_user WHERE role = 'Admin'";
         List<Object[]> admin = koneksi.ambilData(sql_admin);
         String Admin = prefs.get("Admin",null);
@@ -78,12 +82,14 @@ public class LoginController implements Initializable {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Admin Di Daftarkan Sebagai Pemilik Aplikasi");
+            System.out.println("Admin Sudah Daftarkan Sebagai Pemilik Aplikasi");
             btnGoogle.setVisible(false);
             btnGoogle.setManaged(false);
-
-
-
+            session.id_user = (int) admin.get(0)[0];
+            session.username = (String) admin.get(0)[1];
+            session.nama = (String) admin.get(0)[3];
+            session.role = (String) admin.get(0)[4];
+            session.email = (String) admin.get(0)[5];
         }
 
     }
@@ -183,6 +189,9 @@ public class LoginController implements Initializable {
 
             session.id_user = (int) result.get(0)[0];
             session.username = (String) result.get(0)[1];
+            session.nama = (String) result.get(0)[3];
+            session.role = (String) result.get(0)[4];
+            session.email = (String) result.get(0)[5];
 
             if (rememberMe.isSelected()) {
                 prefs.put("username", username);

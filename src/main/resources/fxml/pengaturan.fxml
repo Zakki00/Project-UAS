@@ -10,18 +10,17 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="900" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/pengaturan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PengaturanController">
-
+<BorderPane prefHeight="3000.0" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/pengaturan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PengaturanController">
   <!-- ══════════════ SIDEBAR ══════════════ -->
   <left>
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
-
       <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
         <Label styleClass="logo-icon" text="🏪" />
         <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
@@ -29,52 +28,43 @@
           <Label styleClass="logo-sub" text="Manajemen Toko" />
         </VBox>
       </HBox>
-
       <Separator styleClass="sidebar-divider" />
-
       <VBox fx:id="navMenu" spacing="2" styleClass="nav-menu" VBox.vgrow="ALWAYS">
-        <VBox.margin><Insets bottom="10" top="10" /></VBox.margin>
-
+        <VBox.margin>
+          <Insets bottom="10" top="10" />
+        </VBox.margin>
         <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
           <Rectangle height="0" styleClass="nav-active-bar" width="3" />
           <Label styleClass="nav-icon" text="⊞" />
           <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard" />
         </HBox>
-
         <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
           <Label styleClass="nav-icon" text="📦" />
           <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
         </HBox>
-
         <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
           <Label styleClass="nav-icon" text="🛒" />
           <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
         </HBox>
-
         <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
           <Label styleClass="nav-icon" text="📈" />
           <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan" />
         </HBox>
-
         <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
           <Label styleClass="nav-icon" text="💰" />
           <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang" />
         </HBox>
-
         <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
           <Label styleClass="nav-icon" text="⚙️" />
           <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Pengaturan" />
         </HBox>
-
       </VBox>
-
       <Separator styleClass="sidebar-divider" />
-
       <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
         <Label styleClass="user-avatar" text="A" />
         <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
@@ -82,16 +72,13 @@
           <Label styleClass="user-role" text="Administrator" />
         </VBox>
       </HBox>
-
       <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀" />
-
     </VBox>
   </left>
 
   <!-- ══════════════ MAIN CONTENT ══════════════ -->
   <center>
     <VBox styleClass="main-content">
-
       <!-- TOP BAR -->
       <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
         <VBox spacing="1" HBox.hgrow="ALWAYS">
@@ -108,51 +95,38 @@
         </StackPane>
         <Label styleClass="topbar-avatar" text="A" />
       </HBox>
-
       <!-- BODY -->
       <ScrollPane fitToWidth="true" styleClass="body-scroll" VBox.vgrow="ALWAYS">
         <VBox spacing="20" styleClass="body-content">
-          <padding><Insets bottom="24" left="24" right="24" top="24" /></padding>
-
-          <!-- ── TAB BAR ── -->
-          <HBox spacing="8" styleClass="tab-bar">
-            <Button fx:id="tabAkun" onAction="#onTabAkun" styleClass="tab-btn-active" text="👤  Informasi Akun" />
-            <Button fx:id="tabBackup" onAction="#onTabBackup" styleClass="tab-btn" text="💾  Backup &amp; Restore" />
-            <Button fx:id="tabDatabase" onAction="#onTabDatabase" styleClass="tab-btn" text="🗄  Database" />
-            <Button fx:id="tabTentang" onAction="#onTabTentang" styleClass="tab-btn" text="ℹ  Tentang Aplikasi" />
-          </HBox>
-
+          <padding>
+            <Insets bottom="24" left="24" right="24" top="24" />
+          </padding>
           <!-- ══════════════════════════════════════
                PANEL INFORMASI AKUN
           ═══════════════════════════════════════ -->
-          <VBox fx:id="panelAkun" managed="true" spacing="20" styleClass="setting-panel" visible="true">
-
+          <VBox fx:id="panelAkun" spacing="20" styleClass="setting-panel">
             <Label styleClass="panel-title" text="Informasi Akun" />
-
             <!-- Profile card -->
-           <VBox alignment="CENTER" spacing="16" styleClass="profile-card">
-
-    <!-- Avatar lingkaran besar di tengah -->
-    <VBox alignment="CENTER" styleClass="avatar-box-large">
-        <Label fx:id="lblAvatarInisial" styleClass="avatar-inisial-large" text="A" />
-    </VBox>
-
-    <!-- Teks di tengah -->
-    <VBox alignment="CENTER" spacing="6">
-        <Label fx:id="lblNamaAkun" styleClass="profile-nama" text="Admin" />
-        <Label fx:id="lblUsernameAkun" styleClass="profile-username" text="@admin" />
-        <HBox alignment="CENTER">
-            <Label fx:id="lblRoleAkun" styleClass="profile-role-badge" text="Administrator" />
-        </HBox>
-    </VBox>
-
-    <!-- Tombol edit di tengah -->
-    <Button onAction="#onEditProfil" styleClass="btn-edit-profile" text="✏  Edit Profil" />
-
-</VBox>
-
+            <VBox alignment="CENTER" spacing="16" styleClass="profile-card">
+              <!-- Avatar lingkaran besar di tengah -->
+              <VBox alignment="CENTER" styleClass="avatar-box-large">
+                <ImageView fx:id="imgAvatarGoogle" fitHeight="90" fitWidth="90" managed="false" pickOnBounds="true" preserveRatio="true" visible="false" />
+                <Label fx:id="lblAvatarInisial" styleClass="avatar-inisial-large" text="A" />
+              </VBox>
+                     <Label fx:id="lblEmailGoogle2" styleClass="google-email" text="admin@gmail.com" />
+              <!-- Teks di tengah -->
+              <VBox alignment="CENTER" spacing="6">
+                <Label fx:id="lblNamaAkun" styleClass="profile-nama" text="Admin" />
+                <Label fx:id="lblUsernameAkun" styleClass="profile-username" text="nama akun admin" />
+                <HBox alignment="CENTER">
+                  <Label fx:id="lblRoleAkun" styleClass="profile-role-badge" text="Administrator" />
+                </HBox>
+              </VBox>
+              <!-- Tombol edit di tengah -->
+              <Button fx:id="EditProfil" onAction="#onEditProfil" styleClass="btn-edit-profile" text="✏ Edit Profil" />
+            </VBox>
             <!-- Form edit akun -->
-            <VBox fx:id="formEditAkun" managed="false" spacing="16" styleClass="setting-card" visible="false">
+            <VBox fx:id="formEditAkun" spacing="16" styleClass="setting-card">
               <Label styleClass="card-title" text="Edit Informasi Akun" />
               <HBox spacing="16">
                 <VBox spacing="6" HBox.hgrow="ALWAYS">
@@ -182,12 +156,16 @@
                 <Button onAction="#onSimpanProfil" styleClass="btn-save" text="💾 Simpan" />
               </HBox>
             </VBox>
-
             <!-- Google account -->
-            <VBox spacing="12" styleClass="setting-card">
+            <VBox fx:id="cardAkunGoogle" spacing="12" styleClass="setting-card">
               <Label styleClass="card-title" text="Akun Google" />
               <HBox alignment="CENTER_LEFT" spacing="14" styleClass="google-connected-box">
-                <Label styleClass="google-dot" text="●" />
+                        <VBox alignment="CENTER" minHeight="50.0" minWidth="46.0" prefHeight="50.0" prefWidth="46.0" styleClass="avatar-box-small">
+                           <children>
+                              <ImageView fx:id="imgAvatarGoogle1" fitHeight="40.0" fitWidth="40.0" managed="false" pickOnBounds="true" preserveRatio="true" visible="false" />
+                              <Label fx:id="lblAvatarInisial1" styleClass="avatar-inisial-large1" text="A" />
+                           </children>
+                        </VBox>
                 <VBox spacing="2" HBox.hgrow="ALWAYS">
                   <Label styleClass="google-status-text" text="Akun Google Terhubung" />
                   <Label fx:id="lblEmailGoogle" styleClass="google-email" text="admin@gmail.com" />
@@ -195,32 +173,27 @@
                 <Button onAction="#onDisconnectGoogle" styleClass="btn-disconnect" text="Putuskan" />
               </HBox>
             </VBox>
-
           </VBox>
-
           <!-- ══════════════════════════════════════
                PANEL BACKUP & RESTORE
           ═══════════════════════════════════════ -->
-          <VBox fx:id="panelBackup" managed="false" spacing="20" styleClass="setting-panel" visible="false">
-
+          <VBox fx:id="panelBackup" spacing="20" styleClass="setting-panel">
             <Label styleClass="panel-title" text="Backup &amp; Restore" />
-
             <!-- Backup manual -->
             <VBox spacing="16" styleClass="setting-card">
               <Label styleClass="card-title" text="Backup Manual" />
               <HBox alignment="CENTER_LEFT" spacing="16">
                 <VBox spacing="4" HBox.hgrow="ALWAYS">
                   <Label styleClass="setting-label" text="Backup Terakhir" />
-                  <Label fx:id="lblBackupTerakhir" styleClass="setting-value" text="05-06-2026 20:15" />
+                  <Label fx:id="lblBackupTerakhir" styleClass="setting-value" text="-" />
                 </VBox>
-                <Button fx:id="btnBackup" onAction="#onBackup" styleClass="btn-backup" text="💾  Backup Sekarang" />
               </HBox>
-              <VBox fx:id="backupProgressBox" managed="false" spacing="6" visible="false">
+              <VBox fx:id="backupProgressBox" spacing="6">
                 <Label fx:id="lblBackupStatus" styleClass="backup-status" text="Memproses backup..." />
                 <ProgressBar fx:id="pbBackup" maxWidth="Infinity" progress="0" styleClass="backup-progress" />
               </VBox>
+              <Button fx:id="btnBackup" onAction="#onBackup" prefWidth="180.0" styleClass="btn-backup" text="💾 Backup Sekarang" />
             </VBox>
-
             <!-- Backup otomatis -->
             <VBox spacing="16" styleClass="setting-card">
               <Label styleClass="card-title" text="Backup Otomatis" />
@@ -233,37 +206,25 @@
                 <ComboBox fx:id="cbInterval" prefWidth="160" promptText="Pilih interval" styleClass="setting-combo" />
               </HBox>
               <HBox alignment="CENTER_LEFT" spacing="12">
-                <Label styleClass="setting-label" text="Lokasi Penyimpanan" HBox.hgrow="ALWAYS" />
-                <HBox alignment="CENTER_LEFT" spacing="8">
-                  <TextField fx:id="tfLokasiBackup" editable="false" prefWidth="200" promptText="Pilih folder..." styleClass="setting-field-small" />
-                  <Button onAction="#onBrowseFolder" styleClass="btn-browse" text="📁" />
-                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="8" />
               </HBox>
-              <HBox alignment="CENTER_RIGHT">
-                <Button onAction="#onSimpanBackupSetting" styleClass="btn-save" text="💾  Simpan Pengaturan" />
-              </HBox>
+              <HBox alignment="CENTER_RIGHT" />
+              <Button onAction="#onSimpanBackupSetting" prefWidth="180.0" styleClass="btn-save" text="💾 Simpan Pengaturan" />
             </VBox>
-
             <!-- Restore -->
             <VBox spacing="16" styleClass="setting-card">
               <Label styleClass="card-title" text="Pulihkan Backup" />
-              <Label styleClass="setting-desc" text="Pilih file backup untuk memulihkan data. Pastikan Anda sudah membackup data terbaru sebelum restore." />
+              <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="751.0" />
               <HBox alignment="CENTER_LEFT" spacing="10">
-                <TextField fx:id="tfFileRestore" editable="false" promptText="Pilih file backup (.sql)..." styleClass="setting-field-small" HBox.hgrow="ALWAYS" />
-                <Button onAction="#onBrowseRestore" styleClass="btn-browse" text="📁" />
-                <Button onAction="#onRestore" styleClass="btn-restore" text="🔄  Pulihkan" />
+                <Button onAction="#onRestore" prefHeight="31.0" prefWidth="180.0" styleClass="btn-restore" text="🔄 Pulihkan" />
               </HBox>
             </VBox>
-
           </VBox>
-
           <!-- ══════════════════════════════════════
                PANEL DATABASE
           ═══════════════════════════════════════ -->
-          <VBox fx:id="panelDatabase" managed="false" spacing="20" styleClass="setting-panel" visible="false">
-
+          <VBox fx:id="panelDatabase" spacing="20" styleClass="setting-panel">
             <Label styleClass="panel-title" text="Koneksi Database" />
-
             <!-- Status koneksi -->
             <VBox spacing="12" styleClass="setting-card">
               <HBox alignment="CENTER_LEFT" spacing="12">
@@ -272,52 +233,15 @@
                   <Label fx:id="lblDbDot" styleClass="db-dot-online" text="●" />
                   <Label fx:id="lblDbStatus" styleClass="db-status-text" text="Terhubung" />
                 </HBox>
-                <Button onAction="#onTestKoneksi" styleClass="btn-test-conn" text="🔌  Test Koneksi" />
+                <Button onAction="#onTestKoneksi" styleClass="btn-test-conn" text="🔌 Test Koneksi" />
               </HBox>
             </VBox>
-
-            <!-- Info database -->
-            <VBox spacing="16" styleClass="setting-card">
-              <Label styleClass="card-title" text="Informasi Database" />
-              <HBox spacing="16">
-                <VBox spacing="6" HBox.hgrow="ALWAYS">
-                  <Label styleClass="field-label" text="Host" />
-                  <TextField fx:id="tfDbHost" styleClass="setting-field" text="localhost" />
-                </VBox>
-                <VBox spacing="6">
-                  <Label styleClass="field-label" text="Port" />
-                  <TextField fx:id="tfDbPort" prefWidth="90" styleClass="setting-field" text="3306" />
-                </VBox>
-              </HBox>
-              <VBox spacing="6">
-                <Label styleClass="field-label" text="Nama Database" />
-                <TextField fx:id="tfDbName" styleClass="setting-field" text="db_enjoy_cave" />
-              </VBox>
-              <HBox spacing="16">
-                <VBox spacing="6" HBox.hgrow="ALWAYS">
-                  <Label styleClass="field-label" text="Username" />
-                  <TextField fx:id="tfDbUser" styleClass="setting-field" text="root" />
-                </VBox>
-                <VBox spacing="6" HBox.hgrow="ALWAYS">
-                  <Label styleClass="field-label" text="Password" />
-                  <PasswordField fx:id="pfDbPassword" promptText="Database password..." styleClass="setting-field" />
-                </VBox>
-              </HBox>
-              <HBox alignment="CENTER_RIGHT" spacing="10">
-                <Button onAction="#onResetDb" styleClass="btn-cancel" text="Reset" />
-                <Button onAction="#onSimpanDb" styleClass="btn-save" text="💾 Simpan" />
-              </HBox>
-            </VBox>
-
           </VBox>
-
           <!-- ══════════════════════════════════════
                PANEL TENTANG APLIKASI
           ═══════════════════════════════════════ -->
-          <VBox fx:id="panelTentang" managed="false" spacing="20" styleClass="setting-panel" visible="false">
-
+          <VBox fx:id="panelTentang" spacing="20" styleClass="setting-panel">
             <Label styleClass="panel-title" text="Tentang Aplikasi" />
-
             <VBox alignment="CENTER" spacing="12" styleClass="about-card">
               <Label styleClass="about-logo" text="🏪" />
               <Label styleClass="about-app-name" text="StoreMS" />
@@ -330,7 +254,7 @@
                   <Label styleClass="about-stat-label" text="Framework" />
                 </VBox>
                 <VBox alignment="CENTER" spacing="4">
-                  <Label styleClass="about-stat-value" text="MySQL" />
+                  <Label styleClass="about-stat-value" text="SQL LITE" />
                   <Label styleClass="about-stat-label" text="Database" />
                 </VBox>
                 <VBox alignment="CENTER" spacing="4">
@@ -342,13 +266,9 @@
               <Label styleClass="about-dev" text="Dikembangkan oleh Tim StoreMS" />
               <Label styleClass="about-copy" text="© 2025 StoreMS. All rights reserved." />
             </VBox>
-
           </VBox>
-
         </VBox>
       </ScrollPane>
-
     </VBox>
   </center>
-
 </BorderPane>
