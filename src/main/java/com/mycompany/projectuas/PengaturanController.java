@@ -26,6 +26,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -96,7 +97,10 @@ public class PengaturanController implements Initializable {
     @FXML
     private Label lblBackupStatus;
     @FXML
-    private javafx.scene.control.ProgressBar pbBackup;
+    private ProgressBar pbBackup;
+    @FXML
+    private ProgressBar pbRestore;
+
     @FXML
     private javafx.scene.control.CheckBox cbBackupOtomatis;
     @FXML
@@ -632,11 +636,57 @@ public class PengaturanController implements Initializable {
 
     @FXML
     private void onRestore() {
-        if (tfFileRestore.getText().isEmpty()) {
-            showAlert("Peringatan", "Pilih file backup terlebih dahulu!");
-            return;
-        }
-        showAlert("Info", "Fitur restore akan segera diimplementasikan.");
+        backupProgressBox.setVisible(true);
+        backupProgressBox.setManaged(true);
+        lblBackupStatus.setText("Mengunduh backup dari Google Drive...");
+        pbBackup.setStyle("-fx-accent: #6C63FF;");
+        pbBackup.setProgress(0.0);
+
+        // Animasi loading
+        pbAnimTimeline = new Timeline(
+                new KeyFrame(Duration.millis(0),
+                        new KeyValue(pbBackup.progressProperty(), 0.0)),
+                new KeyFrame(Duration.millis(600),
+                        new KeyValue(pbBackup.progressProperty(), 0.3)),
+                new KeyFrame(Duration.millis(3000),
+                        new KeyValue(pbBackup.progressProperty(), 0.85)));
+        pbAnimTimeline.setCycleCount(1);
+        pbAnimTimeline.play();
+
+        Thread t = new Thread(() -> {
+            GoogleDriveService driveService = new GoogleDriveService();
+            boolean berhasil = driveService.restoreBackup();
+
+            Platform.runLater(() -> {
+                pbAnimTimeline.stop();
+
+                Timeline selesai = new Timeline(
+                        new KeyFrame(Duration.ZERO,
+                                new KeyValue(pbBackup.progressProperty(), pbBackup.getProgress())),
+                        new KeyFrame(Duration.millis(400),
+                                new KeyValue(pbBackup.progressProperty(), 1.0)));
+
+                if (berhasil) {
+                    selesai.setOnFinished(ev -> Platform.runLater(() -> {
+                        pbBackup.setStyle("-fx-accent: #00E5A0;");
+                        pbBackup.applyCss();
+                    }));
+                    selesai.play();
+                    lblBackupStatus.setText("✅ Restore berhasil dari Google Drive");
+                    showAlert("Berhasil", "✅ Data berhasil dipulihkan!\nRestart aplikasi untuk menerapkan perubahan.");
+                } else {
+                    selesai.setOnFinished(ev -> Platform.runLater(() -> {
+                        pbBackup.setStyle("-fx-accent: #FF5C7C;");
+                        pbBackup.applyCss();
+                    }));
+                    selesai.play();
+                    lblBackupStatus.setText("❌ Restore dari Google Drive gagal");
+                    showAlert("Gagal", "❌ Gagal memulihkan data.\nPastikan koneksi internet tersedia.");
+                }
+            });
+        }, "restore-thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     // ══════════════════════════════════════

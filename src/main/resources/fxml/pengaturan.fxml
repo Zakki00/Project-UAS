@@ -192,7 +192,12 @@
                 <Label fx:id="lblBackupStatus" styleClass="backup-status" text="Memproses backup..." />
                 <ProgressBar fx:id="pbBackup" maxWidth="Infinity" progress="0" styleClass="backup-progress" />
               </VBox>
-              <Button fx:id="btnBackup" onAction="#onBackup" prefWidth="180.0" styleClass="btn-backup" text="💾 Backup Sekarang" />
+                     <HBox prefHeight="0.0" prefWidth="764.0" spacing="10.0">
+                        <children>
+                    <Button fx:id="btnBackup" onAction="#onBackup" prefWidth="180.0" styleClass="btn-backup" text="💾 Backup Sekarang" />
+                   <Button onAction="#onRestore" prefHeight="31.0" prefWidth="180.0" styleClass="btn-restore" text="🔄 Pulihkan" />
+                        </children>
+                     </HBox>
             </VBox>
             <!-- Backup otomatis -->
             <VBox spacing="16" styleClass="setting-card">
@@ -210,14 +215,6 @@
               </HBox>
               <HBox alignment="CENTER_RIGHT" />
               <Button onAction="#onSimpanBackupSetting" prefWidth="180.0" styleClass="btn-save" text="💾 Simpan Pengaturan" />
-            </VBox>
-            <!-- Restore -->
-            <VBox spacing="16" styleClass="setting-card">
-              <Label styleClass="card-title" text="Pulihkan Backup" />
-              <HBox alignment="CENTER_RIGHT" prefHeight="0.0" prefWidth="751.0" />
-              <HBox alignment="CENTER_LEFT" spacing="10">
-                <Button onAction="#onRestore" prefHeight="31.0" prefWidth="180.0" styleClass="btn-restore" text="🔄 Pulihkan" />
-              </HBox>
             </VBox>
           </VBox>
           <!-- ══════════════════════════════════════
