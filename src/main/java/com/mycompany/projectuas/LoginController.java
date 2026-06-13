@@ -183,7 +183,7 @@ public class LoginController implements Initializable {
         }
 
         String query = "SELECT * FROM tb_user WHERE username = ? AND password = ?";
-        List<Object[]> result = koneksi.ambilData(query, username, hashPassword(password));
+        List<Object[]> result = koneksi.ambilData(query, username, password);
 
         if (result.size() > 0) {
 

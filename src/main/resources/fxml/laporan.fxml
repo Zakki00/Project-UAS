@@ -434,7 +434,7 @@
               </VBox>
             </VBox>
                   <VBox.margin>
-                     <Insets top="10.0" />
+                     <Insets />
                   </VBox.margin>
           </HBox>
                <VBox prefHeight="155.0" prefWidth="362.0" spacing="10" styleClass="card">

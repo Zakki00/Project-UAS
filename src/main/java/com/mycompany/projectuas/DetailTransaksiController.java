@@ -250,11 +250,6 @@ public class DetailTransaksiController implements Initializable {
 
     // ── Summary ───────────────────────────────────────
     private void updateSummary() {
-        // TransaksiModel.subtotal = listItem.stream()
-        // .mapToLong(ItemTransaksi::subtotal).sum();
-       
-        // long total = TransaksiModel.subtotal + pajak;
-
         lblSubtotal.setText("Rp " + FMT.format(TransaksiModel.subtotal));
        
         lblTotal.setText("Rp " + FMT.format(TransaksiModel.total));
@@ -348,6 +343,7 @@ public class DetailTransaksiController implements Initializable {
         new Popup().showSuccessPopup("Transaksi Berhasil", "Transaksi berhasil disimpan!");
 
         TransaksiModel.keranjang.clear();
+        TransaksiModel.pesananPs = null;
         transaksiController.renderKeranjang();
         transaksiController.updateSummary();
         closeForm(btnSimpan);

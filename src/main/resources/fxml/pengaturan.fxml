@@ -17,7 +17,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="3000.0" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/pengaturan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PengaturanController">
+<BorderPane prefHeight="900.0" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/pengaturan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.PengaturanController">
   <!-- ══════════════ SIDEBAR ══════════════ -->
   <left>
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">

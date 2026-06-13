@@ -984,15 +984,6 @@ public void setTransaksiController(TransaksiController tc) {
 }
 
 // ═══════════════════════════════════════════════
-// INITIALIZE
-// ═══════════════════════════════════════════════
-// @Override
-// public void initialize(URL url, ResourceBundle rb) {
-//     updateDisplay();
-//     btnKonfirmasi.setDisable(true);
-// }
-
-// ═══════════════════════════════════════════════
 // PRESET HANDLERS
 // ═══════════════════════════════════════════════
 @FXML
@@ -1146,12 +1137,6 @@ private void onKonfirmasi() {
 
     renderKeranjang();
     updateSummary();
-
-    boxRentalPs.setVisible(false);
-    boxRentalPs.setManaged(false);
-
-    scrolpane.setVisible(true);
-    scrolpane.setManaged(true);
 }
 @FXML
 private void onBatal() {
