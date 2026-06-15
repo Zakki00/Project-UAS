@@ -380,7 +380,7 @@ public class PengaturanController implements Initializable {
     // ── Load info akun ──────────────────────
     private void loadInfoAkun() {
         String sql = "SELECT username, nama_lengkap FROM tb_user WHERE id_user = ?";
-        List<Object[]> data = koneksi.ambilData(sql, session.id_user);
+        List<Object[]> data = koneksi.ambilData(sql, session.id);
 
         if (data.isEmpty()) {
             return;

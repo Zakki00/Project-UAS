@@ -860,10 +860,10 @@ public class TransaksiController implements Initializable {
 
         if (pembayaraanQris) {
             String sqlTransaksi = "INSERT INTO tb_transaksi "
-                    + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                    + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                     + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
 
-            koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, TransaksiModel.total, 0, 0,
+            koneksi.eksekusiQuery(sqlTransaksi, session.id, TransaksiModel.total, TransaksiModel.total, 0, 0,
                     "Lunas",
                     "");
 
@@ -878,20 +878,20 @@ public class TransaksiController implements Initializable {
                 if (kembalian >= 0) {
 
                     String sqlTransaksi = "INSERT INTO tb_transaksi "
-                            + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                            + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                             + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
 
-                    koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, kembalian, 0,
+                    koneksi.eksekusiQuery(sqlTransaksi, session.id, TransaksiModel.total, tunai, kembalian, 0,
                             "Lunas",
                             "");
 
                 } else {
 
                     String sqlTransaksi = "INSERT INTO tb_transaksi "
-                            + "(id_user, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                            + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
                             + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
 
-                    koneksi.eksekusiQuery(sqlTransaksi, session.id_user, TransaksiModel.total, tunai, 0,
+                    koneksi.eksekusiQuery(sqlTransaksi, session.id, TransaksiModel.total, tunai, 0,
                             Math.abs(kembalian),
                             "Belum Lunas", "");
                 }

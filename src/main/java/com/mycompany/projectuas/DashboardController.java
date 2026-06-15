@@ -594,12 +594,12 @@ public class DashboardController implements Initializable {
                     SUM(dt.jumlah) AS total_item,
                     SUM(t.total_pembayaran - t.kekurangan) AS total_pendapatan
                 FROM tb_transaksi t
-                JOIN tb_user u ON t.id_user = u.id_user
+                JOIN tb_karyawan u ON t.id_karyawan = u.id_karyawan
                 JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
                 WHERE DATE(t.tanggal_transaksi) = DATE('now','localtime')
                 AND TIME(t.tanggal_transaksi) BETWEEN '""" + jamMulai + "' AND '" + jamSelesai + """
                     '
-                    GROUP BY u.id_user, u.username, u.nama_lengkap
+                    GROUP BY u.id_karyawan, u.username, u.nama_lengkap
                     ORDER BY total_pendapatan DESC LIMIT 1
                 """;
         List<Object[]> data = koneksi.ambilData(sql);

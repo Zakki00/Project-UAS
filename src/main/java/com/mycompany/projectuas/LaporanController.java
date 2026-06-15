@@ -482,7 +482,7 @@ public class LaporanController implements Initializable {
                         COUNT(DISTINCT CASE WHEN dt.id_barang IS NOT NULL THEN dt.id_detail END) AS jumlah_item,
                         COALESCE(SUM(DISTINCT pp.durasi), 0) AS total_durasi_ps
                     FROM tb_transaksi t
-                    JOIN tb_user u ON t.id_user = u.id_user
+                    JOIN tb_karyawan u ON t.id_karyawan = u.id_karyawan
                     LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
                     LEFT JOIN tb_paket_ps pp ON t.id_transaksi = pp.id_transaksi
                     WHERE 1=1
@@ -861,7 +861,7 @@ public class LaporanController implements Initializable {
         String sql = """
                     SELECT DISTINCT u.nama_lengkap
                     FROM tb_transaksi t
-                    JOIN tb_user u ON u.id_user = t.id_user
+                    JOIN tb_karyawan u ON u.id_karyawan = t.id_karyawan
                     WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
                       AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
                     ORDER BY u.nama_lengkap

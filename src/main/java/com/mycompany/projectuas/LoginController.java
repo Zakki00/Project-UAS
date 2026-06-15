@@ -60,18 +60,23 @@ public class LoginController implements Initializable {
         setupform();
 
     }
-    
+
+
+
+
+    //=========================================
+    // CEK APAKAH APLIKASI SUDAH MEMLIKI OWNER
+    //=========================================
 
     void setupform() {
-
         // Sync PasswordField <-> TextField untuk show/hide password
         passwordVisible.textProperty().bindBidirectional(passwordField.textProperty());
         loginBtn.setDefaultButton(true);
 
-        //seleksi data 
+        // seleksi data
         String sql_admin = "SELECT * FROM tb_user WHERE role = 'Admin'";
         List<Object[]> admin = koneksi.ambilData(sql_admin);
-        String Admin = prefs.get("Admin",null);
+        String Admin = prefs.get("Admin", null);
         if (Admin == null || admin.isEmpty()) {
             System.out.print("Admin Belum Di Daftarkan Sebagai Pemilik Aplikasi" + Admin);
             btnGoogle.setVisible(true);
@@ -85,7 +90,7 @@ public class LoginController implements Initializable {
             System.out.println("Admin Sudah Daftarkan Sebagai Pemilik Aplikasi");
             btnGoogle.setVisible(false);
             btnGoogle.setManaged(false);
-            session.id_user = (int) admin.get(0)[0];
+            session.id = (int) admin.get(0)[0];
             session.username = (String) admin.get(0)[1];
             session.nama = (String) admin.get(0)[3];
             session.role = (String) admin.get(0)[4];
@@ -93,6 +98,12 @@ public class LoginController implements Initializable {
         }
 
     }
+
+
+
+    // ==========================================
+    // HANDLE LOGIN MENGGUNAKAN GOOGLE
+    // ==========================================
 
     @FXML
     private void onLoginGoogle() {
@@ -119,7 +130,7 @@ public class LoginController implements Initializable {
                         if (!hasil.isEmpty()) {
                             Object[] row = hasil.get(0);
 
-                            session.id_user = (int) row[0];
+                            session.id = (int) row[0];
                             session.username = (String) row[1];
                             session.nama = (String) row[2];
                             session.role = (String) row[3];
@@ -129,7 +140,7 @@ public class LoginController implements Initializable {
                             nav.navigateToDashboard();
                             Stage stage = (Stage) btnGoogle.getScene().getWindow();
                             stage.close();
-                            
+
                             // // ── Tampilkan popup sukses dengan nama user ─────────────────
                             popupHelper.showGoogleSuccessPopup("Selamat Datang Kembali",
                                     "Selamat datang, " + user.getName() + "!", user);
@@ -141,9 +152,8 @@ public class LoginController implements Initializable {
                             nav.navigateToSignup();
                             Stage stage = (Stage) btnGoogle.getScene().getWindow();
                             stage.close();
-                           
-                        }
 
+                        }
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -171,48 +181,141 @@ public class LoginController implements Initializable {
                 });
     }
 
+
+    //==========================================
+    // HANDLE LOGIN UMUM
+    //==========================================
+
+
     @FXML
     private void handleLogin(ActionEvent event) {
 
         String username = usernameField.getText().trim();
-        String password = showingPassword ? passwordVisible.getText() : passwordField.getText();
+        String password = showingPassword
+                ? passwordVisible.getText()
+                : passwordField.getText();
 
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Perhatian", "Username dan password tidak boleh kosong.");
+
+            Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
+
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username dan Password tidak boleh kosong",
+                    Popup.PopupType.WARNING,
+                    ownerStage);
+
             return;
         }
 
-        String query = "SELECT * FROM tb_user WHERE username = ? AND password = ?";
-        List<Object[]> result = koneksi.ambilData(query, username, hashPassword(password));
+        String hashedPassword = hashPassword(password);
 
-        if (result.size() > 0) {
+        // ==========================
+        // CEK TB_USER
+        // ==========================
+        String queryUser = """
+                SELECT *
+                FROM tb_user
+                WHERE username = ? AND password = ?
+                """;
 
-            session.id_user = (int) result.get(0)[0];
-            session.username = (String) result.get(0)[1];
-            session.nama = (String) result.get(0)[3];
-            session.role = (String) result.get(0)[4];
-            session.email = (String) result.get(0)[5];
+        List<Object[]> resultUser = koneksi.ambilData(
+                queryUser,
+                username,
+                hashedPassword);
+
+        if (!resultUser.isEmpty()) {
+
+            session.id = resultUser.get(0)[0];
+            session.username = (String) resultUser.get(0)[1];
+            session.nama = (String) resultUser.get(0)[3];
+            session.role = (String) resultUser.get(0)[4];
+            session.email = (String) resultUser.get(0)[5];
 
             if (rememberMe.isSelected()) {
                 prefs.put("username", username);
                 prefs.put("password", password);
                 prefs.putBoolean("remember", true);
-                System.out.println("Memory saved: " + username + " / " + password);
             } else {
                 prefs.remove("username");
                 prefs.remove("password");
                 prefs.putBoolean("remember", false);
             }
 
+            Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
+
+            new Popup().showModernPopup(
+                    "SUCCESS",
+                    "Login berhasil, selamat datang " + session.nama,
+                    Popup.PopupType.SUCCESS,
+                    ownerStage);
+
             navigation nav = new navigation();
             nav.navigateToDashboard();
 
-            Stage stage = (Stage) loginBtn.getScene().getWindow();
-            stage.close();
-
-        } else {
-            showAlert(Alert.AlertType.ERROR, "Gagal Masuk", "Username atau password salah.");
+            ownerStage.close();
+            return;
         }
+
+        // ==========================
+        // CEK TB_KARYAWAN
+        // ==========================
+        String queryKaryawan = """
+                SELECT *
+                FROM tb_karyawan
+                WHERE username = ?
+                  AND password = ?
+                  AND status_kerja = 'Aktif'
+                """;
+
+        List<Object[]> resultKaryawan = koneksi.ambilData(
+                queryKaryawan,
+                username,
+                hashedPassword);
+
+        if (!resultKaryawan.isEmpty()) {
+
+            session.id = resultKaryawan.get(0)[0];
+            session.username = (String) resultKaryawan.get(0)[1];
+            session.nama = (String) resultKaryawan.get(0)[3];
+            session.role = (String) resultKaryawan.get(0)[9];
+            session.email = "";
+
+            if (rememberMe.isSelected()) {
+                prefs.put("username", username);
+                prefs.put("password", password);
+                prefs.putBoolean("remember", true);
+            } else {
+                prefs.remove("username");
+                prefs.remove("password");
+                prefs.putBoolean("remember", false);
+            }
+
+            Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
+
+            new Popup().showModernPopup(
+                    "SUCCESS",
+                    "Login berhasil, selamat datang " + session.nama,
+                    Popup.PopupType.SUCCESS,
+                    ownerStage);
+
+            navigation nav = new navigation();
+            nav.navigateToDashboard();
+
+            ownerStage.close();
+            return;
+        }
+
+        // ==========================
+        // GAGAL LOGIN
+        // ==========================
+        Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
+
+        new Popup().showModernPopup(
+                "ERROR",
+                "Username atau Password salah",
+                Popup.PopupType.ERROR,
+                ownerStage);
     }
 
     @FXML
@@ -263,6 +366,11 @@ public class LoginController implements Initializable {
             rememberMe.setSelected(true);
         }
     }
+
+
+    //=================================
+    //HASHING PASWORD
+    //=================================
 
     public String hashPassword(String password) {
         try {
