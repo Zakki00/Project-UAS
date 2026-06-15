@@ -728,7 +728,7 @@ public class KaryawanController implements Initializable {
             if (bt == ButtonType.YES) {
 
                 koneksi.eksekusiQuery(
-                        "DELETE FROM karyawan WHERE id_karyawan=?",
+                        "DELETE FROM tb_karyawan WHERE id_karyawan=?",
                         selected.getIdKaryawan());
 
                 karyawanList.remove(selected);
@@ -842,7 +842,7 @@ public class KaryawanController implements Initializable {
         confirm.showAndWait().ifPresent(bt -> {
             if (bt == ButtonType.YES) {
                 koneksi.eksekusiQuery(
-                        "DELETE FROM absensi WHERE id_absensi=?",
+                        "DELETE FROM tb_absensi WHERE id_absensi=?",
                         selected.getIdAbsensi());
                 absensiList.remove(selected);
                 resetAbsensi();
