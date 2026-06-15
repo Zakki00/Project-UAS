@@ -63,6 +63,8 @@ public class DashboardController implements Initializable {
     @FXML
     private HBox navProduk;
     @FXML
+    private HBox navKaryawan;
+    @FXML
     private HBox navKasir;
     @FXML
     private HBox navLaporan;
@@ -70,8 +72,7 @@ public class DashboardController implements Initializable {
     private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
-    @FXML
-    private HBox navKaryawan;
+   
 
     // Nav labels
     @FXML
@@ -79,14 +80,18 @@ public class DashboardController implements Initializable {
     @FXML
     private Label navLblProduk;
     @FXML
+    private Label navLblKaryawan;
+    @FXML
     private Label navLblKasir;
+    
+    @FXML
+    private Label navLblPiutang;
 
     @FXML
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
-    @FXML
-    private Label navLblKaryawan;
+   
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI ORIGINAL
@@ -321,7 +326,7 @@ public class DashboardController implements Initializable {
     private void setNavLabelsVisible(boolean visible) {
 
         List<Label> labels = List.of(
-                navLblDashboard, navLblProduk, navLblKasir,
+                navLblDashboard, navLblProduk,navLblKaryawan, navLblKasir, navLblPiutang,
              navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
@@ -331,7 +336,7 @@ public class DashboardController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk,navKaryawan,navKasir,navPiutang,navLaporan,navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -384,10 +389,8 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavKaryawan() {
         setActiveNav(navKaryawan);
-        navigation nav = new navigation();
-        nav.navigationToKaryawan();
-        Stage stage = (Stage) navKaryawan.getScene().getWindow();
-        stage.close();
+        new navigation().navigationToKaryawan();
+        ((Stage) navKaryawan.getScene().getWindow()).close();   
     }
 
     private void setActiveNav(HBox selected) {

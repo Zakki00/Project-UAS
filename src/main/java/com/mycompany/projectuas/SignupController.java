@@ -199,7 +199,7 @@ public class SignupController implements Initializable {
             navigation nav = new navigation();
             nav.navigateToDashboard();
             Stage stage = (Stage) loginBtn.getScene().getWindow();
-            popupHelper.showGoogleSuccessPopup("Selamat Datang", "Selamat Datang" + googleUser.getName(), googleUser);
+            popupHelper.showGoogleSuccessPopup("Selamat Datang", "Selamat Datang " + googleUser.getName(), googleUser);
             stage.close();
 
         } catch (Exception e) {

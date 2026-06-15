@@ -67,7 +67,7 @@
                      <children>
                         <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
                         <Label styleClass="nav-icon" text="💰" />
-                        <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Piutang" />
+                        <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang" />
                      </children>
                   </HBox>
                   <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
@@ -81,7 +81,7 @@
                      <children>
                         <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
                         <Label styleClass="nav-icon" text="⚙️" />
-                        <Label fx:id="navLblPengaturan1" styleClass="nav-label" text="Pengaturan" />
+                        <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Pengaturan" />
                      </children>
                   </HBox>
                </children>

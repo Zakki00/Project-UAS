@@ -31,7 +31,7 @@
           </children>
         </HBox>
         <Separator styleClass="sidebar-divider" />
-            <VBox fx:id="navMenu" prefHeight="735.0" prefWidth="219.0" spacing="2" styleClass="nav-menu">
+        <VBox fx:id="navMenu" prefHeight="735.0" prefWidth="219.0" spacing="2" styleClass="nav-menu">
                <children>
                   <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
                      <children>
@@ -65,7 +65,7 @@
                      <children>
                         <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
                         <Label styleClass="nav-icon" text="💰" />
-                        <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Piutang" />
+                        <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang" />
                      </children>
                   </HBox>
                   <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
@@ -83,7 +83,7 @@
                      </children>
                   </HBox>
                </children>
-            </VBox>
+        </VBox>
         <Separator styleClass="sidebar-divider" />
         <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
           <children>
@@ -208,9 +208,9 @@
                       <Button fx:id="btnMenPlus" onAction="#onMenitPlus" styleClass="spinner-btn" text="+" />
                     </HBox>
                   </VBox>
-                           <padding>
-                              <Insets bottom="20.0" />
-                           </padding>
+                  <padding>
+                    <Insets bottom="20.0" />
+                  </padding>
                 </HBox>
               </VBox>
               <!-- ── SUMMARY HARGA ── -->

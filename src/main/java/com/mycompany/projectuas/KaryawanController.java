@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.AbsensiModel;
+import com.mycompany.Model.KaryawanModel;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

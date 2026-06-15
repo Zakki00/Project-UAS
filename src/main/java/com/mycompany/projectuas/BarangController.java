@@ -19,6 +19,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
 import javafx.animation.PauseTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -55,6 +56,21 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+import javafx.scene.Node;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.shape.Rectangle;
+
 
 public class BarangController implements Initializable {
 
@@ -92,42 +108,66 @@ public class BarangController implements Initializable {
     @FXML
     private TableColumn<BarangModel, String> colStatus;
 
+    // ═══════════════════════════════════════════════════════
+    // FXML — SIDEBAR
+    // ═══════════════════════════════════════════════════════
     @FXML
     private VBox sidebar;
     @FXML
+    private HBox logoRow;
+    @FXML
     private VBox logoBrand;
+    @FXML
+    private VBox userInfo;
+    @FXML
+    private HBox userRow;
     @FXML
     private Button toggleBtn;
     @FXML
-    private Label navLblDashboard;
-    @FXML
-    private Label navLblProduk;
-    @FXML
-    private Label navLblKasir;
-    @FXML
-    private Label navLblPelanggan;
-    @FXML
-    private Label navLblLaporan;
-    @FXML
-    private Label navLblPengaturan;
-    @FXML
-    private Label navLblPengaturan1;
-    @FXML
-    private VBox userInfo;
+    private VBox navMenu;
 
+    // Nav items
     @FXML
     private HBox navDashboard;
     @FXML
     private HBox navProduk;
     @FXML
+    private HBox navKaryawan;
+    @FXML
     private HBox navKasir;
- 
     @FXML
     private HBox navLaporan;
     @FXML
     private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
+
+    // Nav labels
+    @FXML
+    private Label navLblDashboard;
+    @FXML
+    private Label navLblProduk;
+    @FXML
+    private Label navLblKaryawan;
+    @FXML
+    private Label navLblKasir;
+
+    @FXML
+    private Label navLblPiutang;
+
+    @FXML
+    private Label navLblLaporan;
+    @FXML
+    private Label navLblPengaturan;
+
+
+    // ═══════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════
+    private boolean sidebarCollapsed = false;
+    private static final double SIDEBAR_FULL = 220;
+    private static final double SIDEBAR_MINI = 60;
+
 
     private ObservableList<BarangModel> masterData = FXCollections.observableArrayList();
     private FilteredList<BarangModel> filteredData;
@@ -293,6 +333,7 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        setupNavHover();
         cmbKategori.setItems(FXCollections.observableArrayList("Makanan", "Minuman"));
 
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -656,101 +697,144 @@ public class BarangController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════
+   
+
+    // ═══════════════════════════════════════════════════════
     // SIDEBAR TOGGLE
-    // ═══════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
     @FXML
-    void onToggleSidebar(ActionEvent event) {
-        if (isSidebarExpanded) {
-            sidebar.setPrefWidth(60);
-            logoBrand.setVisible(false);
-            userInfo.setVisible(false);
+    private void onToggleSidebar() {
+        sidebarCollapsed = !sidebarCollapsed;
+        double targetWidth = sidebarCollapsed ? SIDEBAR_MINI : SIDEBAR_FULL;
+        Timeline timeline = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
+                        new KeyValue(sidebar.minWidthProperty(), sidebar.getMinWidth())),
+                new KeyFrame(Duration.millis(350),
+                        new KeyValue(sidebar.prefWidthProperty(), targetWidth),
+                        new KeyValue(sidebar.minWidthProperty(), targetWidth)));
+        if (sidebarCollapsed) {
+            hideSidebarText();
             toggleBtn.setText("▶");
-            setNavLabelsVisible(false);
-            isSidebarExpanded = false;
+            logoRow.setAlignment(Pos.CENTER);
+            logoRow.setPadding(new Insets(18, 0, 18, 0));
+            userRow.setAlignment(Pos.CENTER);
+            userRow.setPadding(new Insets(12, 0, 12, 0));
         } else {
-            sidebar.setPrefWidth(220);
-            logoBrand.setVisible(true);
-            userInfo.setVisible(true);
+            timeline.setOnFinished(e -> {
+                showSidebarText();
+                logoRow.setAlignment(Pos.CENTER_LEFT);
+                logoRow.setPadding(new Insets(18, 16, 18, 16));
+                userRow.setAlignment(Pos.CENTER_LEFT);
+                userRow.setPadding(new Insets(12, 16, 12, 16));
+            });
             toggleBtn.setText("◀");
-            setNavLabelsVisible(true);
-            isSidebarExpanded = true;
         }
+        updateNavPadding(sidebarCollapsed);
+        timeline.play();
+    }
+
+    private void hideSidebarText() {
+        logoBrand.setVisible(false);
+        logoBrand.setManaged(false);
+        userInfo.setVisible(false);
+        userInfo.setManaged(false);
+        setNavLabelsVisible(false);
+    }
+
+    private void showSidebarText() {
+        logoBrand.setVisible(true);
+        logoBrand.setManaged(true);
+        userInfo.setVisible(true);
+        userInfo.setManaged(true);
+        setNavLabelsVisible(true);
     }
 
     private void setNavLabelsVisible(boolean visible) {
-        navLblDashboard.setVisible(visible);
-        navLblProduk.setVisible(visible);
-        navLblKasir.setVisible(visible);
-        navLblPelanggan.setVisible(visible);
-        navLblLaporan.setVisible(visible);
-        navLblPengaturan.setVisible(visible);
-        navLblPengaturan1.setVisible(visible);
+
+        List<Label> labels = List.of(
+                navLblDashboard, navLblProduk,navLblKaryawan, navLblKasir, navLblPiutang,
+             navLblLaporan, navLblPengaturan);
+        for (Label lbl : labels) {
+            lbl.setVisible(visible);
+            lbl.setManaged(visible);
+        }
     }
 
-    // ═══════════════════════════════════════════
-    // NAVIGASI SIDEBAR
-    // ═══════════════════════════════════════════
+    private void updateNavPadding(boolean collapsed) {
+        Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
+        List<HBox> items = List.of(navDashboard, navProduk,navKaryawan,navKasir,navPiutang,navLaporan,navPengaturan);
+        for (HBox item : items) {
+            item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
+            item.setPadding(pad);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // NAV HANDLERS
+    // ═══════════════════════════════════════════════════════
     @FXML
-    void onNavDashboard() {
+    private void onNavDashboard() {
         setActiveNav(navDashboard);
-        navigation nav = new navigation();
-        nav.navigateToDashboard();
-        Stage stage = (Stage) navDashboard.getScene().getWindow();
-        stage.close();
     }
 
     @FXML
-    void onNavProduk() {
+    private void onNavProduk() {
         setActiveNav(navProduk);
-
+        new navigation().navigateToProduk();
+        ((Stage) navProduk.getScene().getWindow()).close();
     }
 
     @FXML
-    void onNavKasir() {
+    private void onNavKasir() {
         setActiveNav(navKasir);
-        navigation nav = new navigation();
-        nav.navigateToTransaksi();
-        Stage stage = (Stage) navKasir.getScene().getWindow();
-        stage.close();
+        new navigation().navigateToTransaksi();
+        ((Stage) navKasir.getScene().getWindow()).close();
     }
+
     @FXML
-    void onNavLaporan() {
+    private void onNavLaporan() {
         setActiveNav(navLaporan);
-        navigation nav = new navigation();
-        nav.navigateToLaporan();
-        Stage stage = (Stage) navLaporan.getScene().getWindow();
-        stage.close();
+        new navigation().navigateToLaporan();
+        ((Stage) navLaporan.getScene().getWindow()).close();
     }
 
     @FXML
-    void onNavPiutang() {
+    private void onNavPiutang() {
         setActiveNav(navPiutang);
-        navigation nav = new navigation();
-        nav.navigateToPiutang();
-        Stage stage = (Stage) navPiutang.getScene().getWindow();
-        stage.close();
+        new navigation().navigateToPiutang();
+        ((Stage) navPiutang.getScene().getWindow()).close();
     }
 
     @FXML
-    void onNavPengaturan() {
+    private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-        navigation nav = new navigation();
-        nav.navigataeToPengaturan();
-        Stage stage = (Stage) navPengaturan.getScene().getWindow();
-        stage.close();
+        new navigation().navigataeToPengaturan();
+        ((Stage) navPengaturan.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        new navigation().navigationToKaryawan();
+        ((Stage) navKaryawan.getScene().getWindow()).close();   
     }
 
     private void setActiveNav(HBox selected) {
-        java.util.List<HBox> all = java.util.List.of(
-                navDashboard, navProduk, navKasir,
-                navLaporan, navPiutang, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
                 item.getStyleClass().add("nav-item");
-            
         }
         selected.getStyleClass().add("nav-active");
+    }
+
+    private void setupNavHover() {
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
+        for (HBox item : all) {
+            item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
+            item.setOnMouseExited(e -> item.setStyle(""));
+        }
     }
 }

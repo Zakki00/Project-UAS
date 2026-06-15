@@ -2,23 +2,14 @@ package com.mycompany.projectuas;
 
 import java.net.URL;
 import java.security.MessageDigest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.checkerframework.checker.units.qual.s;
-
-import java.io.IOException;
-
 import com.mycompany.Model.GoogleUser;
-import com.mycompany.services.GoogleAuthService;
 import com.mycompany.services.GoogleDriveService;
-import com.mysql.cj.Session;
 
-import javafx.scene.Parent;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -228,14 +219,20 @@ public class LoginController implements Initializable {
                 hashedPassword);
 
         if (!resultUser.isEmpty()) {
-            GoogleUser sesigoogle = session.googleUser;
+            GoogleUser sesigoogle = new GoogleUser();
+
             session.id = resultUser.get(0)[0];
             session.username = (String) resultUser.get(0)[1];
             session.nama = (String) resultUser.get(0)[3];
             session.role = (String) resultUser.get(0)[4];
             session.email = (String) resultUser.get(0)[5];
+
+            // 🔥 isi semua data GoogleUser
+            sesigoogle.setName((String) resultUser.get(0)[3]);
+            sesigoogle.setEmail((String) resultUser.get(0)[5]);
             sesigoogle.setProfilePictureUrl((String) resultUser.get(0)[6]);
 
+            session.googleUser = sesigoogle;
             if (rememberMe.isSelected()) {
                 prefs.put("username", username);
                 prefs.put("password", password);
@@ -253,7 +250,7 @@ public class LoginController implements Initializable {
             Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
             Popup popupHelper = new Popup();
             popupHelper.showGoogleSuccessPopup("Selamat Datang kembali",
-                    "Selamat datang Kembali, " + sesigoogle.getName() + "!", sesigoogle);
+                    "Selamat datang Kembali, " + session.nama + "!", sesigoogle);
             ownerStage.close();
             return;
         }
