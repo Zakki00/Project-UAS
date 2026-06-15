@@ -50,6 +50,9 @@ public class navigation {
     public void navigateToPiutang() {
         navigateTo("piutang.fxml", "Piutang");
     }
+    public void navigationToKaryawan(){
+        navigateTo("karyawan.fxml", "Karyawan");
+    }
 
     public void navigataeToPengaturan() {
         navigateTo("pengaturan.fxml", "Pengaturan");

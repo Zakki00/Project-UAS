@@ -71,6 +71,8 @@ public class DashboardController implements Initializable {
     private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
+    @FXML
+    private HBox navKaryawan;
 
     // Nav labels
     @FXML
@@ -79,12 +81,13 @@ public class DashboardController implements Initializable {
     private Label navLblProduk;
     @FXML
     private Label navLblKasir;
-    @FXML
-    private Label navLblPelanggan;
+
     @FXML
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navLblKaryawan;
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI ORIGINAL
@@ -117,7 +120,7 @@ public class DashboardController implements Initializable {
     private Label kpiRataRata;
     @FXML
     private Label kpiRataRataInfo;
-    
+
     // ═══════════════════════════════════════════════════════
     // FXML — SHIFT CARDS
     // ═══════════════════════════════════════════════════════
@@ -201,7 +204,6 @@ public class DashboardController implements Initializable {
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
     private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
-
 
     // ═══════════════════════════════════════════════════════
     // INITIALIZE
@@ -312,9 +314,10 @@ public class DashboardController implements Initializable {
     }
 
     private void setNavLabelsVisible(boolean visible) {
+
         List<Label> labels = List.of(
                 navLblDashboard, navLblProduk, navLblKasir,
-                navLblPelanggan, navLblLaporan, navLblPengaturan);
+                navLblKaryawan, navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -323,7 +326,7 @@ public class DashboardController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navKaryawan, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -353,11 +356,6 @@ public class DashboardController implements Initializable {
     }
 
     @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
-    }
-
-    @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
         new navigation().navigateToLaporan();
@@ -378,8 +376,19 @@ public class DashboardController implements Initializable {
         ((Stage) navPengaturan.getScene().getWindow()).close();
     }
 
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        navigation nav = new navigation();
+        nav.navigationToKaryawan();
+        Stage stage = (Stage) navKaryawan.getScene().getWindow();
+        stage.close();
+    }
+
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, 
+                navKaryawan, navLaporan, navPengaturan,
+                navKaryawan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -389,7 +398,8 @@ public class DashboardController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan,
+                navKaryawan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
@@ -545,7 +555,7 @@ public class DashboardController implements Initializable {
             kpiRataRataInfo.setStyle("-fx-text-fill: #00E5A0;");
         }
     }
-    
+
     // ═══════════════════════════════════════════════════════
     // SHIFT DATA
     // ═══════════════════════════════════════════════════════
@@ -624,7 +634,7 @@ public class DashboardController implements Initializable {
             lblPendapatan.setText("Rp " + FMT.format(((Number) row[4]).longValue()));
         }
     }
-    
+
     private void updateStatusDot() {
         int jam = java.time.LocalTime.now().getHour();
         boolean pagiAktif = jam >= 6 && jam < 12;
