@@ -48,6 +48,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -77,7 +78,11 @@ public class LaporanController implements Initializable {
     private Button toggleBtn;
     @FXML
     private VBox navMenu;
+    @FXML
+    private FlowPane flowKasirPagi;
 
+    @FXML
+    private FlowPane flowKasirMalam;
     // Nav items
     @FXML
     private HBox navDashboard;
@@ -85,8 +90,7 @@ public class LaporanController implements Initializable {
     private HBox navProduk;
     @FXML
     private HBox navKasir;
-    @FXML
-    private HBox navPelanggan;
+
     @FXML
     private HBox navLaporan;
     @FXML
@@ -101,8 +105,6 @@ public class LaporanController implements Initializable {
     private Label navLblProduk;
     @FXML
     private Label navLblKasir;
-    @FXML
-    private Label navLblPelanggan;
     @FXML
     private Label navLblLaporan;
     @FXML
@@ -205,6 +207,10 @@ public class LaporanController implements Initializable {
     private Label lblTrxPagi;
     @FXML
     private Label lblItemPagi;
+    @FXML
+    private Label lblPaketPSPagi;
+    @FXML
+    private Label lblPaketPSMalam;
     @FXML
     private Label lblPendapatanPagi;
     @FXML
@@ -374,7 +380,7 @@ public class LaporanController implements Initializable {
     private void setNavLabelsVisible(boolean visible) {
         List<Label> labels = List.of(
                 navLblDashboard, navLblProduk, navLblKasir,
-                navLblPelanggan, navLblLaporan, navLblPengaturan);
+                navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -383,7 +389,7 @@ public class LaporanController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -415,11 +421,6 @@ public class LaporanController implements Initializable {
     }
 
     @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
-    }
-
-    @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
     }
@@ -439,7 +440,7 @@ public class LaporanController implements Initializable {
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -449,7 +450,7 @@ public class LaporanController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
@@ -481,7 +482,7 @@ public class LaporanController implements Initializable {
                         COUNT(DISTINCT CASE WHEN dt.id_barang IS NOT NULL THEN dt.id_detail END) AS jumlah_item,
                         COALESCE(SUM(DISTINCT pp.durasi), 0) AS total_durasi_ps
                     FROM tb_transaksi t
-                    JOIN tb_user u ON t.id_user = u.id_user
+                    JOIN tb_karyawan u ON t.id_karyawan = u.id_karyawan
                     LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
                     LEFT JOIN tb_paket_ps pp ON t.id_transaksi = pp.id_transaksi
                     WHERE 1=1
@@ -771,48 +772,119 @@ public class LaporanController implements Initializable {
     // SHIFT DATA
     // ═══════════════════════════════════════════════════════
     private void loadShiftData() {
-        loadShift("06:00:00", "12:00:00",
-                lblUsernamePagi, lblNamaPagi, lblTrxPagi,
-                lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
-        loadShift("12:00:00", "21:00:00",
-                lblUsernameMalam, lblNamaMalam, lblTrxMalam,
-                lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
+
+        loadShift(
+                "06:00:00",
+                "12:00:00",
+                lblTrxPagi,
+                lblItemPagi,
+                lblPaketPSPagi,
+                lblPendapatanPagi,
+                lblJamPagi,
+                "06:00 — 12:00");
+
+        loadShift(
+                "12:00:00",
+                "23:00:00",
+                lblTrxMalam,
+                lblItemMalam,
+                lblPaketPSMalam,
+                lblPendapatanMalam,
+                lblJamMalam,
+                "12:00 — 21:00");
+
+        loadKasirShift(
+                "06:00:00",
+                "12:00:00",
+                flowKasirPagi);
+
+        loadKasirShift(
+                "12:00:00",
+                "23:00:00",
+                flowKasirMalam);
+
         updateStatusDot();
     }
 
     private void loadShift(String jamMulai, String jamSelesai,
-            Label lblUsername, Label lblNama, Label lblTrx,
-            Label lblItem, Label lblPendapatan, Label lblStatus,
-            Label lblJam, String jamText) {
+            Label lblTrx,
+            Label lblItem,
+            Label lblPaketPS,
+            Label lblPendapatan,
+            Label lblJam,
+            String jamText) {
+
         String sql = """
-                SELECT u.username, u.nama_lengkap,
-                    COUNT(t.id_transaksi) AS total_trx,
-                    SUM(dt.jumlah) AS total_item,
-                    SUM(t.total_pembayaran - t.kekurangan) AS total_pendapatan
-                FROM tb_transaksi t
-                JOIN tb_user u ON t.id_user = u.id_user
-                JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                WHERE DATE(t.tanggal_transaksi) = DATE('now','localtime')
-                AND TIME(t.tanggal_transaksi) BETWEEN '""" + jamMulai + "' AND '" + jamSelesai + """
-                    '
-                    GROUP BY u.id_user, u.username, u.nama_lengkap
-                    ORDER BY total_pendapatan DESC LIMIT 1
+                    SELECT
+                        COUNT(DISTINCT t.id_transaksi) AS total_trx,
+                        COALESCE(SUM(dt.jumlah),0) AS total_item,
+                        COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
+                        COALESCE(SUM(t.uang_pembayaran - t.kembalian),0) AS pendapatan
+                    FROM tb_transaksi t
+                    LEFT JOIN tb_detail_transaksi dt
+                        ON t.id_transaksi = dt.id_transaksi
+                    LEFT JOIN tb_paket_ps ps
+                        ON t.id_transaksi = ps.id_transaksi
+                    WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                      AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
                 """;
-        List<Object[]> data = koneksi.ambilData(sql);
+
+        List<Object[]> data = koneksi.ambilData(
+                sql,
+                jamMulai,
+                jamSelesai);
+
         lblJam.setText(jamText);
+
         if (data.isEmpty()) {
-            lblUsername.setText("Tidak ada kasir");
-            lblNama.setText("-");
             lblTrx.setText("0");
             lblItem.setText("0 unit");
+            lblPaketPS.setText("0");
             lblPendapatan.setText("Rp 0");
-        } else {
-            Object[] row = data.get(0);
-            lblUsername.setText(String.valueOf(row[0]));
-            lblNama.setText(String.valueOf(row[1]));
-            lblTrx.setText(String.valueOf(((Number) row[2]).intValue()));
-            lblItem.setText(((Number) row[3]).intValue() + " unit");
-            lblPendapatan.setText("Rp " + FMT.format(((Number) row[4]).longValue()));
+            return;
+        }
+        
+
+        Object[] row = data.get(0);
+
+        lblTrx.setText(String.valueOf(((Number) row[0]).intValue()));
+        lblItem.setText(((Number) row[1]).intValue() + " unit");
+        lblPaketPS.setText(String.valueOf(((Number) row[2]).intValue()));
+        lblPendapatan.setText("Rp " + FMT.format(((Number) row[3]).longValue()));
+    }
+
+    private void loadKasirShift(
+            String jamMulai,
+            String jamSelesai,
+            FlowPane flowPane) {
+
+        String sql = """
+                    SELECT DISTINCT u.nama_lengkap
+                    FROM tb_transaksi t
+                    JOIN tb_karyawan u ON u.id_karyawan = t.id_karyawan
+                    WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                      AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
+                    ORDER BY u.nama_lengkap
+                """;
+
+        List<Object[]> data = koneksi.ambilData(
+                sql,
+                jamMulai,
+                jamSelesai);
+
+        flowPane.getChildren().clear();
+
+        if (data.isEmpty()) {
+            Label chip = new Label("Tidak ada kasir");
+            chip.getStyleClass().add("kasir-chip");
+            flowPane.getChildren().add(chip);
+            return;
+        }
+
+        for (Object[] row : data) {
+            Label chip = new Label(String.valueOf(row[0]));
+            chip.getStyleClass().add("kasir-chip");
+            flowPane.getChildren().add(chip);
         }
     }
 
@@ -1103,10 +1175,16 @@ public class LaporanController implements Initializable {
 
     /** Pie: Lunas vs Belum Lunas hari ini */
     private void loadPiePiutang() {
-        List<Object[]> lunas = koneksi.ambilData(
-                "SELECT COUNT(*) FROM tb_transaksi WHERE status_pembayaran = 'Lunas' AND DATE(tanggal_transaksi) = DATE('now','localtime')");
-        List<Object[]> belum = koneksi.ambilData(
-                "SELECT COUNT(*) FROM tb_transaksi WHERE status_pembayaran != 'Lunas' AND DATE(tanggal_transaksi) = DATE('now','localtime')");
+        List<Object[]> lunas = koneksi.ambilData("""
+                    SELECT COUNT(*) FROM tb_transaksi
+                    WHERE status_pembayaran = 'Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime')
+                """);
+        List<Object[]> belum = koneksi.ambilData("""
+                    SELECT COUNT(*) FROM tb_transaksi
+                    WHERE status_pembayaran != 'Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime')
+                """);
         int jLunas = (!lunas.isEmpty() && lunas.get(0)[0] != null) ? ((Number) lunas.get(0)[0]).intValue() : 0;
         int jBelum = (!belum.isEmpty() && belum.get(0)[0] != null) ? ((Number) belum.get(0)[0]).intValue() : 0;
         piePiutang.getData().clear();
@@ -1118,6 +1196,11 @@ public class LaporanController implements Initializable {
         piePiutang.getData().add(new PieChart.Data("Belum Lunas (" + jBelum + ")", jBelum));
         piePiutang.setAnimated(true);
         piePiutang.setLabelsVisible(true);
+        piePiutang.setMinWidth(280);
+        piePiutang.setMinWidth(280);
+        piePiutang.setPrefWidth(280);
+        piePiutang.setPrefHeight(280);
+        piePiutang.setMinHeight(280);
         animateScaleFadeIn(piePiutang, 150);
         Platform.runLater(() -> {
             if (piePiutang.getData().size() >= 2) {
@@ -1258,10 +1341,11 @@ public class LaporanController implements Initializable {
         pieKomposisi.setAnimated(true);
         pieKomposisi.setLabelsVisible(true);
         String[] colors = { "#6C63FF", "#00D4FF" };
+        final double gt = grandTotal;
         Platform.runLater(() -> {
             if (pieKomposisi.getData().size() >= 2) {
-                pieKomposisi.getData().get(0).getNode().setStyle("-fx-pie-color: #00E5A0;");
-                pieKomposisi.getData().get(1).getNode().setStyle("-fx-pie-color: #FF5C7C;");
+                pieKomposisi.getData().get(0).getNode().setStyle("-fx-pie-color: #6C63FF;");
+                pieKomposisi.getData().get(1).getNode().setStyle("-fx-pie-color: #00D4FF;");
 
                 // Fix warna legend
                 javafx.scene.chart.PieChart.Data d0 = pieKomposisi.getData().get(0);
@@ -1278,11 +1362,11 @@ public class LaporanController implements Initializable {
                 });
             }
         });
+        // Summary box kanan
         VBox summaryBox = new VBox(10);
         summaryBox.setAlignment(Pos.CENTER);
         summaryBox.setUserData("komposisi-summary");
         HBox.setHgrow(summaryBox, Priority.ALWAYS);
-        final double gt = grandTotal;
         for (int i = 0; i < data.size(); i++) {
             String kategori = data.get(i)[0].toString();
             double total = ((Number) data.get(i)[1]).doubleValue();

@@ -181,22 +181,25 @@ public class SignupController implements Initializable {
         prefs.put("Admin", role);
 
         try {
-            String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role,email) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role,email,foto_profil) VALUES (?, ?, ?, ?, ?,?)";
             koneksi.eksekusiQuery(sql,
                     username,
                     hashPassword(password),
                     nama,
                     role,
-                    googleUser.getEmail());
+                    googleUser.getEmail(),
+                    googleUser.getProfilePictureUrl());
 
-            popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
-                    "Selamat datang, " + googleUser.getName() + "!", googleUser);
+            
 
             System.out.println("Google User: " + googleUser.getEmail() + " - " + googleUser.getName());
-
+            prefs.put("username", username);
+            prefs.put("password", password);
+            prefs.putBoolean("remember", true);
             navigation nav = new navigation();
-            nav.navigateToLogin();
+            nav.navigateToDashboard();
             Stage stage = (Stage) loginBtn.getScene().getWindow();
+            popupHelper.showGoogleSuccessPopup("Selamat Datang", "Selamat Datang" + googleUser.getName(), googleUser);
             stage.close();
 
         } catch (Exception e) {
@@ -234,16 +237,7 @@ public class SignupController implements Initializable {
         lbl.setVisible(false);
         lbl.setManaged(false);
     }
-
-    private void showAlert(String title, String msg) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
-    }
-
+    
     // Hash password pakai SHA-256
     private String hashPassword(String password) {
         try {

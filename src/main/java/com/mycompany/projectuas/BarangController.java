@@ -121,8 +121,7 @@ public class BarangController implements Initializable {
     private HBox navProduk;
     @FXML
     private HBox navKasir;
-    @FXML
-    private HBox navPelanggan;
+ 
     @FXML
     private HBox navLaporan;
     @FXML
@@ -715,12 +714,6 @@ public class BarangController implements Initializable {
         Stage stage = (Stage) navKasir.getScene().getWindow();
         stage.close();
     }
-
-    @FXML
-    void onNavPelanggan() {
-        setActiveNav(navPelanggan);
-    }
-
     @FXML
     void onNavLaporan() {
         setActiveNav(navLaporan);
@@ -751,11 +744,12 @@ public class BarangController implements Initializable {
     private void setActiveNav(HBox selected) {
         java.util.List<HBox> all = java.util.List.of(
                 navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPiutang, navPengaturan);
+                navLaporan, navPiutang, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
                 item.getStyleClass().add("nav-item");
+            
         }
         selected.getStyleClass().add("nav-active");
     }

@@ -28,6 +28,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mycompany.Model.GoogleUser;
+import com.mycompany.projectuas.session;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -404,7 +405,12 @@ public class GoogleAuthService {
 
                         System.out.println("Credential tersimpan = " + (credential != null));
                         GoogleUser fetchedUser = getUserInfo(credential);
+                        java.util.prefs.Preferences prefs = java.util.prefs.Preferences
+                                .userNodeForPackage(session.class);
 
+                        prefs.put("google_name", fetchedUser.getName());
+                        prefs.put("google_email", fetchedUser.getEmail());
+                        prefs.put("google_photo", fetchedUser.getProfilePictureUrl());
                         user = fetchedUser;
                         sendHtml(exchange,
                                 buildSuccessHtml(fetchedUser.getName(), fetchedUser.getProfilePictureUrl()), 200);

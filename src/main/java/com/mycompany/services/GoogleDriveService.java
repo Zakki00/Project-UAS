@@ -1,6 +1,12 @@
 package com.mycompany.services;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.FileContent;
@@ -29,67 +35,159 @@ public class GoogleDriveService {
                 : new File(System.getProperty("user.home") + "/ProjectUAS/tokens/StoredCredential");
     }
 
+    private static File getImageFolder() {
+        String appData = System.getenv("APPDATA");
+        return (appData != null && !appData.isEmpty())
+                ? new File(appData + "\\ProjectUAS\\image-barang")
+                : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang");
+    }
+
+    private static File getImageZipFile() {
+        String appData = System.getenv("APPDATA");
+        return (appData != null && !appData.isEmpty())
+                ? new File(appData + "\\ProjectUAS\\images-backup.zip")
+                : new File(System.getProperty("user.home") + "/ProjectUAS/images-backup.zip");
+    }
+
     // =========================================================================
-    // Upload Backup ke Google Drive
+    // Drive Helper
+    // =========================================================================
+
+    private Drive buildDrive() throws Exception {
+        Credential credential = GoogleAuthService.loadCredential();
+        if (credential == null)
+            throw new Exception("Credential NULL");
+
+        return new Drive.Builder(
+                new ApacheHttpTransport(),
+                GsonFactory.getDefaultInstance(),
+                credential)
+                .setApplicationName("Enjoy Cafe POS")
+                .build();
+    }
+
+    private void hapusFileLama(Drive drive, String namaFile) throws Exception {
+        FileList result = drive.files()
+                .list()
+                .setQ("name='" + namaFile + "' and trashed=false")
+                .setFields("files(id,name)")
+                .execute();
+
+        for (com.google.api.services.drive.model.File file : result.getFiles()) {
+            System.out.println("Menghapus file lama: " + file.getName() + " | ID = " + file.getId());
+            drive.files().delete(file.getId()).execute();
+        }
+    }
+
+    private void uploadFileToDrive(Drive drive, File file, String namaFile) throws Exception {
+        com.google.api.services.drive.model.File metadata = new com.google.api.services.drive.model.File();
+        metadata.setName(namaFile);
+
+        FileContent mediaContent = new FileContent("application/octet-stream", file);
+
+        com.google.api.services.drive.model.File uploaded = drive.files()
+                .create(metadata, mediaContent)
+                .setFields("id,name")
+                .execute();
+
+        System.out.println("Upload berhasil | ID = " + uploaded.getId() + " | Nama = " + uploaded.getName());
+    }
+
+    private String getFileIdFromDrive(Drive drive, String namaFile) throws Exception {
+        FileList result = drive.files()
+                .list()
+                .setQ("name='" + namaFile + "' and trashed=false")
+                .setFields("files(id,name)")
+                .execute();
+
+        if (result.getFiles().isEmpty())
+            return null;
+        return result.getFiles().get(0).getId();
+    }
+
+    // =========================================================================
+    // ZIP Helper
+    // =========================================================================
+
+    private void zipFolder(File folder, File outputZip) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(outputZip);
+                ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+            File[] files = folder.listFiles();
+            if (files == null || files.length == 0) {
+                System.out.println("Folder gambar kosong, tidak ada yang di-zip.");
+                return;
+            }
+
+            for (File file : files) {
+                if (file.isFile()) {
+                    try (FileInputStream fis = new FileInputStream(file)) {
+                        ZipEntry entry = new ZipEntry(file.getName());
+                        zos.putNextEntry(entry);
+
+                        byte[] buffer = new byte[4096];
+                        int len;
+                        while ((len = fis.read(buffer)) > 0) {
+                            zos.write(buffer, 0, len);
+                        }
+                        zos.closeEntry();
+                    }
+                }
+            }
+        }
+        System.out.println("Zip berhasil: " + outputZip.getAbsolutePath());
+    }
+
+    private void extractZip(File zipFile, File outputFolder) throws IOException {
+        if (!outputFolder.exists())
+            outputFolder.mkdirs();
+
+        try (FileInputStream fis = new FileInputStream(zipFile);
+                ZipInputStream zis = new ZipInputStream(fis)) {
+
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                File outFile = new File(outputFolder, entry.getName());
+
+                try (FileOutputStream fos = new FileOutputStream(outFile)) {
+                    byte[] buffer = new byte[4096];
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+                zis.closeEntry();
+                System.out.println("Extract: " + outFile.getName());
+            }
+        }
+        System.out.println("Extract selesai ke: " + outputFolder.getAbsolutePath());
+    }
+
+    // =========================================================================
+    // Upload Backup Database
     // =========================================================================
 
     public boolean uploadBackup() {
         try {
-            // Cek token
             if (!getTokenFile().exists()) {
                 System.out.println("Token tidak ditemukan: " + getTokenFile().getAbsolutePath());
                 return false;
             }
 
-            Credential credential = GoogleAuthService.loadCredential();
-            if (credential == null) {
-                System.out.println("Credential NULL");
-                return false;
-            }
+            Drive drive = buildDrive();
+            hapusFileLama(drive, "db_enjoy_cafe.db");
 
-            Drive drive = new Drive.Builder(
-                    new ApacheHttpTransport(),
-                    GsonFactory.getDefaultInstance(),
-                    credential)
-                    .setApplicationName("Enjoy Cafe POS")
-                    .build();
-
-            // Hapus file lama di Drive
-            FileList result = drive.files()
-                    .list()
-                    .setQ("name='db_enjoy_cafe.db' and trashed=false")
-                    .setFields("files(id,name)")
-                    .execute();
-
-            for (com.google.api.services.drive.model.File file : result.getFiles()) {
-                System.out.println("Menghapus file lama: " + file.getName() + " | ID = " + file.getId());
-                drive.files().delete(file.getId()).execute();
-            }
-
-            // Cek file yang akan diupload
             File uploadFile = getDbFile();
-            System.out.println("Path = " + uploadFile.getAbsolutePath());
+            System.out.println("Path DB = " + uploadFile.getAbsolutePath());
             System.out.println("Ada File = " + uploadFile.exists());
             System.out.println("Ukuran = " + uploadFile.length());
 
             if (!uploadFile.exists()) {
-                System.out.println("File backup tidak ditemukan");
+                System.out.println("File database tidak ditemukan");
                 return false;
             }
 
-            // Upload file baru
-            com.google.api.services.drive.model.File metadata = new com.google.api.services.drive.model.File();
-            metadata.setName("db_enjoy_cafe.db");
-
-            FileContent mediaContent = new FileContent("application/octet-stream", uploadFile);
-
-            com.google.api.services.drive.model.File uploadedFile = drive.files()
-                    .create(metadata, mediaContent)
-                    .setFields("id,name")
-                    .execute();
-
-            System.out
-                    .println("Upload berhasil | ID = " + uploadedFile.getId() + " | Nama = " + uploadedFile.getName());
+            uploadFileToDrive(drive, uploadFile, "db_enjoy_cafe.db");
             return true;
 
         } catch (Exception e) {
@@ -99,55 +197,213 @@ public class GoogleDriveService {
     }
 
     // =========================================================================
-    // Restore Backup dari Google Drive
+    // Restore Backup Database
     // =========================================================================
 
     public boolean restoreBackup() {
         try {
-            Credential credential = GoogleAuthService.loadCredential();
-            if (credential == null) {
-                System.out.println("Credential NULL");
+            Drive drive = buildDrive();
+
+            String fileId = getFileIdFromDrive(drive, "db_enjoy_cafe.db");
+            if (fileId == null) {
+                System.out.println("Backup database tidak ditemukan di Google Drive");
                 return false;
             }
 
-            Drive drive = new Drive.Builder(
-                    new ApacheHttpTransport(),
-                    GsonFactory.getDefaultInstance(),
-                    credential)
-                    .setApplicationName("Enjoy Cafe POS")
-                    .build();
+            System.out.println("File database ditemukan | ID = " + fileId);
 
-            // Cari file backup di Drive
-            FileList result = drive.files()
-                    .list()
-                    .setQ("name='db_enjoy_cafe.db' and trashed=false")
-                    .setFields("files(id,name)")
-                    .execute();
-
-            if (result.getFiles().isEmpty()) {
-                System.out.println("Backup tidak ditemukan di Google Drive");
-                return false;
-            }
-
-            String fileId = result.getFiles().get(0).getId();
-            System.out.println("File ditemukan | ID = " + fileId);
-
-            // Download ke AppData
             File localDb = getDbFile();
-            if (!localDb.getParentFile().exists()) {
+            if (!localDb.getParentFile().exists())
                 localDb.getParentFile().mkdirs();
-            }
 
-            try (java.io.FileOutputStream output = new java.io.FileOutputStream(localDb)) {
+            try (FileOutputStream output = new FileOutputStream(localDb)) {
                 drive.files().get(fileId).executeMediaAndDownloadTo(output);
             }
 
-            System.out.println("Restore berhasil ke: " + localDb.getAbsolutePath());
+            System.out.println("Restore database berhasil ke: " + localDb.getAbsolutePath());
             return true;
 
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    // =========================================================================
+    // Upload Backup Gambar
+    // =========================================================================
+
+    public boolean uploadImageBackup() {
+        try {
+            if (!getTokenFile().exists()) {
+                System.out.println("Token tidak ditemukan");
+                return false;
+            }
+
+            File imageFolder = getImageFolder();
+            File[] files = imageFolder.listFiles();
+            if (!imageFolder.exists() || files == null || files.length == 0) {
+                System.out.println("Folder gambar kosong, skip backup gambar.");
+                return true; // bukan error, hanya skip
+            }
+
+            // Zip folder gambar
+            File zipFile = getImageZipFile();
+            zipFolder(imageFolder, zipFile);
+
+            if (!zipFile.exists()) {
+                System.out.println("Zip gambar gagal dibuat");
+                return false;
+            }
+
+            Drive drive = buildDrive();
+            hapusFileLama(drive, "images-backup.zip");
+            uploadFileToDrive(drive, zipFile, "images-backup.zip");
+
+            // Hapus file zip sementara
+            zipFile.delete();
+
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // =========================================================================
+    // Restore Backup Gambar
+    // =========================================================================
+
+    public boolean restoreImageBackup() {
+        try {
+            Drive drive = buildDrive();
+
+            String fileId = getFileIdFromDrive(drive, "images-backup.zip");
+            if (fileId == null) {
+                System.out.println("Backup gambar tidak ditemukan di Google Drive");
+                return false;
+            }
+
+            System.out.println("File gambar ditemukan | ID = " + fileId);
+
+            // Download zip ke AppData sementara
+            File zipFile = getImageZipFile();
+            try (FileOutputStream output = new FileOutputStream(zipFile)) {
+                drive.files().get(fileId).executeMediaAndDownloadTo(output);
+            }
+
+            // Extract ke folder image-barang
+            File imageFolder = getImageFolder();
+            extractZip(zipFile, imageFolder);
+
+            // Hapus file zip sementara
+            zipFile.delete();
+
+            System.out.println("Restore gambar berhasil ke: " + imageFolder.getAbsolutePath());
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // =========================================================================
+    // Backup Semua (DB + Gambar)
+    // =========================================================================
+
+    public boolean uploadBackupAll() {
+        System.out.println("=== Memulai backup semua data ===");
+
+        boolean dbOk = uploadBackup();
+        System.out.println("Backup DB: " + (dbOk ? "Berhasil" : "Gagal"));
+
+        boolean imgOk = uploadImageBackup();
+        System.out.println("Backup Gambar: " + (imgOk ? "Berhasil" : "Gagal"));
+
+        return dbOk && imgOk;
+    }
+
+    // =========================================================================
+    // Restore Semua (DB + Gambar)
+    // =========================================================================
+
+    public boolean restoreBackupAll() {
+        System.out.println("=== Memulai restore semua data ===");
+
+        boolean dbOk = restoreBackup();
+        System.out.println("Restore DB: " + (dbOk ? "Berhasil" : "Gagal"));
+
+        boolean imgOk = restoreImageBackup();
+        System.out.println("Restore Gambar: " + (imgOk ? "Berhasil" : "Gagal"));
+
+        return dbOk && imgOk;
+    }
+
+    // =========================================================================
+    // Cek apakah backup sudah kadaluarsa
+    // =========================================================================
+
+    public boolean isBackupExpired(long intervalJam) {
+        try {
+            Drive drive = buildDrive();
+
+            FileList result = drive.files()
+                    .list()
+                    .setQ("name='db_enjoy_cafe.db' and trashed=false")
+                    .setFields("files(id,name,modifiedTime)")
+                    .execute();
+
+            if (result.getFiles().isEmpty()) {
+                System.out.println("Backup tidak ditemukan.");
+                return true;
+            }
+
+            com.google.api.services.drive.model.File file = result.getFiles().get(0);
+            long terakhirBackup = file.getModifiedTime().getValue();
+            long sekarang = System.currentTimeMillis();
+            long selisihJam = (sekarang - terakhirBackup) / (1000 * 60 * 60);
+
+            System.out.println("Backup terakhir = " + selisihJam + " jam lalu");
+            return selisihJam >= intervalJam;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // =========================================================================
+    // Mendapatkan waktu terakhir backup
+    // =========================================================================
+
+    public String getLastBackupTime() {
+        try {
+            Drive drive = buildDrive();
+
+            FileList result = drive.files()
+                    .list()
+                    .setQ("name='db_enjoy_cafe.db' and trashed=false")
+                    .setFields("files(modifiedTime)")
+                    .execute();
+
+            if (result.getFiles().isEmpty()) {
+                return "Belum pernah backup";
+            }
+
+            long waktuBackup = result.getFiles().get(0).getModifiedTime().getValue();
+
+            java.time.LocalDateTime tanggal = java.time.Instant.ofEpochMilli(waktuBackup)
+                    .atZone(java.time.ZoneId.systemDefault())
+                    .toLocalDateTime();
+
+            return tanggal.format(
+                    java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "-";
         }
     }
 }

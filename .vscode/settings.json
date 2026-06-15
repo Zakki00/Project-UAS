@@ -1,5 +1,11 @@
 {
-    "java.configuration.updateBuildConfiguration": "automatic",
-    "java.debug.settings.onBuildFailureProceed": true,
-    "python-envs.defaultEnvManager": "ms-python.python:venv"
+    "java.compile.nullAnalysis.mode": "disabled",
+    "java.configuration.runtimes": [
+        {
+            "name": "JavaSE-21",
+            "path": "C:\\oracleJdk-26",
+            "default": true
+        }
+    ],
+    "java.jdt.ls.java.home": "C:\\oracleJdk-26"
 }

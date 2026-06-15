@@ -18,6 +18,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -61,12 +62,6 @@
           <Label styleClass="nav-icon" text="🛒" />
           <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
         </HBox>
-        <!-- Pelanggan -->
-        <HBox fx:id="navPelanggan" alignment="CENTER_LEFT" onMouseClicked="#onNavPelanggan" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="👥" />
-          <Label fx:id="navLblPelanggan" styleClass="nav-label" text="Pelanggan" />
-        </HBox>
         <!-- Laporan -->
         <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
@@ -109,7 +104,7 @@
       <!-- TOP BAR -->
       <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
         <VBox spacing="1" HBox.hgrow="ALWAYS">
-          <Label styleClass="page-title" text="Dashboard" />
+          <Label styleClass="page-title" text="Laporan" />
           <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
         </VBox>
         <!-- Search -->
@@ -179,6 +174,7 @@
                     <Label fx:id="lblJamPagi" styleClass="shift-pagi-jam" text="06:00 — 12:00" />
                     <!-- Divider -->
                     <Separator styleClass="shift-pagi-divider" VBox.vgrow="NEVER" />
+                              <Label styleClass="shift-pagi-stat-label" text="Kasir" />
                     <!-- Info kasir -->
                     <VBox spacing="10" styleClass="shift-info-box">
                       <VBox.margin>
@@ -187,10 +183,8 @@
                       <children>
                         <HBox alignment="CENTER_LEFT" spacing="8">
                           <Label styleClass="shift-pagi-icon" text="👤" />
-                          <VBox spacing="2">
-                            <Label fx:id="lblUsernamePagi" styleClass="shift-pagi-username" text="-" />
-                            <Label fx:id="lblNamaPagi" styleClass="shift-pagi-nama" text="-" />
-                          </VBox>
+                          <VBox spacing="2" />
+                                       <FlowPane fx:id="flowKasirPagi" prefHeight="67.0" prefWidth="199.0" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-pagi-stat-row">
                           <Label styleClass="shift-pagi-stat-label" text="Total Transaksi" HBox.hgrow="ALWAYS" />
@@ -200,6 +194,12 @@
                           <Label styleClass="shift-pagi-stat-label" text="Item Terjual" HBox.hgrow="ALWAYS" />
                           <Label fx:id="lblItemPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
                         </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-pagi-stat-row">
+                                       <children>
+                                          <Label styleClass="shift-pagi-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="lblPaketPSPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
+                                       </children>
+                                    </HBox>
                       </children>
                     </VBox>
                     <!-- Pendapatan -->
@@ -229,6 +229,7 @@
                     <Label fx:id="lblJamMalam" styleClass="shift-malam-jam" text="12:00 — 21:00" />
                     <!-- Divider -->
                     <Separator styleClass="shift-malam-divider" VBox.vgrow="NEVER" />
+                              <Label styleClass="shift-malam-stat-label" text="Kasir" />
                     <!-- Info kasir -->
                     <VBox spacing="10" styleClass="shift-info-box">
                       <VBox.margin>
@@ -237,10 +238,8 @@
                       <children>
                         <HBox alignment="CENTER_LEFT" spacing="8">
                           <Label styleClass="shift-malam-icon" text="👤" />
-                          <VBox spacing="2">
-                            <Label fx:id="lblUsernameMalam" styleClass="shift-malam-username" text="-" />
-                            <Label fx:id="lblNamaMalam" styleClass="shift-malam-nama" text="-" />
-                          </VBox>
+                          <VBox spacing="2" />
+                                       <FlowPane fx:id="flowKasirMalam" prefHeight="67.0" prefWidth="199.0" />
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-malam-stat-row">
                           <Label styleClass="shift-malam-stat-label" text="Total Transaksi" HBox.hgrow="ALWAYS" />
@@ -250,6 +249,12 @@
                           <Label styleClass="shift-malam-stat-label" text="Item Terjual" HBox.hgrow="ALWAYS" />
                           <Label fx:id="lblItemMalam" styleClass="shift-malam-stat-value" text="0 unit" />
                         </HBox>
+                                    <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-malam-stat-row">
+                                       <children>
+                                          <Label styleClass="shift-malam-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                                          <Label fx:id="lblPaketPSMalam" styleClass="shift-malam-stat-value" text="0 unit" />
+                                       </children>
+                                    </HBox>
                       </children>
                     </VBox>
                     <!-- Pendapatan -->
@@ -440,7 +445,7 @@
               </VBox>
             </VBox>
                   <VBox.margin>
-                     <Insets top="10.0" />
+                     <Insets />
                   </VBox.margin>
           </HBox>
                <VBox prefHeight="155.0" prefWidth="362.0" spacing="10" styleClass="card">

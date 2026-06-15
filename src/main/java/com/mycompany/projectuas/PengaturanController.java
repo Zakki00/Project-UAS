@@ -7,11 +7,11 @@ package com.mycompany.projectuas;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
-
-// import com.mycompany.services.BackupService;
-import com.mycompany.services.GoogleDriveService;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import com.mycompany.services.GoogleDriveService;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -26,11 +26,16 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PopupControl;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.shape.Circle;
 
 /**
  * FXML Controller class
@@ -62,6 +67,8 @@ public class PengaturanController implements Initializable {
     @FXML
     private Label lblAvatarInisial;
     @FXML
+    private Label lblAvatarInisial1;
+    @FXML
     private Label lblNamaAkun;
     @FXML
     private Label lblUsernameAkun;
@@ -70,6 +77,10 @@ public class PengaturanController implements Initializable {
     @FXML
     private Label lblEmailGoogle;
     @FXML
+    private Label lblEmailGoogle2;
+    @FXML
+    private Button EditProfil;
+    @FXML
     private VBox formEditAkun;
     @FXML
     private TextField tfEditNama;
@@ -77,16 +88,22 @@ public class PengaturanController implements Initializable {
     private TextField tfEditUsername;
     @FXML
     private javafx.scene.control.PasswordField pfEditPassword;
-
+    @FXML
+    private VBox cardAkunGoogle;
     // Backup
     @FXML
     private Label lblBackupTerakhir;
     @FXML
     private VBox backupProgressBox;
     @FXML
+    private Button btnRestore;
+    @FXML
     private Label lblBackupStatus;
     @FXML
-    private javafx.scene.control.ProgressBar pbBackup;
+    private ProgressBar pbBackup;
+    @FXML
+    private ProgressBar pbRestore;
+
     @FXML
     private javafx.scene.control.CheckBox cbBackupOtomatis;
     @FXML
@@ -117,6 +134,10 @@ public class PengaturanController implements Initializable {
     @FXML
     private HBox logoRow;
     @FXML
+    private ImageView imgAvatarGoogle;
+    @FXML
+    ImageView imgAvatarGoogle1;
+    @FXML
     private VBox logoBrand;
     @FXML
     private VBox userInfo;
@@ -124,6 +145,8 @@ public class PengaturanController implements Initializable {
     private HBox userRow;
     @FXML
     private Button toggleBtn;
+    @FXML
+    private Button btnSimpanSeting;
     @FXML
     private VBox navMenu;
 
@@ -134,8 +157,6 @@ public class PengaturanController implements Initializable {
     private HBox navProduk;
     @FXML
     private HBox navKasir;
-    @FXML
-    private HBox navPelanggan;
     @FXML
     private HBox navLaporan;
     @FXML
@@ -157,16 +178,6 @@ public class PengaturanController implements Initializable {
     @FXML
     private Label navLblPengaturan;
 
-    // ── KPI ───────────────────────────────────────────────
-    @FXML
-    private Label kpiPenjualan;
-    @FXML
-    private Label kpiTransaksi;
-    @FXML
-    private Label kpiProduk;
-    @FXML
-    private Label kpiStok;
-
     // ── Charts ────────────────────────────────────────────
     @FXML
     private AreaChart<String, Number> salesChart;
@@ -185,6 +196,7 @@ public class PengaturanController implements Initializable {
     private static final double SIDEBAR_MINI = 60;
 
     Preferences prefs = Preferences.userNodeForPackage(session.class);
+    private Timeline autoBackupTimeline;
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
@@ -194,6 +206,9 @@ public class PengaturanController implements Initializable {
         setupPengaturan();
         setupNavHover();
         setActiveNav(navPengaturan);
+        setupForm();
+        loadLastBackupTime();
+
     }
 
     // ═════════════════════════════════════════════════════
@@ -259,7 +274,7 @@ public class PengaturanController implements Initializable {
         Insets normalPad = new Insets(10, 14, 10, 0);
         Insets pad = collapsed ? collapsedPad : normalPad;
 
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -273,6 +288,10 @@ public class PengaturanController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
+        navigation nav = new navigation();
+        nav.navigateToDashboard();
+        Stage stage = (Stage) navDashboard.getScene().getWindow();
+        stage.close();
 
     }
 
@@ -292,11 +311,6 @@ public class PengaturanController implements Initializable {
         nav.navigateToTransaksi();
         Stage stage = (Stage) navKasir.getScene().getWindow();
         stage.close();
-    }
-
-    @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
     }
 
     @FXML
@@ -324,17 +338,18 @@ public class PengaturanController implements Initializable {
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
-            if (!item.getStyleClass().contains("nav-item"))
+            if (!item.getStyleClass().contains("nav-item")) {
                 item.getStyleClass().add("nav-item");
+            }
         }
         selected.getStyleClass().add("nav-active");
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navPelanggan, navLaporan, navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
@@ -344,81 +359,111 @@ public class PengaturanController implements Initializable {
     // ========================================
     // MAIN CONTENT
     // ========================================
-
     koneksi db = new koneksi();
 
     // ── setup di initialize() ──────────────
     private void setupPengaturan() {
-        // interval combo
         cbInterval.setItems(FXCollections.observableArrayList(
-                "1 Jam", "6 Jam", "12 Jam", "24 Jam", "3 Hari", "7 Hari"));
-        cbInterval.setValue("24 Jam");
+                "24 Jam", "3 Hari", "7 Hari"));
 
-        // load info akun dari session/db
+        // Load dari preferences
+        boolean backupAktif = prefs.getBoolean("backup_otomatis", false);
+        String interval = prefs.get("backup_interval", "24 Jam");
+
+        cbBackupOtomatis.setSelected(backupAktif);
+        cbInterval.setValue(interval);
+        cbInterval.setDisable(!backupAktif);
+
         loadInfoAkun();
     }
 
     // ── Load info akun ──────────────────────
     private void loadInfoAkun() {
-        String sql = "SELECT username, nama_lengkap FROM tb_user LIMIT 1";
-        java.util.List<Object[]> data = koneksi.ambilData(sql);
-        if (!data.isEmpty()) {
-            String username = String.valueOf(data.get(0)[0]);
-            String nama = String.valueOf(data.get(0)[1]);
-            lblNamaAkun.setText(nama);
-            lblUsernameAkun.setText("@" + username);
+        String sql = "SELECT username, nama_lengkap FROM tb_user WHERE id_user = ?";
+        List<Object[]> data = koneksi.ambilData(sql, session.id);
+
+        if (data.isEmpty()) {
+            return;
+        }
+
+        String username = String.valueOf(data.get(0)[0]);
+        String nama = String.valueOf(data.get(0)[1]);
+
+        lblNamaAkun.setText(nama);
+        lblUsernameAkun.setText("@" + username);
+
+        String role = session.role;
+
+        if ("Admin".equalsIgnoreCase(role)) {
+
+            String photoUrl = prefs.get("google_photo", "");
+
+            if (!photoUrl.isEmpty()) {
+                if (!photoUrl.isEmpty()) {
+                    imgAvatarGoogle.setImage(new Image(photoUrl, true));
+                    imgAvatarGoogle1.setImage(new Image(photoUrl, true));
+
+                    imgAvatarGoogle.setVisible(true);
+                    imgAvatarGoogle.setManaged(true);
+
+                    imgAvatarGoogle1.setVisible(true);
+                    imgAvatarGoogle1.setManaged(true);
+
+                    lblAvatarInisial.setVisible(false);
+                    lblAvatarInisial.setManaged(false);
+
+                    lblAvatarInisial1.setVisible(false);
+                    lblAvatarInisial1.setManaged(false);
+                }
+            }
+
+        } else {
+
+            imgAvatarGoogle.setVisible(false);
+            imgAvatarGoogle.setVisible(false);
+            imgAvatarGoogle1.setVisible(false);
+            imgAvatarGoogle1.setManaged(false);
+
+            lblAvatarInisial.setVisible(true);
+            lblAvatarInisial.setManaged(true);
+            lblAvatarInisial1.setVisible(true);
+            lblAvatarInisial1.setManaged(true);
+
             lblAvatarInisial.setText(
                     nama.length() > 0
                             ? String.valueOf(nama.charAt(0)).toUpperCase()
                             : "A");
-            tfEditNama.setText(nama);
-            tfEditUsername.setText(username);
         }
     }
 
     // ══════════════════════════════════════
     // TAB HANDLERS
     // ══════════════════════════════════════
-    @FXML
-    private void onTabAkun() {
-        showPanel(panelAkun);
-        setActiveTab(tabAkun);
-    }
+    private void setupForm() {
+        formEditAkun.setVisible(false);
+        formEditAkun.setManaged(false);
+        backupProgressBox.setVisible(false);
+        backupProgressBox.setManaged(false);
+        Circle clip1 = new Circle(45, 45, 45);
+        Circle clip2 = new Circle(20, 20, 20);
 
-    @FXML
-    private void onTabBackup() {
-        showPanel(panelBackup);
-        setActiveTab(tabBackup);
-    }
+        imgAvatarGoogle.setClip(clip1);
+        imgAvatarGoogle1.setClip(clip2);
+        lblEmailGoogle.setText(session.email);
+        lblEmailGoogle2.setText(session.email);
+        if ("Admin".equalsIgnoreCase(session.role)) {
+            EditProfil.setVisible(true);
+            EditProfil.setManaged(true);
 
-    @FXML
-    private void onTabDatabase() {
-        showPanel(panelDatabase);
-        setActiveTab(tabDatabase);
-    }
+            cardAkunGoogle.setVisible(true);
+            cardAkunGoogle.setManaged(true);
+        } else {
+            EditProfil.setVisible(false);
+            EditProfil.setManaged(false);
 
-    @FXML
-    private void onTabTentang() {
-        showPanel(panelTentang);
-        setActiveTab(tabTentang);
-    }
-
-    private void showPanel(VBox panel) {
-        VBox[] panels = { panelAkun, panelBackup, panelDatabase, panelTentang };
-        for (VBox p : panels) {
-            p.setVisible(false);
-            p.setManaged(false);
+            cardAkunGoogle.setVisible(false);
+            cardAkunGoogle.setManaged(false);
         }
-        panel.setVisible(true);
-        panel.setManaged(true);
-    }
-
-    private void setActiveTab(Button active) {
-        Button[] tabs = { tabAkun, tabBackup, tabDatabase, tabTentang };
-        for (Button t : tabs) {
-            t.getStyleClass().setAll("tab-btn");
-        }
-        active.getStyleClass().setAll("tab-btn-active");
     }
 
     // ══════════════════════════════════════
@@ -438,93 +483,141 @@ public class PengaturanController implements Initializable {
 
     @FXML
     private void onSimpanProfil() {
-        // String nama = tfEditNama.getText().trim();
-        // String username = tfEditUsername.getText().trim();
-        // String password = pfEditPassword.getText().trim();
+        String nama = tfEditNama.getText().trim();
+        String username = tfEditUsername.getText().trim();
+        String password = pfEditPassword.getText().trim();
 
-        // if (nama.isEmpty() || username.isEmpty()) {
-        // showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
-        // return;
-        // }
+        if (nama.isEmpty() || username.isEmpty()) {
+            showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
+            return;
+        }
 
-        // String sql;
-        // if (!password.isEmpty()) {
-        // String hashed = hashSHA256(password);
-        // sql = "UPDATE tb_user SET nama_lengkap='" + nama
-        // + "', username='" + username
-        // + "', password='" + hashed + "' WHERE id_user=1";
-        // } else {
-        // sql = "UPDATE tb_user SET nama_lengkap='" + nama
-        // + "', username='" + username + "' WHERE id_user=1";
-        // }
+        try {
+            if (!password.isEmpty()) {
+                String hashed = hashSHA256(password);
+                koneksi.eksekusiQuery(
+                        "UPDATE tb_user SET nama_lengkap=?, username=?, password=? WHERE id_user=1",
+                        nama, username, hashed);
+            } else {
+                koneksi.eksekusiQuery(
+                        "UPDATE tb_user SET nama_lengkap=?, username=? WHERE id_user=1",
+                        nama, username);
+            }
+            loadInfoAkun();
+            onBatalEdit();
+            showAlert("Berhasil", "Profil berhasil diperbarui!");
 
-        // if (koneksi.eksekusi(sql)) {
-        // loadInfoAkun();
-        // onBatalEdit();
-        // showAlert("Berhasil", "Profil berhasil diperbarui!");
-        // } else {
-        // showAlert("Gagal", "Terjadi kesalahan saat menyimpan!");
-        // }
+        } catch (Exception e) {
+            showAlert("Gagal", "Terjadi kesalahan saat menyimpan!");
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void onDisconnectGoogle() {
-        showAlert("Info", "Akun Google berhasil diputus.");
-        try {
-            prefs.clear();
-        } catch (BackingStoreException e) {
-            e.printStackTrace();
-        }
-        navigation nav = new navigation();
-        nav.navigateToLogin();
-        Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
-        stage.close();
-        
+        Popup popup = new Popup();
+        popup.showConfirmPopup("Log Out", "Apakah Anda Yakin Keluar Dari Akun " + session.email, 
+        ()->{
+                    try {
+                        prefs.clear();
+                    } catch (BackingStoreException e) {
+                        e.printStackTrace();
+                    }
+                    navigation nav = new navigation();
+                    nav.navigateToLogin();
+                    Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
+                    stage.close();
+        } );        
     }
 
     // ══════════════════════════════════════
     // BACKUP HANDLERS
     // ══════════════════════════════════════
+    private Timeline pbAnimTimeline; // tambah field ini di atas
+
     @FXML
-   private void onBackup() {
-    backupProgressBox.setVisible(true);
-    backupProgressBox.setManaged(true);
-    lblBackupStatus.setText("Mengupload ke Google Drive...");
-    pbBackup.setProgress(-1);
+    private void onBackup() {
+        backupProgressBox.setVisible(true);
+        backupProgressBox.setManaged(true);
+        lblBackupStatus.setText("Mengupload ke Google Drive...");
+        pbBackup.setStyle("-fx-accent: #6C63FF;");
+        pbBackup.setProgress(0.0);
 
-    Thread t = new Thread(() -> {
-        GoogleDriveService driveService = new GoogleDriveService();
-        boolean berhasil = driveService.uploadBackup();
+        // Animasi: naik pelan ke 0.85, lalu pulse opacity
+        pbAnimTimeline = new Timeline(
+                // Fase 1: naik cepat ke 30%
+                new KeyFrame(Duration.millis(0),
+                        new KeyValue(pbBackup.progressProperty(), 0.0)),
+                new KeyFrame(Duration.millis(600),
+                        new KeyValue(pbBackup.progressProperty(), 0.3)),
+                // Fase 2: naik lambat ke 85%, berhenti di sini sampai upload selesai
+                new KeyFrame(Duration.millis(3000),
+                        new KeyValue(pbBackup.progressProperty(), 0.85)));
+        pbAnimTimeline.setCycleCount(1); // cukup 1x, tidak bolak-balik
+        pbAnimTimeline.play();
 
-        Platform.runLater(() -> {
-            if (berhasil) {
-                pbBackup.setProgress(1);
-                lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
+        Thread t = new Thread(() -> {
+            GoogleDriveService service = new GoogleDriveService();
+            boolean backup = service.uploadBackupAll();
 
-                String now = java.time.LocalDateTime.now()
-                        .format(java.time.format.DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
-                lblBackupTerakhir.setText(now);
+            Platform.runLater(() -> {
+                pbAnimTimeline.stop();
 
-            } else {
-                pbBackup.setProgress(0);
-                lblBackupStatus.setText("❌ Upload Google Drive gagal");
-            }
-        });
-    }, "backup-thread");
-    t.setDaemon(true);
-    t.start();
-}
+                if (backup) {
+                    Timeline selesai = new Timeline(
+                            new KeyFrame(Duration.ZERO,
+                                    new KeyValue(pbBackup.progressProperty(), pbBackup.getProgress())),
+                            new KeyFrame(Duration.millis(400),
+                                    new KeyValue(pbBackup.progressProperty(), 1.0)));
+
+                    selesai.setOnFinished(ev -> {
+                        Platform.runLater(() -> {
+                            pbBackup.setStyle("-fx-accent: #00E5A0;");
+                            pbBackup.applyCss();
+                        });
+                    });
+
+                    selesai.play();
+                    lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
+                    loadLastBackupTime();
+
+                } else {
+                    Timeline selesai = new Timeline(
+                            new KeyFrame(Duration.ZERO,
+                                    new KeyValue(pbBackup.progressProperty(), pbBackup.getProgress())),
+                            new KeyFrame(Duration.millis(400),
+                                    new KeyValue(pbBackup.progressProperty(), 1.0)));
+
+                    selesai.setOnFinished(ev -> {
+                        Platform.runLater(() -> {
+                            pbBackup.setStyle("-fx-accent: #FF5C7C;");
+                            pbBackup.applyCss();
+                        });
+                    });
+
+                    selesai.play();
+                    lblBackupStatus.setText("❌ Upload Google Drive gagal");
+                }
+            });
+        }, "backup-thread");
+        t.setDaemon(true);
+        t.start();
+    }
 
     @FXML
     private void onToggleBackupOtomatis() {
         boolean aktif = cbBackupOtomatis.isSelected();
         cbInterval.setDisable(!aktif);
-        System.out.println("Backup otomatis: " + (aktif ? "Aktif" : "Nonaktif"));
     }
 
     @FXML
     private void onSimpanBackupSetting() {
-        showAlert("Berhasil", "Pengaturan backup disimpan!");
+        prefs.putBoolean("backup_otomatis", cbBackupOtomatis.isSelected());
+        prefs.put("backup_interval", cbInterval.getValue());
+        Stage stage = (Stage) btnSimpanSeting.getScene().getWindow();
+        Popup popup = new Popup();
+        popup.showModernPopup("Simpan Pengaturan", "Simpan Pengaturan. Backup Otomatis Akan Di Lakukan Setiap: " 
+        + prefs.get("backup_interval", "") + " Sekali", Popup.PopupType.SUCCESS, stage);
     }
 
     @FXML
@@ -533,29 +626,69 @@ public class PengaturanController implements Initializable {
         dc.setTitle("Pilih Folder Backup");
         java.io.File folder = dc.showDialog(
                 tfLokasiBackup.getScene().getWindow());
-        if (folder != null)
+        if (folder != null) {
             tfLokasiBackup.setText(folder.getAbsolutePath());
+        }
     }
 
-    @FXML
-    private void onBrowseRestore() {
-        javafx.stage.FileChooser fc = new javafx.stage.FileChooser();
-        fc.setTitle("Pilih File Backup");
-        fc.getExtensionFilters().add(
-                new javafx.stage.FileChooser.ExtensionFilter("SQL File", "*.sql"));
-        java.io.File file = fc.showOpenDialog(
-                tfFileRestore.getScene().getWindow());
-        if (file != null)
-            tfFileRestore.setText(file.getAbsolutePath());
-    }
+
 
     @FXML
     private void onRestore() {
-        if (tfFileRestore.getText().isEmpty()) {
-            showAlert("Peringatan", "Pilih file backup terlebih dahulu!");
-            return;
-        }
-        showAlert("Info", "Fitur restore akan segera diimplementasikan.");
+        backupProgressBox.setVisible(true);
+        backupProgressBox.setManaged(true);
+        lblBackupStatus.setText("Mengunduh backup dari Google Drive...");
+        pbBackup.setStyle("-fx-accent: #6C63FF;");
+        pbBackup.setProgress(0.0);
+
+        // Animasi loading
+        pbAnimTimeline = new Timeline(
+                new KeyFrame(Duration.millis(0),
+                        new KeyValue(pbBackup.progressProperty(), 0.0)),
+                new KeyFrame(Duration.millis(600),
+                        new KeyValue(pbBackup.progressProperty(), 0.3)),
+                new KeyFrame(Duration.millis(3000),
+                        new KeyValue(pbBackup.progressProperty(), 0.85)));
+        pbAnimTimeline.setCycleCount(1);
+        pbAnimTimeline.play();
+
+        Thread t = new Thread(() -> {
+            GoogleDriveService driveService = new GoogleDriveService();
+            boolean restore = driveService.restoreBackupAll();
+
+            Platform.runLater(() -> {
+                pbAnimTimeline.stop();
+
+                Timeline selesai = new Timeline(
+                        new KeyFrame(Duration.ZERO,
+                                new KeyValue(pbBackup.progressProperty(), pbBackup.getProgress())),
+                        new KeyFrame(Duration.millis(400),
+                                new KeyValue(pbBackup.progressProperty(), 1.0)));
+
+                if (restore) {
+                    selesai.setOnFinished(ev -> Platform.runLater(() -> {
+                        pbBackup.setStyle("-fx-accent: #00E5A0;");
+                        pbBackup.applyCss();
+                    }));
+                    selesai.play();
+                    lblBackupStatus.setText("✅ Restore berhasil dari Google Drive");
+                    Popup popup = new Popup();
+                    popup.showSuccessPopup("Berhasil","Restore Data Dari Googl Drive Berhasil Di Lakukan");
+                } else {
+                    selesai.setOnFinished(ev -> Platform.runLater(() -> {
+                        pbBackup.setStyle("-fx-accent: #FF5C7C;");
+                        pbBackup.applyCss();
+                    }));
+                    selesai.play();
+                    Stage stage = (Stage) btnRestore.getScene().getWindow();
+                    Popup popup = new Popup();
+                    popup.showModernPopup("EROR", "Gagal Melakukan Restore Database", Popup.PopupType.ERROR,stage);
+                    lblBackupStatus.setText("❌ Restore dari Google Drive gagal");
+                }
+            });
+        }, "restore-thread");
+        t.setDaemon(true);
+        t.start();
     }
 
     // ══════════════════════════════════════
@@ -608,17 +741,35 @@ public class PengaturanController implements Initializable {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
             byte[] hash = md.digest(input.getBytes("UTF-8"));
             StringBuilder hex = new StringBuilder();
-            for (byte b : hash)
+            for (byte b : hash) {
                 hex.append(String.format("%02x", b));
+            }
             return hex.toString();
         } catch (Exception e) {
             return input;
         }
     }
 
+    private void loadLastBackupTime() {
+
+        Thread t = new Thread(() -> {
+
+            GoogleDriveService driveService = new GoogleDriveService();
+
+            String waktuBackup = driveService.getLastBackupTime();
+
+            Platform.runLater(() -> {
+                lblBackupTerakhir.setText(waktuBackup);
+            });
+
+        });
+
+        t.setDaemon(true);
+        t.start();
+    }
+
     // ======================
     // OTHER HANDLES
-
     @FXML
     private void onNotif() {
         System.out.println("Notifikasi dibuka");
