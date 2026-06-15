@@ -7,7 +7,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.PiutangModel;
+import com.mycompany.Model.PiutangModel.DaftarPaketPS;
 import com.mycompany.Model.PiutangModel.DataHutang;
+import com.mycompany.Model.TransaksiModel.ItemPs;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -17,7 +19,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -147,20 +148,17 @@ public class PiutangController implements Initializable {
     private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
 
     // ---------prepare data hutang dari database----------------
-   
-
 
     // -------------------ambil data hutang dari database----------------
     private void load_data_hutang(String namapelanggan) {
         PiutangModel.dataHutang.clear();
         String sql = "SELECT " + "t.id_transaksi, " + "t.pelanggan AS nama_pelanggan, " + "t.total_pembayaran, "
                 + "t.uang_pembayaran, " + "t.kekurangan, " + "t.status_pembayaran, " + "t.tanggal_transaksi "
-                + "FROM tb_transaksi t " + "WHERE t.status_pembayaran = 'Belum Lunas' " + "AND t.pelanggan LIKE '%"
-                + namapelanggan + "%'";
+                + "FROM tb_transaksi t " + "WHERE t.status_pembayaran = 'Belum Lunas' " + "AND t.pelanggan LIKE ?";
 
         int rowNo = 1;
 
-        List<Object[]> results = koneksi.ambilData(sql);
+        List<Object[]> results = koneksi.ambilData(sql, "%" + namapelanggan + "%");
         System.out.println("Hasil query Data Hutang: " + results.size() + " baris");
         for (Object[] row : results) {
 
@@ -172,22 +170,58 @@ public class PiutangController implements Initializable {
             String status = String.valueOf(row[5]);
             String tanggal = String.valueOf(row[6]);
 
-            PiutangModel.dataHutang.add(new DataHutang(rowNo++, idTransaksi, namaPelanggan, totalPembayaran, uangPembayaran,
-                    kekurangan, status, tanggal));
+            PiutangModel.dataHutang
+                    .add(new DataHutang(rowNo++, idTransaksi, namaPelanggan, totalPembayaran, uangPembayaran,
+                            kekurangan, status, tanggal));
         }
     }
 
     private void load_data_barang(DataHutang dataHutang) {
-        String sql = "SELECT " + "b.nama_barang, " + "b.harga, " + "td.jumlah " + "FROM tb_detail_transaksi td "
-                + "JOIN tb_barang b " + "ON td.id_barang = b.id_barang " + "WHERE td.id_transaksi = '"
-                + dataHutang.idTransaksi + "'";
-        List<Object[]> results = koneksi.ambilData(sql);
-        System.out.println("Hasil query barang: " + results.size() + " baris");
+
+        PiutangModel.dataBarang.clear(); // bersihkan data lama
+
+        String sql = """
+                SELECT b.nama_barang,
+                       b.harga,
+                       td.jumlah
+                FROM tb_detail_transaksi td
+                JOIN tb_barang b
+                ON td.id_barang = b.id_barang
+                WHERE td.id_transaksi = ?
+                """;
+
+        List<Object[]> results = koneksi.ambilData(sql, dataHutang.idTransaksi);
+
         for (Object[] row : results) {
             String nama = String.valueOf(row[0]);
             long harga = ((Number) row[1]).longValue();
             int qty = ((Number) row[2]).intValue();
-            PiutangModel.dataBarang.add(new PiutangModel.DataBarangHutang(nama, harga, qty));
+
+            PiutangModel.dataBarang.add(
+                    new PiutangModel.DataBarangHutang(nama, harga, qty));
+        }
+
+    }
+
+    private void loaddataPaketPS(DataHutang dataHutang) {
+
+     PiutangModel.daftarpaketps = null;
+
+        String sql = """
+                SELECT durasi, harga
+                FROM tb_paket_ps
+                WHERE id_transaksi = ?
+                """;
+        List<Object[]> results = koneksi.ambilData(sql, dataHutang.idTransaksi);
+
+        if (!results.isEmpty()) {
+            Object[] row = results.get(0);
+            int durasi = ((Number) row[0]).intValue();
+            long harga = ((Number) row[1]).longValue();
+
+            PiutangModel.daftarpaketps = new DaftarPaketPS(durasi, harga);
+        } else {
+            PiutangModel.daftarpaketps = null;
         }
     }
 
@@ -215,7 +249,7 @@ public class PiutangController implements Initializable {
         setupLayout();
         SetupRowClick();
         renderList();
-        loadKPI();
+        renderListKPI();
         setupForm();
         setActiveNav(navPiutang);
     }
@@ -340,11 +374,19 @@ public class PiutangController implements Initializable {
     @FXML
     private void onNavPiutang() {
         setActiveNav(navPiutang);
+        navigation nav = new navigation();
+        nav.navigataeToPengaturan();
+        Stage stage = (Stage) navPengaturan.getScene().getWindow();
+        stage.close();
     }
 
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
+        navigation nav = new navigation();
+        nav.navigataeToPengaturan();
+        Stage stage = (Stage) navPengaturan.getScene().getWindow();
+        stage.close();
 
     }
 
@@ -412,127 +454,174 @@ public class PiutangController implements Initializable {
         tableHutang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
-    // ═══════════════════════════════════════════════
-    // LOAD DATA KPI
-    private void loadKPI() {
+    void SetupRowClick() {
+        tableHutang.setOnMouseClicked(e -> {
+            DataHutang selected = tableHutang.getSelectionModel().getSelectedItem();
 
-        String sql = "SELECT "
-                + "SUM(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "THEN kekurangan ELSE 0 END) AS total_piutang, "
+            if (selected != null) {
 
-                + "COUNT(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "THEN 1 END) AS jumlah_transaksi, "
+                lblIdTransaksi.setText(selected.idTransaksi);
+                lblNamaPelanggan.setText(selected.namaPelanggan);
+                lblJumlahHutang.setText("Rp " + FMT.format(selected.kekurangan));
 
-                + "SUM(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = CURDATE() "
-                + "THEN 1 ELSE 0 END) AS transaksi_hari_ini, "
+                load_data_barang(selected);
+                loaddataPaketPS(selected);
+                renderList();
 
-                // total piutang kemarin
-                + "SUM(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY "
-                + "THEN kekurangan ELSE 0 END) AS piutang_kemarin, "
+                tfPelanggan.setDisable(true);
+                tfTunai.setDisable(false);
 
-                // transaksi kemarin
-                + "COUNT(CASE "
-                + "WHEN status_pembayaran = 'Belum Lunas' "
-                + "AND DATE(tanggal_transaksi) = CURDATE() - INTERVAL 1 DAY "
-                + "THEN 1 END) AS transaksi_kemarin "
-
-                + "FROM tb_transaksi";
-
-        List<Object[]> results = koneksi.ambilData(sql);
-
-        if (!results.isEmpty()) {
-
-            Object[] row = results.get(0);
-
-            long totalPiutang = row[0] != null
-                    ? ((Number) row[0]).longValue()
-                    : 0;
-
-            int jumlahTransaksi = row[1] != null
-                    ? ((Number) row[1]).intValue()
-                    : 0;
-
-            int transaksiHariIni = row[2] != null
-                    ? ((Number) row[2]).intValue()
-                    : 0;
-
-            long piutangKemarin = row[3] != null
-                    ? ((Number) row[3]).longValue()
-                    : 0;
-
-            int transaksiKemarin = row[4] != null
-                    ? ((Number) row[4]).intValue()
-                    : 0;
-
-            // ================= KPI VALUE =================
-
-            kpiTotalPiutang.setText(
-                    "Rp " + FMT.format(totalPiutang));
-
-            kpiJumlahTransaksi.setText(
-                    String.valueOf(jumlahTransaksi));
-
-            kpiHariIni.setText(
-                    String.valueOf(transaksiHariIni));
-
-            // ================= DELTA =================
-
-            setDeltaLabel(
-                    lblDeltaPiutang,
-                    totalPiutang,
-                    piutangKemarin);
-
-            setDeltaLabel(
-                    lblDeltaTransaksi,
-                    jumlahTransaksi,
-                    transaksiKemarin);
-
-            setDeltaLabel(
-                    lblDeltaHariIni,
-                    transaksiHariIni,
-                    transaksiKemarin);
-        }
+                btnQuick5.setDisable(false);
+                btnQuick10.setDisable(false);
+                btnQuick20.setDisable(false);
+                btnQuick50.setDisable(false);
+                System.out.println("ID Transaksi = " + selected.idTransaksi);
+                System.out.println("Jumlah barang = " + PiutangModel.dataBarang.size());
+            }
+        });
     }
 
-    private void setDeltaLabel(Label label,
-            double today,
-            double yesterday) {
+    // ═══════════════════════════════════════════════
+    // LOAD DATA KPI
+
+    void renderListKPI() {
+        loadTotalPiutang();
+        loadJumlahTransaksiYangBelumLunas();
+        loadTransaksiYangBelumLunasHariIni();
+    }
+
+    private void setPersenKPI(Label label, double today, double yesterday) {
+
+        double persen;
 
         if (yesterday == 0) {
-
-            label.setText("▲ 100% vs kemarin");
-            label.getStyleClass().removeAll(
-                    "kpi-delta-up",
-                    "kpi-delta-down");
-
-            label.getStyleClass().add("kpi-delta-up");
-            return;
+            persen = today > 0 ? 100 : 0;
+        } else {
+            persen = ((today - yesterday) / yesterday) * 100;
         }
 
-        double percent = ((today - yesterday) / yesterday) * 100;
+        String icon;
+        String status;
 
-        String arrow = percent >= 0 ? "▲" : "▼";
+        if (persen > 0) {
+            icon = "▲ +";
+            status = "lebih besar dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #ef4444;
+                    """);
+            // merah
+        } else if (persen < 0) {
+            icon = "▼ -";
+            status = "lebih kecil dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #22c55e;
+                    """);
+            // hijau
+        } else {
+            icon = "■ ";
+            status = "tidak berubah dari kemarin";
+            label.setStyle("""
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #9ca3af;
+                    """);
+            // abu-abu
+        }
 
-        String text = arrow + " "
-                + String.format("%.0f", Math.abs(percent))
-                + "% vs kemarin";
+        String text = icon + String.format("%.1f%% %s", Math.abs(persen), status);
 
         label.setText(text);
+    }
 
-        label.getStyleClass().removeAll(
-                "kpi-delta-up",
-                "kpi-delta-down");
+    private void loadTotalPiutang() {
 
-        label.getStyleClass().add(
-                percent >= 0
-                        ? "kpi-delta-up"
-                        : "kpi-delta-down");
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime')
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime','-1 day')
+                """);
+
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
+
+        kpiTotalPiutang.setText("Rp " + String.format("%,.0f", today));
+        setPersenKPI(lblDeltaPiutang, today, yesterday);
+    }
+
+    private void loadJumlahTransaksiYangBelumLunas() {
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COUNT(*)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime')
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                     SELECT COUNT(*)
+                FROM tb_transaksi
+                WHERE status_pembayaran='Belum Lunas'
+                AND DATE(tanggal_transaksi)=DATE('now','localtime','-1 day')
+                """);
+
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
+
+        kpiJumlahTransaksi.setText(String.valueOf((int) today));
+        setPersenKPI(lblDeltaTransaksi, today, yesterday);
+    }
+
+    private void loadTransaksiYangBelumLunasHariIni() {
+
+        List<Object[]> todayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                    FROM tb_transaksi
+                    WHERE status_pembayaran = 'Belum Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime')
+                """);
+
+        List<Object[]> yesterdayData = koneksi.ambilData("""
+                    SELECT COALESCE(SUM(kekurangan),0)
+                    FROM tb_transaksi
+                    WHERE status_pembayaran = 'Belum Lunas'
+                    AND DATE(tanggal_transaksi) = DATE('now','localtime','-1 day')
+                """);
+
+        double today = 0;
+        if (!todayData.isEmpty() && todayData.get(0)[0] != null) {
+            today = ((Number) todayData.get(0)[0]).doubleValue();
+        }
+
+        double yesterday = 0;
+        if (!yesterdayData.isEmpty() && yesterdayData.get(0)[0] != null) {
+            yesterday = ((Number) yesterdayData.get(0)[0]).doubleValue();
+        }
+
+        kpiHariIni.setText("Rp " + String.format("%,.0f", today));
+        setPersenKPI(lblDeltaHariIni, today, yesterday);
+
     }
 
     // ═══════════════════════════════════════════════
@@ -547,64 +636,56 @@ public class PiutangController implements Initializable {
 
     @FXML
     private void onLunas() {
-
+        Stage ownerStage = (Stage) btnLunas.getScene().getWindow();
         // 1. Validasi input
         if (tfTunai.getText().isEmpty() || kembalian < 0) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Pembayaran Tidak Valid");
-            alert.setHeaderText(null);
-            alert.setContentText("Pastikan jumlah tunai sudah benar dan cukup untuk melunasi hutang.");
-            alert.showAndWait();
+            new Popup().showModernPopup("ERROR",
+                    "Pembayaran tidak valid. Pastikan jumlah tunai mencukupi untuk melunasi hutang.",
+                    Popup.PopupType.ERROR, ownerStage);
             return;
         }
 
-        // 2. Konfirmasi user
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Konfirmasi Lunas");
-        confirm.setHeaderText(null);
-        confirm.setContentText("Tandai transaksi ini sebagai LUNAS?");
+        new Popup().showConfirmPopup("KONFIRMASI", "Apakah Anda yakin ingin menandai transaksi ini sebagai LUNAS?",
+                () -> {
+                    // 3. Ambil data aman
+                    String idTransaksi = lblIdTransaksi.getText();
+                    String kembalianStr = lblKembalian.getText().replaceAll("[^0-9]", "");
+                    String raw = tfTunai.getText();
+                    String clean = raw.replaceAll("[^0-9]", "");
+                    int tunai = Integer.parseInt(clean);
+                    // 4. Update database (HANYA SEKALI)
+                    long kembalianNum = Long.parseLong(kembalianStr.isEmpty() ? "0" : kembalianStr);
+                    String sql = "UPDATE tb_transaksi SET "
+                            + "uang_pembayaran = uang_pembayaran + ?, "
+                            + "status_pembayaran = 'Lunas', "
+                            + "kembalian = ?, "
+                            + "kekurangan = 0 "
+                            + "WHERE id_transaksi = ?";
 
-        confirm.showAndWait().ifPresent(response -> {
-            if (response != javafx.scene.control.ButtonType.OK) {
-                return;
-            }
+                    koneksi.eksekusiQuery(sql, tunai, kembalianNum, idTransaksi);
 
-            // 3. Ambil data aman
-            String idTransaksi = lblIdTransaksi.getText();
-            String kembalianStr = lblKembalian.getText().replaceAll("[^0-9]", "");
-            String raw = tfTunai.getText();
-            String clean = raw.replaceAll("[^0-9]", "");
-            int tunai = Integer.parseInt(clean);
-            // 4. Update database (HANYA SEKALI)
-            String sql = "UPDATE tb_transaksi SET "
-                    + "uang_pembayaran = uang_pembayaran + " + tunai + ", "
-                    + "status_pembayaran = 'Lunas', "
-                    + "kembalian = " + kembalianStr + ", "
-                    + "kekurangan = 0 "
-                    + "WHERE id_transaksi = '" + idTransaksi + "'";
+                    System.out.println("Transaksi " + idTransaksi + " ditandai LUNAS");
 
-            koneksi.eksekusiQuery(sql);
+                    // 5. Reset state UI
+                    PiutangModel.dataBarang.clear();
+                    renderList();
 
-            System.out.println("Transaksi " + idTransaksi + " ditandai LUNAS");
+                    // 6. Reload data utama (INI YANG PENTING)
+                    load_data_hutang(tfPelanggan.getText());
+                    tableHutang.setItems(PiutangModel.dataHutang);
+                    tableHutang.refresh();
 
-            // 5. Reset state UI
-            PiutangModel.dataBarang.clear();
-            renderList();
+                    // 7. Update komponen lain
+                    updateSummary();
+                    renderListKPI();
 
-            // 6. Reload data utama (INI YANG PENTING)
-            load_data_hutang(tfPelanggan.getText());
-            tableHutang.setItems(PiutangModel.dataHutang);
-            tableHutang.refresh();
+                    clearform();
+                    onClearSearch();
+                    tfPelanggan.setDisable(false);
+                    new Popup().showModernPopup("SUKSES", "Transaksi berhasil ditandai sebagai LUNAS.",
+                            Popup.PopupType.SUCCESS, ownerStage);
+                });
 
-            // 7. Update komponen lain
-            updateSummary();
-            loadKPI();
-
-            clearform();
-            onClearSearch();
-            tfPelanggan.setDisable(false);
-
-        });
     }
 
     @FXML
@@ -642,6 +723,7 @@ public class PiutangController implements Initializable {
             tfTunai.setText("");
             isUpdating = false;
             updateSummary();
+            return;
         }
         long value = Long.parseLong(raw);
         tfTunai.setText("Rp " + FMT.format(value));
@@ -656,26 +738,6 @@ public class PiutangController implements Initializable {
         } catch (NumberFormatException e) {
             return 0;
         }
-    }
-
-    void SetupRowClick() {
-        tableHutang.setOnMouseClicked(e -> {
-            DataHutang selected = tableHutang.getSelectionModel().getSelectedItem();
-            if (selected != null) {
-                lblIdTransaksi.setText(selected.idTransaksi);
-                lblNamaPelanggan.setText(selected.namaPelanggan);
-                lblJumlahHutang.setText("Rp " + FMT.format(selected.kekurangan));
-                load_data_barang(selected);
-                renderList();
-                tfPelanggan.setDisable(true);
-                tfTunai.setDisable(false);
-                PiutangModel.dataBarang.clear();
-                btnQuick5.setDisable(false);
-                btnQuick10.setDisable(false);
-                btnQuick20.setDisable(false);
-                btnQuick50.setDisable(false);
-            }
-        });
     }
 
     // ── Setup layout scroll content ───────────────────
@@ -723,6 +785,11 @@ public class PiutangController implements Initializable {
             for (PiutangModel.DataBarangHutang barang : PiutangModel.dataBarang) {
                 detailList.getChildren().add(setdatabarang(barang, no));
                 no++;
+            }
+            if (PiutangModel.daftarpaketps != null) {
+                detailList.getChildren().add(
+                        setdataPS(PiutangModel.daftarpaketps, no));
+                no++; 
             }
             // Summary
             updateSummary();
@@ -812,6 +879,41 @@ public class PiutangController implements Initializable {
         lblQty.setAlignment(Pos.CENTER);
 
         HBox row = new HBox(5, lblNo, lblNama, lblHarga, lblQty);
+        row.getStyleClass().add("item-row");
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        return row;
+    }
+
+    private HBox setdataPS(PiutangModel.DaftarPaketPS PaketPS, int no) {
+        // cell data
+        Label lblNo = new Label(String.valueOf(no));
+        Label lblNama = new Label("Paket Play Station");
+        Label lblHarga = new Label("Rp " + FMT.format(PaketPS.harga));
+
+        // No urut
+        lblNo.getStyleClass().add("item-no");
+        lblNo.setPrefWidth(30);
+        lblNo.setMinWidth(30);
+        lblNo.setMaxWidth(30);
+        lblNo.setAlignment(Pos.CENTER);
+
+        // Nama produk
+
+        lblNama.getStyleClass().add("item-nama");
+        lblNama.setPrefWidth(100);
+        lblNama.setMinWidth(100);
+        lblNama.setMaxWidth(100);
+        lblNama.setAlignment(Pos.CENTER_LEFT);
+
+        // Harga
+        lblHarga.getStyleClass().add("item-harga");
+        lblHarga.setPrefWidth(90);
+        lblHarga.setMinWidth(90);
+        lblHarga.setMaxWidth(90);
+        lblHarga.setAlignment(Pos.CENTER);
+
+        HBox row = new HBox(5, lblNo, lblNama, lblHarga);
         row.getStyleClass().add("item-row");
         row.setAlignment(Pos.CENTER_LEFT);
 

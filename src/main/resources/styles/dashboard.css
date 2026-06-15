@@ -639,3 +639,524 @@
     -fx-background-radius: 99;
     -fx-background-insets: 0;
 }
+
+
+/* ═══════════════════════════════════════════════════════════
+   CHARTS
+════════════════════════════════════════════════════════════ */
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.sales-chart,
+.trx-chart,
+.month-chart {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-plot-background-color: transparent;
+}
+
+/* Remove chart border & legend box */
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-legend {
+    -fx-background-color: transparent;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: transparent;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #2E3250;
+    -fx-stroke-dash-array: 4 4;
+}
+
+.chart-axis {
+    -fx-tick-label-fill: #8B8FA8;
+    -fx-tick-label-font-size: 9px;
+    -fx-color: #2E3250;
+}
+
+.chart-axis .axis-label {
+    -fx-text-fill: transparent;
+}
+
+/* Area chart series color */
+.sales-chart .chart-series-area-fill {
+    -fx-fill: rgba(108, 99, 255, 0.18);
+}
+
+.sales-chart .chart-series-area-line {
+    -fx-stroke: #6C63FF;
+    -fx-stroke-width: 2.5;
+}
+
+/* Bar chart series */
+.trx-chart .default-color0.chart-bar {
+    -fx-bar-fill: #00D4FF;
+    -fx-background-radius: 4 4 0 0;
+}
+
+/* Line chart */
+.month-chart .chart-series-line {
+    -fx-stroke: #00E5A0;
+    -fx-stroke-width: 2.5;
+}
+
+.month-chart .chart-line-symbol {
+    -fx-background-color: transparent, transparent;
+}
+
+/* Tooltip */
+.chart-tooltip {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+}
+
+/* ═══════════════════════════════════════
+   Horizontal Bar Chart
+════════════════════════════════════════ */
+
+.bar-row {
+    -fx-padding: 6 0 6 0;
+}
+
+.bar-nama {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.bar-total {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 10px;
+    -fx-min-width: 55;
+    -fx-alignment: CENTER_RIGHT;
+}
+
+/* Track background */
+.bar-progress {
+    -fx-background-color: transparent;
+    -fx-pref-height: 12;
+}
+
+.bar-progress .track {
+    -fx-background-color: #252840;
+    -fx-background-radius: 99;
+    -fx-background-insets: 0;
+}
+
+.bar-progress .bar {
+    -fx-background-radius: 99;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+/* merah  */
+
+/* ═══════════════════════════════════════════════════════════
+   TABLE VIEW
+════════════════════════════════════════════════════════════ */
+.trx-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.trx-table .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.trx-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.trx-table .column-header .label {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 9px;
+    -fx-font-weight: normal;
+    -fx-padding: 0 8 4 8;
+}
+
+.trx-table .table-row-cell {
+    -fx-background-color: #252840;
+    -fx-background-radius: 7;
+    -fx-table-cell-border-color: transparent;
+    -fx-cell-size: 36px;
+}
+
+.trx-table .table-row-cell:odd {
+    -fx-background-color: #1E2138;
+}
+
+.trx-table .table-row-cell:hover {
+    -fx-background-color: #2E3250;
+}
+
+.trx-table .table-row-cell:selected {
+    -fx-background-color: rgba(108, 99, 255, 0.2);
+}
+
+.trx-table .table-cell {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 11px;
+    -fx-padding: 0 8 0 8;
+    -fx-border-color: transparent;
+}
+
+/* Warna khusus per kolom ditangani di controller */
+
+.trx-table .scroll-bar {
+    -fx-background-color: #1A1D2E;
+}
+
+
+
+/* ═══════════════════════════════════════════════════════════
+   STOCK PROGRESS ITEMS  (dibuat via controller)
+════════════════════════════════════════════════════════════ */
+.stock-item-name {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 10px;
+}
+
+.stock-item-count {
+    -fx-text-fill: #8B8FA8;
+    -fx-font-size: 9px;
+}
+
+.badge-kritis {
+    -fx-background-color: rgba(255, 92, 124, 0.15);
+    -fx-border-color: #FF5C7C;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #FF5C7C;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-padding: 1 7 1 7;
+}
+
+.badge-menipis {
+    -fx-background-color: rgba(255, 209, 102, 0.15);
+    -fx-border-color: #FFD166;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #FFD166;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-padding: 1 7 1 7;
+}
+
+.progress-bar-bg {
+    -fx-background-color: #252840;
+    -fx-background-radius: 99;
+    -fx-min-height: 5;
+    -fx-max-height: 5;
+}
+
+.progress-kritis {
+    -fx-accent: #FF5C7C;
+}
+
+.progress-menipis {
+    -fx-accent: #FFD166;
+}
+
+.progress-bar .bar {
+    -fx-background-radius: 99;
+    -fx-border-radius: 99;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+}
+
+.progress-bar .track {
+    -fx-background-color: #252840;
+    -fx-background-radius: 99;
+    -fx-background-insets: 0;
+}
+
+/* ═══════════════════════════════════════════════
+   Shift Card — Pagi & Malam
+════════════════════════════════════════════════ */
+
+.shift-container {
+    -fx-background-color: transparent;
+}
+
+.shift-wrapper {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+}
+
+/* ── BASE CARD ───────────────────────────────── */
+.shift-card {
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 16, 0, 0, 4);
+}
+
+/* ════════════════════════════════════════════════
+   SHIFT PAGI — background cerah/terang
+   semua teks gelap agar kontras
+════════════════════════════════════════════════ */
+.shift-pagi {
+    -fx-background-image: url("../image/pagi.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-border-color: rgba(255, 200, 50, 0.4);
+}
+
+/* Badge pagi */
+.badge-pagi {
+    -fx-background-color: rgba(255, 255, 255, 0.55);
+    -fx-border-color: rgba(255, 255, 255, 0.85);
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #1A1A2E;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 12 4 12;
+}
+
+
+/* Divider pagi */
+.shift-pagi-divider {
+    -fx-background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* Icon kasir pagi */
+.shift-pagi-icon {
+    -fx-font-size: 22px;
+}
+
+
+/* ════════════════════════════════════════════════
+   SHIFT MALAM — background gelap
+   semua teks terang agar kontras
+════════════════════════════════════════════════ */
+.shift-malam {
+    -fx-background-image: url("../image/malam.png");
+    -fx-background-size: cover;
+    -fx-background-position: center;
+    -fx-border-color: rgba(108, 99, 255, 0.4);
+    -fx-background-color: transparent;
+}
+
+/* Badge malam */
+.badge-malam {
+    -fx-background-color: rgba(108, 99, 255, 0.25);
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1;
+    -fx-border-radius: 99;
+    -fx-background-radius: 99;
+    -fx-text-fill: #E0DDFF;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 12 4 12;
+}
+
+/* Divider malam */
+.shift-malam-divider {
+    -fx-background-color: rgba(108, 99, 255, 0.35);
+}
+
+/* Icon kasir malam */
+.shift-malam-icon {
+    -fx-font-size: 22px;
+}
+
+/* ── STATUS DOT animasi ───────────────────────── */
+.shift-status-aktif {
+    -fx-effect: dropshadow(gaussian, #00E5A0, 6, 0.8, 0, 0);
+    -fx-text-fill: #00E5A0;
+}
+
+.shift-status-nonaktif {
+    -fx-text-fill: rgba(255, 255, 255, 0.2);
+    -fx-effect: none;
+}
+
+
+
+
+/* ════════════════════════════════════════════════
+   SHIFT PAGI — teks gelap (representasi malam)
+════════════════════════════════════════════════ */
+
+.shift-pagi-jam {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-padding: 10 0 10 0;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.4), 4, 0, 0, 1);
+}
+
+.shift-pagi-username {
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.shift-pagi-nama {
+    -fx-text-fill: #2E3270;
+    /* navy medium */
+    -fx-font-size: 10px;
+}
+
+.shift-pagi-stat-row {
+    -fx-background-color: rgba(26, 29, 78, 0.10);
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+}
+
+.shift-pagi-stat-label {
+    -fx-text-fill: #2E3270;
+    /* navy medium */
+    -fx-font-size: 11px;
+}
+
+.shift-pagi-stat-value {
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.shift-pagi-pendapatan-box {
+    -fx-background-color: rgba(26, 29, 78, 0.10);
+    -fx-border-color: rgba(26, 29, 78, 0.20);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 14 0 14 0;
+}
+
+.shift-pagi-pendapatan-label {
+    -fx-text-fill: rgba(26, 29, 78, 0.60);
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 6 0;
+}
+
+.shift-pagi-pendapatan-value {
+    -fx-text-fill: #1A1D4E;
+    /* navy gelap */
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 4, 0, 0, 1);
+}
+
+.shift-pagi-dot {
+    -fx-font-size: 10px;
+    -fx-text-fill: #1A1D4E;
+}
+
+.shift-pagi-icon {
+    -fx-font-size: 22px;
+}
+
+/* ════════════════════════════════════════════════
+   SHIFT MALAM — teks terang (representasi pagi)
+════════════════════════════════════════════════ */
+
+.shift-malam-jam {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #E8F4FF;
+    /* putih kebiruan */
+    -fx-padding: 10 0 10 0;
+    -fx-effect: dropshadow(gaussian, rgba(100, 180, 255, 0.4), 6, 0, 0, 2);
+}
+
+.shift-malam-username {
+    -fx-text-fill: #FFFFFF;
+    /* putih */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.shift-malam-nama {
+    -fx-text-fill: #B8D4F0;
+    /* biru muda terang */
+    -fx-font-size: 10px;
+}
+
+.shift-malam-stat-row {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+}
+
+.shift-malam-stat-label {
+    -fx-text-fill: #B8D4F0;
+    /* biru muda terang */
+    -fx-font-size: 11px;
+}
+
+.shift-malam-stat-value {
+    -fx-text-fill: #FFFFFF;
+    /* putih */
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.shift-malam-pendapatan-box {
+    -fx-background-color: rgba(255, 255, 255, 0.08);
+    -fx-border-color: rgba(255, 255, 255, 0.20);
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    -fx-padding: 14 0 14 0;
+}
+
+.shift-malam-pendapatan-label {
+    -fx-text-fill: rgba(184, 212, 240, 0.70);
+    -fx-font-size: 9px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 6 0;
+}
+
+.shift-malam-pendapatan-value {
+    -fx-text-fill: #E8F4FF;
+    /* putih kebiruan */
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(100, 180, 255, 0.5), 6, 0, 0, 2);
+}
+
+.shift-malam-dot {
+    -fx-font-size: 10px;
+    -fx-text-fill: #B8D4F0;
+}
+
+.shift-malam-icon {
+    -fx-font-size: 22px;
+}
+
+
+/* lable pie chart */
+.chart-pie-label {
+    -fx-fill: #ffffff;
+    -fx-font-size: 11px;
+}
+
+.chart-pie-label-line {
+    -fx-stroke: #8B8FA8;
+}

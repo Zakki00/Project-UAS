@@ -230,9 +230,10 @@ public class BarangController implements Initializable {
         root.setStyle("-fx-background-color: transparent;");
         root.setPadding(new Insets(6));
 
-        Scene scene = new Scene(root, 322, 80);
+        Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         popupStage.setScene(scene);
+        popupStage.sizeToScene();
 
         // ── Posisi kanan bawah layar ──
         javafx.geometry.Rectangle2D screen = javafx.stage.Screen.getPrimary().getVisualBounds();
@@ -333,9 +334,25 @@ public class BarangController implements Initializable {
                     setText(null);
                 } else {
                     try {
+                        Image img = null;
+
+                        // Coba baca dari dalam JAR dulu
                         var stream = getClass().getResourceAsStream("/image-barang/" + item);
                         if (stream != null) {
-                            imageView.setImage(new Image(stream));
+                            img = new Image(stream);
+                        } else {
+                            // Fallback: baca dari AppData
+                            String appData = System.getenv("APPDATA");
+                            File imgFile = (appData != null && !appData.isEmpty())
+                                    ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
+                                    : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
+                            if (imgFile.exists()) {
+                                img = new Image(imgFile.toURI().toString());
+                            }
+                        }
+
+                        if (img != null) {
+                            imageView.setImage(img);
                             setGraphic(imageView);
                             setText(null);
                         } else {
@@ -448,7 +465,7 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════
     private void loadDataFromDB() {
         masterData.clear();
-        String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_url FROM tb_barang";
+        String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_path FROM tb_barang";
         try (Connection conn = koneksi.getConnection();
                 PreparedStatement ps = conn.prepareStatement(query);
                 ResultSet rs = ps.executeQuery()) {
@@ -461,7 +478,7 @@ public class BarangController implements Initializable {
                         rs.getInt("harga"),
                         rs.getInt("stok"),
                         rs.getString("deskripsi"),
-                        rs.getString("image_url")));
+                        rs.getString("image_path")));
             }
         } catch (SQLException e) {
             showModernPopup("Error Database", "Gagal memuat data: " + e.getMessage(), PopupType.ERROR);
@@ -484,7 +501,7 @@ public class BarangController implements Initializable {
             String deskripsi = txtDeskripsi.getText();
             String gambar = lblFilePath.getText();
 
-            String query = "INSERT INTO tb_barang (nama_barang, kategori, harga, stok, deskripsi, image_url) VALUES (?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO tb_barang (nama_barang, kategori, harga, stok, deskripsi, image_path) VALUES (?, ?, ?, ?, ?, ?)";
             try (Connection conn = koneksi.getConnection();
                     PreparedStatement ps = conn.prepareStatement(query)) {
 
@@ -518,39 +535,42 @@ public class BarangController implements Initializable {
         if (!isInputValid(true, dipilih))
             return;
 
-        try {
-            String nama = txtNama.getText().trim();
-            String kategori = cmbKategori.getValue();
-            int harga = getHargaValue();
-            int stok = Integer.parseInt(txtStok.getText().trim());
-            String deskripsi = txtDeskripsi.getText();
-            String gambar = lblFilePath.getText().equals("Tidak ada file dipilih")
-                    ? dipilih.getGambar()
-                    : lblFilePath.getText();
+        new Popup().showConfirmPopup("UBAH BARANG", "Apakah Anda Yakin Ingin Merubah Data Barang Ini?", () -> {
+            try {
+                String nama = txtNama.getText().trim();
+                String kategori = cmbKategori.getValue();
+                int harga = getHargaValue();
+                int stok = Integer.parseInt(txtStok.getText().trim());
+                String deskripsi = txtDeskripsi.getText();
+                String gambar = lblFilePath.getText().equals("Tidak ada file dipilih")
+                        ? dipilih.getGambar()
+                        : lblFilePath.getText();
 
-            String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_url=? WHERE id_barang=?";
-            try (Connection conn = koneksi.getConnection();
-                    PreparedStatement ps = conn.prepareStatement(query)) {
+                String query = "UPDATE tb_barang SET nama_barang=?, kategori=?, harga=?, stok=?, deskripsi=?, image_path =? WHERE id_barang=?";
+                try (Connection conn = koneksi.getConnection();
+                        PreparedStatement ps = conn.prepareStatement(query)) {
 
-                ps.setString(1, nama);
-                ps.setString(2, kategori);
-                ps.setInt(3, harga);
-                ps.setInt(4, stok);
-                ps.setString(5, deskripsi);
-                ps.setString(6, gambar);
-                ps.setInt(7, dipilih.getId());
-                ps.executeUpdate();
+                    ps.setString(1, nama);
+                    ps.setString(2, kategori);
+                    ps.setInt(3, harga);
+                    ps.setInt(4, stok);
+                    ps.setString(5, deskripsi);
+                    ps.setString(6, gambar);
+                    ps.setInt(7, dipilih.getId());
+                    ps.executeUpdate();
+                }
+
+                loadDataFromDB();
+                clearForm(null);
+                showModernPopup("Berhasil Diperbarui", "Barang \"" + nama + "\" berhasil diubah.", PopupType.SUCCESS);
+
+            } catch (NumberFormatException e) {
+                showModernPopup("Kesalahan Input", "Stok harus berupa angka bulat!", PopupType.ERROR);
+            } catch (SQLException e) {
+                showModernPopup("Error Database", "Gagal mengubah data: " + e.getMessage(), PopupType.ERROR);
             }
+        });
 
-            loadDataFromDB();
-            clearForm(null);
-            showModernPopup("Berhasil Diperbarui", "Barang \"" + nama + "\" berhasil diubah.", PopupType.SUCCESS);
-
-        } catch (NumberFormatException e) {
-            showModernPopup("Kesalahan Input", "Stok harus berupa angka bulat!", PopupType.ERROR);
-        } catch (SQLException e) {
-            showModernPopup("Error Database", "Gagal mengubah data: " + e.getMessage(), PopupType.ERROR);
-        }
     }
 
     @FXML
@@ -560,23 +580,27 @@ public class BarangController implements Initializable {
             showModernPopup("Peringatan", "Pilih data di tabel terlebih dahulu!", PopupType.WARNING);
             return;
         }
-        try {
-            String namaBarang = dipilih.getNama();
-            String query = "DELETE FROM tb_barang WHERE id_barang=?";
-            try (Connection conn = koneksi.getConnection();
-                    PreparedStatement ps = conn.prepareStatement(query)) {
 
-                ps.setInt(1, dipilih.getId());
-                ps.executeUpdate();
+        new Popup().showConfirmPopup("HAPUS BARANG", "Apakah Anda Yakin Ingin Menghapus Data Barang Ini?", () -> {
+            try {
+                String namaBarang = dipilih.getNama();
+                String query = "DELETE FROM tb_barang WHERE id_barang=?";
+                try (Connection conn = koneksi.getConnection();
+                        PreparedStatement ps = conn.prepareStatement(query)) {
+
+                    ps.setInt(1, dipilih.getId());
+                    ps.executeUpdate();
+                }
+
+                loadDataFromDB();
+                clearForm(null);
+                showModernPopup("Berhasil Dihapus", "Barang \"" + namaBarang + "\" telah dihapus.", PopupType.SUCCESS);
+
+            } catch (SQLException e) {
+                showModernPopup("Error Database", "Gagal menghapus data: " + e.getMessage(), PopupType.ERROR);
             }
+        });
 
-            loadDataFromDB();
-            clearForm(null);
-            showModernPopup("Berhasil Dihapus", "Barang \"" + namaBarang + "\" telah dihapus.", PopupType.SUCCESS);
-
-        } catch (SQLException e) {
-            showModernPopup("Error Database", "Gagal menghapus data: " + e.getMessage(), PopupType.ERROR);
-        }
     }
 
     @FXML
@@ -614,9 +638,19 @@ public class BarangController implements Initializable {
         File file = fc.showOpenDialog(txtNama.getScene().getWindow());
         if (file != null) {
             try {
-                Path tujuan = Path.of("src/main/resources/image-barang/" + file.getName());
+                // Simpan ke AppData
+                String appData = System.getenv("APPDATA");
+                File imgFolder = (appData != null && !appData.isEmpty())
+                        ? new File(appData + "\\ProjectUAS\\image-barang")
+                        : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang");
+
+                if (!imgFolder.exists())
+                    imgFolder.mkdirs();
+
+                Path tujuan = Path.of(imgFolder.getAbsolutePath(), file.getName());
                 Files.copy(file.toPath(), tujuan, StandardCopyOption.REPLACE_EXISTING);
                 lblFilePath.setText(file.getName());
+
             } catch (IOException e) {
                 showModernPopup("Error", "Gagal menyalin file gambar: " + e.getMessage(), PopupType.ERROR);
             }
@@ -708,6 +742,10 @@ public class BarangController implements Initializable {
     @FXML
     void onNavPengaturan() {
         setActiveNav(navPengaturan);
+        navigation nav = new navigation();
+        nav.navigataeToPengaturan();
+        Stage stage = (Stage) navPengaturan.getScene().getWindow();
+        stage.close();
     }
 
     private void setActiveNav(HBox selected) {
