@@ -319,11 +319,11 @@
     -fx-text-fill: #FFFFFF;
 }
 .date-picker-popup .day-cell {
-    -fx-text-fill: #FFFFFF;
+    -fx-text-fill: #2E3250;
     -fx-background-color: transparent;
 }
 .date-picker-popup .day-cell:hover {
-    -fx-background-color: #2E3250;
+    -fx-background-color: #eeff00;
     -fx-background-radius: 6;
 }
 .date-picker-popup .selected {

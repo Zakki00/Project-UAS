@@ -10,6 +10,8 @@ DROP TABLE IF EXISTS tb_barang;
 DROP TABLE IF EXISTS tb_paket_ps;
 
 DROP TABLE IF EXISTS tb_user;
+DROP Table if EXISTS tb_karyawan;
+DROP TABLE if EXISTS tb_absensi;
 
 CREATE TABLE
     tb_user (
@@ -71,3 +73,27 @@ CREATE TABLE
         FOREIGN KEY (id_barang) REFERENCES tb_barang (id_barang),
         FOREIGN KEY (id_paket_ps) REFERENCES tb_paket_ps (id_paket_ps)
     )
+
+ CREATE TABLE tb_karyawan (
+    id_karyawan TEXT PRIMARY KEY,
+    nama_karyawan TEXT NOT NULL,
+    jenis_kelamin TEXT NOT NULL CHECK (
+        jenis_kelamin IN ('Laki-laki', 'Perempuan')
+    ),
+    jabatan TEXT NOT NULL,
+    no_hp TEXT NOT NULL,
+    tanggal_masuk TEXT NOT NULL,
+    status_kerja TEXT NOT NULL CHECK (
+        status_kerja IN ('Aktif', 'Non Aktif')
+    ),
+    alamat TEXT
+);
+
+CREATE TABLE tb_absensi (
+    id_absensi INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_karyawan TEXT NOT NULL,
+    tanggal TEXT NOT NULL,
+    jam_masuk TEXT NOT NULL,
+    status_kehadiran TEXT NOT NULL,
+    FOREIGN KEY (id_karyawan) REFERENCES tb_karyawan (id_karyawan) ON DELETE CASCADE
+);

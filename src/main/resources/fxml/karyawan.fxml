@@ -13,7 +13,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -23,12 +22,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="900" prefWidth="1080"
-            stylesheets="@../styles/karyawan.css"
-            styleClass="root-pane"
-            xmlns="http://javafx.com/javafx/26"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.mycompany.projectuas.KaryawanController">
+<BorderPane prefHeight="900" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/karyawan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.KaryawanController">
 
     <!-- ══════════════════════════════════════════════════
          SIDEBAR  (sama seperti milik Anda)
@@ -133,11 +127,11 @@
                             <VBox.margin><Insets /></VBox.margin>
 
                             <!-- ── CARD FORM ─────────────────────────── -->
-                            <VBox styleClass="card" spacing="14">
+                            <VBox spacing="14" styleClass="card">
 
                                 <!-- Card Header -->
                                 <HBox alignment="CENTER_LEFT" spacing="8">
-                                    <Label text="📋" style="-fx-font-size:16px;" />
+                                    <Label style="-fx-font-size:16px;" text="📋" />
                                     <Label styleClass="card-title" text="DATA KARYAWAN CAFE" />
                                 </HBox>
                                 <Separator styleClass="sep" />
@@ -159,91 +153,73 @@
                                     </rowConstraints>
 
                                     <!-- Row 0 -->
-                                    <Label text="ID Karyawan" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                    <TextField fx:id="txtIdKaryawan" styleClass="form-field" promptText="Auto-generate"
-                                               maxWidth="Infinity" editable="false"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                    <Label styleClass="form-label" text="ID Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                    <TextField fx:id="txtIdKaryawan" editable="false" maxWidth="Infinity" promptText="Auto-generate" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                                    <Label text="No HP" styleClass="form-label" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                                    <TextField fx:id="txtNoHp" styleClass="form-field" promptText="08xxxxxxxxxx"
-                                               maxWidth="Infinity"
-                                               GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                    <Label styleClass="form-label" text="No HP" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                    <TextField fx:id="txtNoHp" maxWidth="Infinity" promptText="08xxxxxxxxxx" styleClass="form-field" GridPane.columnIndex="4" GridPane.rowIndex="0" />
 
                                     <!-- Row 1 -->
-                                    <Label text="Nama Lengkap" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                    <TextField fx:id="txtNamaKaryawan" styleClass="form-field" promptText="Nama karyawan"
-                                               maxWidth="Infinity"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label styleClass="form-label" text="Nama Lengkap" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                    <TextField fx:id="txtNamaKaryawan" maxWidth="Infinity" promptText="Nama karyawan" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                                    <Label text="Alamat" styleClass="form-label" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <TextArea fx:id="txtAlamat" styleClass="form-textarea" promptText="Alamat lengkap..."
-                                              wrapText="true"
-                                              GridPane.columnIndex="4" GridPane.rowIndex="1"
-                                              GridPane.rowSpan="2" />
+                                    <Label styleClass="form-label" text="Alamat" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <TextArea fx:id="txtAlamat" promptText="Alamat lengkap..." styleClass="form-textarea" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.rowSpan="2" />
 
                                     <!-- Row 2 -->
-                                    <Label text="Jenis Kelamin" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                    <ComboBox fx:id="cmbJenisKelamin" styleClass="form-combo" promptText="Pilih..."
-                                              maxWidth="Infinity"
-                                              GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label styleClass="form-label" text="Jenis Kelamin" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                    <ComboBox fx:id="cmbJenisKelamin" maxWidth="Infinity" promptText="Pilih..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                     <!-- Row 3 -->
-                                    <Label text="Jabatan" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                    <ComboBox fx:id="cmbJabatan" styleClass="form-combo" promptText="Pilih jabatan..."
-                                              maxWidth="Infinity"
-                                              GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Label styleClass="form-label" text="Jabatan" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                    <ComboBox fx:id="cmbJabatan" maxWidth="Infinity" promptText="Pilih jabatan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                                    <Label text="Tanggal Masuk" styleClass="form-label" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                    <DatePicker fx:id="dpTanggalMasuk" styleClass="form-datepicker"
-                                                maxWidth="Infinity"
-                                                GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                                    <Label styleClass="form-label" text="Tanggal Masuk" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                    <DatePicker fx:id="dpTanggalMasuk" maxWidth="Infinity" styleClass="form-datepicker" GridPane.columnIndex="4" GridPane.rowIndex="3" />
                                 </GridPane>
 
-                                <!-- Row Status berdiri sendiri (full width) -->
-                                <GridPane hgap="14" vgap="12">
+                                   <!-- Row Status berdiri sendiri (full width) -->
+                                <GridPane hgap="14" prefHeight="36.0" prefWidth="753.0" vgap="12">
                                     <columnConstraints>
                                         <ColumnConstraints minWidth="110" prefWidth="120" />
-                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="160" maxWidth="240"/>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="240" minWidth="160" />
                                         <ColumnConstraints hgrow="ALWAYS" />
                                     </columnConstraints>
                                     <rowConstraints>
                                         <RowConstraints minHeight="36" />
                                     </rowConstraints>
-                                    <Label text="Status Kerja" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                    <ComboBox fx:id="cmbStatusKerja" styleClass="form-combo" promptText="Pilih status..."
-                                              maxWidth="Infinity"
-                                              GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                    <Label styleClass="form-label" text="Status Kerja" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                    <ComboBox fx:id="cmbStatusKerja" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                                 </GridPane>
 
                                 <!-- Tombol Aksi -->
-                                <HBox spacing="10" alignment="CENTER_LEFT">
-                                    <Button styleClass="btn-base, btn-tambah" text="＋  Tambah"  onAction="#tambahKaryawan" minWidth="100" />
-                                    <Button styleClass="btn-base, btn-simpan" text="💾  Simpan"  onAction="#simpanKaryawan" minWidth="100" />
-                                    <Button styleClass="btn-base, btn-ubah"   text="✏  Ubah"    onAction="#ubahKaryawan"   minWidth="100" />
-                                    <Button styleClass="btn-base, btn-hapus"  text="🗑  Hapus"   onAction="#hapusKaryawan"  minWidth="100" />
-                                    <Button styleClass="btn-base, btn-reset"  text="↺  Reset"   onAction="#resetKaryawan"  minWidth="100" />
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Button minWidth="100" onAction="#tambahKaryawan" styleClass="btn-base, btn-tambah" text="＋  Tambah" />
+                                    <Button minWidth="100" onAction="#simpanKaryawan" styleClass="btn-base, btn-simpan" text="💾  Simpan" />
+                                    <Button minWidth="100" onAction="#ubahKaryawan" styleClass="btn-base, btn-ubah" text="✏  Ubah" />
+                                    <Button minWidth="100" onAction="#hapusKaryawan" styleClass="btn-base, btn-hapus" text="🗑  Hapus" />
+                                    <Button minWidth="100" onAction="#resetKaryawan" styleClass="btn-base, btn-reset" text="↺  Reset" />
                                 </HBox>
                             </VBox>
 
                             <!-- ── TABLE DAFTAR KARYAWAN ─────────────── -->
                             <VBox spacing="10">
                                 <HBox alignment="CENTER_LEFT" spacing="8">
-                                    <Label text="📋" style="-fx-font-size:14px;" />
+                                    <Label style="-fx-font-size:14px;" text="📋" />
                                     <Label styleClass="section-title" text="Daftar Karyawan" />
                                 </HBox>
 
-                                <TableView fx:id="tableKaryawan" styleClass="table-karyawan"
-                                           VBox.vgrow="ALWAYS" minHeight="280" prefHeight="320">
+                                <TableView fx:id="tableKaryawan" minHeight="280" prefHeight="320" styleClass="table-karyawan" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colId"       text="ID"           prefWidth="90"  minWidth="70"  />
-                                        <TableColumn fx:id="colNama"     text="Nama"         prefWidth="180" minWidth="120" />
-                                        <TableColumn fx:id="colNoHp"     text="No HP"        prefWidth="140" minWidth="110" />
-                                        <TableColumn fx:id="colTglMasuk" text="Tgl Masuk"    prefWidth="120" minWidth="90"  />
-                                        <TableColumn fx:id="colAlamat"   text="Alamat"       prefWidth="220" minWidth="140" />
-                                        <TableColumn fx:id="colStatus"   text="Status"       prefWidth="110" minWidth="90"  />
+                                        <TableColumn fx:id="colId" minWidth="70" prefWidth="90" text="ID" />
+                                        <TableColumn fx:id="colNama" minWidth="120" prefWidth="180" text="Nama" />
+                                        <TableColumn fx:id="colNoHp" minWidth="110" prefWidth="140" text="No HP" />
+                                        <TableColumn fx:id="colTglMasuk" minWidth="90" prefWidth="120" text="Tgl Masuk" />
+                                        <TableColumn fx:id="colAlamat" minWidth="140" prefWidth="220" text="Alamat" />
+                                        <TableColumn fx:id="colStatus" minWidth="90" prefWidth="110" text="Status" />
                                     </columns>
                                     <placeholder>
-                                        <Label text="Belum ada data karyawan" style="-fx-text-fill:#8B8FA8;" />
+                                        <Label style="-fx-text-fill:#8B8FA8;" text="Belum ada data karyawan" />
                                     </placeholder>
                                 </TableView>
                             </VBox>
@@ -260,10 +236,10 @@
                         <VBox spacing="16" styleClass="content-inner">
 
                             <!-- ── CARD FORM ABSENSI ─────────────────── -->
-                            <VBox styleClass="card" spacing="14">
+                            <VBox spacing="14" styleClass="card">
 
                                 <HBox alignment="CENTER_LEFT" spacing="8">
-                                    <Label text="📅" style="-fx-font-size:16px;" />
+                                    <Label style="-fx-font-size:16px;" text="📅" />
                                     <Label styleClass="card-title" text="FORM ABSENSI KARYAWAN" />
                                 </HBox>
                                 <Separator styleClass="sep" />
@@ -283,62 +259,51 @@
                                     </rowConstraints>
 
                                     <!-- Row 0 -->
-                                    <Label text="Tanggal Absensi" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                    <DatePicker fx:id="dpTanggalAbsensi" styleClass="form-datepicker"
-                                                maxWidth="Infinity"
-                                                GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                    <Label styleClass="form-label" text="Tanggal Absensi" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                    <DatePicker fx:id="dpTanggalAbsensi" maxWidth="Infinity" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                                    <Label text="Shift Masuk" styleClass="form-label" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                                    <ComboBox fx:id="cmbShift" styleClass="form-combo" promptText="Pilih shift..."
-                                              maxWidth="Infinity"
-                                              GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                                    <Label styleClass="form-label" text="Shift Masuk" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                                    <ComboBox fx:id="cmbShift" maxWidth="Infinity" promptText="Pilih shift..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="0" />
 
                                     <!-- Row 1 -->
-                                    <Label text="Pilih Karyawan" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                    <ComboBox fx:id="cmbPilihKaryawan" styleClass="form-combo" promptText="ID Karyawan..."
-                                              maxWidth="Infinity"
-                                              GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <Label styleClass="form-label" text="Pilih Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="cmbPilihKaryawan" maxWidth="Infinity" promptText="ID Karyawan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                                    <Label text="Status Kehadiran" styleClass="form-label" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                                    <ComboBox fx:id="cmbStatusKehadiran" styleClass="form-combo" promptText="Pilih status..."
-                                              maxWidth="Infinity"
-                                              GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                                    <Label styleClass="form-label" text="Status Kehadiran" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="cmbStatusKehadiran" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="1" />
 
                                     <!-- Row 2 -->
-                                    <Label text="Nama Karyawan" styleClass="form-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                    <TextField fx:id="txtNamaAbsensi" styleClass="form-field" promptText="Auto-fill..."
-                                               editable="false" maxWidth="Infinity"
-                                               GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <Label styleClass="form-label" text="Nama Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                    <TextField fx:id="txtNamaAbsensi" editable="false" maxWidth="Infinity" promptText="Auto-fill..." styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                 </GridPane>
 
                                 <!-- Tombol Absensi -->
-                                <HBox spacing="10" alignment="CENTER_LEFT">
-                                    <Button styleClass="btn-base, btn-tambah" text="💾  Simpan Absensi" onAction="#simpanAbsensi" minWidth="140" />
-                                    <Button styleClass="btn-base, btn-ubah"   text="✏  Ubah"           onAction="#ubahAbsensi"   minWidth="100" />
-                                    <Button styleClass="btn-base, btn-hapus"  text="🗑  Hapus"          onAction="#hapusAbsensi"  minWidth="100" />
-                                    <Button styleClass="btn-base, btn-reset"  text="↺  Reset"          onAction="#resetAbsensi"  minWidth="100" />
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Button minWidth="140" onAction="#simpanAbsensi" styleClass="btn-base, btn-tambah" text="💾  Simpan Absensi" />
+                                    <Button minWidth="100" onAction="#ubahAbsensi" styleClass="btn-base, btn-ubah" text="✏  Ubah" />
+                                    <Button minWidth="100" onAction="#hapusAbsensi" styleClass="btn-base, btn-hapus" text="🗑  Hapus" />
+                                    <Button minWidth="100" onAction="#resetAbsensi" styleClass="btn-base, btn-reset" text="↺  Reset" />
                                 </HBox>
                             </VBox>
 
                             <!-- ── TABLE ABSENSI ──────────────────────── -->
                             <VBox spacing="10">
                                 <HBox alignment="CENTER_LEFT" spacing="8">
-                                    <Label text="📋" style="-fx-font-size:14px;" />
+                                    <Label style="-fx-font-size:14px;" text="📋" />
                                     <Label styleClass="section-title" text="Daftar Absensi" />
                                 </HBox>
 
-                                <TableView fx:id="tableAbsensi" styleClass="table-absensi"
-                                           VBox.vgrow="ALWAYS" minHeight="280" prefHeight="320">
+                                <TableView fx:id="tableAbsensi" minHeight="280" prefHeight="320" styleClass="table-absensi" VBox.vgrow="ALWAYS">
                                     <columns>
-                                        <TableColumn fx:id="colAbsTanggal" text="Tanggal"    prefWidth="120" minWidth="90"  />
-                                        <TableColumn fx:id="colAbsId"      text="ID"         prefWidth="90"  minWidth="70"  />
-                                        <TableColumn fx:id="colAbsNama"    text="Nama"       prefWidth="180" minWidth="120" />
-                                        <TableColumn fx:id="colAbsJabatan" text="Jabatan"    prefWidth="130" minWidth="90"  />
-                                        <TableColumn fx:id="colAbsShift"   text="Shift"      prefWidth="100" minWidth="80"  />
-                                        <TableColumn fx:id="colAbsStatus"  text="Status"     prefWidth="110" minWidth="90"  />
+                                        <TableColumn fx:id="colAbsTanggal" minWidth="90" prefWidth="120" text="Tanggal" />
+                                        <TableColumn fx:id="colAbsId" minWidth="70" prefWidth="90" text="ID" />
+                                        <TableColumn fx:id="colAbsNama" minWidth="120" prefWidth="180" text="Nama" />
+                                        <TableColumn fx:id="colAbsJabatan" minWidth="90" prefWidth="130" text="Jabatan" />
+                                        <TableColumn fx:id="colAbsShift" minWidth="80" prefWidth="100" text="Shift" />
+                                        <TableColumn fx:id="colAbsStatus" minWidth="90" prefWidth="110" text="Status" />
                                     </columns>
                                     <placeholder>
-                                        <Label text="Belum ada data absensi" style="-fx-text-fill:#8B8FA8;" />
+                                        <Label style="-fx-text-fill:#8B8FA8;" text="Belum ada data absensi" />
                                     </placeholder>
                                 </TableView>
                             </VBox>
