@@ -33,36 +33,57 @@
         <VBox.margin>
           <Insets bottom="10" top="10" />
         </VBox.margin>
-        <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
-          <Rectangle height="0" styleClass="nav-active-bar" width="3" />
-          <Label styleClass="nav-icon" text="⊞" />
-          <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard" />
-        </HBox>
-        <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="📦" />
-          <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
-        </HBox>
-        <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="🛒" />
-          <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
-        </HBox>
-        <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="📈" />
-          <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan" />
-        </HBox>
-        <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="💰" />
-          <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang" />
-        </HBox>
-        <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
-          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-          <Label styleClass="nav-icon" text="⚙️" />
-          <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Pengaturan" />
-        </HBox>
+            <children>
+               <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
+                  <children>
+                     <Rectangle height="0" styleClass="nav-active-bar" width="3" />
+                     <Label styleClass="nav-icon" text="⊞" />
+                     <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard" />
+                  </children>
+               </HBox>
+               <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
+                  <children>
+                     <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                     <Label styleClass="nav-icon" text="📦" />
+                     <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
+                  </children>
+               </HBox>
+               <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
+                  <children>
+                     <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                     <Label styleClass="nav-icon" text="👥" />
+                     <Label fx:id="navLblKaryawan" styleClass="nav-label" text="Karyawan" />
+                  </children>
+               </HBox>
+               <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
+                  <children>
+                     <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                     <Label styleClass="nav-icon" text="🛒" />
+                     <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
+                  </children>
+               </HBox>
+               <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
+                  <children>
+                     <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                     <Label styleClass="nav-icon" text="💰" />
+                     <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Piutang" />
+                  </children>
+               </HBox>
+               <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
+                  <children>
+                     <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                     <Label styleClass="nav-icon" text="📈" />
+                     <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan" />
+                  </children>
+               </HBox>
+               <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
+                  <children>
+                     <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+                     <Label styleClass="nav-icon" text="⚙️" />
+                     <Label fx:id="navLblPengaturan1" styleClass="nav-label" text="Pengaturan" />
+                  </children>
+               </HBox>
+            </children>
       </VBox>
       <Separator styleClass="sidebar-divider" />
       <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">

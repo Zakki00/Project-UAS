@@ -987,30 +987,36 @@ public class DashboardController implements Initializable {
         }
         stockList.getChildren().clear();
         for (int idx = 0; idx < data.size(); idx++) {
+
             Object[] row = data.get(idx);
             String name = String.valueOf(row[0]);
             int stock = ((Number) row[1]).intValue();
             String status = String.valueOf(row[2]);
             double pct = Math.min(1.0, (double) stock / 50);
             boolean kritis = status.equals("Kritis") || status.equals("Habis");
+
             Label nameLabel = new Label(name);
             nameLabel.getStyleClass().add("stock-item-name");
             Label countLabel = new Label(stock + " unit");
             countLabel.getStyleClass().add("stock-item-count");
             Label badge = new Label(status);
             badge.getStyleClass().add(kritis ? "badge-kritis" : "badge-menipis");
+
             HBox rightBox = new HBox(6, countLabel, badge);
             rightBox.setAlignment(Pos.CENTER_RIGHT);
             rightBox.setMinWidth(Region.USE_PREF_SIZE);
             Region spacer = new Region();
+
             HBox.setHgrow(spacer, Priority.ALWAYS);
             HBox topRow = new HBox(8, nameLabel, spacer, rightBox);
             topRow.setAlignment(Pos.CENTER_LEFT);
             topRow.setMaxWidth(Double.MAX_VALUE);
+
             ProgressBar pb = new ProgressBar(0);
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setPrefHeight(5);
             pb.getStyleClass().add(kritis ? "progress-kritis" : "progress-menipis");
+            
             VBox itemBox = new VBox(4, topRow, pb);
             stockList.getChildren().add(itemBox);
             animateProgressBar(pb, pct, 100 + idx * 100);
