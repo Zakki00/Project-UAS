@@ -48,6 +48,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -77,7 +78,11 @@ public class LaporanController implements Initializable {
     private Button toggleBtn;
     @FXML
     private VBox navMenu;
+    @FXML
+    private FlowPane flowKasirPagi;
 
+    @FXML
+    private FlowPane flowKasirMalam;
     // Nav items
     @FXML
     private HBox navDashboard;
@@ -85,7 +90,7 @@ public class LaporanController implements Initializable {
     private HBox navProduk;
     @FXML
     private HBox navKasir;
-   
+
     @FXML
     private HBox navLaporan;
     @FXML
@@ -767,6 +772,7 @@ public class LaporanController implements Initializable {
     // SHIFT DATA
     // ═══════════════════════════════════════════════════════
     private void loadShiftData() {
+
         loadShift(
                 "06:00:00",
                 "12:00:00",
@@ -786,6 +792,17 @@ public class LaporanController implements Initializable {
                 lblPendapatanMalam,
                 lblJamMalam,
                 "12:00 — 21:00");
+
+        loadKasirShift(
+                "06:00:00",
+                "12:00:00",
+                flowKasirPagi);
+
+        loadKasirShift(
+                "12:00:00",
+                "23:00:00",
+                flowKasirMalam);
+
         updateStatusDot();
     }
 
@@ -826,6 +843,7 @@ public class LaporanController implements Initializable {
             lblPendapatan.setText("Rp 0");
             return;
         }
+        
 
         Object[] row = data.get(0);
 
@@ -834,7 +852,42 @@ public class LaporanController implements Initializable {
         lblPaketPS.setText(String.valueOf(((Number) row[2]).intValue()));
         lblPendapatan.setText("Rp " + FMT.format(((Number) row[3]).longValue()));
     }
-    
+
+    private void loadKasirShift(
+            String jamMulai,
+            String jamSelesai,
+            FlowPane flowPane) {
+
+        String sql = """
+                    SELECT DISTINCT u.nama_lengkap
+                    FROM tb_transaksi t
+                    JOIN tb_user u ON u.id_user = t.id_user
+                    WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                      AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
+                    ORDER BY u.nama_lengkap
+                """;
+
+        List<Object[]> data = koneksi.ambilData(
+                sql,
+                jamMulai,
+                jamSelesai);
+
+        flowPane.getChildren().clear();
+
+        if (data.isEmpty()) {
+            Label chip = new Label("Tidak ada kasir");
+            chip.getStyleClass().add("kasir-chip");
+            flowPane.getChildren().add(chip);
+            return;
+        }
+
+        for (Object[] row : data) {
+            Label chip = new Label(String.valueOf(row[0]));
+            chip.getStyleClass().add("kasir-chip");
+            flowPane.getChildren().add(chip);
+        }
+    }
+
     private void updateStatusDot() {
         int jam = java.time.LocalTime.now().getHour();
         boolean pagiAktif = jam >= 6 && jam < 12;
@@ -1121,7 +1174,7 @@ public class LaporanController implements Initializable {
     // ═══════════════════════════════════════════════════════
 
     /** Pie: Lunas vs Belum Lunas hari ini */
-     private void loadPiePiutang() {
+    private void loadPiePiutang() {
         List<Object[]> lunas = koneksi.ambilData("""
                     SELECT COUNT(*) FROM tb_transaksi
                     WHERE status_pembayaran = 'Lunas'

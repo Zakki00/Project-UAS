@@ -234,16 +234,7 @@ public class SignupController implements Initializable {
         lbl.setVisible(false);
         lbl.setManaged(false);
     }
-
-    private void showAlert(String title, String msg) {
-        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
-                javafx.scene.control.Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
-        alert.showAndWait();
-    }
-
+    
     // Hash password pakai SHA-256
     private String hashPassword(String password) {
         try {

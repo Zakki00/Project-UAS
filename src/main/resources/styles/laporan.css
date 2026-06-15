@@ -1232,3 +1232,13 @@
 .chart-pie-label-line {
     -fx-stroke: #8B8FA8;
 }
+
+
+.kasir-chip {
+    -fx-background-color: rgba(255, 255, 255, 0.18);
+    -fx-background-radius: 20;
+    -fx-padding: 5 12 5 12;
+    -fx-text-fill: rgb(255, 255, 255);
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}

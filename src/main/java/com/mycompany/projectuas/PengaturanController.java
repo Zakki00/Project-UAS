@@ -557,13 +557,13 @@ public class PengaturanController implements Initializable {
         pbAnimTimeline.play();
 
         Thread t = new Thread(() -> {
-            GoogleDriveService driveService = new GoogleDriveService();
-            boolean berhasil = driveService.uploadBackup();
+            GoogleDriveService service = new GoogleDriveService();
+            boolean backup = service.uploadBackupAll();
 
             Platform.runLater(() -> {
                 pbAnimTimeline.stop();
 
-                if (berhasil) {
+                if (backup) {
                     Timeline selesai = new Timeline(
                             new KeyFrame(Duration.ZERO,
                                     new KeyValue(pbBackup.progressProperty(), pbBackup.getProgress())),
@@ -616,7 +616,8 @@ public class PengaturanController implements Initializable {
         prefs.put("backup_interval", cbInterval.getValue());
         Stage stage = (Stage) btnSimpanSeting.getScene().getWindow();
         Popup popup = new Popup();
-        popup.showModernPopup("Simpan Pengaturan", "Simpan Pengaturan. Backup Otomatis Akan Di Lakukan Setiap: " + prefs.get("backup_interval", "") + " Sekali", Popup.PopupType.SUCCESS, stage);
+        popup.showModernPopup("Simpan Pengaturan", "Simpan Pengaturan. Backup Otomatis Akan Di Lakukan Setiap: " 
+        + prefs.get("backup_interval", "") + " Sekali", Popup.PopupType.SUCCESS, stage);
     }
 
     @FXML
@@ -630,18 +631,7 @@ public class PengaturanController implements Initializable {
         }
     }
 
-    @FXML
-    private void onBrowseRestore() {
-        javafx.stage.FileChooser fc = new javafx.stage.FileChooser();
-        fc.setTitle("Pilih File Backup");
-        fc.getExtensionFilters().add(
-                new javafx.stage.FileChooser.ExtensionFilter("SQL File", "*.sql"));
-        java.io.File file = fc.showOpenDialog(
-                tfFileRestore.getScene().getWindow());
-        if (file != null) {
-            tfFileRestore.setText(file.getAbsolutePath());
-        }
-    }
+
 
     @FXML
     private void onRestore() {
@@ -664,7 +654,7 @@ public class PengaturanController implements Initializable {
 
         Thread t = new Thread(() -> {
             GoogleDriveService driveService = new GoogleDriveService();
-            boolean berhasil = driveService.restoreBackup();
+            boolean restore = driveService.restoreBackupAll();
 
             Platform.runLater(() -> {
                 pbAnimTimeline.stop();
@@ -675,7 +665,7 @@ public class PengaturanController implements Initializable {
                         new KeyFrame(Duration.millis(400),
                                 new KeyValue(pbBackup.progressProperty(), 1.0)));
 
-                if (berhasil) {
+                if (restore) {
                     selesai.setOnFinished(ev -> Platform.runLater(() -> {
                         pbBackup.setStyle("-fx-accent: #00E5A0;");
                         pbBackup.applyCss();

@@ -17,7 +17,8 @@ import com.mycompany.Model.TransaksiModel;
 import com.mycompany.Model.TransaksiModel.CartItem;
 import com.mycompany.Model.TransaksiModel.ItemPs;
 import com.mycompany.Model.TransaksiModel.Produk;
-
+import javafx.stage.FileChooser;
+import java.io.File;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -157,9 +158,8 @@ public class TransaksiController implements Initializable {
     @FXML
     private ScrollPane scrolpane;
 
-
     // rental ps
-    
+
     // pesana paket ps
     // ── FXML refs ──────────────────────────────────
     @FXML
@@ -193,7 +193,7 @@ public class TransaksiController implements Initializable {
         updateSummary();
         setupMetodeBayar();
         setupMenu();
-      
+
     }
 
     private boolean sidebarCollapsed = false;
@@ -403,7 +403,7 @@ public class TransaksiController implements Initializable {
         btnQuick50.setDisable(true);
         boxRentalPs.setVisible(false);
         boxRentalPs.setManaged(false);
-      
+
     }
 
     // ═════════════════════════════════════════════════════
@@ -438,16 +438,28 @@ public class TransaksiController implements Initializable {
 
             if (imageName == null || imageName.isBlank()) {
                 var url = getClass().getResource("/image/not_found.png");
-                img.setImage(new Image(url.toExternalForm()));
-            }
-
-            var url = getClass().getResource("/image-barang/" + imageName);
-
-            if (url != null) {
-                img.setImage(new Image(url.toExternalForm()));
+                if (url != null)
+                    img.setImage(new Image(url.toExternalForm()));
             } else {
-                url = getClass().getResource("/image/not_found.png");
-                img.setImage(new Image(url.toExternalForm()));
+                // Coba baca dari AppData dulu
+                String appData = System.getenv("APPDATA");
+                File imgFile = (appData != null && !appData.isEmpty())
+                        ? new File(appData + "\\ProjectUAS\\image-barang\\" + imageName)
+                        : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + imageName);
+
+                if (imgFile.exists()) {
+                    img.setImage(new Image(imgFile.toURI().toString()));
+                } else {
+                    // Fallback: baca dari dalam JAR
+                    var url = getClass().getResource("/image-barang/" + imageName);
+                    if (url != null) {
+                        img.setImage(new Image(url.toExternalForm()));
+                    } else {
+                        var notFound = getClass().getResource("/image/not_found.png");
+                        if (notFound != null)
+                            img.setImage(new Image(notFound.toExternalForm()));
+                    }
+                }
             }
 
         } catch (Exception e) {
@@ -752,9 +764,10 @@ public class TransaksiController implements Initializable {
             QuickBox.setManaged(true);
         });
     }
-    void setupMenu(){
+
+    void setupMenu() {
         btnProduk.getStyleClass().add("btn-menu-active");
-        btnProduk.setOnAction(e ->{
+        btnProduk.setOnAction(e -> {
             btnProduk.getStyleClass().add("btn-menu-active");
             btnPS.getStyleClass().remove("btn-menu-active");
             boxRentalPs.setVisible(false);
@@ -763,7 +776,7 @@ public class TransaksiController implements Initializable {
             scrolpane.setManaged(true);
 
         });
-        btnPS.setOnAction(e ->{
+        btnPS.setOnAction(e -> {
             boxRentalPs.setVisible(true);
             boxRentalPs.setManaged(true);
             scrolpane.setVisible(false);
@@ -895,7 +908,6 @@ public class TransaksiController implements Initializable {
                     " qty: " + item.qty);
         }
 
-
         String sql_idtransaksi = "SELECT id_transaksi FROM tb_transaksi ORDER BY id_transaksi DESC LIMIT 1";
 
         List<Object[]> data = koneksi.ambilData(sql_idtransaksi);
@@ -953,230 +965,259 @@ public class TransaksiController implements Initializable {
         }
     }
 
+    @FXML
+    private void onRentalPs() {
 
-
-
-@FXML
-private void onRentalPs(){
-   
-}
-
-
-// ── State ──────────────────────────────────────
-private int jam = 0;
-private int menit = 0; // hanya 0 atau 30
-private int activePreset = -1; // -1 = custom
-
-private TransaksiController transaksiController;
-
-// private static final NumberFormat FMT = NumberFormat.getInstance(
-//         new Locale("id", "ID"));
-
-// harga per 30 menit = Rp 3.000
-// harga per 60 menit = Rp 5.000
-// custom: 30 menit pertama = 3.000, tiap jam = 5.000
-private static final long HARGA_30_MENIT = 3_000;
-private static final long HARGA_1_JAM = 5_000;
-
-// ── Setter dipanggil dari navigation ──────────
-public void setTransaksiController(TransaksiController tc) {
-    this.transaksiController = tc;
-}
-
-// ═══════════════════════════════════════════════
-// PRESET HANDLERS
-// ═══════════════════════════════════════════════
-@FXML
-private void onPreset1() {
-    setPreset(0, 30, 1);
-} // 30 menit
-
-@FXML
-private void onPreset2() {
-    setPreset(1, 0, 2);
-} // 1 jam
-
-@FXML
-private void onPreset3() {
-    setPreset(1, 30, 3);
-} // 1,5 jam
-
-@FXML
-private void onPreset4() {
-    setPreset(2, 0, 4);
-} // 2 jam
-
-private void resetPresetStyle() {
-    for (Button b : new Button[] { btnPreset1, btnPreset2, btnPreset3, btnPreset4 }) {
-        b.getStyleClass().setAll("preset-btn");
     }
-}
 
-private void setPreset(int j, int m, int presetNo) {
+    // ── State ──────────────────────────────────────
+    private int jam = 0;
+    private int menit = 0; // hanya 0 atau 30
+    private int activePreset = -1; // -1 = custom
 
-    jam = j;
-    menit = m;
-    activePreset = presetNo;
+    private TransaksiController transaksiController;
 
-    lblJam.setText(String.valueOf(jam));
-    lblMenit.setText(String.valueOf(menit));
+    // private static final NumberFormat FMT = NumberFormat.getInstance(
+    // new Locale("id", "ID"));
 
-    resetPresetStyle();
+    // harga per 30 menit = Rp 3.000
+    // harga per 60 menit = Rp 5.000
+    // custom: 30 menit pertama = 3.000, tiap jam = 5.000
+    private static final long HARGA_30_MENIT = 3_000;
+    private static final long HARGA_1_JAM = 5_000;
 
-    Button[] btns = { btnPreset1, btnPreset2, btnPreset3, btnPreset4 };
+    // ── Setter dipanggil dari navigation ──────────
+    public void setTransaksiController(TransaksiController tc) {
+        this.transaksiController = tc;
+    }
 
-    btns[presetNo - 1]
-            .getStyleClass()
-            .add("preset-btn-active");
+    // ═══════════════════════════════════════════════
+    // PRESET HANDLERS
+    // ═══════════════════════════════════════════════
+    @FXML
+    private void onPreset1() {
+        setPreset(0, 30, 1);
+    } // 30 menit
 
-    updateDisplay();
-}
+    @FXML
+    private void onPreset2() {
+        setPreset(1, 0, 2);
+    } // 1 jam
 
-// ═══════════════════════════════════════════════
-// CUSTOM SPINNER HANDLERS
-// ═══════════════════════════════════════════════
-@FXML
-private void onJamPlus() {
-    jam++;
-    activePreset = -1; // switch ke custom
-    resetPresetStyle();
-    lblJam.setText(String.valueOf(jam));
-    updateDisplay();
-}
+    @FXML
+    private void onPreset3() {
+        setPreset(1, 30, 3);
+    } // 1,5 jam
 
-@FXML
-private void onJamMin() {
-    if (jam > 0) {
-        jam--;
-        activePreset = -1;
+    @FXML
+    private void onPreset4() {
+        setPreset(2, 0, 4);
+    } // 2 jam
+
+    private void resetPresetStyle() {
+        for (Button b : new Button[] { btnPreset1, btnPreset2, btnPreset3, btnPreset4 }) {
+            b.getStyleClass().setAll("preset-btn");
+        }
+    }
+
+    private void setPreset(int j, int m, int presetNo) {
+
+        jam = j;
+        menit = m;
+        activePreset = presetNo;
+
+        lblJam.setText(String.valueOf(jam));
+        lblMenit.setText(String.valueOf(menit));
+
+        resetPresetStyle();
+
+        Button[] btns = { btnPreset1, btnPreset2, btnPreset3, btnPreset4 };
+
+        btns[presetNo - 1]
+                .getStyleClass()
+                .add("preset-btn-active");
+
+        updateDisplay();
+    }
+
+    // ═══════════════════════════════════════════════
+    // CUSTOM SPINNER HANDLERS
+    // ═══════════════════════════════════════════════
+    @FXML
+    private void onJamPlus() {
+        jam++;
+        activePreset = -1; // switch ke custom
         resetPresetStyle();
         lblJam.setText(String.valueOf(jam));
         updateDisplay();
     }
-}
 
-@FXML
-private void onMenitPlus() {
-    menit = (menit == 0) ? 30 : 0;
-    if (menit == 0)
-        jam++; // overflow 30+30 = 1 jam
-    activePreset = -1;
-    resetPresetStyle();
-    lblJam.setText(String.valueOf(jam));
-    lblMenit.setText(String.valueOf(menit));
-    updateDisplay();
-}
-
-@FXML
-private void onMenitMin() {
-    if (menit == 30) {
-        menit = 0;
-    } else if (jam > 0) {
-        jam--;
-        menit = 30;
+    @FXML
+    private void onJamMin() {
+        if (jam > 0) {
+            jam--;
+            activePreset = -1;
+            resetPresetStyle();
+            lblJam.setText(String.valueOf(jam));
+            updateDisplay();
+        }
     }
-    activePreset = -1;
-    resetPresetStyle();
-    lblJam.setText(String.valueOf(jam));
-    lblMenit.setText(String.valueOf(menit));
-    updateDisplay();
-}
 
-// ═══════════════════════════════════════════════
-// HITUNG HARGA & UPDATE DISPLAY
-// ═══════════════════════════════════════════════
-private void updateDisplay() {
-    int totalMenit = (jam * 60) + menit;
-    long harga = hitungHarga(totalMenit);
+    @FXML
+    private void onMenitPlus() {
+        menit = (menit == 0) ? 30 : 0;
+        if (menit == 0)
+            jam++; // overflow 30+30 = 1 jam
+        activePreset = -1;
+        resetPresetStyle();
+        lblJam.setText(String.valueOf(jam));
+        lblMenit.setText(String.valueOf(menit));
+        updateDisplay();
+    }
 
-    // teks durasi
-    String durasiText = buildDurasiText();
-    lblDurasiText.setText(totalMenit == 0 ? "-" : durasiText);
-    lblHargaTotal.setText("Rp " + FMT.format(harga));
+    @FXML
+    private void onMenitMin() {
+        if (menit == 30) {
+            menit = 0;
+        } else if (jam > 0) {
+            jam--;
+            menit = 30;
+        }
+        activePreset = -1;
+        resetPresetStyle();
+        lblJam.setText(String.valueOf(jam));
+        lblMenit.setText(String.valueOf(menit));
+        updateDisplay();
+    }
 
-    // disable konfirmasi kalau durasi 0
-    btnKonfirmasi.setDisable(totalMenit == 0);
-}
+    // ═══════════════════════════════════════════════
+    // HITUNG HARGA & UPDATE DISPLAY
+    // ═══════════════════════════════════════════════
+    private void updateDisplay() {
+        int totalMenit = (jam * 60) + menit;
+        long harga = hitungHarga(totalMenit);
 
-private long hitungHarga(int totalMenit) {
-    if (totalMenit == 0)
-        return 0;
-    if (totalMenit == 30)
-        return HARGA_30_MENIT; // 30 menit = 3.000
+        // teks durasi
+        String durasiText = buildDurasiText();
+        lblDurasiText.setText(totalMenit == 0 ? "-" : durasiText);
+        lblHargaTotal.setText("Rp " + FMT.format(harga));
 
-    // tiap jam = 5.000, sisa 30 menit = 3.000
-    long jamPenuh = totalMenit / 60;
-    int sisaMenit = totalMenit % 60;
-    return (jamPenuh * HARGA_1_JAM) + (sisaMenit > 0 ? HARGA_30_MENIT : 0);
-}
+        // disable konfirmasi kalau durasi 0
+        btnKonfirmasi.setDisable(totalMenit == 0);
+    }
 
-private String buildDurasiText() {
-    if (jam == 0 && menit == 0)
-        return "-";
-    if (jam == 0)
-        return menit + " Menit";
-    if (menit == 0)
-        return jam + " Jam";
-    return jam + " Jam " + menit + " Menit";
-}
+    private long hitungHarga(int totalMenit) {
+        if (totalMenit == 0)
+            return 0;
+        if (totalMenit == 30)
+            return HARGA_30_MENIT; // 30 menit = 3.000
 
-// ═══════════════════════════════════════════════
-// KONFIRMASI — masuk ke keranjang
-// ═══════════════════════════════════════════════
-@FXML
-private void onKonfirmasi() {
+        // tiap jam = 5.000, sisa 30 menit = 3.000
+        long jamPenuh = totalMenit / 60;
+        int sisaMenit = totalMenit % 60;
+        return (jamPenuh * HARGA_1_JAM) + (sisaMenit > 0 ? HARGA_30_MENIT : 0);
+    }
 
-    int totalMenit = (jam * 60) + menit;
-    long harga = hitungHarga(totalMenit);
+    private String buildDurasiText() {
+        if (jam == 0 && menit == 0)
+            return "-";
+        if (jam == 0)
+            return menit + " Menit";
+        if (menit == 0)
+            return jam + " Jam";
+        return jam + " Jam " + menit + " Menit";
+    }
 
-    TransaksiModel.pesananPs = new ItemPs(
-            -1,
-            jam,
-            menit,
-            harga);
+    // ═══════════════════════════════════════════════
+    // KONFIRMASI — masuk ke keranjang
+    // ═══════════════════════════════════════════════
+    @FXML
+    private void onKonfirmasi() {
 
-    renderKeranjang();
-    updateSummary();
-}
-@FXML
-private void onBatal() {
-    Stage stage = (Stage) btnKonfirmasi.getScene().getWindow();
-    stage.close();
-}
+        int totalMenit = (jam * 60) + menit;
+        long harga = hitungHarga(totalMenit);
 
-private HBox buildItemPs(ItemPs itemPs) {
+        TransaksiModel.pesananPs = new ItemPs(
+                -1,
+                jam,
+                menit,
+                harga);
 
-    Label nama = new Label("Play Station");
-    nama.getStyleClass().add("cart-item-nama");
+        renderKeranjang();
+        updateSummary();
+    }
 
-    Label hargaSatuan = new Label(
-            "1 Jam Rp 5.000 / 30 Menit Rp 3.000");
-    hargaSatuan.getStyleClass().add("cart-item-harga");
+    @FXML
+    private void onBatal() {
+        Stage stage = (Stage) btnKonfirmasi.getScene().getWindow();
+        stage.close();
+    }
 
-    VBox infoBox = new VBox(2, nama, hargaSatuan);
-    infoBox.setAlignment(Pos.CENTER_LEFT);
-    HBox.setHgrow(infoBox, Priority.ALWAYS);
+    private HBox buildItemPs(ItemPs itemPs) {
 
-    // ==================================================
-    // HITUNG TOTAL MENIT SAAT INI
-    // ==================================================
-    int totalMenit = (itemPs.durasiJam * 60)
-            + itemPs.durasiMenit;
+        Label nama = new Label("Play Station");
+        nama.getStyleClass().add("cart-item-nama");
 
-    // ==================================================
-    // BUTTON MINUS
-    // ==================================================
-    Button btnMin = new Button("−");
-    btnMin.getStyleClass().add("btn-qty");
+        Label hargaSatuan = new Label(
+                "1 Jam Rp 5.000 / 30 Menit Rp 3.000");
+        hargaSatuan.getStyleClass().add("cart-item-harga");
 
-    btnMin.setOnAction(e -> {
+        VBox infoBox = new VBox(2, nama, hargaSatuan);
+        infoBox.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
 
-        int menitSekarang = (itemPs.durasiJam * 60)
+        // ==================================================
+        // HITUNG TOTAL MENIT SAAT INI
+        // ==================================================
+        int totalMenit = (itemPs.durasiJam * 60)
                 + itemPs.durasiMenit;
 
-        if (menitSekarang > 30) {
+        // ==================================================
+        // BUTTON MINUS
+        // ==================================================
+        Button btnMin = new Button("−");
+        btnMin.getStyleClass().add("btn-qty");
 
-            menitSekarang -= 30;
+        btnMin.setOnAction(e -> {
+
+            int menitSekarang = (itemPs.durasiJam * 60)
+                    + itemPs.durasiMenit;
+
+            if (menitSekarang > 30) {
+
+                menitSekarang -= 30;
+
+                itemPs.durasiJam = menitSekarang / 60;
+                itemPs.durasiMenit = menitSekarang % 60;
+
+                itemPs.harga = hitungHarga(menitSekarang);
+
+                renderKeranjang();
+                updateSummary();
+            }
+        });
+
+        // ==================================================
+        // LABEL DURASI
+        // ==================================================
+        Label lblDurasi = new Label(
+                itemPs.durasiJam + " Jam "
+                        + itemPs.durasiMenit + " Menit");
+
+        lblDurasi.getStyleClass().add("lbl-qty");
+
+        // ==================================================
+        // BUTTON PLUS
+        // ==================================================
+        Button btnPlus = new Button("+");
+        btnPlus.getStyleClass().add("btn-qty");
+
+        btnPlus.setOnAction(e -> {
+
+            int menitSekarang = (itemPs.durasiJam * 60)
+                    + itemPs.durasiMenit;
+
+            menitSekarang += 30;
 
             itemPs.durasiJam = menitSekarang / 60;
             itemPs.durasiMenit = menitSekarang % 60;
@@ -1185,89 +1226,57 @@ private HBox buildItemPs(ItemPs itemPs) {
 
             renderKeranjang();
             updateSummary();
-        }
-    });
+        });
 
-    // ==================================================
-    // LABEL DURASI
-    // ==================================================
-    Label lblDurasi = new Label(
-            itemPs.durasiJam + " Jam "
-                    + itemPs.durasiMenit + " Menit");
+        HBox durasiBox = new HBox(
+                5,
+                btnMin,
+                lblDurasi,
+                btnPlus);
 
-    lblDurasi.getStyleClass().add("lbl-qty");
+        durasiBox.setAlignment(Pos.CENTER_LEFT);
 
-    // ==================================================
-    // BUTTON PLUS
-    // ==================================================
-    Button btnPlus = new Button("+");
-    btnPlus.getStyleClass().add("btn-qty");
+        // ==================================================
+        // SUBTOTAL
+        // ==================================================
+        Label subtotal = new Label(
+                "Rp " + FMT.format(itemPs.harga));
 
-    btnPlus.setOnAction(e -> {
+        subtotal.getStyleClass().add("cart-item-subtotal");
 
-        int menitSekarang = (itemPs.durasiJam * 60)
-                + itemPs.durasiMenit;
+        // ==================================================
+        // HAPUS
+        // ==================================================
+        Button btnHapus = new Button("✕");
+        btnHapus.getStyleClass().add("btn-hapus-item");
 
-        menitSekarang += 30;
+        btnHapus.setOnAction(e -> {
+            TransaksiModel.pesananPs = null;
 
-        itemPs.durasiJam = menitSekarang / 60;
-        itemPs.durasiMenit = menitSekarang % 60;
+            renderKeranjang();
+            updateSummary();
+        });
 
-        itemPs.harga = hitungHarga(menitSekarang);
+        // ==================================================
+        // BOTTOM ROW
+        // ==================================================
+        HBox bottomRow = new HBox(
+                8,
+                durasiBox,
+                subtotal,
+                btnHapus);
 
-        renderKeranjang();
-        updateSummary();
-    });
+        bottomRow.setAlignment(Pos.CENTER_LEFT);
 
-    HBox durasiBox = new HBox(
-            5,
-            btnMin,
-            lblDurasi,
-            btnPlus);
+        VBox content = new VBox(
+                6,
+                infoBox,
+                bottomRow);
 
-    durasiBox.setAlignment(Pos.CENTER_LEFT);
+        HBox item = new HBox(content);
+        item.getStyleClass().add("cart-item");
 
-    // ==================================================
-    // SUBTOTAL
-    // ==================================================
-    Label subtotal = new Label(
-            "Rp " + FMT.format(itemPs.harga));
-
-    subtotal.getStyleClass().add("cart-item-subtotal");
-
-    // ==================================================
-    // HAPUS
-    // ==================================================
-    Button btnHapus = new Button("✕");
-    btnHapus.getStyleClass().add("btn-hapus-item");
-
-    btnHapus.setOnAction(e -> {
-        TransaksiModel.pesananPs = null;
-
-        renderKeranjang();
-        updateSummary();
-    });
-
-    // ==================================================
-    // BOTTOM ROW
-    // ==================================================
-    HBox bottomRow = new HBox(
-            8,
-            durasiBox,
-            subtotal,
-            btnHapus);
-
-    bottomRow.setAlignment(Pos.CENTER_LEFT);
-
-    VBox content = new VBox(
-            6,
-            infoBox,
-            bottomRow);
-
-    HBox item = new HBox(content);
-    item.getStyleClass().add("cart-item");
-
-    return item;
-}
+        return item;
+    }
 
 }

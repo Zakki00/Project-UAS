@@ -109,7 +109,7 @@ public class LoginController implements Initializable {
 
                     try {
                         GoogleDriveService service = new GoogleDriveService();
-                        boolean restore = service.restoreBackup();
+                        boolean restore = service.restoreBackupAll();
                         System.out.println("Restore = " + restore);
                         session.googleUser = user; // simpan ke session
                         String cekSql = "SELECT id_user, username, nama_lengkap, role, email FROM tb_user WHERE email = ?";
@@ -183,7 +183,7 @@ public class LoginController implements Initializable {
         }
 
         String query = "SELECT * FROM tb_user WHERE username = ? AND password = ?";
-        List<Object[]> result = koneksi.ambilData(query, username, password);
+        List<Object[]> result = koneksi.ambilData(query, username, hashPassword(password));
 
         if (result.size() > 0) {
 
