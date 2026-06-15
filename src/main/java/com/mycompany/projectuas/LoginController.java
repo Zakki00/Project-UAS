@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
+
+import org.checkerframework.checker.units.qual.s;
+
 import java.io.IOException;
 
 import com.mycompany.Model.GoogleUser;
@@ -18,7 +21,6 @@ import javafx.scene.Parent;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -33,6 +35,7 @@ import javafx.stage.Stage;
  */
 public class LoginController implements Initializable {
     GoogleUser googleUser = new GoogleUser();
+
     session session = new session();
     @FXML
     private Button btnGoogle;
@@ -143,7 +146,7 @@ public class LoginController implements Initializable {
 
                             // // ── Tampilkan popup sukses dengan nama user ─────────────────
                             popupHelper.showGoogleSuccessPopup("Selamat Datang Kembali",
-                                    "Selamat datang, " + user.getName() + "!", user);
+                                    "Selamat datang Kembali, " + user.getName() + "!", user);
 
                             System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
                         } else {
@@ -242,17 +245,14 @@ public class LoginController implements Initializable {
                 prefs.putBoolean("remember", false);
             }
 
-            Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
-
-            new Popup().showModernPopup(
-                    "SUCCESS",
-                    "Login berhasil, selamat datang " + session.nama,
-                    Popup.PopupType.SUCCESS,
-                    ownerStage);
+            GoogleUser sesigoogle = session.googleUser;
 
             navigation nav = new navigation();
             nav.navigateToDashboard();
-
+            Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
+            Popup popupHelper = new Popup();
+            popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
+                    "Selamat datang, " + sesigoogle.getName() + "!", sesigoogle);
             ownerStage.close();
             return;
         }
@@ -291,16 +291,11 @@ public class LoginController implements Initializable {
                 prefs.putBoolean("remember", false);
             }
 
-            Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
-
-            new Popup().showModernPopup(
-                    "SUCCESS",
-                    "Login berhasil, selamat datang " + session.nama,
-                    Popup.PopupType.SUCCESS,
-                    ownerStage);
 
             navigation nav = new navigation();
             nav.navigateToDashboard();
+            Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
+            new Popup().showSuccessPopup("Selmat Datang " + session.username, "Selamat Datang " + session.nama);
 
             ownerStage.close();
             return;

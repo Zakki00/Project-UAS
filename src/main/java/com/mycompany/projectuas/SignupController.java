@@ -189,8 +189,7 @@ public class SignupController implements Initializable {
                     role,
                     googleUser.getEmail());
 
-            popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
-                    "Selamat datang, " + googleUser.getName() + "!", googleUser);
+            
 
             System.out.println("Google User: " + googleUser.getEmail() + " - " + googleUser.getName());
 

@@ -78,7 +78,7 @@ public class DashboardController implements Initializable {
     private Label navLblProduk;
     @FXML
     private Label navLblKasir;
-    
+
     @FXML
     private Label navLblLaporan;
     @FXML
@@ -115,15 +115,19 @@ public class DashboardController implements Initializable {
     private Label kpiRataRata;
     @FXML
     private Label kpiRataRataInfo;
-    
+
     // ═══════════════════════════════════════════════════════
     // FXML — SHIFT CARDS
     // ═══════════════════════════════════════════════════════
-    
+
     @FXML
     private VBox cardPagi;
     @FXML
     private VBox cardMalam;
+    @FXML
+    private Label lblPaketPSPagi;
+    @FXML
+    private Label lblPaketPSMalam;
     @FXML
     private StackPane wrapperPagi;
     @FXML
@@ -201,7 +205,6 @@ public class DashboardController implements Initializable {
     private static final double SIDEBAR_MINI = 60;
     private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
 
-
     // ═══════════════════════════════════════════════════════
     // INITIALIZE
     // ═══════════════════════════════════════════════════════
@@ -212,7 +215,7 @@ public class DashboardController implements Initializable {
         setupCharts();
         setupStockList();
         loadShiftData();
-        
+
     }
 
     // ═══════════════════════════════════════════════════════
@@ -351,6 +354,7 @@ public class DashboardController implements Initializable {
         new navigation().navigateToTransaksi();
         ((Stage) navKasir.getScene().getWindow()).close();
     }
+
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
@@ -539,95 +543,190 @@ public class DashboardController implements Initializable {
             kpiRataRataInfo.setStyle("-fx-text-fill: #00E5A0;");
         }
     }
-    
+
     // ═══════════════════════════════════════════════════════
     // SHIFT DATA
     // ═══════════════════════════════════════════════════════
     private void loadShiftData() {
+
         int jamSekarang = java.time.LocalTime.now().getHour();
+
         applyRoundedClip(wrapperPagi);
         applyRoundedClip(wrapperMalam);
+
         if (jamSekarang >= 6 && jamSekarang < 12) {
-            // Shift pagi aktif
+            lblUsernamePagi.setText(session.username);
+            lblNamaPagi.setText(session.nama);
+
             wrapperPagi.setVisible(true);
             wrapperPagi.setManaged(true);
+
             wrapperMalam.setVisible(false);
             wrapperMalam.setManaged(false);
-            loadShift("06:00:00", "12:00:00",
-                    lblUsernamePagi, lblNamaPagi, lblTrxPagi,
-                    lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
+
+            loadShift(
+                    "06:00:00",
+                    "12:00:00",
+                    lblTrxPagi,
+                    lblItemPagi,
+                    lblPaketPSPagi,
+                    lblPendapatanPagi,
+                    lblJamPagi,
+                    "06:00 — 12:00");
 
         } else if (jamSekarang >= 12 && jamSekarang < 21) {
-            // Shift malam aktif
+            lblUsernameMalam.setText(session.username);
+            lblNamaMalam.setText(session.nama);
+
             wrapperPagi.setVisible(false);
             wrapperPagi.setManaged(false);
+
             wrapperMalam.setVisible(true);
             wrapperMalam.setManaged(true);
-            loadShift("12:00:00", "21:00:00",
-                    lblUsernameMalam, lblNamaMalam, lblTrxMalam,
-                    lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
+
+            loadShift(
+                    "12:00:00",
+                    "21:00:00",
+                    lblTrxMalam,
+                    lblItemMalam,
+                    lblPaketPSMalam,
+                    lblPendapatanMalam,
+                    lblJamMalam,
+                    "12:00 — 21:00");
 
         } else {
-            // Di luar jam shift
+
             wrapperPagi.setVisible(true);
             wrapperPagi.setManaged(true);
+
             wrapperMalam.setVisible(true);
             wrapperMalam.setManaged(true);
-            loadShift("06:00:00", "12:00:00",
-                    lblUsernamePagi, lblNamaPagi, lblTrxPagi,
-                    lblItemPagi, lblPendapatanPagi, lblStatusPagi, lblJamPagi, "06:00 — 12:00");
-            loadShift("12:00:00", "21:00:00",
-                    lblUsernameMalam, lblNamaMalam, lblTrxMalam,
-                    lblItemMalam, lblPendapatanMalam, lblStatusMalam, lblJamMalam, "12:00 — 21:00");
+
+            loadShift(
+                    "06:00:00",
+                    "12:00:00",
+                    lblTrxPagi,
+                    lblItemPagi,
+                    lblPaketPSPagi,
+                    lblPendapatanPagi,
+                    lblJamPagi,
+                    "06:00 — 12:00");
+
+            loadShift(
+                    "12:00:00",
+                    "21:00:00",
+                    lblTrxMalam,
+                    lblItemMalam,
+                    lblPaketPSMalam,
+                    lblPendapatanMalam,
+                    lblJamMalam,
+                    "12:00 — 21:00");
         }
 
         updateStatusDot();
     }
 
-    private void loadShift(String jamMulai, String jamSelesai,
-            Label lblUsername, Label lblNama, Label lblTrx,
-            Label lblItem, Label lblPendapatan, Label lblStatus,
-            Label lblJam, String jamText) {
+    private void loadShift(
+            String jamMulai,
+            String jamSelesai,
+            Label lblTrx,
+            Label lblItem,
+            Label lblPaketPS,
+            Label lblPendapatan,
+            Label lblJam,
+            String jamText) {
+
         String sql = """
-                SELECT u.username, u.nama_lengkap,
-                    COUNT(t.id_transaksi) AS total_trx,
-                    SUM(dt.jumlah) AS total_item,
-                    SUM(t.total_pembayaran - t.kekurangan) AS total_pendapatan
+                SELECT
+                    COUNT(DISTINCT t.id_transaksi) AS total_trx,
+
+                    COALESCE(
+                        (
+                            SELECT SUM(dt.jumlah)
+                            FROM tb_detail_transaksi dt
+                            JOIN tb_transaksi t2
+                                ON dt.id_transaksi = t2.id_transaksi
+                            WHERE DATE(t2.tanggal_transaksi)=DATE('now','localtime')
+                              AND TIME(t2.tanggal_transaksi) BETWEEN ? AND ?
+                        ),0
+                    ) AS total_item,
+
+                    COALESCE(
+                        (
+                            SELECT COUNT(*)
+                            FROM tb_paket_ps ps
+                            JOIN tb_transaksi t3
+                                ON ps.id_transaksi = t3.id_transaksi
+                            WHERE DATE(t3.tanggal_transaksi)=DATE('now','localtime')
+                              AND TIME(t3.tanggal_transaksi) BETWEEN ? AND ?
+                        ),0
+                    ) AS total_paket_ps,
+
+                    COALESCE(
+                        SUM(t.uang_pembayaran - t.kembalian),
+                        0
+                    ) AS pendapatan
+
                 FROM tb_transaksi t
-                JOIN tb_karyawan u ON t.id_karyawan = u.id_karyawan
-                JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-                WHERE DATE(t.tanggal_transaksi) = DATE('now','localtime')
-                AND TIME(t.tanggal_transaksi) BETWEEN '""" + jamMulai + "' AND '" + jamSelesai + """
-                    '
-                    GROUP BY u.id_karyawan, u.username, u.nama_lengkap
-                    ORDER BY total_pendapatan DESC LIMIT 1
+                WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                  AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
                 """;
-        List<Object[]> data = koneksi.ambilData(sql);
+
+        List<Object[]> data = koneksi.ambilData(
+                sql,
+                jamMulai, jamSelesai,
+                jamMulai, jamSelesai,
+                jamMulai, jamSelesai);
+
         lblJam.setText(jamText);
+
         if (data.isEmpty()) {
-            lblUsername.setText("Tidak ada kasir");
-            lblNama.setText("-");
+
             lblTrx.setText("0");
             lblItem.setText("0 unit");
+            lblPaketPS.setText("0");
             lblPendapatan.setText("Rp 0");
-        } else {
-            Object[] row = data.get(0);
-            lblUsername.setText(String.valueOf(row[0]));
-            lblNama.setText(String.valueOf(row[1]));
-            lblTrx.setText(String.valueOf(((Number) row[2]).intValue()));
-            lblItem.setText(((Number) row[3]).intValue() + " unit");
-            lblPendapatan.setText("Rp " + FMT.format(((Number) row[4]).longValue()));
+
+            return;
         }
+
+        Object[] row = data.get(0);
+
+        lblTrx.setText(
+                String.valueOf(((Number) row[0]).intValue()));
+
+        lblItem.setText(
+                ((Number) row[1]).intValue() + " unit");
+
+        lblPaketPS.setText(
+                String.valueOf(((Number) row[2]).intValue()));
+
+        lblPendapatan.setText(
+                "Rp " + FMT.format(((Number) row[3]).longValue()));
     }
-    
+
     private void updateStatusDot() {
+
         int jam = java.time.LocalTime.now().getHour();
+
         boolean pagiAktif = jam >= 6 && jam < 12;
         boolean malamAktif = jam >= 12 && jam < 21;
-        lblStatusPagi.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
-        lblStatusPagi.getStyleClass().add(pagiAktif ? "shift-status-aktif" : "shift-status-nonaktif");
-        lblStatusMalam.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
-        lblStatusMalam.getStyleClass().add(malamAktif ? "shift-status-aktif" : "shift-status-nonaktif");
+
+        lblStatusPagi.getStyleClass()
+                .removeAll("shift-status-aktif", "shift-status-nonaktif");
+
+        lblStatusPagi.getStyleClass()
+                .add(pagiAktif
+                        ? "shift-status-aktif"
+                        : "shift-status-nonaktif");
+
+        lblStatusMalam.getStyleClass()
+                .removeAll("shift-status-aktif", "shift-status-nonaktif");
+
+        lblStatusMalam.getStyleClass()
+                .add(malamAktif
+                        ? "shift-status-aktif"
+                        : "shift-status-nonaktif");
     }
 
     // ═══════════════════════════════════════════════════════
@@ -1221,7 +1320,7 @@ public class DashboardController implements Initializable {
         animateFadeIn(jamChart, 300);
     }
 
-     private void applyRoundedClip(StackPane pane) {
+    private void applyRoundedClip(StackPane pane) {
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(pane.widthProperty());
         clip.heightProperty().bind(pane.heightProperty());
@@ -1229,6 +1328,7 @@ public class DashboardController implements Initializable {
         clip.setArcHeight(20);
         pane.setClip(clip);
     }
+
     // ═══════════════════════════════════════════════════════
     // OTHER HANDLERS
     // ═══════════════════════════════════════════════════════
