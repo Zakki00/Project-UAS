@@ -815,7 +815,7 @@ public class KaryawanController implements Initializable {
         }
 
         koneksi.eksekusiQuery(
-                "UPDATE absensi SET tanggal=?, jam_masuk=?, status_kehadiran=? WHERE id_absensi=?",
+                "UPDATE tb_absensi SET tanggal=?, jam_masuk=?, status_kehadiran=? WHERE id_absensi=?",
                 Date.valueOf(dpTanggalAbsensi.getValue()),
                 cmbShift.getValue(),
                 cmbStatusKehadiran.getValue(),
