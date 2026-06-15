@@ -170,26 +170,10 @@
                                     <Label styleClass="form-label" text="Jenis Kelamin" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                                     <ComboBox fx:id="cmbJenisKelamin" maxWidth="Infinity" promptText="Pilih..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                                    <!-- Row 3 -->
-                                    <Label styleClass="form-label" text="Jabatan" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                    <ComboBox fx:id="cmbJabatan" maxWidth="Infinity" promptText="Pilih jabatan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
                                     <Label styleClass="form-label" text="Tanggal Masuk" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                                     <DatePicker fx:id="dpTanggalMasuk" maxWidth="Infinity" styleClass="form-datepicker" GridPane.columnIndex="4" GridPane.rowIndex="3" />
-                                </GridPane>
-
-                                   <!-- Row Status berdiri sendiri (full width) -->
-                                <GridPane hgap="14" prefHeight="36.0" prefWidth="753.0" vgap="12">
-                                    <columnConstraints>
-                                        <ColumnConstraints minWidth="110" prefWidth="120" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="240" minWidth="160" />
-                                        <ColumnConstraints hgrow="ALWAYS" />
-                                    </columnConstraints>
-                                    <rowConstraints>
-                                        <RowConstraints minHeight="36" />
-                                    </rowConstraints>
-                                    <Label styleClass="form-label" text="Status Kerja" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                    <ComboBox fx:id="cmbStatusKerja" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                    <ComboBox fx:id="cmbStatusKerja" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                           <Label styleClass="form-label" text="Status Kerja" GridPane.rowIndex="3" />
                                 </GridPane>
 
                                 <!-- Tombol Aksi -->

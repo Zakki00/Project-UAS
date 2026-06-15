@@ -85,8 +85,6 @@ public class KaryawanController implements Initializable {
     @FXML
     private ComboBox<String> cmbJenisKelamin;
     @FXML
-    private ComboBox<String> cmbJabatan;
-    @FXML
     private TextField txtNoHp;
     @FXML
     private DatePicker dpTanggalMasuk;
@@ -318,8 +316,6 @@ public class KaryawanController implements Initializable {
     // ══════════════════════════════════════════════════════
     private void setupComboBoxes() {
         cmbJenisKelamin.setItems(FXCollections.observableArrayList("Laki-laki", "Perempuan"));
-        cmbJabatan.setItems(FXCollections.observableArrayList("Kasir", "Admin", "Barista", "Manager", "Security",
-                "Cleaning Service"));
         cmbStatusKerja.setItems(FXCollections.observableArrayList("Aktif", "Non Aktif"));
         cmbShift.setItems(FXCollections.observableArrayList("Siang", "Malam"));
         cmbStatusKehadiran.setItems(FXCollections.observableArrayList("Hadir", "Izin", "Sakit", "Alpha"));
@@ -457,7 +453,6 @@ public class KaryawanController implements Initializable {
             txtIdKaryawan.setText(selected.getIdKaryawan());
             txtNamaKaryawan.setText(selected.getNamaKaryawan());
             cmbJenisKelamin.setValue(selected.getJenisKelamin());
-            cmbJabatan.setValue(selected.getJabatan());
             txtNoHp.setText(selected.getNoHp());
             cmbStatusKerja.setValue(selected.getStatusKerja());
             txtAlamat.setText(selected.getAlamat());
@@ -608,10 +603,6 @@ public class KaryawanController implements Initializable {
             showAlert(Alert.AlertType.WARNING, "Pilih jenis kelamin!");
             return false;
         }
-        if (cmbJabatan.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Pilih jabatan!");
-            return false;
-        }
         if (txtNoHp.getText().isBlank()) {
             showAlert(Alert.AlertType.WARNING, "No HP wajib diisi!");
             return false;
@@ -643,20 +634,22 @@ public class KaryawanController implements Initializable {
         String id = txtIdKaryawan.getText();
         String tgl = dpTanggalMasuk.getValue().format(fmt);
         String alamat = txtAlamat.getText();
+        String jabatan = "Kasir";
 
         koneksi.eksekusiQuery(
                 "INSERT INTO tb_karyawan(id_karyawan,nama_karyawan,jenis_kelamin,jabatan,no_hp,tanggal_masuk,status_kerja,alamat) VALUES(?,?,?,?,?,?,?,?)",
                 id,
                 txtNamaKaryawan.getText(),
                 cmbJenisKelamin.getValue(),
-                cmbJabatan.getValue(),
+                jabatan,
                 txtNoHp.getText(),
                 Date.valueOf(dpTanggalMasuk.getValue()),
                 cmbStatusKerja.getValue(),
                 alamat);
+                System.out.println("Status = [" + cmbStatusKerja.getValue() + "]");
 
         karyawanList.add(new KaryawanModel(id, txtNamaKaryawan.getText(),
-                cmbJenisKelamin.getValue(), cmbJabatan.getValue(),
+                cmbJenisKelamin.getValue(),jabatan,
                 txtNoHp.getText(), tgl, cmbStatusKerja.getValue(), alamat));
         cmbPilihKaryawan.getItems().add(id);
         showAlert(Alert.AlertType.INFORMATION, "Karyawan berhasil ditambahkan!");
@@ -665,6 +658,7 @@ public class KaryawanController implements Initializable {
 
     @FXML
     public void simpanKaryawan() {
+        String jabatan = "Kasir";
         KaryawanModel selected = tableKaryawan.getSelectionModel().getSelectedItem();
 
         if (selected == null) {
@@ -686,7 +680,7 @@ public class KaryawanController implements Initializable {
 
                 txtNamaKaryawan.getText(),
                 cmbJenisKelamin.getValue(),
-                cmbJabatan.getValue(),
+                jabatan,
                 txtNoHp.getText(),
                 Date.valueOf(dpTanggalMasuk.getValue()),
                 cmbStatusKerja.getValue(),
@@ -695,7 +689,7 @@ public class KaryawanController implements Initializable {
 
         selected.setNamaKaryawan(txtNamaKaryawan.getText());
         selected.setJenisKelamin(cmbJenisKelamin.getValue());
-        selected.setJabatan(cmbJabatan.getValue());
+        selected.setJabatan(jabatan);
         selected.setNoHp(txtNoHp.getText());
         selected.setTanggalMasuk(tgl);
         selected.setStatusKerja(cmbStatusKerja.getValue());
@@ -752,7 +746,6 @@ public class KaryawanController implements Initializable {
     public void resetKaryawan() {
         txtNamaKaryawan.clear();
         cmbJenisKelamin.setValue(null);
-        cmbJabatan.setValue(null);
         txtNoHp.clear();
         dpTanggalMasuk.setValue(null);
         cmbStatusKerja.setValue(null);
