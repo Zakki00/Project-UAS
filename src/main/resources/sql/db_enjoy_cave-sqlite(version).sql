@@ -21,7 +21,8 @@ CREATE TABLE
         password TEXT NOT NULL,
         nama_lengkap TEXT NOT NULL,
         role TEXT NOT NULL,
-        email TEXT
+        email TEXT NOT NULL,
+        foto_profil TEXT NOT NULL
     );
 
 -- BARANG

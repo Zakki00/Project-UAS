@@ -181,21 +181,25 @@ public class SignupController implements Initializable {
         prefs.put("Admin", role);
 
         try {
-            String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role,email) VALUES (?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role,email,foto_profil) VALUES (?, ?, ?, ?, ?,?)";
             koneksi.eksekusiQuery(sql,
                     username,
                     hashPassword(password),
                     nama,
                     role,
-                    googleUser.getEmail());
+                    googleUser.getEmail(),
+                    googleUser.getProfilePictureUrl());
 
             
 
             System.out.println("Google User: " + googleUser.getEmail() + " - " + googleUser.getName());
-
+            prefs.put("username", username);
+            prefs.put("password", password);
+            prefs.putBoolean("remember", true);
             navigation nav = new navigation();
-            nav.navigateToLogin();
+            nav.navigateToDashboard();
             Stage stage = (Stage) loginBtn.getScene().getWindow();
+            popupHelper.showGoogleSuccessPopup("Selamat Datang", "Selamat Datang" + googleUser.getName(), googleUser);
             stage.close();
 
         } catch (Exception e) {

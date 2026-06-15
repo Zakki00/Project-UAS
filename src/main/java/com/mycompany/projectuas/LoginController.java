@@ -228,12 +228,13 @@ public class LoginController implements Initializable {
                 hashedPassword);
 
         if (!resultUser.isEmpty()) {
-
+            GoogleUser sesigoogle = session.googleUser;
             session.id = resultUser.get(0)[0];
             session.username = (String) resultUser.get(0)[1];
             session.nama = (String) resultUser.get(0)[3];
             session.role = (String) resultUser.get(0)[4];
             session.email = (String) resultUser.get(0)[5];
+            sesigoogle.setProfilePictureUrl((String) resultUser.get(0)[6]);
 
             if (rememberMe.isSelected()) {
                 prefs.put("username", username);
@@ -245,14 +246,14 @@ public class LoginController implements Initializable {
                 prefs.putBoolean("remember", false);
             }
 
-            GoogleUser sesigoogle = session.googleUser;
+            
 
             navigation nav = new navigation();
             nav.navigateToDashboard();
             Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
             Popup popupHelper = new Popup();
-            popupHelper.showGoogleSuccessPopup("Akun Berhasil Di Buat",
-                    "Selamat datang, " + sesigoogle.getName() + "!", sesigoogle);
+            popupHelper.showGoogleSuccessPopup("Selamat Datang kembali",
+                    "Selamat datang Kembali, " + sesigoogle.getName() + "!", sesigoogle);
             ownerStage.close();
             return;
         }
