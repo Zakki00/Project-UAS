@@ -11,6 +11,7 @@ import java.util.List;
 import java.io.File;
 import javax.swing.JOptionPane;
 
+
 public class koneksi {
     private static final String URL = "jdbc:sqlite:" + getDbPath();
     // private static final String URL =

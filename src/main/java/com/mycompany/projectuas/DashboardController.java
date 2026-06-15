@@ -70,6 +70,8 @@ public class DashboardController implements Initializable {
     private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
+    @FXML
+    private HBox navKaryawan;
 
     // Nav labels
     @FXML
@@ -83,6 +85,8 @@ public class DashboardController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navLblKaryawan;
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI ORIGINAL
@@ -315,9 +319,10 @@ public class DashboardController implements Initializable {
     }
 
     private void setNavLabelsVisible(boolean visible) {
+
         List<Label> labels = List.of(
                 navLblDashboard, navLblProduk, navLblKasir,
-                navLblLaporan, navLblPengaturan);
+             navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -374,6 +379,15 @@ public class DashboardController implements Initializable {
         setActiveNav(navPengaturan);
         new navigation().navigataeToPengaturan();
         ((Stage) navPengaturan.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        navigation nav = new navigation();
+        nav.navigationToKaryawan();
+        Stage stage = (Stage) navKaryawan.getScene().getWindow();
+        stage.close();
     }
 
     private void setActiveNav(HBox selected) {
