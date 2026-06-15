@@ -28,9 +28,9 @@ import javafx.util.Duration;
 
 public class KaryawanController implements Initializable {
 
-    // ══════════════════════════════════════════════════════
-    // SIDEBAR
-    // ══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    // FXML — SIDEBAR
+    // ═══════════════════════════════════════════════════════
     @FXML
     private VBox sidebar;
     @FXML
@@ -46,37 +46,39 @@ public class KaryawanController implements Initializable {
     @FXML
     private VBox navMenu;
 
+    // Nav items
     @FXML
     private HBox navDashboard;
     @FXML
     private HBox navProduk;
     @FXML
-    private HBox navKasir;
+    private HBox navKaryawan;
     @FXML
-    private HBox navPelanggan;
+    private HBox navKasir;
     @FXML
     private HBox navLaporan;
     @FXML
     private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
-    @FXML
-    private HBox navKaryawan;
 
+    // Nav labels
     @FXML
     private Label navLblDashboard;
     @FXML
     private Label navLblProduk;
     @FXML
-    private Label navLblKasir;
+    private Label navLblKaryawan;
     @FXML
-    private Label navLblPelanggan;
+    private Label navLblKasir;
+
+    @FXML
+    private Label navLblPiutang;
+
     @FXML
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
-    @FXML
-    private Label navLblKaryawan;
 
     // ══════════════════════════════════════════════════════
     // TAB KARYAWAN — Form
@@ -176,14 +178,14 @@ public class KaryawanController implements Initializable {
         generateNextId();
     }
 
-    // ══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
     // SIDEBAR TOGGLE
-    // ══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
         double targetWidth = sidebarCollapsed ? SIDEBAR_MINI : SIDEBAR_FULL;
-        Timeline tl = new Timeline(
+        Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
                         new KeyValue(sidebar.minWidthProperty(), sidebar.getMinWidth())),
@@ -198,7 +200,7 @@ public class KaryawanController implements Initializable {
             userRow.setAlignment(Pos.CENTER);
             userRow.setPadding(new Insets(12, 0, 12, 0));
         } else {
-            tl.setOnFinished(e -> {
+            timeline.setOnFinished(e -> {
                 showSidebarText();
                 logoRow.setAlignment(Pos.CENTER_LEFT);
                 logoRow.setPadding(new Insets(18, 16, 18, 16));
@@ -208,7 +210,7 @@ public class KaryawanController implements Initializable {
             toggleBtn.setText("◀");
         }
         updateNavPadding(sidebarCollapsed);
-        tl.play();
+        timeline.play();
     }
 
     private void hideSidebarText() {
@@ -227,78 +229,82 @@ public class KaryawanController implements Initializable {
         setNavLabelsVisible(true);
     }
 
-    private void setNavLabelsVisible(boolean v) {
-        for (Label lbl : List.of(navLblDashboard, navLblProduk, navLblKasir,
-                navLblPelanggan, navLblLaporan, navLblPengaturan, navLblKaryawan)) {
-            lbl.setVisible(v);
-            lbl.setManaged(v);
+    private void setNavLabelsVisible(boolean visible) {
+
+        List<Label> labels = List.of(
+                navLblDashboard, navLblProduk, navLblKaryawan, navLblKasir, navLblPiutang,
+                navLblLaporan, navLblPengaturan);
+        for (Label lbl : labels) {
+            lbl.setVisible(visible);
+            lbl.setManaged(visible);
         }
     }
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        for (HBox item : List.of(navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan, navKaryawan)) {
+        List<HBox> items = List.of(navDashboard, navProduk, navKaryawan, navKasir, navPiutang, navLaporan,
+                navPengaturan);
+        for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
         }
     }
 
-    // ══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
     // NAV HANDLERS
-    // ══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
+        new navigation().navigateToDashboard();
+        ((Stage) navDashboard.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
+        new navigation().navigateToProduk();
+        ((Stage) navProduk.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        new navigation().navigationToKaryawan();
+        ((Stage) navKaryawan.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
-        navigation nav = new navigation();
-        nav.navigateToTransaksi();
+        new navigation().navigateToTransaksi();
         ((Stage) navKasir.getScene().getWindow()).close();
-    }
-
-    @FXML
-    private void onNavPelanggan() {
-        setActiveNav(navPelanggan);
     }
 
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
-        navigation nav = new navigation();
-        nav.navigateToLaporan();
+        new navigation().navigateToLaporan();
         ((Stage) navLaporan.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavPiutang() {
         setActiveNav(navPiutang);
-        navigation nav = new navigation();
-        nav.navigateToPiutang();
+        new navigation().navigateToPiutang();
         ((Stage) navPiutang.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-    }
-
-    @FXML
-    private void onNavKaryawan() {
-        setActiveNav(navKaryawan);
+        new navigation().navigataeToPengaturan();
+        ((Stage) navPengaturan.getScene().getWindow()).close();
     }
 
     private void setActiveNav(HBox selected) {
-        for (HBox item : List.of(navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan, navKaryawan)) {
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
+        for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
                 item.getStyleClass().add("nav-item");
@@ -307,9 +313,9 @@ public class KaryawanController implements Initializable {
     }
 
     private void setupNavHover() {
-        for (HBox item : List.of(navDashboard, navProduk, navKasir,
-                navPelanggan, navLaporan, navPengaturan, navKaryawan)) {
-            item.setOnMouseEntered(e -> item.setStyle("-fx-background-color:#252840;-fx-background-radius:10;"));
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
+        for (HBox item : all) {
+            item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
@@ -429,10 +435,10 @@ public class KaryawanController implements Initializable {
         tableAbsensi.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
 
-    //======================================================
+    // ======================================================
     // SETUP TEXFILED NO HP
-    //=====================================================
-    private void setuptxNoHp(){
+    // =====================================================
+    private void setuptxNoHp() {
         txtNoHp.setTextFormatter(new TextFormatter<>(change -> {
             String text = change.getControlNewText();
 
@@ -649,10 +655,10 @@ public class KaryawanController implements Initializable {
                 Date.valueOf(dpTanggalMasuk.getValue()),
                 cmbStatusKerja.getValue(),
                 alamat);
-                System.out.println("Status = [" + cmbStatusKerja.getValue() + "]");
+        System.out.println("Status = [" + cmbStatusKerja.getValue() + "]");
 
         karyawanList.add(new KaryawanModel(id, txtNamaKaryawan.getText(),
-                cmbJenisKelamin.getValue(),jabatan,
+                cmbJenisKelamin.getValue(), jabatan,
                 txtNoHp.getText(), tgl, cmbStatusKerja.getValue(), alamat));
         cmbPilihKaryawan.getItems().add(id);
         showAlert(Alert.AlertType.INFORMATION, "Karyawan berhasil ditambahkan!");

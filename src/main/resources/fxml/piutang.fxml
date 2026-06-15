@@ -49,7 +49,7 @@
                         <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
                      </children>
                   </HBox>
-                  <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
+                  <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavKaryawan" spacing="10" styleClass="nav-item">
                      <children>
                         <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
                         <Label styleClass="nav-icon" text="👥" />
@@ -214,7 +214,7 @@
                   </children>
                 </VBox>
                 <ScrollPane fx:id="detailScroll" fitToWidth="true" prefHeight="426.0" prefWidth="202.0" style="-fx-background-color: #0F1117;" styleClass="detail-scroll" />
-                <VBox fx:id="tunaiBox" managed="true" spacing="6" visible="true">
+                <VBox  managed="true" spacing="6" visible="true">
                   <children>
                     <Label styleClass="section-label" text="UANG DITERIMA" />
                     <HBox alignment="CENTER_LEFT" spacing="6" styleClass="tunai-input-box">

@@ -17,7 +17,6 @@ import com.mycompany.Model.TransaksiModel;
 import com.mycompany.Model.TransaksiModel.CartItem;
 import com.mycompany.Model.TransaksiModel.ItemPs;
 import com.mycompany.Model.TransaksiModel.Produk;
-import javafx.stage.FileChooser;
 import java.io.File;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -51,8 +50,6 @@ import javafx.util.Duration;
  */
 public class TransaksiController implements Initializable {
 
-    koneksi koneksi = new koneksi();
-
     // ── FXML refs ────────────────────────────────────────
     @FXML
     private FlowPane flowProduk;
@@ -65,10 +62,11 @@ public class TransaksiController implements Initializable {
     @FXML
     private Button btnClearSearch;
 
+    // ═══════════════════════════════════════════════════════
+    // FXML — SIDEBAR
+    // ═══════════════════════════════════════════════════════
     @FXML
     private VBox sidebar;
-    @FXML
-    private Button toggleBtn;
     @FXML
     private HBox logoRow;
     @FXML
@@ -78,11 +76,17 @@ public class TransaksiController implements Initializable {
     @FXML
     private HBox userRow;
     @FXML
+    private Button toggleBtn;
+    @FXML
     private VBox navMenu;
+
+    // Nav items
     @FXML
     private HBox navDashboard;
     @FXML
     private HBox navProduk;
+    @FXML
+    private HBox navKaryawan;
     @FXML
     private HBox navKasir;
     @FXML
@@ -92,22 +96,27 @@ public class TransaksiController implements Initializable {
     @FXML
     private HBox navPengaturan;
 
-    @FXML
-    private Button btnProduk;
+    // Nav labels
     @FXML
     private Label navLblDashboard;
     @FXML
     private Label navLblProduk;
     @FXML
-    private Label navLblKasir;
+    private Label navLblKaryawan;
     @FXML
-    private Label navLblPelanggan;
+    private Label navLblKasir;
+
+    @FXML
+    private Label navLblPiutang;
+
     @FXML
     private Label navLblLaporan;
     @FXML
-    private Label navLblPiutang;
-    @FXML
     private Label navLblPengaturan;
+
+    //==========================
+    @FXML
+    private Button btnProduk;
 
     @FXML
     private VBox vboxKeranjang;
@@ -203,31 +212,28 @@ public class TransaksiController implements Initializable {
     private final java.util.List<Produk> semuaProduk = TransaksiModel.semuaProduk;
     private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
 
+    // ═══════════════════════════════════════════════════════
+    // SIDEBAR TOGGLE
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
-
         double targetWidth = sidebarCollapsed ? SIDEBAR_MINI : SIDEBAR_FULL;
-
-        // Animasi lebar sidebar
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
                         new KeyValue(sidebar.minWidthProperty(), sidebar.getMinWidth())),
-                new KeyFrame(Duration.millis(350), new KeyValue(sidebar.prefWidthProperty(), targetWidth),
+                new KeyFrame(Duration.millis(350),
+                        new KeyValue(sidebar.prefWidthProperty(), targetWidth),
                         new KeyValue(sidebar.minWidthProperty(), targetWidth)));
-
-        // Sembunyikan / tampilkan teks dengan fade
         if (sidebarCollapsed) {
-            // Langsung sembunyikan teks saat mulai collapse
             hideSidebarText();
             toggleBtn.setText("▶");
-            // Ubah padding logo row ke center
-            logoRow.setAlignment(javafx.geometry.Pos.CENTER);
+            logoRow.setAlignment(Pos.CENTER);
             logoRow.setPadding(new Insets(18, 0, 18, 0));
-            userRow.setAlignment(javafx.geometry.Pos.CENTER);
+            userRow.setAlignment(Pos.CENTER);
             userRow.setPadding(new Insets(12, 0, 12, 0));
         } else {
-            // Tampilkan teks setelah animasi selesai
             timeline.setOnFinished(e -> {
                 showSidebarText();
                 logoRow.setAlignment(Pos.CENTER_LEFT);
@@ -237,77 +243,8 @@ public class TransaksiController implements Initializable {
             });
             toggleBtn.setText("◀");
         }
-
-        // Atur padding nav items saat collapse
         updateNavPadding(sidebarCollapsed);
-
         timeline.play();
-    }
-
-    @FXML
-    private void onNotif() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Notifikasi");
-        alert.setHeaderText(null);
-        alert.setContentText("Tidak ada pemberitahuan baru.");
-        alert.showAndWait();
-    }
-
-    // ═════════════════════════════════════════════════════
-    // NAV CLICK HANDLERS
-    // ═════════════════════════════════════════════════════
-    @FXML
-    private void onNavDashboard() {
-        setActiveNav(navDashboard);
-        navigation nav = new navigation();
-        nav.navigateToDashboard();
-        Stage stage = (Stage) navDashboard.getScene().getWindow();
-        stage.close();
-        TransaksiModel.keranjang.clear();
-
-    }
-
-    @FXML
-    private void onNavProduk() {
-        setActiveNav(navProduk);
-        navigation nav = new navigation();
-        nav.navigateToProduk();
-        Stage stage = (Stage) navProduk.getScene().getWindow();
-        stage.close();
-    }
-
-    @FXML
-    private void onNavKasir() {
-        setActiveNav(navKasir);
-
-    }
-
-    @FXML
-    private void onNavLaporan() {
-        setActiveNav(navLaporan);
-        navigation nav = new navigation();
-        nav.navigateToLaporan();
-        Stage stage = (Stage) navLaporan.getScene().getWindow();
-        stage.close();
-    }
-
-    @FXML
-    private void onNavPiutang() {
-        setActiveNav(navPiutang);
-        navigation nav = new navigation();
-        nav.navigateToPiutang();
-        Stage stage = (Stage) navPiutang.getScene().getWindow();
-        stage.close();
-    }
-
-    @FXML
-    private void onNavPengaturan() {
-        setActiveNav(navPengaturan);
-        navigation nav = new navigation();
-        nav.navigataeToPengaturan();
-        Stage stage = (Stage) navPengaturan.getScene().getWindow();
-        stage.close();
-
     }
 
     private void hideSidebarText() {
@@ -327,8 +264,10 @@ public class TransaksiController implements Initializable {
     }
 
     private void setNavLabelsVisible(boolean visible) {
-        List<Label> labels = List.of(navLblDashboard, navLblProduk, navLblKasir, navLblPelanggan, navLblLaporan,
-                navLblPiutang, navLblPengaturan);
+
+        List<Label> labels = List.of(
+                navLblDashboard, navLblProduk, navLblKaryawan, navLblKasir, navLblPiutang,
+                navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -336,11 +275,8 @@ public class TransaksiController implements Initializable {
     }
 
     private void updateNavPadding(boolean collapsed) {
-        Insets collapsedPad = new Insets(10, 0, 10, 0);
-        Insets normalPad = new Insets(10, 14, 10, 0);
-        Insets pad = collapsed ? collapsedPad : normalPad;
-
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPiutang,
+        Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
+        List<HBox> items = List.of(navDashboard, navProduk, navKaryawan, navKasir, navPiutang, navLaporan,
                 navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
@@ -348,14 +284,72 @@ public class TransaksiController implements Initializable {
         }
     }
 
+    // ═══════════════════════════════════════════════════════
+    // NAV HANDLERS
+    // ═══════════════════════════════════════════════════════
+    @FXML
+    private void onNavDashboard() {
+        setActiveNav(navDashboard);
+        new navigation().navigateToDashboard();
+        ((Stage) navDashboard.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavProduk() {
+        setActiveNav(navProduk);
+        new navigation().navigateToProduk();
+        ((Stage) navProduk.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        new navigation().navigationToKaryawan();
+        ((Stage) navKaryawan.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKasir() {
+        setActiveNav(navKasir);
+       
+    }
+
+    @FXML
+    private void onNavLaporan() {
+        setActiveNav(navLaporan);
+        new navigation().navigateToLaporan();
+        ((Stage) navLaporan.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavPiutang() {
+        setActiveNav(navPiutang);
+        new navigation().navigateToPiutang();
+        ((Stage) navPiutang.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavPengaturan() {
+        setActiveNav(navPengaturan);
+        new navigation().navigataeToPengaturan();
+        ((Stage) navPengaturan.getScene().getWindow()).close();
+    }
+
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPiutang,
-                navPengaturan);
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
+            if (!item.getStyleClass().contains("nav-item"))
+                item.getStyleClass().add("nav-item");
         }
-        if (selected != null) {
-            selected.getStyleClass().add("nav-active");
+        selected.getStyleClass().add("nav-active");
+    }
+
+    private void setupNavHover() {
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
+        for (HBox item : all) {
+            item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
+            item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
 
@@ -1277,6 +1271,19 @@ public class TransaksiController implements Initializable {
         item.getStyleClass().add("cart-item");
 
         return item;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // OTHER HANDLERS
+    // ═══════════════════════════════════════════════════════
+    @FXML
+    private void onNotif() {
+        System.out.println("Notifikasi dibuka");
+    }
+
+    @FXML
+    private void onLihatSemua() {
+        System.out.println("Lihat semua transaksi");
     }
 
 }

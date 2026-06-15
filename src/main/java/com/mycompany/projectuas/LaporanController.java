@@ -78,19 +78,16 @@ public class LaporanController implements Initializable {
     private Button toggleBtn;
     @FXML
     private VBox navMenu;
-    @FXML
-    private FlowPane flowKasirPagi;
 
-    @FXML
-    private FlowPane flowKasirMalam;
     // Nav items
     @FXML
     private HBox navDashboard;
     @FXML
     private HBox navProduk;
     @FXML
+    private HBox navKaryawan;
+    @FXML
     private HBox navKasir;
-
     @FXML
     private HBox navLaporan;
     @FXML
@@ -104,11 +101,18 @@ public class LaporanController implements Initializable {
     @FXML
     private Label navLblProduk;
     @FXML
+    private Label navLblKaryawan;
+    @FXML
     private Label navLblKasir;
+
+    @FXML
+    private Label navLblPiutang;
+
     @FXML
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI ORIGINAL
@@ -192,6 +196,11 @@ public class LaporanController implements Initializable {
     // FXML — SHIFT CARDS
     // ═══════════════════════════════════════════════════════
     @FXML
+    private FlowPane flowKasirPagi;
+
+    @FXML
+    private FlowPane flowKasirMalam;
+    @FXML
     private VBox cardPagi;
     @FXML
     private VBox cardMalam;
@@ -199,10 +208,6 @@ public class LaporanController implements Initializable {
     private StackPane wrapperPagi;
     @FXML
     private StackPane wrapperMalam;
-    @FXML
-    private Label lblUsernamePagi;
-    @FXML
-    private Label lblNamaPagi;
     @FXML
     private Label lblTrxPagi;
     @FXML
@@ -217,10 +222,7 @@ public class LaporanController implements Initializable {
     private Label lblStatusPagi;
     @FXML
     private Label lblJamPagi;
-    @FXML
-    private Label lblUsernameMalam;
-    @FXML
-    private Label lblNamaMalam;
+  
     @FXML
     private Label lblTrxMalam;
     @FXML
@@ -378,8 +380,9 @@ public class LaporanController implements Initializable {
     }
 
     private void setNavLabelsVisible(boolean visible) {
+
         List<Label> labels = List.of(
-                navLblDashboard, navLblProduk, navLblKasir,
+                navLblDashboard, navLblProduk, navLblKaryawan, navLblKasir, navLblPiutang,
                 navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
@@ -389,7 +392,8 @@ public class LaporanController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKaryawan, navKasir, navPiutang, navLaporan,
+                navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -411,6 +415,13 @@ public class LaporanController implements Initializable {
         setActiveNav(navProduk);
         new navigation().navigateToProduk();
         ((Stage) navProduk.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        new navigation().navigationToKaryawan();
+        ((Stage) navKaryawan.getScene().getWindow()).close();
     }
 
     @FXML

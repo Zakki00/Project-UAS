@@ -26,7 +26,6 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.PopupControl;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -44,24 +43,23 @@ import javafx.scene.shape.Circle;
  */
 public class PengaturanController implements Initializable {
 
-    // ── FXML refs ──────────────────────────
-    @FXML
-    private Button tabAkun;
-    @FXML
-    private Button tabBackup;
-    @FXML
-    private Button tabDatabase;
-    @FXML
-    private Button tabTentang;
-
     @FXML
     private VBox panelAkun;
     @FXML
     private VBox panelBackup;
     @FXML
     private VBox panelDatabase;
+    @FXML 
+    private Button btnBackup;
+    @FXML 
+    private Button btnSimpanSeting;
+    
     @FXML
     private VBox panelTentang;
+    @FXML
+    private ImageView imgAvatarGoogle1;
+    @FXML
+    private ImageView imgAvatarGoogle;
 
     // Akun
     @FXML
@@ -102,41 +100,23 @@ public class PengaturanController implements Initializable {
     @FXML
     private ProgressBar pbBackup;
     @FXML
-    private ProgressBar pbRestore;
-
-    @FXML
     private javafx.scene.control.CheckBox cbBackupOtomatis;
     @FXML
     private javafx.scene.control.ComboBox<String> cbInterval;
-    @FXML
-    private TextField tfLokasiBackup;
-    @FXML
-    private TextField tfFileRestore;
 
     // Database
     @FXML
     private Label lblDbDot;
     @FXML
     private Label lblDbStatus;
-    @FXML
-    private TextField tfDbHost;
-    @FXML
-    private TextField tfDbPort;
-    @FXML
-    private TextField tfDbName;
-    @FXML
-    private TextField tfDbUser;
-    @FXML
-    private javafx.scene.control.PasswordField pfDbPassword;
-    // ── Sidebar ───────────────────────────────────────────
+    
+    // ═══════════════════════════════════════════════════════
+    // FXML — SIDEBAR
+    // ═══════════════════════════════════════════════════════
     @FXML
     private VBox sidebar;
     @FXML
     private HBox logoRow;
-    @FXML
-    private ImageView imgAvatarGoogle;
-    @FXML
-    ImageView imgAvatarGoogle1;
     @FXML
     private VBox logoBrand;
     @FXML
@@ -146,8 +126,6 @@ public class PengaturanController implements Initializable {
     @FXML
     private Button toggleBtn;
     @FXML
-    private Button btnSimpanSeting;
-    @FXML
     private VBox navMenu;
 
     // Nav items
@@ -155,6 +133,8 @@ public class PengaturanController implements Initializable {
     private HBox navDashboard;
     @FXML
     private HBox navProduk;
+    @FXML
+    private HBox navKaryawan;
     @FXML
     private HBox navKasir;
     @FXML
@@ -164,15 +144,19 @@ public class PengaturanController implements Initializable {
     @FXML
     private HBox navPengaturan;
 
-    // Nav labels (semua label teks nav)
+    // Nav labels
     @FXML
     private Label navLblDashboard;
     @FXML
     private Label navLblProduk;
     @FXML
-    private Label navLblKasir;
+    private Label navLblKaryawan;
     @FXML
-    private Label navLblPelanggan;
+    private Label navLblKasir;
+
+    @FXML
+    private Label navLblPiutang;
+
     @FXML
     private Label navLblLaporan;
     @FXML
@@ -186,9 +170,6 @@ public class PengaturanController implements Initializable {
     @FXML
     private LineChart<String, Number> monthChart;
 
-    // ── Stock list ────────────────────────────────────────
-    @FXML
-    private VBox stockList;
 
     // ── State ─────────────────────────────────────────────
     private boolean sidebarCollapsed = false;
@@ -211,17 +192,19 @@ public class PengaturanController implements Initializable {
 
     }
 
-    // ═════════════════════════════════════════════════════
-    // SIDEBAR TOGGLE (animasi smooth)
-    // ═════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    // SIDEBAR TOGGLE
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
         double targetWidth = sidebarCollapsed ? SIDEBAR_MINI : SIDEBAR_FULL;
         Timeline timeline = new Timeline(
-                new KeyFrame(Duration.ZERO, new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
                         new KeyValue(sidebar.minWidthProperty(), sidebar.getMinWidth())),
-                new KeyFrame(Duration.millis(350), new KeyValue(sidebar.prefWidthProperty(), targetWidth),
+                new KeyFrame(Duration.millis(350),
+                        new KeyValue(sidebar.prefWidthProperty(), targetWidth),
                         new KeyValue(sidebar.minWidthProperty(), targetWidth)));
         if (sidebarCollapsed) {
             hideSidebarText();
@@ -261,8 +244,10 @@ public class PengaturanController implements Initializable {
     }
 
     private void setNavLabelsVisible(boolean visible) {
-        List<Label> labels = List.of(navLblDashboard, navLblProduk, navLblKasir, navLblPelanggan, navLblLaporan,
-                navLblPengaturan);
+
+        List<Label> labels = List.of(
+                navLblDashboard, navLblProduk, navLblKaryawan, navLblKasir, navLblPiutang,
+                navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -270,80 +255,72 @@ public class PengaturanController implements Initializable {
     }
 
     private void updateNavPadding(boolean collapsed) {
-        Insets collapsedPad = new Insets(10, 0, 10, 0);
-        Insets normalPad = new Insets(10, 14, 10, 0);
-        Insets pad = collapsed ? collapsedPad : normalPad;
-
-        List<HBox> items = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
+        Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
+        List<HBox> items = List.of(navDashboard, navProduk, navKaryawan, navKasir, navPiutang, navLaporan,
+                navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
-
         }
     }
 
-    // ═════════════════════════════════════════════════════
-    // NAV CLICK HANDLERS
-    // ═════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    // NAV HANDLERS
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
-        navigation nav = new navigation();
-        nav.navigateToDashboard();
-        Stage stage = (Stage) navDashboard.getScene().getWindow();
-        stage.close();
-
+        new navigation().navigateToDashboard();
+        ((Stage) navDashboard.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
-        navigation nav = new navigation();
-        nav.navigateToProduk();
-        Stage stage = (Stage) navProduk.getScene().getWindow();
-        stage.close();
+        new navigation().navigateToProduk();
+        ((Stage) navProduk.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        new navigation().navigationToKaryawan();
+        ((Stage) navKaryawan.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
-        navigation nav = new navigation();
-        nav.navigateToTransaksi();
-        Stage stage = (Stage) navKasir.getScene().getWindow();
-        stage.close();
+        new navigation().navigateToTransaksi();
+        ((Stage) navKasir.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
-        navigation nav = new navigation();
-        nav.navigateToLaporan();
-        Stage stage = (Stage) navLaporan.getScene().getWindow();
-        stage.close();
+        new navigation().navigateToLaporan();
+        ((Stage) navLaporan.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavPiutang() {
         setActiveNav(navPiutang);
-        navigation nav = new navigation();
-        nav.navigateToPiutang();
-        Stage stage = (Stage) navPiutang.getScene().getWindow();
-        stage.close();
+        new navigation().navigateToPiutang();
+        ((Stage) navPiutang.getScene().getWindow()).close();
     }
 
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-
+        
     }
 
     private void setActiveNav(HBox selected) {
         List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
-            if (!item.getStyleClass().contains("nav-item")) {
+            if (!item.getStyleClass().contains("nav-item"))
                 item.getStyleClass().add("nav-item");
-            }
         }
         selected.getStyleClass().add("nav-active");
     }
@@ -355,6 +332,8 @@ public class PengaturanController implements Initializable {
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
+
+
 
     // ========================================
     // MAIN CONTENT
@@ -620,16 +599,7 @@ public class PengaturanController implements Initializable {
         + prefs.get("backup_interval", "") + " Sekali", Popup.PopupType.SUCCESS, stage);
     }
 
-    @FXML
-    private void onBrowseFolder() {
-        javafx.stage.DirectoryChooser dc = new javafx.stage.DirectoryChooser();
-        dc.setTitle("Pilih Folder Backup");
-        java.io.File folder = dc.showDialog(
-                tfLokasiBackup.getScene().getWindow());
-        if (folder != null) {
-            tfLokasiBackup.setText(folder.getAbsolutePath());
-        }
-    }
+
 
 
 
@@ -710,14 +680,6 @@ public class PengaturanController implements Initializable {
         }
     }
 
-    @FXML
-    private void onResetDb() {
-        tfDbHost.setText("localhost");
-        tfDbPort.setText("3306");
-        tfDbName.setText("db_enjoy_cave");
-        tfDbUser.setText("root");
-        pfDbPassword.clear();
-    }
 
     @FXML
     private void onSimpanDb() {

@@ -50,13 +50,13 @@
           <Label styleClass="nav-icon" text="📦" />
           <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
         </HBox>
-            <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
-               <children>
-                  <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-                  <Label styleClass="nav-icon" text="👥" />
-                  <Label fx:id="navLblKaryawan" styleClass="nav-label" text="Karyawan" />
-               </children>
-            </HBox>
+        <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavKaryawan" spacing="10" styleClass="nav-item">
+          <children>
+            <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+            <Label styleClass="nav-icon" text="👥" />
+            <Label fx:id="navLblKaryawan" styleClass="nav-label" text="Karyawan" />
+          </children>
+        </HBox>
         <!-- Kasir -->
         <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
@@ -173,7 +173,7 @@
                     <children>
                       <HBox alignment="CENTER_LEFT" spacing="8">
                         <children>
-                          <Label fx:id="lblBadgePagi" styleClass="shift-badge, badge-pagi" text="🌤 Shift Pagi - Siang" />
+                          <Label styleClass="shift-badge, badge-pagi" text="🌤 Shift Pagi - Siang" />
                           <Label fx:id="lblStatusPagi" styleClass="shift-pagi-dot" text="●" />
                         </children>
                       </HBox>
@@ -207,12 +207,12 @@
                               <Label fx:id="lblItemPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
                             </children>
                           </HBox>
-                                       <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-pagi-stat-row">
-                                          <children>
-                                             <Label styleClass="shift-pagi-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
-                                             <Label fx:id="lblPaketPSPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
-                                          </children>
-                                       </HBox>
+                          <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-pagi-stat-row">
+                            <children>
+                              <Label styleClass="shift-pagi-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblPaketPSPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
+                            </children>
+                          </HBox>
                         </children>
                       </VBox>
                       <VBox alignment="CENTER" styleClass="shift-pagi-pendapatan-box">
@@ -237,7 +237,7 @@
                     <children>
                       <HBox alignment="CENTER_LEFT" spacing="8">
                         <children>
-                          <Label fx:id="lblBadgeMalam" styleClass="shift-badge, badge-malam" text="🌙 Shift Siang - Malam" />
+                          <Label styleClass="shift-badge, badge-malam" text="🌙 Shift Siang - Malam" />
                           <Label fx:id="lblStatusMalam" styleClass="shift-malam-dot" text="●" />
                         </children>
                       </HBox>
@@ -271,12 +271,12 @@
                               <Label fx:id="lblItemMalam" styleClass="shift-malam-stat-value" text="0 unit" />
                             </children>
                           </HBox>
-                                       <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-malam-stat-row">
-                                          <children>
-                                             <Label styleClass="shift-malam-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
-                                             <Label fx:id="lblPaketPSMalam" styleClass="shift-malam-stat-value" text="0 unit" />
-                                          </children>
-                                       </HBox>
+                          <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-malam-stat-row">
+                            <children>
+                              <Label styleClass="shift-malam-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                              <Label fx:id="lblPaketPSMalam" styleClass="shift-malam-stat-value" text="0 unit" />
+                            </children>
+                          </HBox>
                         </children>
                       </VBox>
                       <VBox alignment="CENTER" styleClass="shift-malam-pendapatan-box">

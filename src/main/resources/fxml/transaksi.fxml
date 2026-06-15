@@ -47,7 +47,7 @@
                         <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
                      </children>
                   </HBox>
-                  <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
+                  <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavKaryawan" spacing="10" styleClass="nav-item">
                      <children>
                         <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
                         <Label styleClass="nav-icon" text="👥" />

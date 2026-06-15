@@ -72,7 +72,6 @@ public class DashboardController implements Initializable {
     private HBox navPiutang;
     @FXML
     private HBox navPengaturan;
-   
 
     // Nav labels
     @FXML
@@ -83,7 +82,7 @@ public class DashboardController implements Initializable {
     private Label navLblKaryawan;
     @FXML
     private Label navLblKasir;
-    
+
     @FXML
     private Label navLblPiutang;
 
@@ -91,7 +90,6 @@ public class DashboardController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
-   
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI ORIGINAL
@@ -326,8 +324,8 @@ public class DashboardController implements Initializable {
     private void setNavLabelsVisible(boolean visible) {
 
         List<Label> labels = List.of(
-                navLblDashboard, navLblProduk,navLblKaryawan, navLblKasir, navLblPiutang,
-             navLblLaporan, navLblPengaturan);
+                navLblDashboard, navLblProduk, navLblKaryawan, navLblKasir, navLblPiutang,
+                navLblLaporan, navLblPengaturan);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -336,7 +334,8 @@ public class DashboardController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk,navKaryawan,navKasir,navPiutang,navLaporan,navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKaryawan, navKasir, navPiutang, navLaporan,
+                navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
@@ -349,6 +348,8 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
+        new navigation().navigateToDashboard();
+        ((Stage) navDashboard.getScene().getWindow()).close();
     }
 
     @FXML
@@ -356,6 +357,13 @@ public class DashboardController implements Initializable {
         setActiveNav(navProduk);
         new navigation().navigateToProduk();
         ((Stage) navProduk.getScene().getWindow()).close();
+    }
+
+    @FXML
+    private void onNavKaryawan() {
+        setActiveNav(navKaryawan);
+        new navigation().navigationToKaryawan();
+        ((Stage) navKaryawan.getScene().getWindow()).close();
     }
 
     @FXML
@@ -384,13 +392,6 @@ public class DashboardController implements Initializable {
         setActiveNav(navPengaturan);
         new navigation().navigataeToPengaturan();
         ((Stage) navPengaturan.getScene().getWindow()).close();
-    }
-
-    @FXML
-    private void onNavKaryawan() {
-        setActiveNav(navKaryawan);
-        new navigation().navigationToKaryawan();
-        ((Stage) navKaryawan.getScene().getWindow()).close();   
     }
 
     private void setActiveNav(HBox selected) {
@@ -664,7 +665,7 @@ public class DashboardController implements Initializable {
                             JOIN tb_transaksi t2
                                 ON dt.id_transaksi = t2.id_transaksi
                             WHERE DATE(t2.tanggal_transaksi)=DATE('now','localtime')
-                              AND TIME(t2.tanggal_transaksi) BETWEEN ? AND ?
+                            AND TIME(t2.tanggal_transaksi) BETWEEN ? AND ?
                         ),0
                     ) AS total_item,
 
@@ -675,7 +676,7 @@ public class DashboardController implements Initializable {
                             JOIN tb_transaksi t3
                                 ON ps.id_transaksi = t3.id_transaksi
                             WHERE DATE(t3.tanggal_transaksi)=DATE('now','localtime')
-                              AND TIME(t3.tanggal_transaksi) BETWEEN ? AND ?
+                            AND TIME(t3.tanggal_transaksi) BETWEEN ? AND ?
                         ),0
                     ) AS total_paket_ps,
 
@@ -686,7 +687,7 @@ public class DashboardController implements Initializable {
 
                 FROM tb_transaksi t
                 WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
-                  AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
+                AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
                 """;
 
         List<Object[]> data = koneksi.ambilData(
@@ -891,21 +892,26 @@ public class DashboardController implements Initializable {
             long total = ((Number) data.get(i)[1]).longValue();
             double pct = (double) total / max;
             Label lblNama = new Label(nama);
+
             lblNama.getStyleClass().add("bar-nama");
             lblNama.setPrefWidth(140);
             lblNama.setMinWidth(140);
             lblNama.setMaxWidth(140);
+
             Label lblTotal = new Label(total + " unit");
             lblTotal.getStyleClass().add("bar-total");
+
             ProgressBar pb = new ProgressBar(0);
             pb.getStyleClass().add("bar-progress");
             pb.setPrefHeight(12);
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setStyle("-fx-accent: " + colors[i % colors.length] + ";");
+
             HBox.setHgrow(pb, Priority.ALWAYS);
             HBox row2 = new HBox(10, lblNama, pb, lblTotal);
             row2.setAlignment(Pos.CENTER_LEFT);
             row2.getStyleClass().add("bar-row");
+
             vboxChart.getChildren().add(row2);
             animateProgressBar(pb, pct, 100 + i * 80);
             animateFadeIn(row2, 100 + i * 80);
@@ -1019,7 +1025,7 @@ public class DashboardController implements Initializable {
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setPrefHeight(5);
             pb.getStyleClass().add(kritis ? "progress-kritis" : "progress-menipis");
-            
+
             VBox itemBox = new VBox(4, topRow, pb);
             stockList.getChildren().add(itemBox);
             animateProgressBar(pb, pct, 100 + idx * 100);
@@ -1065,10 +1071,6 @@ public class DashboardController implements Initializable {
                 piePiutang.getData().get(0).getNode().setStyle("-fx-pie-color: #00E5A0;");
                 piePiutang.getData().get(1).getNode().setStyle("-fx-pie-color: #FF5C7C;");
 
-                // Fix warna legend
-                javafx.scene.chart.PieChart.Data d0 = piePiutang.getData().get(0);
-                javafx.scene.chart.PieChart.Data d1 = piePiutang.getData().get(1);
-
                 piePiutang.lookupAll(".chart-legend-item-symbol").forEach(node -> {
                     String text = ((javafx.scene.control.Label) node.getParent()).getText();
                     if (text != null && text.startsWith("Lunas (")) {
@@ -1110,23 +1112,29 @@ public class DashboardController implements Initializable {
             String kategori = data.get(i)[1].toString();
             long terjual = ((Number) data.get(i)[2]).longValue();
             double pct = (double) terjual / max;
+
             Label lblNama = new Label(nama);
             lblNama.getStyleClass().add("bar-nama");
             lblNama.setPrefWidth(130);
             lblNama.setMinWidth(130);
+
             Label lblTotal = new Label(terjual + " unit");
             lblTotal.getStyleClass().add("bar-total");
+            
             ProgressBar pb = new ProgressBar(0);
             pb.getStyleClass().add("bar-progress");
             pb.setPrefHeight(12);
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setStyle("-fx-accent: " + colors[i % colors.length] + ";");
+
             HBox.setHgrow(pb, Priority.ALWAYS);
             Label lblKategori = new Label(kategori);
             lblKategori.setStyle("-fx-text-fill: #8B8FA8; -fx-font-size: 10px;");
+
             HBox row = new HBox(10, lblNama, pb, lblTotal);
             row.setAlignment(Pos.CENTER_LEFT);
             row.getStyleClass().add("bar-row");
+
             vboxTerlarisMinggu.getChildren().addAll(row, lblKategori);
             animateProgressBar(pb, pct, 100 + i * 80);
             animateFadeIn(row, 100 + i * 80);
@@ -1205,10 +1213,6 @@ public class DashboardController implements Initializable {
                 pieKomposisi.getData().get(0).getNode().setStyle("-fx-pie-color: #6C63FF;");
                 pieKomposisi.getData().get(1).getNode().setStyle("-fx-pie-color: #00D4FF;");
 
-                // Fix warna legend
-                javafx.scene.chart.PieChart.Data d0 = pieKomposisi.getData().get(0);
-                javafx.scene.chart.PieChart.Data d1 = pieKomposisi.getData().get(1);
-
                 pieKomposisi.lookupAll(".chart-legend-item-symbol").forEach(node -> {
                     String text = ((javafx.scene.control.Label) node.getParent()).getText();
 
@@ -1229,14 +1233,19 @@ public class DashboardController implements Initializable {
             String kategori = data.get(i)[0].toString();
             double total = ((Number) data.get(i)[1]).doubleValue();
             double pct = gt > 0 ? (total / gt) * 100 : 0;
+
             Label dot = new Label("●");
             dot.setStyle("-fx-text-fill: " + colors[i % colors.length] + "; -fx-font-size: 14px;");
+
             Label lblNama = new Label(kategori);
             lblNama.setStyle("-fx-text-fill: #8B8FA8; -fx-font-size: 12px;");
+
             Label lblNominal = new Label("Rp " + String.format("%,.0f", total));
             lblNominal.setStyle("-fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-font-size: 12px;");
+
             Label lblPct = new Label(String.format("%.1f%%", pct));
             lblPct.setStyle("-fx-text-fill: " + colors[i % colors.length] + "; -fx-font-size: 11px;");
+
             VBox item = new VBox(3, new HBox(5, dot, lblNama), lblNominal, lblPct);
             item.setAlignment(Pos.CENTER_LEFT);
             item.setStyle("-fx-background-color: #2E3250; -fx-background-radius: 8; -fx-padding: 8 14 8 14;");
@@ -1246,18 +1255,24 @@ public class DashboardController implements Initializable {
         }
         Label lblTotalTitle = new Label("Total 30 hari");
         lblTotalTitle.setStyle("-fx-text-fill: #8B8FA8; -fx-font-size: 11px;");
+
         Label lblTotalNominal = new Label("Rp " + String.format("%,.0f", grandTotal));
         lblTotalNominal.setStyle("-fx-text-fill: #FFD166; -fx-font-weight: bold; -fx-font-size: 13px;");
+
         VBox totalItem = new VBox(3, lblTotalTitle, lblTotalNominal);
         totalItem.setAlignment(Pos.CENTER_LEFT);
         totalItem.setStyle("-fx-background-color: #2E3250; -fx-background-radius: 8; -fx-padding: 8 14 8 14;");
         totalItem.setMaxWidth(Double.MAX_VALUE);
+
         summaryBox.getChildren().add(totalItem);
+
         pieKomposisi.setMinWidth(280);
         pieKomposisi.setPrefWidth(280);
         pieKomposisi.setPrefHeight(280);
         pieKomposisi.setMinHeight(280);
+
         HBox.setHgrow(pieKomposisi, Priority.NEVER);
+
         HBox wrapper = new HBox(16, pieKomposisi, summaryBox);
         wrapper.setAlignment(Pos.CENTER_LEFT);
         wrapper.setUserData("komposisi-wrapper");
@@ -1295,20 +1310,25 @@ public class DashboardController implements Initializable {
             long total = ((Number) data.get(i)[1]).longValue();
             double pct = (double) total / max;
             Label lblNama = new Label(kategori);
+
             lblNama.getStyleClass().add("bar-nama");
             lblNama.setPrefWidth(100);
             lblNama.setMinWidth(100);
+
             Label lblTotal = new Label("Rp " + String.format("%,.0f", (double) total));
             lblTotal.getStyleClass().add("bar-total");
+
             ProgressBar pb = new ProgressBar(0);
             pb.getStyleClass().add("bar-progress");
             pb.setPrefHeight(12);
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setStyle("-fx-accent: " + colors[i % colors.length] + ";");
+
             HBox.setHgrow(pb, Priority.ALWAYS);
             HBox row = new HBox(10, lblNama, pb, lblTotal);
             row.setAlignment(Pos.CENTER_LEFT);
             row.getStyleClass().add("bar-row");
+            
             vboxKategori.getChildren().add(row);
             animateProgressBar(pb, pct, 100 + i * 80);
             animateFadeIn(row, 100 + i * 80);
