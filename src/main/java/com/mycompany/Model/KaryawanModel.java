@@ -5,29 +5,42 @@ import javafx.beans.property.*;
 public class KaryawanModel {
 
     private final StringProperty idKaryawan;
-    private final StringProperty namaKaryawan;
+    private final StringProperty username;
+    private final StringProperty password;
+
+    private final StringProperty namaLengkap;
     private final StringProperty jenisKelamin;
-    private final StringProperty jabatan;
 
     private final StringProperty noHp;
     private final StringProperty tanggalMasuk;
     private final StringProperty statusKerja;
     private final StringProperty alamat;
+    private final StringProperty role;
 
-    public KaryawanModel(String idKaryawan, String namaKaryawan, String jenisKelamin,
-            String jabatan, String noHp, String tanggalMasuk,
-            String statusKerja, String alamat) {
+    public KaryawanModel(
+            String idKaryawan,
+            String username,
+            String password,
+            String namaLengkap,
+            String jenisKelamin,
+            String noHp,
+            String tanggalMasuk,
+            String statusKerja,
+            String alamat,
+            String role) {
         this.idKaryawan = new SimpleStringProperty(idKaryawan);
-        this.namaKaryawan = new SimpleStringProperty(namaKaryawan);
+        this.username = new SimpleStringProperty(username);
+        this.password = new SimpleStringProperty(password);
+        this.namaLengkap = new SimpleStringProperty(namaLengkap);
         this.jenisKelamin = new SimpleStringProperty(jenisKelamin);
-        this.jabatan = new SimpleStringProperty(jabatan);
         this.noHp = new SimpleStringProperty(noHp);
         this.tanggalMasuk = new SimpleStringProperty(tanggalMasuk);
         this.statusKerja = new SimpleStringProperty(statusKerja);
         this.alamat = new SimpleStringProperty(alamat);
+        this.role = new SimpleStringProperty(role);
     }
 
-    // ── idKaryawan ────────────────────────────────────────
+    // ── ID ─────────────────────────────
     public StringProperty idKaryawanProperty() {
         return idKaryawan;
     }
@@ -40,20 +53,46 @@ public class KaryawanModel {
         idKaryawan.set(v);
     }
 
-    // ── namaKaryawan ──────────────────────────────────────
-    public StringProperty namaKaryawanProperty() {
-        return namaKaryawan;
+    // ── USERNAME ───────────────────────
+    public StringProperty usernameProperty() {
+        return username;
     }
 
-    public String getNamaKaryawan() {
-        return namaKaryawan.get();
+    public String getUsername() {
+        return username.get();
     }
 
-    public void setNamaKaryawan(String v) {
-        namaKaryawan.set(v);
+    public void setUsername(String v) {
+        username.set(v);
     }
 
-    // ── jenisKelamin ──────────────────────────────────────
+    // ── PASSWORD ───────────────────────
+    public StringProperty passwordProperty() {
+        return password;
+    }
+
+    public String getPassword() {
+        return password.get();
+    }
+
+    public void setPassword(String v) {
+        password.set(v);
+    }
+
+    // ── NAMA ───────────────────────────
+    public StringProperty namaLengkapProperty() {
+        return namaLengkap;
+    }
+
+    public String getNamaLengkap() {
+        return namaLengkap.get();
+    }
+
+    public void setNamaLengkap(String v) {
+        namaLengkap.set(v);
+    }
+
+    // ── JENIS KELAMIN ──────────────────
     public StringProperty jenisKelaminProperty() {
         return jenisKelamin;
     }
@@ -66,20 +105,7 @@ public class KaryawanModel {
         jenisKelamin.set(v);
     }
 
-    // ── jabatan ───────────────────────────────────────────
-    public StringProperty jabatanProperty() {
-        return jabatan;
-    }
-
-    public String getJabatan() {
-        return jabatan.get();
-    }
-
-    public void setJabatan(String v) {
-        jabatan.set(v);
-    }
-
-    // ── noHp ─────────────────────────────────────────────
+    // ── NO HP ──────────────────────────
     public StringProperty noHpProperty() {
         return noHp;
     }
@@ -92,7 +118,7 @@ public class KaryawanModel {
         noHp.set(v);
     }
 
-    // ── tanggalMasuk ──────────────────────────────────────
+    // ── TANGGAL MASUK ──────────────────
     public StringProperty tanggalMasukProperty() {
         return tanggalMasuk;
     }
@@ -105,7 +131,7 @@ public class KaryawanModel {
         tanggalMasuk.set(v);
     }
 
-    // ── statusKerja ───────────────────────────────────────
+    // ── STATUS ─────────────────────────
     public StringProperty statusKerjaProperty() {
         return statusKerja;
     }
@@ -118,7 +144,7 @@ public class KaryawanModel {
         statusKerja.set(v);
     }
 
-    // ── alamat ────────────────────────────────────────────
+    // ── ALAMAT ─────────────────────────
     public StringProperty alamatProperty() {
         return alamat;
     }
@@ -129,5 +155,18 @@ public class KaryawanModel {
 
     public void setAlamat(String v) {
         alamat.set(v);
+    }
+
+    // ── ROLE ───────────────────────────
+    public StringProperty roleProperty() {
+        return role;
+    }
+
+    public String getRole() {
+        return role.get();
+    }
+
+    public void setRole(String v) {
+        role.set(v);
     }
 }

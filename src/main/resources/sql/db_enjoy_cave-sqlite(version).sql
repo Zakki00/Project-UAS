@@ -78,32 +78,24 @@ CREATE TABLE
         FOREIGN KEY (id_paket_ps) REFERENCES tb_paket_ps (id_paket_ps)
     )
 
-<<<<<<< HEAD
+
 CREATE TABLE tb_karyawan (
     id_karyawan TEXT PRIMARY KEY,
     username TEXT NOT NULL UNIQUE, 
     password TEXT NOT NULL,
     nama_lengkap TEXT NOT NULL,
-=======
- CREATE TABLE tb_karyawan (
-    id_karyawan TEXT PRIMARY KEY,
-    nama_karyawan TEXT NOT NULL,
->>>>>>> origin/main
     jenis_kelamin TEXT NOT NULL CHECK (
         jenis_kelamin IN ('Laki-laki', 'Perempuan')
     ),
-    jabatan TEXT NOT NULL,
     no_hp TEXT NOT NULL,
     tanggal_masuk TEXT NOT NULL,
     status_kerja TEXT NOT NULL CHECK (
         status_kerja IN ('Aktif', 'Non Aktif')
     ),
-<<<<<<< HEAD
+
     alamat TEXT,
     role TEXT NOT NULL
-=======
-    alamat TEXT
->>>>>>> origin/main
+
 );
 
 CREATE TABLE tb_absensi (
@@ -113,8 +105,5 @@ CREATE TABLE tb_absensi (
     jam_masuk TEXT NOT NULL,
     status_kehadiran TEXT NOT NULL,
     FOREIGN KEY (id_karyawan) REFERENCES tb_karyawan (id_karyawan) ON DELETE CASCADE
-<<<<<<< HEAD
+
 );
-=======
-);
->>>>>>> origin/main

@@ -93,6 +93,13 @@
           <Label styleClass="user-role" text="Administrator" />
         </VBox>
       </HBox>
+         <HBox fx:id="navLogout" alignment="CENTER_LEFT" onMouseClicked="#onNavLogout" onMouseEntered="#onNavLogoutHover" onMouseExited="#onNavLogoutExit" prefHeight="49.0" prefWidth="219.0" spacing="10" style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
+            <children>
+               <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
+               <Label style="-fx-font-size: 16px; -fx-text-fill: #FF5C7C; -fx-min-width: 26; -fx-alignment: CENTER;" text="🚪" />
+               <Label fx:id="navLblLogout" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #FF5C7C;" text="Logout" />
+            </children>
+         </HBox>
       <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀" />
     </VBox>
   </left>

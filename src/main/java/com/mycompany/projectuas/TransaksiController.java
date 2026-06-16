@@ -26,7 +26,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -65,6 +64,10 @@ public class TransaksiController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // FXML — SIDEBAR
     // ═══════════════════════════════════════════════════════
+    @FXML
+    private HBox navLogout;
+    @FXML
+    private Label navLblLogout;
     @FXML
     private VBox sidebar;
     @FXML
@@ -202,6 +205,8 @@ public class TransaksiController implements Initializable {
         updateSummary();
         setupMetodeBayar();
         setupMenu();
+        setupNavHover();
+        setupLogoutHover();
 
     }
 
@@ -264,10 +269,10 @@ public class TransaksiController implements Initializable {
     }
 
     private void setNavLabelsVisible(boolean visible) {
-
         List<Label> labels = List.of(
-                navLblDashboard, navLblProduk, navLblKaryawan, navLblKasir, navLblPiutang,
-                navLblLaporan, navLblPengaturan);
+                navLblDashboard, navLblProduk, navLblKaryawan,
+                navLblKasir, navLblPiutang, navLblLaporan,
+                navLblPengaturan, navLblLogout);
         for (Label lbl : labels) {
             lbl.setVisible(visible);
             lbl.setManaged(visible);
@@ -276,12 +281,85 @@ public class TransaksiController implements Initializable {
 
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
-        List<HBox> items = List.of(navDashboard, navProduk, navKaryawan, navKasir, navPiutang, navLaporan,
-                navPengaturan);
+        List<HBox> items = List.of(navDashboard, navProduk, navKaryawan,
+                navKasir, navPiutang, navLaporan, navPengaturan); // navLogout DIKELUARKAN
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
         }
+
+        // navLogout dihandle terpisah — hanya alignment & padding, tanpa setStyle()
+        navLogout.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
+        navLogout.setPadding(pad);
+    }
+
+    private void setActiveNav(HBox selected) {
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir,
+                navLaporan, navPengaturan); // navLogout DIKELUARKAN
+        for (HBox item : all) {
+            item.getStyleClass().removeAll("nav-active");
+            if (!item.getStyleClass().contains("nav-item"))
+                item.getStyleClass().add("nav-item");
+        }
+        selected.getStyleClass().add("nav-active");
+    }
+
+    private void setupNavHover() {
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir,
+                navLaporan, navPengaturan); // navLogout DIKELUARKAN
+        for (HBox item : all) {
+            item.setOnMouseEntered(e -> item.setStyle(
+                    "-fx-background-color: #252840; -fx-background-radius: 10;"));
+            item.setOnMouseExited(e -> item.setStyle(""));
+        }
+    }
+
+    // Tambahkan method baru ini
+    private void setupLogoutHover() {
+        String styleNormal = "-fx-background-color: transparent;" +
+                "-fx-background-radius: 10;" +
+                "-fx-cursor: hand;";
+
+        String styleHover = "-fx-background-color: #FF5C7C26;" +
+                "-fx-background-radius: 10;" +
+                "-fx-cursor: hand;";
+
+        navLogout.setStyle(styleNormal);
+        navLogout.setOnMouseEntered(e -> navLogout.setStyle(styleHover));
+        navLogout.setOnMouseExited(e -> navLogout.setStyle(styleNormal));
+    }
+
+    // =====================================
+    // LOG OUT
+    // =====================================
+
+    @FXML
+    private void onNavLogout() {
+        new Popup().showConfirmPopup(
+                "Konfirmasi Logout",
+                "Yakin ingin keluar dari aplikasi?",
+                () -> {
+                    new navigation().navigateToLogin();
+                    ((Stage) navLogout.getScene().getWindow()).close();
+                });
+    }
+
+    @FXML
+    private void onNavLogoutHover() {
+        navLogout.setStyle(
+                "-fx-background-color: #FF5C7C26;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 10 14 10 0;");
+    }
+
+    @FXML
+    private void onNavLogoutExit() {
+        navLogout.setStyle(
+                "-fx-background-color: transparent;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-cursor: hand;" +
+                        "-fx-padding: 10 14 10 0;");
     }
 
     // ═══════════════════════════════════════════════════════
@@ -311,7 +389,8 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
-       
+        new navigation().navigateToTransaksi();
+        ((Stage) navKasir.getScene().getWindow()).close();
     }
 
     @FXML
@@ -333,24 +412,6 @@ public class TransaksiController implements Initializable {
         setActiveNav(navPengaturan);
         new navigation().navigataeToPengaturan();
         ((Stage) navPengaturan.getScene().getWindow()).close();
-    }
-
-    private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
-        for (HBox item : all) {
-            item.getStyleClass().removeAll("nav-active");
-            if (!item.getStyleClass().contains("nav-item"))
-                item.getStyleClass().add("nav-item");
-        }
-        selected.getStyleClass().add("nav-active");
-    }
-
-    private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
-        for (HBox item : all) {
-            item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
-            item.setOnMouseExited(e -> item.setStyle(""));
-        }
     }
 
     // ──data ────────────────────────────────────────

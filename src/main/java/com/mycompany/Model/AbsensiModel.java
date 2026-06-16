@@ -7,7 +7,6 @@ public class AbsensiModel {
     private final IntegerProperty idAbsensi;
     private final StringProperty idKaryawan;
     private final StringProperty namaKaryawan;
-    private final StringProperty jabatan;
     private final StringProperty tanggal;
     private final StringProperty shiftMasuk;
     private final StringProperty statusKehadiran;
@@ -18,7 +17,6 @@ public class AbsensiModel {
         this.idAbsensi = new SimpleIntegerProperty(idAbsensi);
         this.idKaryawan = new SimpleStringProperty(idKaryawan);
         this.namaKaryawan = new SimpleStringProperty(namaKaryawan);
-        this.jabatan = new SimpleStringProperty(jabatan);
         this.tanggal = new SimpleStringProperty(tanggal);
         this.shiftMasuk = new SimpleStringProperty(shiftMasuk);
         this.statusKehadiran = new SimpleStringProperty(statusKehadiran);
@@ -61,19 +59,6 @@ public class AbsensiModel {
 
     public void setNamaKaryawan(String v) {
         namaKaryawan.set(v);
-    }
-
-    // ── jabatan ───────────────────────────────────────────
-    public StringProperty jabatanProperty() {
-        return jabatan;
-    }
-
-    public String getJabatan() {
-        return jabatan.get();
-    }
-
-    public void setJabatan(String v) {
-        jabatan.set(v);
     }
 
     // ── tanggal ───────────────────────────────────────────
