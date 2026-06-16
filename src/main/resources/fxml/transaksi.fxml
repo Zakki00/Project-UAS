@@ -18,20 +18,20 @@
   <!-- sidebar -->
   <left>
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
-      <children>
-        <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
-          <children>
-            <Label styleClass="logo-icon" text="🏪" />
-            <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
-              <children>
-                <Label styleClass="logo-title" text="StoreMS" />
-                <Label styleClass="logo-sub" text="Manajemen Toko" />
-              </children>
-            </VBox>
-          </children>
-        </HBox>
-        <Separator styleClass="sidebar-divider" />
-        <VBox fx:id="navMenu" prefHeight="735.0" prefWidth="219.0" spacing="2" styleClass="nav-menu">
+         <children>
+            <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
+               <children>
+                  <Label styleClass="logo-icon" text="🏪" />
+                  <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
+                     <children>
+                        <Label styleClass="logo-title" text="StoreMS" />
+                        <Label styleClass="logo-sub" text="Manajemen Toko" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <Separator styleClass="sidebar-divider" />
+            <VBox fx:id="navMenu" spacing="2" styleClass="nav-menu" VBox.vgrow="ALWAYS">
                <children>
                   <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
                      <children>
@@ -83,19 +83,19 @@
                      </children>
                   </HBox>
                </children>
-        </VBox>
-        <Separator styleClass="sidebar-divider" />
-        <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
-          <children>
-            <Label styleClass="user-avatar" text="A" />
-            <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
-              <children>
-                <Label styleClass="user-name" text="Admin" />
-                <Label styleClass="user-role" text="Administrator" />
-              </children>
             </VBox>
-          </children>
-        </HBox>
+            <Separator styleClass="sidebar-divider" />
+            <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
+               <children>
+                  <Label styleClass="user-avatar" text="A" />
+                  <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
+                     <children>
+                        <Label styleClass="user-name" text="Admin" />
+                        <Label styleClass="user-role" text="Administrator" />
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
             <HBox fx:id="navLogout" alignment="CENTER_LEFT" onMouseClicked="#onNavLogout" onMouseEntered="#onNavLogoutHover" onMouseExited="#onNavLogoutExit" prefHeight="49.0" prefWidth="219.0" spacing="10" style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
                <children>
                   <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
@@ -103,8 +103,8 @@
                   <Label fx:id="navLblLogout" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #FF5C7C;" text="Logout" />
                </children>
             </HBox>
-        <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀" />
-      </children>
+            <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀" />
+         </children>
     </VBox>
   </left>
 

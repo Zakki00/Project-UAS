@@ -1,4 +1,4 @@
--- Active: 1781529073806@@127.0.0.1@3306
+-- Active: 1781220730953@@127.0.0.1@3306
 
 SELECT * FROM tb_user;
 
@@ -92,7 +92,6 @@ CREATE TABLE tb_karyawan (
     status_kerja TEXT NOT NULL CHECK (
         status_kerja IN ('Aktif', 'Non Aktif')
     ),
-
     alamat TEXT,
     role TEXT NOT NULL
 

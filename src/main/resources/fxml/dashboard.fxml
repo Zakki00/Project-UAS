@@ -94,19 +94,11 @@
       </HBox>
       <!-- Tombol Logout -->
       <!-- BENAR — hanya nav-logout, tanpa nav-item -->
-      <HBox fx:id="navLogout" 
-      alignment="CENTER_LEFT" 
-      onMouseClicked="#onNavLogout"
-      onMouseEntered="#onNavLogoutHover"
-      onMouseExited="#onNavLogoutExit"
-      prefHeight="49.0" prefWidth="219.0" spacing="10"
-      style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
+      <HBox fx:id="navLogout" alignment="CENTER_LEFT" onMouseClicked="#onNavLogout" onMouseEntered="#onNavLogoutHover" onMouseExited="#onNavLogoutExit" prefHeight="49.0" prefWidth="219.0" spacing="10" style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
     <children>
         <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
         <Label style="-fx-font-size: 16px; -fx-text-fill: #FF5C7C; -fx-min-width: 26; -fx-alignment: CENTER;" text="🚪" />
-        <Label fx:id="navLblLogout" 
-               style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #FF5C7C;" 
-               text="Logout" />
+        <Label fx:id="navLblLogout" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #FF5C7C;" text="Logout" />
     </children>
 </HBox>
       <!-- Toggle Button -->
@@ -220,13 +212,13 @@
                           </HBox>
                           <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-pagi-stat-row">
                             <children>
-                              <Label styleClass="shift-pagi-stat-label" text="Item Terjual" HBox.hgrow="ALWAYS" />
+                              <Label styleClass="shift-pagi-stat-label" text="Transaksi Produk" HBox.hgrow="ALWAYS" />
                               <Label fx:id="lblItemPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
                             </children>
                           </HBox>
                           <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-pagi-stat-row">
                             <children>
-                              <Label styleClass="shift-pagi-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                              <Label styleClass="shift-pagi-stat-label" text="Transaksi Paket PS" HBox.hgrow="ALWAYS" />
                               <Label fx:id="lblPaketPSPagi" styleClass="shift-pagi-stat-value" text="0 unit" />
                             </children>
                           </HBox>
@@ -284,13 +276,13 @@
                           </HBox>
                           <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-malam-stat-row">
                             <children>
-                              <Label styleClass="shift-malam-stat-label" text="Item Terjual" HBox.hgrow="ALWAYS" />
+                              <Label styleClass="shift-malam-stat-label" text="Transaksi Produk" HBox.hgrow="ALWAYS" />
                               <Label fx:id="lblItemMalam" styleClass="shift-malam-stat-value" text="0 unit" />
                             </children>
                           </HBox>
                           <HBox alignment="CENTER_LEFT" spacing="10" styleClass="shift-malam-stat-row">
                             <children>
-                              <Label styleClass="shift-malam-stat-label" text="Paket PS" HBox.hgrow="ALWAYS" />
+                              <Label styleClass="shift-malam-stat-label" text="Transaksi Paket PS" HBox.hgrow="ALWAYS" />
                               <Label fx:id="lblPaketPSMalam" styleClass="shift-malam-stat-value" text="0 unit" />
                             </children>
                           </HBox>
@@ -408,13 +400,13 @@
                   <VBox fx:id="vboxChart" spacing="14" styleClass="card">
                     <children>
                       <Label styleClass="card-title" text="🏆 Top 5 Produk Terlaris" />
-                      <Label styleClass="card-sub" text="Berdasarkan jumlah terjual" />
+                      <Label fx:id="lblInfoProduk" styleClass="card-sub" text="Berdasarkan jumlah terjual" />
                     </children>
                   </VBox>
                   <VBox fx:id="vboxChartPs" spacing="14" styleClass="card">
                     <children>
                       <Label styleClass="card-title" text="🏆 Top 5 Durasi Play Station" />
-                      <Label styleClass="card-sub" text="Berdasarkan jumlah Pemain" />
+                      <Label fx:id="lblInfoPs" styleClass="card-sub" text="Berdasarkan jumlah Pemain" />
                     </children>
                   </VBox>
                 </children>

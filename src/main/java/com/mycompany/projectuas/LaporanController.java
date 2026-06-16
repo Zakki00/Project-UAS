@@ -253,6 +253,10 @@ public class LaporanController implements Initializable {
     private VBox vboxChartPs;
     @FXML
     private VBox stockList;
+    @FXML
+    private Label lblInfoProduk;
+    @FXML
+    private Label lblInfoPs;
 
     // ═══════════════════════════════════════════════════════
     // FXML — CHARTS TAMBAHAN
@@ -889,7 +893,15 @@ public class LaporanController implements Initializable {
         String sql = """
                     SELECT
                         COUNT(DISTINCT t.id_transaksi) AS total_trx,
-                        COALESCE(SUM(dt.jumlah),0) AS total_item,
+                        COALESCE(
+                            SUM(
+                                CASE
+                                    WHEN dt.id_barang IS NOT NULL
+                                    THEN dt.jumlah
+                                    ELSE 0
+                                END
+                            ),
+                        0) AS total_item,
                         COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
                         COALESCE(SUM(t.uang_pembayaran - t.kembalian),0) AS pendapatan
                     FROM tb_transaksi t
@@ -910,7 +922,7 @@ public class LaporanController implements Initializable {
 
         if (data.isEmpty()) {
             lblTrx.setText("0");
-            lblItem.setText("0 unit");
+            lblItem.setText("0");
             lblPaketPS.setText("0");
             lblPendapatan.setText("Rp 0");
             return;
@@ -920,7 +932,7 @@ public class LaporanController implements Initializable {
         Object[] row = data.get(0);
 
         lblTrx.setText(String.valueOf(((Number) row[0]).intValue()));
-        lblItem.setText(((Number) row[1]).intValue() + " unit");
+        lblItem.setText(String.valueOf(((Number) row[1]).intValue()));
         lblPaketPS.setText(String.valueOf(((Number) row[2]).intValue()));
         lblPendapatan.setText("Rp " + FMT.format(((Number) row[3]).longValue()));
     }
@@ -1097,38 +1109,68 @@ public class LaporanController implements Initializable {
                     GROUP BY b.nama_barang
                     ORDER BY total DESC LIMIT 5
                 """;
+
         List<Object[]> data = koneksi.ambilData(sql);
+
+        // Hapus data chart lama, sisakan judul dan subjudul
+        if (vboxChart.getChildren().size() > 2) {
+            vboxChart.getChildren().remove(2, vboxChart.getChildren().size());
+        }
+
+        if (data.isEmpty()) {
+            lblInfoProduk.setText("Tidak ada data tersedia");
+            return;
+        }
+
+        lblInfoProduk.setText("Berdasarkan jumlah terjual");
+
         long max = 1;
         for (Object[] row : data) {
             long v = ((Number) row[1]).longValue();
-            if (v > max)
+            if (v > max) {
                 max = v;
+            }
         }
-        vboxChart.getChildren().clear();
-        String[] colors = { "#6C63FF", "#00D4FF", "#00E5A0", "#FFD166", "#FF5C7C" };
+
+        String[] colors = {
+                "#6C63FF",
+                "#00D4FF",
+                "#00E5A0",
+                "#FFD166",
+                "#FF5C7C"
+        };
+
         for (int i = 0; i < data.size(); i++) {
+
             String nama = data.get(i)[0].toString();
             long total = ((Number) data.get(i)[1]).longValue();
             double pct = (double) total / max;
+
             Label lblNama = new Label(nama);
             lblNama.getStyleClass().add("bar-nama");
             lblNama.setPrefWidth(140);
             lblNama.setMinWidth(140);
             lblNama.setMaxWidth(140);
+
             Label lblTotal = new Label(total + " unit");
             lblTotal.getStyleClass().add("bar-total");
+
             ProgressBar pb = new ProgressBar(0);
             pb.getStyleClass().add("bar-progress");
             pb.setPrefHeight(12);
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setStyle("-fx-accent: " + colors[i % colors.length] + ";");
+
             HBox.setHgrow(pb, Priority.ALWAYS);
-            HBox row2 = new HBox(10, lblNama, pb, lblTotal);
-            row2.setAlignment(Pos.CENTER_LEFT);
-            row2.getStyleClass().add("bar-row");
-            vboxChart.getChildren().add(row2);
+
+            HBox row = new HBox(10, lblNama, pb, lblTotal);
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.getStyleClass().add("bar-row");
+
+            vboxChart.getChildren().add(row);
+
             animateProgressBar(pb, pct, 100 + i * 80);
-            animateFadeIn(row2, 100 + i * 80);
+            animateFadeIn(row, 100 + i * 80);
         }
     }
 
@@ -1139,51 +1181,75 @@ public class LaporanController implements Initializable {
                     GROUP BY pp.durasi
                     ORDER BY total DESC LIMIT 5
                 """;
+
         List<Object[]> data = koneksi.ambilData(sql);
+
+        // Hapus data chart lama, sisakan judul dan subjudul
+        if (vboxChartPs.getChildren().size() > 2) {
+            vboxChartPs.getChildren().remove(2, vboxChartPs.getChildren().size());
+        }
+
+        if (data.isEmpty()) {
+            lblInfoPs.setText("Tidak ada data tersedia");
+            return;
+        }
+
+        lblInfoPs.setText("Berdasarkan jumlah pemain");
+
         long max = 1;
         for (Object[] row : data) {
             long v = ((Number) row[1]).longValue();
-            if (v > max)
+            if (v > max) {
                 max = v;
+            }
         }
-        vboxChartPs.getChildren().clear();
-        Label judul = new Label("Top 5 Durasi PS Terbanyak");
-        judul.setStyle("-fx-text-fill: #ffffff; -fx-font-weight: bold; -fx-font-size: 13px;");
-        vboxChartPs.getChildren().add(judul);
-        String[] colors = { "#6C63FF", "#00D4FF", "#00E5A0", "#FFD166", "#FF5C7C" };
-        if (data.isEmpty()) {
-            Label kosong = new Label("Belum ada data PS");
-            kosong.setStyle("-fx-text-fill: #888;");
-            vboxChartPs.getChildren().add(kosong);
-            return;
-        }
+
+        String[] colors = {
+                "#6C63FF",
+                "#00D4FF",
+                "#00E5A0",
+                "#FFD166",
+                "#FF5C7C"
+        };
+
         for (int i = 0; i < data.size(); i++) {
+
             int durasi = ((Number) data.get(i)[0]).intValue();
             long total = ((Number) data.get(i)[1]).longValue();
             double pct = (double) total / max;
+
             int jam = durasi / 60;
             int menit = durasi % 60;
-            String labelDurasi = durasi >= 60 ? (menit > 0 ? jam + " jam " + menit + " mnt" : jam + " jam")
+
+            String labelDurasi = durasi >= 60
+                    ? (menit > 0 ? jam + " jam " + menit + " mnt" : jam + " jam")
                     : durasi + " mnt";
+
             Label lblNama = new Label(labelDurasi);
             lblNama.getStyleClass().add("bar-nama");
             lblNama.setPrefWidth(140);
             lblNama.setMinWidth(140);
             lblNama.setMaxWidth(140);
+
             Label lblTotal = new Label(total + "x");
             lblTotal.getStyleClass().add("bar-total");
+
             ProgressBar pb = new ProgressBar(0);
             pb.getStyleClass().add("bar-progress");
             pb.setPrefHeight(12);
             pb.setMaxWidth(Double.MAX_VALUE);
             pb.setStyle("-fx-accent: " + colors[i % colors.length] + ";");
+
             HBox.setHgrow(pb, Priority.ALWAYS);
-            HBox row2 = new HBox(10, lblNama, pb, lblTotal);
-            row2.setAlignment(Pos.CENTER_LEFT);
-            row2.getStyleClass().add("bar-row");
-            vboxChartPs.getChildren().add(row2);
+
+            HBox row = new HBox(10, lblNama, pb, lblTotal);
+            row.setAlignment(Pos.CENTER_LEFT);
+            row.getStyleClass().add("bar-row");
+
+            vboxChartPs.getChildren().add(row);
+
             animateProgressBar(pb, pct, 150 + i * 80);
-            animateFadeIn(row2, 150 + i * 80);
+            animateFadeIn(row, 150 + i * 80);
         }
     }
 

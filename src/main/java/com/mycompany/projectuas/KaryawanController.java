@@ -1,6 +1,7 @@
 package com.mycompany.projectuas;
 
 import java.net.URL;
+import java.security.MessageDigest;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -723,7 +724,7 @@ public class KaryawanController implements Initializable {
                 sql,
                 id,
                 txtUsername.getText(),
-                txtPassword.getText(),
+                hashPassword(txtPassword.getText()),
                 txtNamaKaryawan.getText(),
                 cmbJenisKelamin.getValue(),
                 txtNoHp.getText(),
@@ -1033,5 +1034,23 @@ public class KaryawanController implements Initializable {
     // ══════════════════════════════════════════════════════
     private void showAlert(Alert.AlertType type, String msg) {
         new Alert(type, msg, ButtonType.OK).showAndWait();
+    }
+
+
+    //===========================================
+     // Hash password pakai SHA-256
+     //=========================================
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes("UTF-8"));
+            StringBuilder hex = new StringBuilder();
+            for (byte b : hash) {
+                hex.append(String.format("%02x", b));
+            }
+            return hex.toString();
+        } catch (Exception e) {
+            return password; // fallback tanpa hash
+        }
     }
 }

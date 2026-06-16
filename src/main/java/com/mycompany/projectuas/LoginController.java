@@ -227,7 +227,7 @@ public class LoginController implements Initializable {
             session.role = (String) resultUser.get(0)[4];
             session.email = (String) resultUser.get(0)[5];
 
-            // 🔥 isi semua data GoogleUser
+            //  isi semua data GoogleUser
             sesigoogle.setName((String) resultUser.get(0)[3]);
             sesigoogle.setEmail((String) resultUser.get(0)[5]);
             sesigoogle.setProfilePictureUrl((String) resultUser.get(0)[6]);

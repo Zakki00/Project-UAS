@@ -177,3 +177,29 @@ VALUES (4, NULL, 1, 1, 15000),
     )
 VALUES (4, NULL, 1, 1, 15000),
     (5, NULL, 2, 1, 30000);
+
+
+
+
+
+    SELECT
+    t.id_transaksi,
+    COUNT(dt.id_detail_transaksi) AS jumlah_detail_barang,
+    COUNT(ps.id_paket_ps) AS jumlah_paket_ps
+FROM
+    tb_transaksi t
+    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+    LEFT JOIN tb_paket_ps ps ON t.id_transaksi = ps.id_transaksi
+GROUP BY
+    t.id_transaksi
+ORDER BY t.id_transaksi DESC;
+
+
+
+SELECT t.id_transaksi, COUNT(dt.id_barang) AS jumlah_barang, COUNT(dt.id_paket_ps) AS jumlah_ps
+FROM
+    tb_transaksi t
+    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+GROUP BY
+    t.id_transaksi
+ORDER BY t.id_transaksi DESC;
