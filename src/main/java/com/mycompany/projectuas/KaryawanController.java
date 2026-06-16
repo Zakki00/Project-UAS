@@ -352,8 +352,7 @@ public class KaryawanController implements Initializable {
     @FXML
     private void onNavKaryawan() {
         setActiveNav(navKaryawan);
-        new navigation().navigationToKaryawan();
-        ((Stage) navKaryawan.getScene().getWindow()).close();
+        
     }
 
     @FXML

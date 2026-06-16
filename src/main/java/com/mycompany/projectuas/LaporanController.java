@@ -512,8 +512,7 @@ public class LaporanController implements Initializable {
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
-        new navigation().navigateToLaporan();
-        ((Stage) navLaporan.getScene().getWindow()).close();
+       
     }
 
     @FXML

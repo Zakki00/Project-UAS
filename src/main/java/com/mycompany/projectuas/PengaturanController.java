@@ -389,8 +389,7 @@ public class PengaturanController implements Initializable {
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-        new navigation().navigataeToPengaturan();
-        ((Stage) navPengaturan.getScene().getWindow()).close();
+       
     }
 
 

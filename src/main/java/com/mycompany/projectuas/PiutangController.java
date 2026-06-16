@@ -417,8 +417,7 @@ public class PiutangController implements Initializable {
     @FXML
     private void onNavPiutang() {
         setActiveNav(navPiutang);
-        new navigation().navigateToPiutang();
-        ((Stage) navPiutang.getScene().getWindow()).close();
+       
     }
 
     @FXML

@@ -389,8 +389,7 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
-        new navigation().navigateToTransaksi();
-        ((Stage) navKasir.getScene().getWindow()).close();
+        
     }
 
     @FXML

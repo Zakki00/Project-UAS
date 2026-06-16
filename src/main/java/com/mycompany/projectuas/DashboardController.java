@@ -426,8 +426,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
-        new navigation().navigateToDashboard();
-        ((Stage) navDashboard.getScene().getWindow()).close();
+       
     }
 
     @FXML

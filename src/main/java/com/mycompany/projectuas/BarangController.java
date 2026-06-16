@@ -719,8 +719,7 @@ public class BarangController implements Initializable {
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
-        new navigation().navigateToProduk();
-        ((Stage) navProduk.getScene().getWindow()).close();
+       
     }
 
     @FXML
