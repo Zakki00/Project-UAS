@@ -771,16 +771,13 @@ public class DashboardController implements Initializable {
         boolean pagiAktif = jam >= 6 && jam < 12;
         boolean malamAktif = jam >= 12 && jam < 21;
 
-        lblStatusPagi.getStyleClass()
-                .removeAll("shift-status-aktif", "shift-status-nonaktif");
+        lblStatusPagi.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
 
-        lblStatusPagi.getStyleClass()
-                .add(pagiAktif
+        lblStatusPagi.getStyleClass().add(pagiAktif
                         ? "shift-status-aktif"
                         : "shift-status-nonaktif");
 
-        lblStatusMalam.getStyleClass()
-                .removeAll("shift-status-aktif", "shift-status-nonaktif");
+        lblStatusMalam.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
 
         lblStatusMalam.getStyleClass()
                 .add(malamAktif

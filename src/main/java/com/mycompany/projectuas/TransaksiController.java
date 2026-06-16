@@ -31,6 +31,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -41,6 +42,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.Node;
+import javafx.geometry.Rectangle2D;
 
 /**
  * FXML Controller class
@@ -117,7 +120,7 @@ public class TransaksiController implements Initializable {
     @FXML
     private Label navLblPengaturan;
 
-    //==========================
+    // ==========================
     @FXML
     private Button btnProduk;
 
@@ -389,7 +392,7 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
-        
+
     }
 
     @FXML
@@ -473,29 +476,37 @@ public class TransaksiController implements Initializable {
 
     private VBox buildProdukCard(Produk p) {
         boolean habis = p.stok == 0;
+        boolean stokSedikit = p.stok > 0 && p.stok <= 5;
 
         // ── ImageView ──────────────────────────────────
         ImageView img = new ImageView();
-        img.setFitWidth(120);
-        img.setFitHeight(90);
-        img.setPreserveRatio(true); // ← tetap true, jaga rasio
+        img.setFitWidth(170);
+        img.setFitHeight(120);
+        img.setPreserveRatio(false);
         img.setSmooth(true);
 
-        // Crop tengah — potong bagian yang keluar
-        Rectangle clip = new Rectangle(120, 90);
-        clip.setArcWidth(10); // rounded clip juga
-        clip.setArcHeight(10);
-        img.setClip(clip);
+        img.imageProperty().addListener((obs, oldImg, newImg) -> {
+            if (newImg == null)
+                return;
+
+            if (newImg.isBackgroundLoading()) {
+                newImg.progressProperty().addListener((o, ov, nv) -> {
+                    if (nv.doubleValue() >= 1.0) {
+                        applyCoverViewport(img, newImg, 170, 120);
+                    }
+                });
+            } else {
+                applyCoverViewport(img, newImg, 170, 120);
+            }
+        });
 
         try {
             String imageName = p.imageUrl;
-
             if (imageName == null || imageName.isBlank()) {
                 var url = getClass().getResource("/image/not_found.png");
                 if (url != null)
                     img.setImage(new Image(url.toExternalForm()));
             } else {
-                // Coba baca dari AppData dulu
                 String appData = System.getenv("APPDATA");
                 File imgFile = (appData != null && !appData.isEmpty())
                         ? new File(appData + "\\ProjectUAS\\image-barang\\" + imageName)
@@ -504,7 +515,6 @@ public class TransaksiController implements Initializable {
                 if (imgFile.exists()) {
                     img.setImage(new Image(imgFile.toURI().toString()));
                 } else {
-                    // Fallback: baca dari dalam JAR
                     var url = getClass().getResource("/image-barang/" + imageName);
                     if (url != null) {
                         img.setImage(new Image(url.toExternalForm()));
@@ -515,58 +525,118 @@ public class TransaksiController implements Initializable {
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         StackPane imgWrapper = new StackPane(img);
         imgWrapper.getStyleClass().add("produk-card-img-wrapper");
-        imgWrapper.setPrefSize(120, 90);
-        imgWrapper.setMinSize(120, 90);
-        imgWrapper.setMaxSize(120, 90);
+        imgWrapper.setPrefSize(170, 120);
+        imgWrapper.setMinSize(170, 120);
+        imgWrapper.setMaxSize(170, 120);
+        imgWrapper.setClip(null);
+        applyRoundedClip(imgWrapper);
 
         // ── Nama ───────────────────────────────────────
         Label nama = new Label(p.nama);
         nama.getStyleClass().add("produk-card-nama");
-        nama.setMaxWidth(130);
-        nama.setWrapText(true);
+        nama.setAlignment(Pos.CENTER);
+        nama.setMaxWidth(Double.MAX_VALUE);
+        nama.setWrapText(false);
 
-        // ── Deskripsi ──────────────────────────────────
+        // ── Deskripsi (2 baris + Tooltip) ─────────────
         Label desc = new Label(p.description);
         desc.getStyleClass().add("produk-card-desc");
-        desc.setMaxWidth(130);
+        desc.setAlignment(Pos.CENTER);
+        desc.setMaxWidth(Double.MAX_VALUE);
         desc.setWrapText(true);
+        desc.setMinHeight(32);
+        desc.setMaxHeight(32);
+        desc.setPrefHeight(32);
+
+        if (p.description != null && !p.description.isBlank()) {
+            Tooltip tooltip = new Tooltip(p.description);
+            tooltip.setWrapText(true);
+            tooltip.setMaxWidth(200);
+            tooltip.getStyleClass().add("produk-card-tooltip");
+            tooltip.setShowDelay(Duration.millis(300));
+            Tooltip.install(desc, tooltip);
+        }
 
         // ── Harga ──────────────────────────────────────
         Label harga = new Label("Rp " + FMT.format(p.harga));
         harga.getStyleClass().add("produk-card-harga");
+        harga.setAlignment(Pos.CENTER);
+        harga.setMaxWidth(Double.MAX_VALUE);
 
         // ── Stok ───────────────────────────────────────
-        Label stok = new Label(habis ? "Stok habis" : "Stok: " + p.stok);
-        stok.getStyleClass().add("produk-card-stok");
+        Node stokNode;
+        if (habis) {
+            Label badge = new Label("Stok habis");
+            badge.getStyleClass().add("produk-card-badge-habis");
+            HBox badgeWrap = new HBox(badge);
+            badgeWrap.setAlignment(Pos.CENTER);
+            badgeWrap.setMinHeight(24);
+            stokNode = badgeWrap;
+        } else {
+            Label stok = new Label("Stok: " + p.stok);
+            stok.setAlignment(Pos.CENTER);
+            stok.setMaxWidth(Double.MAX_VALUE);
+            stok.setMinHeight(24);
+            stok.getStyleClass().add(stokSedikit ? "produk-card-stok-warn" : "produk-card-stok");
+            stokNode = stok;
+        }
 
-        // ── Tombol tambah ──────────────────────────────
+        // ── Tombol Tambah ──────────────────────────────
         Button btnTambah = new Button("+ Tambah");
         btnTambah.getStyleClass().add("btn-tambah-card");
         btnTambah.setDisable(habis);
         btnTambah.setMaxWidth(Double.MAX_VALUE);
         btnTambah.setOnAction(e -> tambahKeKeranjang(p));
 
-        // ── Rakit card — imgWrapper & desc sudah masuk ─
-        VBox card = new VBox(6, imgWrapper, nama, desc, harga, stok, btnTambah);
-        card.setAlignment(Pos.CENTER);
-        card.setPadding(new Insets(12));
-        card.setPrefWidth(155);
-        card.setPrefHeight(240); // lebih tinggi karena ada gambar + deskripsi
+        // ── Body ───────────────────────────────────────
+        VBox body = new VBox(4, nama, desc, harga, stokNode, btnTambah);
+        body.setAlignment(Pos.CENTER);
+        body.setPadding(new Insets(10, 12, 14, 12));
+
+        // ── Card ───────────────────────────────────────
+        VBox card = new VBox(0, imgWrapper, body);
+        card.setAlignment(Pos.TOP_CENTER);
+        card.setPrefWidth(170);
         card.getStyleClass().add(habis ? "produk-card produk-card-habis" : "produk-card");
 
-        // ── Klik card = tambah ke keranjang ────────────
         if (!habis) {
             card.setOnMouseClicked(e -> tambahKeKeranjang(p));
         }
 
         return card;
+    }
+    
+    private void applyCoverViewport(ImageView imgView, Image image, double targetW, double targetH) {
+        double imgW = image.getWidth();
+        double imgH = image.getHeight();
+
+        if (imgW <= 0 || imgH <= 0)
+            return;
+
+        double scale = Math.max(targetW / imgW, targetH / imgH);
+
+        double cropW = targetW / scale;
+        double cropH = targetH / scale;
+
+        double cropX = (imgW - cropW) / 2;
+        double cropY = (imgH - cropH) / 2;
+
+        imgView.setViewport(new Rectangle2D(cropX, cropY, cropW, cropH));
+    }
+
+    private void applyRoundedClip(StackPane pane) {
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(pane.widthProperty());
+        clip.heightProperty().bind(pane.heightProperty());
+        clip.setArcWidth(20);
+        clip.setArcHeight(20);
+        pane.setClip(clip);
     }
 
     // ═════════════════════════════════════════════════════

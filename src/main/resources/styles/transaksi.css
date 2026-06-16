@@ -421,99 +421,117 @@
   -fx-text-fill: white;
 }
 
-/* ── PRODUK CARD (dibuat via controller) ─────────────── */
+/* ═══════════════════════════════════════════
+   PRODUK CARD
+═══════════════════════════════════════════ */
+
 .produk-card {
-  -fx-background-color: #1a1d2e;
-  -fx-border-color: #2e3250;
+  -fx-background-color: #1A1D2E;
+  -fx-border-color: #2E3250;
   -fx-border-width: 1;
-  -fx-border-radius: 12;
-  -fx-background-radius: 12;
+  -fx-border-radius: 16;
+  -fx-background-radius: 16;
   -fx-cursor: hand;
-  -fx-pref-width: 150;
-  -fx-pref-height: 165;
-  -fx-alignment: CENTER;
 }
 
 .produk-card:hover {
-  -fx-border-color: #6c63ff;
-  -fx-background-color: #252840;
-  -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.35), 12, 0, 0, 3);
+  -fx-border-color: #6C63FF;
+  -fx-translate-y: -3;
 }
 
-/* wrapper ImageView */
-.produk-card-img-wrapper {
-  -fx-background-color: #252840;
-  -fx-background-radius: 10;
-  -fx-border-color: #2e3250;
+.produk-card-habis {
+  -fx-background-color: #1A1D2E;
+  -fx-border-color: #2E3250;
   -fx-border-width: 1;
-  -fx-border-radius: 10;
-  -fx-alignment: CENTER;
+  -fx-border-radius: 16;
+  -fx-background-radius: 16;
+  -fx-opacity: 0.55;
+  -fx-cursor: default;
 }
 
+/* ── Image Wrapper ── */
+.produk-card-img-wrapper {
+  -fx-background-color: #0F1117;
+}
+
+/* ── Nama ── */
 .produk-card-nama {
-  -fx-text-fill: #ffffff;
-  -fx-font-size: 11px;
+  -fx-text-fill: #E8EAF6;
+  -fx-font-size: 14px;
   -fx-font-weight: bold;
-  -fx-alignment: CENTER;
-  -fx-wrap-text: true;
-  -fx-text-alignment: CENTER;
 }
 
+/* ── Deskripsi ── */
+.produk-card-desc {
+  -fx-text-fill: #8B8FA8;
+  -fx-font-size: 11px;
+}
+
+/* ── Harga ── */
 .produk-card-harga {
-  -fx-text-fill: #00d4ff;
-  -fx-font-size: 11px;
-  -fx-alignment: CENTER;
-}
-
-.produk-card-stok {
-  -fx-text-fill: #8b8fa8;
-  -fx-font-size: 9px;
-  -fx-alignment: CENTER;
-}
-
-.btn-tambah-card {
-  -fx-background-color: #6c63ff;
-  -fx-text-fill: #ffffff;
-  -fx-font-size: 9px;
+  -fx-text-fill: #6C63FF;
+  -fx-font-size: 15px;
   -fx-font-weight: bold;
-  -fx-border-radius: 6;
-  -fx-background-radius: 6;
-  -fx-padding: 4 14 4 14;
+}
+
+/* ── Stok Normal ── */
+.produk-card-stok {
+  -fx-text-fill: #00E5A0;
+  -fx-font-size: 11px;
+}
+
+/* ── Stok Sedikit ── */
+.produk-card-stok-warn {
+  -fx-text-fill: #FFD166;
+  -fx-font-size: 11px;
+}
+
+/* ── Badge Stok Habis ── */
+.produk-card-badge-habis {
+  -fx-background-color: rgba(255, 92, 124, 0.15);
+  -fx-border-color: rgba(255, 92, 124, 0.4);
+  -fx-border-width: 1;
+  -fx-border-radius: 20;
+  -fx-background-radius: 20;
+  -fx-text-fill: #FF5C7C;
+  -fx-font-size: 11px;
+  -fx-font-weight: bold;
+  -fx-padding: 3 10 3 10;
+}
+
+/* ── Tombol Tambah ── */
+.btn-tambah-card {
+  -fx-background-color: #6C63FF;
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 13px;
+  -fx-font-weight: bold;
+  -fx-background-radius: 8;
+  -fx-border-radius: 8;
+  -fx-padding: 6 0 6 0;
   -fx-cursor: hand;
 }
 
 .btn-tambah-card:hover {
-  -fx-background-color: #5a52e0;
+  -fx-background-color: #7f78ff;
 }
 
-/* Stok habis */
-.produk-card-habis {
-  -fx-background-color: #1a1d2e;
-  -fx-border-color: #2e3250;
-  -fx-opacity: 0.45;
+.btn-tambah-card:disabled {
+  -fx-background-color: #2E3250;
+  -fx-text-fill: #555a7a;
   -fx-cursor: default;
 }
 
-/* Info bar bawah */
-.info-bar {
-  -fx-background-color: #1a1d2e;
-  -fx-border-color: #2e3250;
+/* ── Tooltip Deskripsi ── */
+.produk-card-tooltip {
+  -fx-background-color: #252a45;
+  -fx-border-color: rgba(108, 99, 255, 0.4);
   -fx-border-width: 1;
-  -fx-border-radius: 8;
-  -fx-background-radius: 8;
-  -fx-padding: 6 12 6 12;
-}
-
-.info-text {
-  -fx-text-fill: #8b8fa8;
-  -fx-font-size: 10px;
-}
-
-.info-count {
-  -fx-text-fill: #6c63ff;
-  -fx-font-size: 10px;
-  -fx-font-weight: bold;
-  -fx-alignment: CENTER_RIGHT;
+  -fx-border-radius: 12;
+  -fx-background-radius: 12;
+  -fx-text-fill: #C8CAE0;
+  -fx-font-size: 12px;
+  -fx-padding: 8 12 8 12;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 4);
 }
 
 /* ── PANEL KANAN — KERANJANG ─────────────────────────── */
