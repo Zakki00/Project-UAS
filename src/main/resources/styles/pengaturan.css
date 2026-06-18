@@ -288,15 +288,18 @@
     -fx-cursor: hand;
 }
 
-/* ── BODY SCROLL ─────────────────────────────── */
+/* ── BODY SCROLL ─────────────────────────────────────────── */
 .body-scroll {
     -fx-background-color: transparent;
     -fx-background: #0F1117;
-    -fx-border-width: 0;
 }
 
 .body-scroll .viewport {
     -fx-background-color: transparent;
+}
+
+.body-scroll .scroll-bar {
+    -fx-background-color: #1A1D2E;
 }
 
 .body-scroll .scroll-bar .thumb {
@@ -307,7 +310,6 @@
 .body-content {
     -fx-background-color: #0F1117;
 }
-
 /* ── TAB BAR ─────────────────────────────────── */
 .tab-bar {
     -fx-background-color: #1A1D2E;

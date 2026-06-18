@@ -86,6 +86,10 @@ public class PiutangController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navllblakun;
+    @FXML
+    private Label navlblnama;
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI TOPBAR
@@ -188,10 +192,22 @@ public class PiutangController implements Initializable {
         setActiveNav(navPiutang);
         setupNavHover();
         setupLogoutHover();
+        setupForm();
     }
 
     public void setStage(Stage stage) {
         this.myStage = stage;
+    }
+
+
+    private void setupForm(){
+        if (session.email == "") {
+            navllblakun.setText(session.username);
+            navlblnama.setText(session.nama);
+        } else {
+            navllblakun.setText(session.email);
+            navlblnama.setText(session.nama);
+        }
     }
 
     // ── Kelompok setup saat initialize ──────────────────────

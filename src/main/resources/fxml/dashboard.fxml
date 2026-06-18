@@ -88,8 +88,8 @@
       <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
         <Label styleClass="user-avatar" text="A" />
         <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
-          <Label styleClass="user-name" text="Admin" />
-          <Label styleClass="user-role" text="Administrator" />
+          <Label fx:id="navllblakun" styleClass="user-name" text="Admin" />
+          <Label fx:id="navlblnama" styleClass="user-role" text="Administrator" />
         </VBox>
       </HBox>
       <!-- Tombol Logout -->
@@ -427,7 +427,7 @@
                       </LineChart>
                     </children>
                   </VBox>
-                  <VBox spacing="10" styleClass="card">
+                  <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
                     <children>
                       <Label fx:id="chartslbstok" styleClass="card-title" text="⚠ Stok Menipis" />
                       <Label fx:id="chartslbSegeraStok" styleClass="card-sub" text="Perlu segera restock" />
@@ -460,7 +460,7 @@
               <VBox spacing="10" styleClass="card">
                 <Label styleClass="card-title" text="🕐 Transaksi per Jam" />
                 <Label styleClass="card-sub" text="Pola ramai hari ini" />
-                <BarChart fx:id="jamChart" legendVisible="false" maxHeight="180" prefHeight="180" styleClass="trx-chart">
+                <BarChart fx:id="jamChart" legendVisible="false" maxHeight="180" prefHeight="180" styleClass="trx-chart" VBox.vgrow="ALWAYS">
                   <xAxis>
                     <CategoryAxis styleClass="chart-axis" />
                   </xAxis>

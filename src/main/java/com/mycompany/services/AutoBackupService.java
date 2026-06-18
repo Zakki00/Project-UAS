@@ -16,9 +16,9 @@ public class AutoBackupService {
         if (timeline != null)
             timeline.stop();
 
-        // Cek tiap 30 menit
+        // Cek tiap 1 menit
         timeline = new Timeline(
-                new KeyFrame(Duration.minutes(30), e -> cekDanBackup()));
+                new KeyFrame(Duration.minutes(1), e -> cekDanBackup()));
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 

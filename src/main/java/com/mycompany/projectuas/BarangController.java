@@ -142,6 +142,10 @@ public class BarangController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navllblakun;
+    @FXML
+    private Label navlblnama;
 
     // ═══════════════════════════════════════════════════════
     // STATE
@@ -171,12 +175,19 @@ public class BarangController implements Initializable {
 
 
 
-
-
     //==============================================
     //SETUP FROM
     //==============================================
     private void setupFrom(){
+        if (session.email == "") {
+            navllblakun.setText(session.username);
+            navlblnama.setText(session.nama);
+        } else {
+            navllblakun.setText(session.email);
+            navlblnama.setText(session.nama);
+        }
+       
+        
         cmbKategori.setItems(FXCollections.observableArrayList("Makanan", "Minuman"));
 
         // ── Validasi txtStok hanya angka ──

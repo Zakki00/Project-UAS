@@ -80,6 +80,10 @@ public class KaryawanController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navllblakun;
+    @FXML
+    private Label navlblnama;
 
     // ══════════════════════════════════════════════════════
     // TAB KARYAWAN — Form
@@ -186,8 +190,21 @@ public class KaryawanController implements Initializable {
         loadDataKaryawan();
         loadDataAbsensi();
         generateNextId();
+        setupForm();
     }
 
+    //=======================================================
+    //SETUP FORM
+    //=======================================================
+    private void setupForm(){
+        if (session.email == "") {
+            navllblakun.setText(session.username);
+            navlblnama.setText(session.nama);
+        } else {
+            navllblakun.setText(session.email);
+            navlblnama.setText(session.nama);
+        }
+    }
     // ═══════════════════════════════════════════════════════
     // SIDEBAR TOGGLE
     // ═══════════════════════════════════════════════════════

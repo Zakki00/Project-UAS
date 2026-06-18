@@ -573,6 +573,7 @@
 
 .kasir-info-icon {
   -fx-font-size: 11px;
+  -fx-text-fill: #ffffff;
 }
 
 .kasir-info-text {

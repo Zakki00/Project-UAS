@@ -119,6 +119,10 @@ public class TransaksiController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navllblakun;
+    @FXML
+    private Label navlblnama;
 
     // ==========================
     @FXML
@@ -448,6 +452,20 @@ public class TransaksiController implements Initializable {
 
     // setupa form
     private void setupForm() {
+        if (session.email == "") {
+            navllblakun.setText(session.username);
+            navlblnama.setText(session.nama);
+        } else {
+            navllblakun.setText(session.email);
+            navlblnama.setText(session.nama);
+        }
+        
+        int jamSekarang = java.time.LocalTime.now().getHour();
+        if (jamSekarang >= 6 && jamSekarang <12) {
+            lblShift.setText("Shift Siang");
+        }else{
+            lblShift.setText("Shift Malam");
+        }
         TransaksiModel.keranjang.clear();
         TransaksiModel.pesananPs = null;
         TransaksiModel.semuaProduk.clear();
@@ -460,6 +478,7 @@ public class TransaksiController implements Initializable {
         btnQuick50.setDisable(true);
         boxRentalPs.setVisible(false);
         boxRentalPs.setManaged(false);
+        lblNamaKasir.setText(session.nama);
 
     }
 
@@ -898,6 +917,7 @@ public class TransaksiController implements Initializable {
             boxRentalPs.setManaged(false);
             scrolpane.setVisible(true);
             scrolpane.setManaged(true);
+            cbKategori.setDisable(false);
 
         });
         btnPS.setOnAction(e -> {
@@ -907,6 +927,7 @@ public class TransaksiController implements Initializable {
             scrolpane.setManaged(false);
             btnProduk.getStyleClass().remove("btn-menu-active");
             btnPS.getStyleClass().add("btn-menu-active");
+            cbKategori.setDisable(true);
 
         });
     }

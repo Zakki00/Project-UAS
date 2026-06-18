@@ -90,8 +90,8 @@
                   <Label styleClass="user-avatar" text="A" />
                   <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
                      <children>
-                        <Label styleClass="user-name" text="Admin" />
-                        <Label styleClass="user-role" text="Administrator" />
+                        <Label fx:id="navllblakun" styleClass="user-name" text="Admin" />
+                        <Label fx:id="navlblnama" styleClass="user-role" text="Administrator" />
                      </children>
                   </VBox>
                </children>

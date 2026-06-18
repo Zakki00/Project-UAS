@@ -101,8 +101,8 @@
       <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
         <Label styleClass="user-avatar" text="A" />
         <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
-          <Label styleClass="user-name" text="Admin" />
-          <Label styleClass="user-role" text="Administrator" />
+          <Label fx:id="navllblakun" styleClass="user-name" text="Admin" />
+          <Label fx:id="navlblnama" styleClass="user-role" text="Administrator" />
         </VBox>
       </HBox>
          <HBox fx:id="navLogout" alignment="CENTER_LEFT" onMouseClicked="#onNavLogout" onMouseEntered="#onNavLogoutHover" onMouseExited="#onNavLogoutExit" prefHeight="49.0" prefWidth="219.0" spacing="10" style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
@@ -460,7 +460,7 @@
                 </LineChart>
               </VBox>
               <!-- Stok Menipis -->
-              <VBox spacing="10" styleClass="card">
+              <VBox spacing="10" styleClass="card" VBox.vgrow="ALWAYS">
                 <Label fx:id="chartslbstok" styleClass="card-title" text="⚠ Stok Menipis" />
                 <Label fx:id="chartslbSegeraStok" styleClass="card-sub" text="Perlu segera restock" />
                 <VBox fx:id="stockList" spacing="10" />

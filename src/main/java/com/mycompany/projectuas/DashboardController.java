@@ -7,6 +7,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
+
+import javax.swing.plaf.synth.SynthStyle;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -94,6 +97,10 @@ public class DashboardController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navllblakun;
+    @FXML
+    private Label navlblnama;
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI ORIGINAL
@@ -629,7 +636,16 @@ public class DashboardController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // SHIFT DATA
     // ═══════════════════════════════════════════════════════
+
     private void loadShiftData() {
+        
+        if (session.email == "") {
+            navllblakun.setText(session.username);
+            navlblnama.setText(session.nama);
+        } else {
+            navllblakun.setText(session.email);
+            navlblnama.setText(session.nama);
+        }
 
         int jamSekarang = java.time.LocalTime.now().getHour();
 

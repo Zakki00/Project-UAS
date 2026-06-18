@@ -41,8 +41,6 @@ public class LoginController implements Initializable {
     @FXML
     private Button loginBtn;
     @FXML
-    private Button guestBtn;
-    @FXML
     private Button togglePasswordBtn;
 
     private boolean showingPassword = false;
@@ -293,7 +291,7 @@ public class LoginController implements Initializable {
             navigation nav = new navigation();
             nav.navigateToDashboard();
             Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
-            new Popup().showSuccessPopup("Selmat Datang " + session.username, "Selamat Datang " + session.nama);
+            new Popup().showSuccessPopup("Selmat Datang " + session.username, "Selamat Datang Dan Selamat Bekerja! @" + session.nama);
 
             ownerStage.close();
             return;
@@ -309,15 +307,6 @@ public class LoginController implements Initializable {
                 "Username atau Password salah",
                 Popup.PopupType.ERROR,
                 ownerStage);
-    }
-
-    @FXML
-    private void handleGuestLogin(ActionEvent event) {
-        navigation nav = new navigation();
-        nav.navigateToDashboard();
-        Stage stage = (Stage) guestBtn.getScene().getWindow();
-        stage.close();
-
     }
 
     @FXML

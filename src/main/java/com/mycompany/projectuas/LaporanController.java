@@ -116,7 +116,10 @@ public class LaporanController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
-
+    @FXML
+    private Label navllblakun;
+    @FXML
+    private Label navlblnama;
 
     // ═══════════════════════════════════════════════════════
     // FXML — KPI ORIGINAL
@@ -537,6 +540,15 @@ public class LaporanController implements Initializable {
     // FORM & TABEL LAPORAN
     // ═══════════════════════════════════════════════════════
     private void setupForm() {
+        if (session.email == "") {
+            navllblakun.setText(session.username);
+            navlblnama.setText(session.nama);
+        } else {
+            navllblakun.setText(session.email);
+            navlblnama.setText(session.nama);
+        }
+
+
         cbStatusPembayaran.getItems().addAll("Semua", "Lunas", "Belum Lunas");
         cbStatusPembayaran.setOnAction(e -> loadLaporanTransaksi());
         dpTanggal.setOnAction(e -> loadLaporanTransaksi());
@@ -861,7 +873,7 @@ public class LaporanController implements Initializable {
 
         loadShift(
                 "12:00:00",
-                "23:00:00",
+                "21:00:00",
                 lblTrxMalam,
                 lblItemMalam,
                 lblPaketPSMalam,

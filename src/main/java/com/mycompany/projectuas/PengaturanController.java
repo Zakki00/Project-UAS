@@ -49,11 +49,11 @@ public class PengaturanController implements Initializable {
     private VBox panelBackup;
     @FXML
     private VBox panelDatabase;
-    @FXML 
+    @FXML
     private Button btnBackup;
-    @FXML 
+    @FXML
     private Button btnSimpanSeting;
-    
+
     @FXML
     private VBox panelTentang;
     @FXML
@@ -109,7 +109,7 @@ public class PengaturanController implements Initializable {
     private Label lblDbDot;
     @FXML
     private Label lblDbStatus;
-    
+
     // ═══════════════════════════════════════════════════════
     // FXML — SIDEBAR
     // ═══════════════════════════════════════════════════════
@@ -165,6 +165,10 @@ public class PengaturanController implements Initializable {
     private Label navLblLaporan;
     @FXML
     private Label navLblPengaturan;
+    @FXML
+    private Label navllblakun;
+    @FXML
+    private Label navlblnama;
 
     // ── Charts ────────────────────────────────────────────
     @FXML
@@ -174,14 +178,13 @@ public class PengaturanController implements Initializable {
     @FXML
     private LineChart<String, Number> monthChart;
 
-
     // ── State ─────────────────────────────────────────────
     private boolean sidebarCollapsed = false;
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
 
     Preferences prefs = Preferences.userNodeForPackage(session.class);
-    private Timeline autoBackupTimeline;
+    // private Timeline autoBackupTimeline;
 
     // ═════════════════════════════════════════════════════
     // INITIALIZE
@@ -389,10 +392,8 @@ public class PengaturanController implements Initializable {
     @FXML
     private void onNavPengaturan() {
         setActiveNav(navPengaturan);
-       
+
     }
-
-
 
     // ========================================
     // MAIN CONTENT
@@ -417,45 +418,52 @@ public class PengaturanController implements Initializable {
 
     // ── Load info akun ──────────────────────
     private void loadInfoAkun() {
-        String sql = "SELECT username, nama_lengkap FROM tb_user WHERE id_user = ?";
-        List<Object[]> data = koneksi.ambilData(sql, session.id);
-
-        if (data.isEmpty()) {
-            return;
-        }
-
-        String username = String.valueOf(data.get(0)[0]);
-        String nama = String.valueOf(data.get(0)[1]);
-
-        lblNamaAkun.setText(nama);
-        lblUsernameAkun.setText("@" + username);
-
         String role = session.role;
+        System.out.println(session.role);
 
         if ("Admin".equalsIgnoreCase(role)) {
-
+           
+            lblRoleAkun.setText(role);
             String photoUrl = prefs.get("google_photo", "");
 
             if (!photoUrl.isEmpty()) {
-                if (!photoUrl.isEmpty()) {
-                    imgAvatarGoogle.setImage(new Image(photoUrl, true));
-                    imgAvatarGoogle1.setImage(new Image(photoUrl, true));
+                imgAvatarGoogle.setImage(new Image(photoUrl, true));
+                imgAvatarGoogle1.setImage(new Image(photoUrl, true));
 
-                    imgAvatarGoogle.setVisible(true);
-                    imgAvatarGoogle.setManaged(true);
+                imgAvatarGoogle.setVisible(true);
+                imgAvatarGoogle.setManaged(true);
 
-                    imgAvatarGoogle1.setVisible(true);
-                    imgAvatarGoogle1.setManaged(true);
+                imgAvatarGoogle1.setVisible(true);
+                imgAvatarGoogle1.setManaged(true);
 
-                    lblAvatarInisial.setVisible(false);
-                    lblAvatarInisial.setManaged(false);
+                lblAvatarInisial.setVisible(false);
+                lblAvatarInisial.setManaged(false);
 
-                    lblAvatarInisial1.setVisible(false);
-                    lblAvatarInisial1.setManaged(false);
+                lblAvatarInisial1.setVisible(false);
+                lblAvatarInisial1.setManaged(false);
+            } else {
+                imgAvatarGoogle.setVisible(false);
+
+                imgAvatarGoogle.setVisible(false);
+                imgAvatarGoogle1.setVisible(false);
+                imgAvatarGoogle1.setManaged(false);
+
+                lblAvatarInisial.setVisible(true);
+                lblAvatarInisial.setManaged(true);
+                lblAvatarInisial1.setVisible(true);
+                lblAvatarInisial1.setManaged(true);
+
+                if (session.nama != null && !session.nama.isBlank()) {
+                    lblAvatarInisial.setText(
+                            String.valueOf(session.nama.charAt(0)).toUpperCase());
+                } else {
+                    lblAvatarInisial.setText("A");
                 }
+
             }
 
         } else {
+            lblRoleAkun.setText(role);
 
             imgAvatarGoogle.setVisible(false);
             imgAvatarGoogle.setVisible(false);
@@ -466,11 +474,12 @@ public class PengaturanController implements Initializable {
             lblAvatarInisial.setManaged(true);
             lblAvatarInisial1.setVisible(true);
             lblAvatarInisial1.setManaged(true);
-
-            lblAvatarInisial.setText(
-                    nama.length() > 0
-                            ? String.valueOf(nama.charAt(0)).toUpperCase()
-                            : "A");
+            if (session.nama != null && !session.nama.isBlank()) {
+                lblAvatarInisial.setText(
+                        String.valueOf(session.nama.charAt(0)).toUpperCase());
+            } else {
+                lblAvatarInisial.setText("A");
+            }
         }
     }
 
@@ -478,6 +487,21 @@ public class PengaturanController implements Initializable {
     // TAB HANDLERS
     // ══════════════════════════════════════
     private void setupForm() {
+
+        if (session.email == "") {
+            lblNamaAkun.setText(session.nama);
+            lblEmailGoogle2.setVisible(false);
+            lblEmailGoogle2.setManaged(false);
+            lblUsernameAkun.setVisible(false);
+            lblUsernameAkun.setManaged(false);
+            navllblakun.setText(session.username);
+            navlblnama.setText(session.nama);
+        } else {
+            lblNamaAkun.setText(session.nama);
+            navllblakun.setText(session.email);
+            navlblnama.setText(session.nama);
+        }
+
         formEditAkun.setVisible(false);
         formEditAkun.setManaged(false);
         backupProgressBox.setVisible(false);
@@ -489,6 +513,7 @@ public class PengaturanController implements Initializable {
         imgAvatarGoogle1.setClip(clip2);
         lblEmailGoogle.setText(session.email);
         lblEmailGoogle2.setText(session.email);
+        lblUsernameAkun.setText("@" + session.email);
         if ("Admin".equalsIgnoreCase(session.role)) {
             EditProfil.setVisible(true);
             EditProfil.setManaged(true);
@@ -554,8 +579,8 @@ public class PengaturanController implements Initializable {
     @FXML
     private void onDisconnectGoogle() {
         Popup popup = new Popup();
-        popup.showConfirmPopup("Log Out", "Apakah Anda Yakin Keluar Dari Akun " + session.email, 
-        ()->{
+        popup.showConfirmPopup("Log Out", "Apakah Anda Yakin Keluar Dari Akun " + session.email,
+                () -> {
                     try {
                         prefs.clear();
                     } catch (BackingStoreException e) {
@@ -565,7 +590,7 @@ public class PengaturanController implements Initializable {
                     nav.navigateToLogin();
                     Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
                     stage.close();
-        } );        
+                });
     }
 
     // ══════════════════════════════════════
@@ -654,13 +679,9 @@ public class PengaturanController implements Initializable {
         prefs.put("backup_interval", cbInterval.getValue());
         Stage stage = (Stage) btnSimpanSeting.getScene().getWindow();
         Popup popup = new Popup();
-        popup.showModernPopup("Simpan Pengaturan", "Simpan Pengaturan. Backup Otomatis Akan Di Lakukan Setiap: " 
-        + prefs.get("backup_interval", "") + " Sekali", Popup.PopupType.SUCCESS, stage);
+        popup.showModernPopup("Simpan Pengaturan", "Simpan Pengaturan. Backup Otomatis Akan Di Lakukan Setiap: "
+                + prefs.get("backup_interval", "") + " Sekali", Popup.PopupType.SUCCESS, stage);
     }
-
-
-
-
 
     @FXML
     private void onRestore() {
@@ -702,7 +723,7 @@ public class PengaturanController implements Initializable {
                     selesai.play();
                     lblBackupStatus.setText("✅ Restore berhasil dari Google Drive");
                     Popup popup = new Popup();
-                    popup.showSuccessPopup("Berhasil","Restore Data Dari Googl Drive Berhasil Di Lakukan");
+                    popup.showSuccessPopup("Berhasil", "Restore Data Dari Googl Drive Berhasil Di Lakukan");
                 } else {
                     selesai.setOnFinished(ev -> Platform.runLater(() -> {
                         pbBackup.setStyle("-fx-accent: #FF5C7C;");
@@ -711,7 +732,7 @@ public class PengaturanController implements Initializable {
                     selesai.play();
                     Stage stage = (Stage) btnRestore.getScene().getWindow();
                     Popup popup = new Popup();
-                    popup.showModernPopup("EROR", "Gagal Melakukan Restore Database", Popup.PopupType.ERROR,stage);
+                    popup.showModernPopup("EROR", "Gagal Melakukan Restore Database", Popup.PopupType.ERROR, stage);
                     lblBackupStatus.setText("❌ Restore dari Google Drive gagal");
                 }
             });
@@ -738,7 +759,6 @@ public class PengaturanController implements Initializable {
             showAlert("Gagal", "❌ Koneksi database gagal!\n" + e.getMessage());
         }
     }
-
 
     @FXML
     private void onSimpanDb() {
