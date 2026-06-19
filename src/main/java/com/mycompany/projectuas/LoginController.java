@@ -330,19 +330,8 @@ public class LoginController implements Initializable {
         }
     }
 
-    @FXML
-    private void handleForgotPassword(ActionEvent event) {
-        showAlert(Alert.AlertType.INFORMATION, "Lupa Password",
-                "Silakan hubungi administrator untuk mereset password Anda.");
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+   
+   
 
     public void loadRememberedCredentials() {
         if (prefs.getBoolean("remember", false)) {
