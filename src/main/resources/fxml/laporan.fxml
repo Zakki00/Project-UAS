@@ -132,7 +132,7 @@
       <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
         <VBox spacing="1" HBox.hgrow="ALWAYS">
           <Label styleClass="page-title" text="Laporan" />
-          <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
+               <Label fx:id="tanggal" styleClass="page-date" text="Senin, 16 Juni 2025" />
         </VBox>
         <!-- Notif -->
         <StackPane styleClass="notif-wrapper">

@@ -36,6 +36,9 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.shape.Circle;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * FXML Controller class
@@ -43,6 +46,8 @@ import javafx.scene.shape.Circle;
  * @author zakki mubarroq
  */
 public class PengaturanController implements Initializable {
+    @FXML
+    private Label tanggal;
     // ======================================================
     // FOTO PROFILE
     // =======================================================
@@ -501,6 +506,12 @@ public class PengaturanController implements Initializable {
     // TAB HANDLERS
     // ══════════════════════════════════════
     private void setupForm() {
+        // ====tanggal====
+        Locale localeID = new Locale("id", "ID");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
+        tanggal.setText(LocalDate.now().format(formatter));
+
+
         session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
                 imgAvatarGoogletopbar, imgAvatarGooglenavbar);
 

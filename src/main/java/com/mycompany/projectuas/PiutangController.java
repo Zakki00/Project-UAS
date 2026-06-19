@@ -29,8 +29,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class PiutangController implements Initializable {
+    @FXML
+    private Label tanggal;
     // ======================================================
     // FOTO PROFILE
     // =======================================================
@@ -213,6 +218,11 @@ public class PiutangController implements Initializable {
 
 
     private void setupForm(){
+        // ====tanggal====
+        Locale localeID = new Locale("id", "ID");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
+        tanggal.setText(LocalDate.now().format(formatter));
+
         session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
                 imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {

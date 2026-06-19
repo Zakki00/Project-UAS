@@ -36,9 +36,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import javafx.util.Duration;
 
 public class DashboardController implements Initializable {
+    @FXML
+    private Label tanggal;
 
     //======================================================
     //FOTO PROFILE
@@ -256,6 +261,11 @@ public class DashboardController implements Initializable {
     //SETUP FORM
     //======================================================
     private void setupForm() {
+        // ====tanggal====
+        Locale localeID = new Locale("id", "ID");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
+        tanggal.setText(LocalDate.now().format(formatter));
+
         session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
                 imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {

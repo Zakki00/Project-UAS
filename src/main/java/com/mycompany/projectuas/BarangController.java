@@ -44,10 +44,15 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import java.util.List;
 
 public class BarangController implements Initializable {
+    @FXML
+    private Label tanggal;
     // ======================================================
     // FOTO PROFILE
     // =======================================================
@@ -190,6 +195,12 @@ public class BarangController implements Initializable {
     //SETUP FROM
     //==============================================
     private void setupFrom(){
+        //====tanggal====
+        Locale localeID = new Locale("id", "ID");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
+        tanggal.setText(LocalDate.now().format(formatter));
+
+        //======= foto profile
         session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
                 imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {

@@ -2,7 +2,6 @@ package com.mycompany.projectuas;
 
 import java.net.URL;
 import java.security.MessageDigest;
-import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -27,8 +26,13 @@ import javafx.scene.image.ImageView;
 import javafx.animation.Timeline;
 import javafx.util.Callback;
 import javafx.util.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 public class KaryawanController implements Initializable {
+    @FXML
+    private Label tanggal;
     // ======================================================
     // FOTO PROFILE
     // =======================================================
@@ -214,6 +218,12 @@ public class KaryawanController implements Initializable {
     //SETUP FORM
     //=======================================================
     private void setupForm(){
+        // ====tanggal====
+        Locale localeID = new Locale("id", "ID");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
+        tanggal.setText(LocalDate.now().format(formatter));
+
+
         session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
                 imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {

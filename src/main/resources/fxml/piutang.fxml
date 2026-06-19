@@ -124,7 +124,7 @@
             <VBox spacing="1" HBox.hgrow="ALWAYS">
               <children>
                 <Label styleClass="page-title" text="Piutang" />
-                <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
+                        <Label fx:id="tanggal" styleClass="page-date" text="Senin, 16 Juni 2025" />
               </children>
             </VBox>
             <StackPane styleClass="notif-wrapper">
