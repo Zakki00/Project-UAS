@@ -32,6 +32,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -495,6 +496,15 @@ public class TransaksiController implements Initializable {
         boxRentalPs.setManaged(false);
         lblNamaKasir.setText(session.nama);
 
+        tfDiskon.setTextFormatter(new TextFormatter<>(change -> {
+            String text = change.getControlNewText();
+
+            if (text.matches("\\d{0,3}")) {
+                return change;
+            }
+
+            return null;
+        }));
     }
 
     // ═════════════════════════════════════════════════════
@@ -858,9 +868,6 @@ public class TransaksiController implements Initializable {
 
         // Subtotal rental PS
         long subtotalPs = 0;
-        if (TransaksiModel.pesananPs != null) {
-            subtotalPs = TransaksiModel.pesananPs.harga;
-        }
 
         // Total subtotal transaksi
         TransaksiModel.subtotal = subtotalBarang + subtotalPs;

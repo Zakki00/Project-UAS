@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import com.mycompany.projectuas.Popup.PopupType;
 import com.mycompany.services.GoogleDriveService;
 
 import javafx.animation.KeyFrame;
@@ -208,7 +209,6 @@ public class PengaturanController implements Initializable {
         setActiveNav(navPengaturan);
         setupForm();
         loadLastBackupTime();
-
     }
 
     // ═══════════════════════════════════════════════════════
@@ -767,12 +767,13 @@ public class PengaturanController implements Initializable {
             lblDbDot.getStyleClass().setAll("db-dot-online");
             lblDbStatus.setText("Terhubung");
             lblDbStatus.setStyle("-fx-text-fill: #00E5A0;");
-            showAlert("Berhasil", "✅ Koneksi database berhasil!");
+            new Popup().showSuccessPopup("KONEKSI", "Koneksi Ke Database Berjalan Dengan Baik");
         } catch (Exception e) {
+            Stage stage = (Stage) lblAvatarInisial.getScene().getWindow();
             lblDbDot.getStyleClass().setAll("db-dot-offline");
             lblDbStatus.setText("Gagal");
             lblDbStatus.setStyle("-fx-text-fill: #FF5C7C;");
-            showAlert("Gagal", "❌ Koneksi database gagal!\n" + e.getMessage());
+            new Popup().showModernPopup("EROR","Koneksi Ke Database Bermasalah. Silahkan Lakukan Backup Manual" ,Popup.PopupType.ERROR,stage);
         }
     }
 
