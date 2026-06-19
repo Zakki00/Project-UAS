@@ -205,53 +205,72 @@ public class DetailTransaksiController implements Initializable {
 
     private HBox setDataPs(ItemPs ps, int no) {
 
-    Label lblNo = new Label(String.valueOf(no));
-    lblNo.getStyleClass().add("item-no");
-    lblNo.setPrefWidth(40);
+        // No
+        Label lblNo = new Label(String.valueOf(no));
+        lblNo.getStyleClass().add("item-no");
+        lblNo.setPrefWidth(40);
+        lblNo.setMinWidth(40);
+        lblNo.setAlignment(Pos.CENTER);
 
-    Label lblNama = new Label("Rental PlayStation");
-    lblNama.getStyleClass().add("item-nama");
+        // Nama produk
+        Label lblNama = new Label("Rental PlayStation");
+        lblNama.getStyleClass().add("item-nama");
 
-    Label lblKat = new Label(
-            ps.durasiJam + " Jam " +
-            ps.durasiMenit + " Menit");
-    lblKat.getStyleClass().add("item-kategori");
+        // Durasi
+        Label lblKat = new Label(
+                ps.durasiJam + " Jam " +
+                        ps.durasiMenit + " Menit");
+        lblKat.getStyleClass().add("item-kategori");
 
-    VBox namaBox = new VBox(2, lblNama, lblKat);
-    HBox.setHgrow(namaBox, Priority.ALWAYS);
+        VBox namaBox = new VBox(2, lblNama, lblKat);
+        namaBox.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(namaBox, Priority.ALWAYS);
+        namaBox.setMaxWidth(Double.MAX_VALUE);
 
-    Label lblHarga = new Label(
-            "Rp " + FMT.format(ps.harga));
-    lblHarga.setPrefWidth(130);
-    lblHarga.setAlignment(Pos.CENTER_RIGHT);
+        // Harga
+        Label lblHarga = new Label(
+                "Rp " + FMT.format(ps.harga));
+        lblHarga.getStyleClass().add("item-harga");
+        lblHarga.setPrefWidth(130);
+        lblHarga.setMinWidth(130);
+        lblHarga.setAlignment(Pos.CENTER_RIGHT);
 
-    Label lblQty = new Label("x1");
-    lblQty.setPrefWidth(60);
-    lblQty.setAlignment(Pos.CENTER);
+        // Qty
+        Label lblQty = new Label("x1");
+        lblQty.getStyleClass().add("item-qty");
+        lblQty.setPrefWidth(60);
+        lblQty.setMinWidth(60);
+        lblQty.setAlignment(Pos.CENTER);
 
-    Label lblSub = new Label(
-            "Rp " + FMT.format(ps.harga));
-    lblSub.setPrefWidth(120);
-    lblSub.setAlignment(Pos.CENTER_RIGHT);
+        // Subtotal
+        Label lblSub = new Label(
+                "Rp " + FMT.format(ps.harga));
+        lblSub.getStyleClass().add("item-subtotal");
+        lblSub.setPrefWidth(120);
+        lblSub.setMinWidth(120);
+        lblSub.setAlignment(Pos.CENTER_RIGHT);
 
-    HBox row = new HBox(
-            12,
-            lblNo,
-            namaBox,
-            lblHarga,
-            lblQty,
-            lblSub);
 
-    row.getStyleClass().add("item-row");
+        HBox row = new HBox(
+                12,
+                lblNo,
+                namaBox,
+                lblHarga,
+                lblQty,
+                lblSub);
 
-    return row;
-}
+        row.getStyleClass().add("item-row");
+        row.setAlignment(Pos.CENTER_LEFT);
+
+        return row;
+    }
+    
     // ── Item row ──────────────────────────────────────
 
     // ── Summary ───────────────────────────────────────
     private void updateSummary() {
         lblSubtotal.setText("Rp " + FMT.format(TransaksiModel.subtotal));
-       
+
         lblTotal.setText("Rp " + FMT.format(TransaksiModel.total));
         Label lbel_total = new Label("Total");
         lbel_total.getStyleClass().add("summary-total");
@@ -356,7 +375,7 @@ public class DetailTransaksiController implements Initializable {
             renderList();
             closeForm(btnBatal);
             String sql_hapus_pesanan_ps = "DELETE FROM tb_paket_ps WHERE  id_transaksi = ?";
-            koneksi.eksekusiQuery(sql_hapus_pesanan_ps,id_transaksi);
+            koneksi.eksekusiQuery(sql_hapus_pesanan_ps, id_transaksi);
             String sql_hapus_transaksi = "DELETE FROM tb_transaksi WHERE id_transaksi = ?";
             koneksi.eksekusiQuery(sql_hapus_transaksi, id_transaksi);
         });

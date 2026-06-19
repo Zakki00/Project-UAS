@@ -51,6 +51,17 @@ import javafx.geometry.Rectangle2D;
  * @author zakki mubarroq
  */
 public class TransaksiController implements Initializable {
+    // ======================================================
+    // FOTO PROFILE
+    // =======================================================
+    @FXML
+    private Label lblAvatarnavbar;
+    @FXML
+    private Label lblAvatartopbar;
+    @FXML
+    private ImageView imgAvatarGooglenavbar;
+    @FXML
+    private ImageView imgAvatarGoogletopbar;
 
     // ── FXML refs ────────────────────────────────────────
     @FXML
@@ -452,11 +463,13 @@ public class TransaksiController implements Initializable {
 
     // setupa form
     private void setupForm() {
+        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
+                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {
-            navllblakun.setText(session.username);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         } else {
-            navllblakun.setText(session.email);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
         

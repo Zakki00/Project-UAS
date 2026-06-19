@@ -1,5 +1,10 @@
 package com.mycompany.projectuas;
 import com.mycompany.Model.GoogleUser;
+import javafx.scene.image.Image;
+import javafx.scene.control.Label;
+
+import javafx.scene.image.ImageView;
+import javafx.scene.shape.Circle;
 
 public class session {
     
@@ -19,6 +24,48 @@ public class session {
     }
 
 
+    public static void applyFotoProfile(Label labelInisial1, Label labelInisial2,
+            ImageView imageView1, ImageView imageView2) {
+
+        imageView1.setClip(new Circle(20, 20, 20)); // topbar → 44x44
+        imageView2.setClip(new Circle(15, 15, 15)); // sidebar → 44x44
+        if ("Admin".equalsIgnoreCase(session.role)) {
+            String photoUrl = session.googleUser.getProfilePictureUrl();
+
+            if (photoUrl != null && !photoUrl.isEmpty()) {
+                imageView1.setImage(new javafx.scene.image.Image(photoUrl, true));
+                imageView2.setImage(new javafx.scene.image.Image(photoUrl, true));
+
+                imageView1.setVisible(true);
+                imageView1.setManaged(true);
+                imageView2.setVisible(true);
+                imageView2.setManaged(true);
+
+                labelInisial1.setVisible(false);
+                labelInisial1.setManaged(false);
+                labelInisial2.setVisible(false);
+                labelInisial2.setManaged(false);
+
+            } else {
+                imageView1.setVisible(false);
+                imageView1.setManaged(false);
+                imageView2.setVisible(false);
+                imageView2.setManaged(false);
+
+                labelInisial1.setVisible(true);
+                labelInisial1.setManaged(true);
+                labelInisial2.setVisible(true);
+                labelInisial2.setManaged(true);
+
+                String inisial = (session.nama != null && !session.nama.isBlank())
+                        ? String.valueOf(session.nama.charAt(0)).toUpperCase()
+                        : "A";
+
+                labelInisial1.setText(inisial);
+                labelInisial2.setText(inisial);
+            }
+        }
+    }
    
     
 }

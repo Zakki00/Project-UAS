@@ -274,9 +274,11 @@
 
 .topbar-avatar {
     -fx-min-width: 34;
-    -fx-min-height: 34;
-    -fx-max-width: 34;
-    -fx-max-height: 34;
+        -fx-min-height: 34;
+        -fx-max-width: 34;
+        -fx-max-height: 34;
+        -fx-pref-width: 34;
+        -fx-pref-height: 34;
     -fx-background-color: rgba(108, 99, 255, 0.25);
     -fx-border-color: #6C63FF;
     -fx-border-width: 2;

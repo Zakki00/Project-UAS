@@ -54,12 +54,24 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class LaporanController implements Initializable {
+    // ======================================================
+    // FOTO PROFILE
+    // =======================================================
+    @FXML
+    private Label lblAvatarnavbar;
+    @FXML
+    private Label lblAvatartopbar;
+    @FXML
+    private ImageView imgAvatarGooglenavbar;
+    @FXML
+    private ImageView imgAvatarGoogletopbar;
 
     // ═══════════════════════════════════════════════════════
     // FXML — SIDEBAR
@@ -540,11 +552,13 @@ public class LaporanController implements Initializable {
     // FORM & TABEL LAPORAN
     // ═══════════════════════════════════════════════════════
     private void setupForm() {
+        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
+                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {
-            navllblakun.setText(session.username);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         } else {
-            navllblakun.setText(session.email);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
 

@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -89,7 +90,12 @@
         <Separator styleClass="sidebar-divider" />
         <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
           <children>
-            <Label styleClass="user-avatar" text="A" />
+                  <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
+                     <children>
+                        <ImageView fx:id="imgAvatarGooglenavbar" fitHeight="30.0" fitWidth="30.0" managed="false" pickOnBounds="true" preserveRatio="false" visible="false" />
+                        <Label fx:id="lblAvatarnavbar" styleClass="topbar-avatar" text="A" />
+                     </children>
+                  </VBox>
             <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
               <children>
                 <Label fx:id="navllblakun" styleClass="user-name" text="Admin" />
@@ -133,7 +139,12 @@
                 <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />
               </children>
             </StackPane>
-            <Label styleClass="topbar-avatar" text="A" />
+                  <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
+                     <children>
+                        <ImageView fx:id="imgAvatarGoogletopbar" fitHeight="30.0" fitWidth="30.0" managed="false" pickOnBounds="true" preserveRatio="false" visible="false" />
+                        <Label fx:id="lblAvatartopbar" styleClass="topbar-avatar" text="A" />
+                     </children>
+                  </VBox>
           </children>
         </HBox>
         <VBox spacing="16" styleClass="body-content">

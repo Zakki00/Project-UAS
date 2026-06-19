@@ -48,6 +48,17 @@ import javafx.util.Duration;
 import java.util.List;
 
 public class BarangController implements Initializable {
+    // ======================================================
+    // FOTO PROFILE
+    // =======================================================
+    @FXML
+    private Label lblAvatarnavbar;
+    @FXML
+    private Label lblAvatartopbar;
+    @FXML
+    private ImageView imgAvatarGooglenavbar;
+    @FXML
+    private ImageView imgAvatarGoogletopbar;
 
     // ═══════════════════════════════════════════════════════
     // FXML — FORM
@@ -179,11 +190,13 @@ public class BarangController implements Initializable {
     //SETUP FROM
     //==============================================
     private void setupFrom(){
+        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
+                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {
-            navllblakun.setText(session.username);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         } else {
-            navllblakun.setText(session.email);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
        

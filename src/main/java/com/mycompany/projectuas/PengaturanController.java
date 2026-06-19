@@ -42,6 +42,17 @@ import javafx.scene.shape.Circle;
  * @author zakki mubarroq
  */
 public class PengaturanController implements Initializable {
+    // ======================================================
+    // FOTO PROFILE
+    // =======================================================
+    @FXML
+    private Label lblAvatarnavbar;
+    @FXML
+    private Label lblAvatartopbar;
+    @FXML
+    private ImageView imgAvatarGooglenavbar;
+    @FXML
+    private ImageView imgAvatarGoogletopbar;
 
     @FXML
     private VBox panelAkun;
@@ -422,9 +433,12 @@ public class PengaturanController implements Initializable {
         System.out.println(session.role);
 
         if ("Admin".equalsIgnoreCase(role)) {
+
+          
+            
            
             lblRoleAkun.setText(role);
-            String photoUrl = prefs.get("google_photo", "");
+            String photoUrl = session.googleUser.getProfilePictureUrl();
 
             if (!photoUrl.isEmpty()) {
                 imgAvatarGoogle.setImage(new Image(photoUrl, true));
@@ -487,6 +501,8 @@ public class PengaturanController implements Initializable {
     // TAB HANDLERS
     // ══════════════════════════════════════
     private void setupForm() {
+        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
+                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
 
         if (session.email == "") {
             lblNamaAkun.setText(session.nama);
@@ -494,11 +510,11 @@ public class PengaturanController implements Initializable {
             lblEmailGoogle2.setManaged(false);
             lblUsernameAkun.setVisible(false);
             lblUsernameAkun.setManaged(false);
-            navllblakun.setText(session.username);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         } else {
             lblNamaAkun.setText(session.nama);
-            navllblakun.setText(session.email);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
 

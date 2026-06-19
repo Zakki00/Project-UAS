@@ -7,9 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
-
-import javax.swing.plaf.synth.SynthStyle;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -31,6 +28,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -41,6 +39,18 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class DashboardController implements Initializable {
+
+    //======================================================
+    //FOTO PROFILE
+    //=======================================================
+    @FXML
+    private Label lblAvatarnavbar;
+    @FXML
+    private Label lblAvatartopbar;
+    @FXML
+    private ImageView imgAvatarGooglenavbar;
+    @FXML
+    private ImageView imgAvatarGoogletopbar;
 
     // ═══════════════════════════════════════════════════════
     // FXML — SIDEBAR
@@ -238,6 +248,23 @@ public class DashboardController implements Initializable {
         setupCharts();
         setupStockList();
         loadShiftData();
+        setupForm();
+
+    }
+
+    //======================================================
+    //SETUP FORM
+    //======================================================
+    private void setupForm() {
+        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
+                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
+        if (session.email == "") {
+            navllblakun.setText(session.role);
+            navlblnama.setText(session.nama);
+        } else {
+            navllblakun.setText(session.role);
+            navlblnama.setText(session.nama);
+        }
 
     }
 
@@ -639,14 +666,7 @@ public class DashboardController implements Initializable {
 
     private void loadShiftData() {
         
-        if (session.email == "") {
-            navllblakun.setText(session.username);
-            navlblnama.setText(session.nama);
-        } else {
-            navllblakun.setText(session.email);
-            navlblnama.setText(session.nama);
-        }
-
+      
         int jamSekarang = java.time.LocalTime.now().getHour();
 
         applyRoundedClip(wrapperPagi);

@@ -23,11 +23,23 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.scene.image.ImageView;
 import javafx.animation.Timeline;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
 public class KaryawanController implements Initializable {
+    // ======================================================
+    // FOTO PROFILE
+    // =======================================================
+    @FXML
+    private Label lblAvatarnavbar;
+    @FXML
+    private Label lblAvatartopbar;
+    @FXML
+    private ImageView imgAvatarGooglenavbar;
+    @FXML
+    private ImageView imgAvatarGoogletopbar;
 
     // ═══════════════════════════════════════════════════════
     // FXML — SIDEBAR
@@ -197,11 +209,13 @@ public class KaryawanController implements Initializable {
     //SETUP FORM
     //=======================================================
     private void setupForm(){
+        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
+                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {
-            navllblakun.setText(session.username);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         } else {
-            navllblakun.setText(session.email);
+            navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
     }

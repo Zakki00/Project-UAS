@@ -25,9 +25,7 @@ import javafx.stage.Stage;
  * resources/fxml/login.fxml
  */
 public class LoginController implements Initializable {
-    GoogleUser googleUser = new GoogleUser();
-
-    session session = new session();
+    
     @FXML
     private Button btnGoogle;
     @FXML
@@ -59,6 +57,8 @@ public class LoginController implements Initializable {
     //=========================================
     // CEK APAKAH APLIKASI SUDAH MEMLIKI OWNER
     //=========================================
+    GoogleUser googleUser = new GoogleUser();
+    session session = new session();
 
     void setupform() {
         // Sync PasswordField <-> TextField untuk show/hide password
@@ -87,6 +87,7 @@ public class LoginController implements Initializable {
             session.nama = (String) admin.get(0)[3];
             session.role = (String) admin.get(0)[4];
             session.email = (String) admin.get(0)[5];
+            googleUser.setProfilePictureUrl((String) admin.get(0)[6]);
         }
 
     }
@@ -115,7 +116,7 @@ public class LoginController implements Initializable {
                         boolean restore = service.restoreBackupAll();
                         System.out.println("Restore = " + restore);
                         session.googleUser = user; // simpan ke session
-                        String cekSql = "SELECT id_user, username, nama_lengkap, role, email FROM tb_user WHERE email = ?";
+                        String cekSql = "SELECT id_user, username, nama_lengkap, role, foto_profil email FROM tb_user WHERE email = ?";
                         List<Object[]> hasil = koneksi.ambilData(cekSql, user.getEmail());
                         System.out.println("data admin berdasarkan email" + hasil.size());
 
@@ -127,6 +128,7 @@ public class LoginController implements Initializable {
                             session.nama = (String) row[2];
                             session.role = (String) row[3];
                             session.email = (String) row[4];
+                            googleUser.setProfilePictureUrl((String) row[5]);
                             navigation nav = new navigation();
                             prefs.put("Admin", "Admin");
                             nav.navigateToDashboard();
@@ -224,6 +226,7 @@ public class LoginController implements Initializable {
             session.nama = (String) resultUser.get(0)[3];
             session.role = (String) resultUser.get(0)[4];
             session.email = (String) resultUser.get(0)[5];
+            googleUser.setProfilePictureUrl((String) resultUser.get(0)[6]);
 
             //  isi semua data GoogleUser
             sesigoogle.setName((String) resultUser.get(0)[3]);
