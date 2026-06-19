@@ -10,7 +10,12 @@ import com.mycompany.Model.DetailTransaksiModel;
 import com.mycompany.Model.TransaksiModel;
 import com.mycompany.Model.TransaksiModel.CartItem;
 import com.mycompany.Model.TransaksiModel.ItemPs;
+import javafx.util.Duration;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -22,11 +27,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class DetailTransaksiController implements Initializable {
 
     // ── FXML refs ─────────────────────────────────────
+    @FXML
+    private VBox rootVBox;
     @FXML
     private TextField tfPelanggan;
     @FXML
@@ -37,8 +46,6 @@ public class DetailTransaksiController implements Initializable {
     private Button btnBatal;
     @FXML
     private Label lblSubtotal;
-    @FXML
-    private Label lblPajak;
     @FXML
     private Label lblTotal;
 
@@ -73,11 +80,28 @@ public class DetailTransaksiController implements Initializable {
         idtransaksi();
         setupLayout();
         renderList();
+        setupAnimasiMasuk();
 
-        buildSummaryRow("asdas", "asdasd", false);
     }
 
-    // ── Dummy data ────────────────────────────────────
+    // ANIMASI HELPER---------------------
+    private void setupAnimasiMasuk() {
+
+        // Animasi slide up + fade in
+        rootVBox.setTranslateY(40);
+        rootVBox.setOpacity(0);
+
+        Timeline animMasuk = new Timeline(
+                new KeyFrame(Duration.ZERO,
+                        new KeyValue(rootVBox.translateYProperty(), 40),
+                        new KeyValue(rootVBox.opacityProperty(), 0)),
+                new KeyFrame(Duration.millis(350),
+                        new KeyValue(rootVBox.translateYProperty(), 0,
+                                javafx.animation.Interpolator.EASE_OUT),
+                        new KeyValue(rootVBox.opacityProperty(), 1,
+                                javafx.animation.Interpolator.EASE_OUT)));
+        animMasuk.play();
+    }
 
     // ── Setup layout scroll content ───────────────────
     private void setupLayout() {
@@ -250,7 +274,6 @@ public class DetailTransaksiController implements Initializable {
         lblSub.setMinWidth(120);
         lblSub.setAlignment(Pos.CENTER_RIGHT);
 
-
         HBox row = new HBox(
                 12,
                 lblNo,
@@ -264,7 +287,7 @@ public class DetailTransaksiController implements Initializable {
 
         return row;
     }
-    
+
     // ── Item row ──────────────────────────────────────
 
     // ── Summary ───────────────────────────────────────

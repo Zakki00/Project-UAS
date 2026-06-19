@@ -71,20 +71,17 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.mycompany.projectuas.App</mainClass>
-                    <!-- TAMBAH INI -->
                     <options>
                         <option>--add-modules java.desktop</option>
+                        <option>--enable-native-access=javafx.graphics,ALL-UNNAMED</option>
+                        <option>--enable-final-field-mutation=ALL-UNNAMED</option>
                     </options>
                 </configuration>
                 <executions>
                     <execution>
-                        <!-- Default configuration for running -->
-                        <!-- Usage: mvn clean javafx:run -->
                         <id>default-cli</id>
                     </execution>
                     <execution>
-                        <!-- Configuration for manual attach debugging -->
-                        <!-- Usage: mvn clean javafx:run@debug -->
                         <id>debug</id>
                         <configuration>
                             <options>
@@ -94,7 +91,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <!-- Configuration for automatic IDE debugging -->
                         <id>ide-debug</id>
                         <configuration>
                             <options>
@@ -104,7 +100,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <!-- Configuration for automatic IDE profiling -->
                         <id>ide-profile</id>
                         <configuration>
                             <options>
@@ -158,7 +153,8 @@
                     </execution>
                 </executions>
             </plugin>
-            
+
+
         </plugins>
     </build>
     <name>Project-UAS</name>

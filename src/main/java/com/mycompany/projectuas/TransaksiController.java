@@ -21,6 +21,7 @@ import java.io.File;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -41,6 +42,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import javafx.scene.Node;
 import javafx.geometry.Rectangle2D;
@@ -472,11 +474,11 @@ public class TransaksiController implements Initializable {
             navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
-        
+
         int jamSekarang = java.time.LocalTime.now().getHour();
-        if (jamSekarang >= 6 && jamSekarang <12) {
+        if (jamSekarang >= 6 && jamSekarang < 12) {
             lblShift.setText("Shift Siang");
-        }else{
+        } else {
             lblShift.setText("Shift Malam");
         }
         TransaksiModel.keranjang.clear();
@@ -643,7 +645,7 @@ public class TransaksiController implements Initializable {
 
         return card;
     }
-    
+
     private void applyCoverViewport(ImageView imgView, Image image, double targetW, double targetH) {
         double imgW = image.getWidth();
         double imgH = image.getHeight();
@@ -1015,7 +1017,14 @@ public class TransaksiController implements Initializable {
                 && TransaksiModel.pesananPs == null) {
             return;
         }
-
+        if ("Admin".equals(session.role)) {
+            new Popup().showConfirmPopup("OTORITAS",
+                    "Proses Pembayaran Tidak Dapat Di Lakukan Karena Role Tidak Sesuai, Silahkan Login Dengan Akun Karyawan",
+                    () -> {
+                        return;
+                    });
+            return;
+        }
         if (pembayaraanQris) {
             String sqlTransaksi = "INSERT INTO tb_transaksi "
                     + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
@@ -1026,10 +1035,10 @@ public class TransaksiController implements Initializable {
                     "");
 
         } else {
-            if (tfTunai.getText() == null || tfTunai.getText().isBlank() || tunai == 0) {
+            if (tfTunai.getText() == null || tfTunai.getText().isBlank() || tunai < 1000) {
                 new Popup().showModernPopup(
                         "WARNING",
-                        "Silahkan Masukkan Nominal Tunai",
+                        "Uang Pembyaran Minimal Rp.1000",
                         Popup.PopupType.WARNING, ownerStage);
                 return;
             } else {
@@ -1098,6 +1107,7 @@ public class TransaksiController implements Initializable {
         System.out.println("No: #TRX-" + String.format("%04d", TransaksiModel.noTrx));
         System.out.println("Metode: " + TransaksiModel.metodeBayar);
         tfTunai.clear();
+
         navigation nav = new navigation();
         Stage stage = (Stage) btnBayar.getScene().getWindow();
         nav.detailTransaksi(stage, this);

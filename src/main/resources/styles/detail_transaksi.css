@@ -395,3 +395,11 @@
 .dialog-pane .graphic-container {
     -fx-padding: 22px 0 0 22px;
 }
+
+/* ── BORDER WINDOW GRADIENT ──────────────────────────── */
+.detail-root {
+    -fx-background-color: #080B14;
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(108, 99, 255, 0.6), 40, 0, 0, 0);
+}

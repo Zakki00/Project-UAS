@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 public class navigation {
@@ -28,7 +29,7 @@ public class navigation {
     }
 
     public void navigateToSignup() {
-       navigateTo("signup.fxml", "Signup");
+        navigateTo("signup.fxml", "Signup");
     }
 
     public void navigateToDashboard() {
@@ -50,7 +51,8 @@ public class navigation {
     public void navigateToPiutang() {
         navigateTo("piutang.fxml", "Piutang");
     }
-    public void navigationToKaryawan(){
+
+    public void navigationToKaryawan() {
         navigateTo("karyawan.fxml", "Karyawan");
     }
 
@@ -72,25 +74,31 @@ public class navigation {
     }
 
     public void detailTransaksi(Stage ownerStage, TransaksiController transaksiController) {
-
         try {
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/detail_transaksi.fxml"));
             Parent root = loader.load();
             DetailTransaksiController controller = loader.getController();
             controller.setTransaksiController(transaksiController);
             Stage stage = new Stage();
             stage.setTitle("Detail Transaksi");
-            stage.setScene(new Scene(root));
+
+            // Scene transparan agar border-radius bawah tidak terpotong
+            Scene scene = new Scene(root);
+            scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+
+            stage.setScene(scene);
             stage.initModality(Modality.WINDOW_MODAL);
             stage.initOwner(ownerStage);
+            stage.initStyle(StageStyle.TRANSPARENT); // ganti UNDECORATED → TRANSPARENT
+            stage.setWidth(760);
+            stage.setHeight(860);
+            stage.centerOnScreen();
+
             stage.setOnCloseRequest(event -> {
                 event.consume();
                 shakeStage(stage);
             });
-
             stage.show();
-
         } catch (Exception e) {
             e.printStackTrace();
         }

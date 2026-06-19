@@ -144,11 +144,11 @@
             </VBox>
       </HBox>
       <!-- Tab Pane -->
-      <TabPane styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+      <TabPane fx:id="tabPane" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
         <!-- ═══════════════════════════════════════
                      TAB 1 : DATA KARYAWAN
                 ════════════════════════════════════════ -->
-        <Tab text="👤 Karyawan">
+        <Tab fx:id="tabKaryawan" text="👤 Karyawan">
           <ScrollPane fitToWidth="true" styleClass="content-scroll" VBox.vgrow="ALWAYS">
             <VBox spacing="16" styleClass="content-inner">
               <VBox.margin>
@@ -172,11 +172,11 @@
                     <ColumnConstraints hgrow="ALWAYS" minWidth="160" />
                   </columnConstraints>
                   <rowConstraints>
-                    <RowConstraints minHeight="36" />
-                    <RowConstraints minHeight="36" />
-                    <RowConstraints minHeight="36" />
-                    <RowConstraints minHeight="36" />
-                    <RowConstraints minHeight="36" />
+                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0" />
                   </rowConstraints>
                   <!-- Row 0 -->
                   <Label styleClass="form-label" text="ID Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -189,18 +189,18 @@
                   <Label styleClass="form-label" text="Alamat" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <TextArea fx:id="txtAlamat" promptText="Alamat lengkap..." styleClass="form-textarea" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.rowSpan="2" />
                   <!-- Row 2 -->
-                  <Label styleClass="form-label" text="Jenis Kelamin" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                  <ComboBox fx:id="cmbJenisKelamin" prefWidth="161.0" promptText="Pilih..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label styleClass="form-label" text="Jenis Kelamin" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <ComboBox fx:id="cmbJenisKelamin" maxWidth="Infinity" promptText="Pilih..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS" />
                   <!-- Row 3 (NEW) -->
-                  <Label styleClass="form-label" text="Username" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                  <TextField fx:id="txtUsername" promptText="Username login" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label styleClass="form-label" text="Password" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <TextField fx:id="txtPassword" promptText="Password" styleClass="form-field" GridPane.columnIndex="4" GridPane.rowIndex="3" />
+                  <Label styleClass="form-label" text="Username" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtUsername" promptText="Username login" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label styleClass="form-label" text="Password" GridPane.rowIndex="3" />
+                  <TextField fx:id="txtPassword" promptText="Password" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <!-- Row 4 -->
-                  <Label styleClass="form-label" text="Status Kerja" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                  <ComboBox fx:id="cmbStatusKerja" prefWidth="183.0" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Label styleClass="form-label" text="Tanggal Masuk" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                  <DatePicker fx:id="dpTanggalMasuk" prefWidth="343.0" styleClass="form-datepicker" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                  <Label styleClass="form-label" text="Status Kerja" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                  <ComboBox fx:id="cmbStatusKerja" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+                  <Label styleClass="form-label" text="Tanggal Masuk" GridPane.rowIndex="4" />
+                  <DatePicker fx:id="dpTanggalMasuk" prefWidth="343.0" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 </GridPane>
                 <!-- Tombol Aksi -->
                 <HBox alignment="CENTER_LEFT" spacing="10">
@@ -259,23 +259,22 @@
                     <ColumnConstraints hgrow="ALWAYS" minWidth="160" />
                   </columnConstraints>
                   <rowConstraints>
-                    <RowConstraints minHeight="36" />
-                    <RowConstraints minHeight="36" />
-                    <RowConstraints minHeight="36" />
+                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0" />
                   </rowConstraints>
                   <!-- Row 0 -->
                   <Label styleClass="form-label" text="Tanggal Absensi" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                   <DatePicker fx:id="dpTanggalAbsensi" maxWidth="Infinity" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                   <Label styleClass="form-label" text="Shift Masuk" GridPane.columnIndex="3" GridPane.rowIndex="0" />
                   <ComboBox fx:id="cmbShift" maxWidth="Infinity" promptText="Pilih shift..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="0" />
-                  <!-- Row 1 -->
-                  <Label styleClass="form-label" text="Pilih Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="cmbPilihKaryawan" maxWidth="Infinity" promptText="ID Karyawan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="cmbPilihKaryawan" maxWidth="Infinity" prefWidth="200.0" promptText="ID Karyawan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label styleClass="form-label" text="Status Kehadiran" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                   <ComboBox fx:id="cmbStatusKehadiran" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="1" />
                   <!-- Row 2 -->
-                  <Label styleClass="form-label" text="Nama Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                  <TextField fx:id="txtNamaAbsensi" editable="false" maxWidth="Infinity" promptText="Auto-fill..." styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label styleClass="form-label" text="Nama Karyawan" GridPane.rowIndex="1" />
+                           <TextField fx:id="txtNamaAbsensi" editable="false" maxWidth="Infinity" prefWidth="187.0" promptText="Auto-fill..." styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           <Label prefWidth="71.0" styleClass="form-label" text="Pilih Karyawan" GridPane.rowIndex="2" />
                 </GridPane>
                 <!-- Tombol Absensi -->
                 <HBox alignment="CENTER_LEFT" spacing="10">

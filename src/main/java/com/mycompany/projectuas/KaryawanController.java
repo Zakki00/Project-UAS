@@ -101,6 +101,11 @@ public class KaryawanController implements Initializable {
     // TAB KARYAWAN — Form
     // ══════════════════════════════════════════════════════
     @FXML
+    private Tab tabKaryawan; // pastikan sudah di-inject
+
+    @FXML
+    private TabPane tabPane; // inject TabPane-nya juga
+    @FXML
     private TextField txtIdKaryawan;
     @FXML
     private TextField txtNamaKaryawan;
@@ -214,10 +219,12 @@ public class KaryawanController implements Initializable {
         if (session.email == "") {
             navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
+            tabPane.getTabs().remove(tabKaryawan);
         } else {
             navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
+
     }
     // ═══════════════════════════════════════════════════════
     // SIDEBAR TOGGLE
@@ -755,7 +762,7 @@ public class KaryawanController implements Initializable {
                 sql,
                 id,
                 txtUsername.getText(),
-                hashPassword(txtPassword.getText()),
+                txtPassword.getText(),
                 txtNamaKaryawan.getText(),
                 cmbJenisKelamin.getValue(),
                 txtNoHp.getText(),

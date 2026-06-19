@@ -8,4 +8,5 @@
         }
     ],
     "java.jdt.ls.java.home": "C:\\oracleJdk-26",
+    "java.configuration.updateBuildConfiguration": "interactive",
 }

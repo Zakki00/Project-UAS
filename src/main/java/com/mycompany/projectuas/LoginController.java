@@ -270,7 +270,7 @@ public class LoginController implements Initializable {
         List<Object[]> resultKaryawan = koneksi.ambilData(
                 queryKaryawan,
                 username,
-                hashedPassword);
+                password);
 
         if (!resultKaryawan.isEmpty()) {
 
