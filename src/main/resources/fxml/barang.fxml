@@ -171,6 +171,18 @@
               <Button onAction="#clearForm" style="-fx-background-color: transparent; -fx-text-fill: #8B8FA8; -fx-border-color: #2E3250; -fx-border-radius: 8;" styleClass="btn-primary" text="Reset" />
             </HBox>
           </VBox>
+               <HBox alignment="CENTER_LEFT" prefHeight="124.0" prefWidth="773.0" spacing="12" styleClass="panel-pencarian">
+                  <children>
+                     <Label styleClass="lbl-barang" text="Nama Barang" />
+                     <HBox alignment="CENTER_LEFT" maxHeight="-Infinity" prefHeight="10.0" prefWidth="405.0" spacing="8" styleClass="search-box" HBox.hgrow="ALWAYS">
+                        <children>
+                           <Label styleClass="search-icon" text="🔍" />
+                           <TextField fx:id="txtCari" promptText="Cari Nama Pelanggan" styleClass="search-field" HBox.hgrow="ALWAYS" />
+                           <Button fx:id="btnClearSearch" onAction="#onClearSearch" styleClass="btn-clear" text="✕" />
+                        </children>
+                     </HBox>
+                  </children>
+               </HBox>
           <TableView fx:id="tabelBarang" prefHeight="480.0" styleClass="barang-table" VBox.vgrow="ALWAYS">
             <columns>
               <TableColumn fx:id="colId" prefWidth="50.0" text="ID" />

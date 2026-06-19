@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.BarangModel;
+import com.mycompany.Model.PiutangModel;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -70,6 +71,8 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════════════════
     @FXML
     private TextField txtNama;
+    @FXML
+    private Button btnClearSearch;
     @FXML
     private ComboBox<String> cmbKategori;
     @FXML
@@ -187,6 +190,7 @@ public class BarangController implements Initializable {
         selectedData();
         setupFrom();
         loadDataFromDB();
+        cariBarang();
     }
 
 
@@ -554,15 +558,24 @@ public class BarangController implements Initializable {
         tabelBarang.getSelectionModel().clearSelection();
     }
 
-    @FXML
-    void cariBarang(KeyEvent event) {
-        String keyword = txtCari.getText().toLowerCase();
-        filteredData.setPredicate(barang -> {
-            if (keyword == null || keyword.isEmpty())
-                return true;
-            return barang.getNama().toLowerCase().contains(keyword)
-                    || barang.getKategori().toLowerCase().contains(keyword);
+
+    private void cariBarang() {
+        txtCari.textProperty().addListener((obs, oldVal, newVal) -> {
+            String keyword = newVal.toLowerCase();
+            filteredData.setPredicate(barang -> {
+                if (keyword == null || keyword.isEmpty())
+                    return true;
+                return barang.getNama().toLowerCase().contains(keyword)
+                        || barang.getKategori().toLowerCase().contains(keyword);
+            });
         });
+    }
+    
+    @FXML
+    private void onClearSearch() {
+        txtCari.setText("Cari Nama Barang");
+        loadDataFromDB();
+        setUpTable();
     }
 
     @FXML

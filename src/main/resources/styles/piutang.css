@@ -431,7 +431,7 @@
 /* //search-box */
 .btn-clear {
   -fx-background-color: transparent;
-  -fx-text-fill: #8B8FA8;
+  -fx-text-fill: #8b8fa8;
   -fx-font-size: 11px;
   -fx-cursor: hand;
   -fx-padding: 2 4 2 4;
@@ -439,15 +439,18 @@
 }
 
 .btn-clear:hover {
-  -fx-text-fill: #FF5C7C;
+  -fx-text-fill: #ff5c7c;
 }
-
 
 /* ── HEADER PELANGGAN ────────────────────────── */
 .header-piutang {
   -fx-background-color: #1a1d2e;
+  -fx-background-radius: 10;
+
   -fx-border-color: transparent transparent #2e3250 transparent;
   -fx-border-width: 1;
+  -fx-border-radius: 10;
+
   -fx-padding: 20 30 20 30;
 }
 
@@ -472,15 +475,20 @@
 .tf-pelanggan:focused {
   -fx-border-color: #6c63ff;
 }
-/* ── TABLE VIEW ──────────────────────────────── */
+/* ─────────────────────────────────────────────
+   TABLE PIUTANG — SAMA DENGAN LAPORAN STYLE
+───────────────────────────────────────────── */
+
 .table-piutang {
   -fx-background-color: transparent;
-  -fx-border-color: transparent;
-  -fx-table-cell-border-color: transparent;
+  -fx-border-color: #1a1d2e;
+  -fx-border-width: 1;
+  -fx-border-radius: 12;
   -fx-background-radius: 12;
+  -fx-table-cell-border-color: transparent;
 }
 
-/* Header background */
+/* HEADER */
 .table-piutang .column-header-background {
   -fx-background-color: #252840;
   -fx-background-radius: 10 10 0 0;
@@ -488,7 +496,6 @@
   -fx-border-width: 0 0 1 0;
 }
 
-/* Tiap kolom header */
 .table-piutang .column-header {
   -fx-background-color: transparent;
   -fx-border-color: transparent;
@@ -503,21 +510,17 @@
   -fx-letter-spacing: 0.8;
 }
 
-/* Hover header */
 .table-piutang .column-header:hover {
   -fx-background-color: #2e3250;
 }
 
-/* Filler pojok kanan header */
 .table-piutang .filler {
   -fx-background-color: #252840;
-  -fx-border-color: transparent;
 }
 
-/* ── ROWS ────────────────────────────────────── */
+/* ROW */
 .table-piutang .table-row-cell {
   -fx-background-color: #1a1d2e;
-  -fx-table-cell-border-color: transparent;
   -fx-cell-size: 46px;
   -fx-border-color: transparent transparent #2e3250 transparent;
   -fx-border-width: 0 0 0.5 0;
@@ -535,15 +538,9 @@
 
 .table-piutang .table-row-cell:selected {
   -fx-background-color: rgba(108, 99, 255, 0.15);
-  -fx-border-color: transparent transparent #6c63ff transparent;
 }
 
-.table-piutang .table-row-cell:empty {
-  -fx-background-color: transparent;
-  -fx-border-color: transparent;
-}
-
-/* ── CELLS ───────────────────────────────────── */
+/* CELL */
 .table-piutang .table-cell {
   -fx-text-fill: #ffffff;
   -fx-font-size: 12px;
@@ -552,32 +549,25 @@
   -fx-alignment: CENTER;
 }
 
-/* Kolom No — tengah */
+/* Kolom pertama (no) */
 .table-piutang .table-cell:first-child {
   -fx-text-fill: #8b8fa8;
   -fx-font-size: 11px;
-  -fx-alignment: CENTER;
 }
 
-/* Kolom harga & subtotal — kanan */
+/* numeric & center helper (biar konsisten dengan laporan) */
 .table-piutang .table-cell.numeric {
   -fx-alignment: CENTER_RIGHT;
   -fx-text-fill: #00e5a0;
   -fx-font-weight: bold;
 }
 
-/* Kolom qty — tengah */
 .table-piutang .table-cell.center {
   -fx-alignment: CENTER;
   -fx-text-fill: #8b8fa8;
 }
 
-/* Row selected — cell text */
-.table-piutang .table-row-cell:selected .table-cell {
-  -fx-text-fill: #ffffff;
-}
-
-/* ── SCROLLBAR ───────────────────────────────── */
+/* SCROLLBAR */
 .table-piutang .scroll-bar {
   -fx-background-color: #1a1d2e;
 }
@@ -601,16 +591,7 @@
   -fx-padding: 0;
 }
 
-/* Sembunyikan scrollbar horizontal kalau tidak perlu */
-.table-piutang .scroll-bar:horizontal {
-  -fx-pref-height: 6;
-}
-
-.table-piutang .scroll-bar:vertical {
-  -fx-pref-width: 6;
-}
-
-/* ── PLACEHOLDER (tabel kosong) ──────────────── */
+/* placeholder */
 .table-piutang .placeholder .label {
   -fx-text-fill: #8b8fa8;
   -fx-font-size: 12px;
@@ -657,19 +638,19 @@
 }
 
 .empty-text {
-  -fx-text-fill: #8B8FA8;
+  -fx-text-fill: #8b8fa8;
   -fx-font-size: 12px;
   -fx-font-weight: bold;
 }
 
 .empty-sub {
-  -fx-text-fill: #2E3250;
+  -fx-text-fill: #2e3250;
   -fx-font-size: 10px;
 }
 
 /* Divider */
 .cart-divider {
-  -fx-background-color: #2E3250;
+  -fx-background-color: #2e3250;
 }
 /* Hutang total */
 .hutang-box {
@@ -824,12 +805,11 @@
   -fx-spacing: 10;
 }
 
-/* * ── SCROLL & LIST ───────────────────────────────────── */ 
+/* * ── SCROLL & LIST ───────────────────────────────────── */
 .detail-scroll {
   -fx-background-color: transparent;
-  -fx-background: #0F1117;
+  -fx-background: #0f1117;
   -fx-border-width: 0;
- 
 }
 
 .detail-scroll .viewport {
@@ -837,7 +817,7 @@
 }
 
 .detail-scroll .scroll-bar:vertical .thumb {
-  -fx-background-color: #2E3250;
+  -fx-background-color: #2e3250;
   -fx-background-radius: 4;
 }
 
@@ -854,17 +834,16 @@
   -fx-padding: 12 0 12 0;
 }
 
-
 .th-label {
-  -fx-text-fill: #8B8FA8;
+  -fx-text-fill: #8b8fa8;
   -fx-font-size: 10px;
   -fx-font-weight: bold;
 }
 
 /* ── ITEM ROW ────────────────────────────────────────── */
 .item-row {
-  -fx-background-color: #1A1D2E;
-  -fx-border-color: #2E3250;
+  -fx-background-color: #1a1d2e;
+  -fx-border-color: #2e3250;
   -fx-border-width: 1;
   -fx-border-radius: 10;
   -fx-background-radius: 10;
@@ -873,23 +852,23 @@
 
 .item-row:hover {
   -fx-background-color: #252840;
-  -fx-border-color: #6C63FF;
+  -fx-border-color: #6c63ff;
 }
 
 .item-no {
-  -fx-text-fill: #8B8FA8;
+  -fx-text-fill: #8b8fa8;
   -fx-font-size: 11px;
   -fx-alignment: CENTER;
 }
 
 .item-nama {
-  -fx-text-fill: #FFFFFF;
+  -fx-text-fill: #ffffff;
   -fx-font-size: 12px;
   -fx-font-weight: bold;
 }
 
 .item-kategori {
-  -fx-text-fill: #8B8FA8;
+  -fx-text-fill: #8b8fa8;
   -fx-font-size: 10px;
 }
 
@@ -900,7 +879,7 @@
 }
 
 .item-qty {
-  -fx-text-fill: #FFFFFF;
+  -fx-text-fill: #ffffff;
   -fx-font-size: 12px;
   -fx-font-weight: bold;
 }
