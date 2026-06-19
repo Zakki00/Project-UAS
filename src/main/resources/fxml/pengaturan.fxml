@@ -118,10 +118,6 @@
           <Label styleClass="page-title" text="Pengaturan" />
           <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
         </VBox>
-        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
-          <Label styleClass="search-icon" text="🔍" />
-          <TextField promptText="Cari..." styleClass="search-field" />
-        </HBox>
         <StackPane styleClass="notif-wrapper">
           <Button onAction="#onNotif" styleClass="notif-btn" text="🔔" />
           <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />

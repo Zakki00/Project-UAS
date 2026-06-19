@@ -11,7 +11,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -123,11 +122,6 @@
           <Label styleClass="page-title" text="Dashboard" />
           <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
         </VBox>
-        <!-- Search -->
-        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
-          <Label styleClass="search-icon" text="🔍" />
-          <TextField promptText="Cari..." styleClass="search-field" />
-        </HBox>
         <!-- Notif -->
         <StackPane styleClass="notif-wrapper">
           <Button onAction="#onNotif" styleClass="notif-btn" text="🔔" />

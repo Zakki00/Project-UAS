@@ -115,10 +115,6 @@
           <Label styleClass="page-title" text="Produk" />
           <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
         </VBox>
-        <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
-          <Label styleClass="search-icon" text="🔍" />
-          <TextField fx:id="txtCari" promptText="Cari..." styleClass="search-field" />
-        </HBox>
         <StackPane styleClass="notif-wrapper">
           <Button styleClass="notif-btn" text="🔔" />
           <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />

@@ -127,12 +127,6 @@
                 <Label styleClass="page-date" text="Senin, 16 Juni 2025" />
               </children>
             </VBox>
-            <HBox alignment="CENTER_LEFT" prefHeight="53.0" prefWidth="276.0" spacing="8" styleClass="search-box">
-              <children>
-                <Label styleClass="search-icon" text="🔍" />
-                <TextField promptText="Cari..." styleClass="search-field" />
-              </children>
-            </HBox>
             <StackPane styleClass="notif-wrapper">
               <children>
                 <Button onAction="#onNotif" styleClass="notif-btn" text="🔔" />
