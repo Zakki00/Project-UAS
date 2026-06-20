@@ -700,36 +700,46 @@ public class KaryawanController implements Initializable {
     // VALIDASI KARYAWAN
     // ══════════════════════════════════════════════════════
     private boolean validasiKaryawan() {
+        Stage stage = (Stage) txtIdKaryawan.getScene().getWindow();
+
         if (txtNamaKaryawan.getText().isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "Nama karyawan wajib diisi!");
+            new Popup().showModernPopup("WARNING", "Nama karyawan wajib diisi!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         if (cmbJenisKelamin.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Pilih jenis kelamin!");
+            new Popup().showModernPopup("WARNING", "Pilih jenis kelamin!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         if (txtNoHp.getText().isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "No HP wajib diisi!");
+            new Popup().showModernPopup("WARNING", "No HP wajib diisi!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         if (!txtNoHp.getText().matches("\\d{10,13}")) {
-            showAlert(Alert.AlertType.WARNING, "No HP harus terdiri dari 10 sampai 13 digit!");
+            new Popup().showModernPopup("WARNING", "No HP harus terdiri dari 10 sampai 13 digit!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         if (dpTanggalMasuk.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Pilih tanggal masuk!");
+            new Popup().showModernPopup("WARNING", "Pilih tanggal masuk!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         if (cmbStatusKerja.getValue() == null) {
-            showAlert(Alert.AlertType.WARNING, "Pilih status kerja!");
+            new Popup().showModernPopup("WARNING", "Pilih status kerja!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         if (txtUsername.getText().isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "Username wajib diisi!");
+            new Popup().showModernPopup("WARNING", "Username wajib diisi!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         if (txtPassword.getText().isBlank()) {
-            showAlert(Alert.AlertType.WARNING, "Password wajib diisi!");
+            new Popup().showModernPopup("WARNING", "Password wajib diisi!",
+                    Popup.PopupType.WARNING, stage);
             return false;
         }
         return true;
@@ -1083,28 +1093,4 @@ public class KaryawanController implements Initializable {
         tableAbsensi.getSelectionModel().clearSelection();
     }
 
-    // ══════════════════════════════════════════════════════
-    // HELPER
-    // ══════════════════════════════════════════════════════
-    private void showAlert(Alert.AlertType type, String msg) {
-        new Alert(type, msg, ButtonType.OK).showAndWait();
-    }
-
-
-    //===========================================
-     // Hash password pakai SHA-256
-     //=========================================
-    private String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hash = md.digest(password.getBytes("UTF-8"));
-            StringBuilder hex = new StringBuilder();
-            for (byte b : hash) {
-                hex.append(String.format("%02x", b));
-            }
-            return hex.toString();
-        } catch (Exception e) {
-            return password; // fallback tanpa hash
-        }
-    }
 }
