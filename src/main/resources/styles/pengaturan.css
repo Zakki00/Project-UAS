@@ -890,3 +890,18 @@
     -fx-max-width: 46px;
     -fx-max-height: 46px;
 }
+
+.notif-badge {
+    -fx-background-color: #FF5C7C;
+    -fx-background-radius: 50;
+    -fx-min-width: 16;
+    -fx-min-height: 16;
+    -fx-max-width: 16;
+    -fx-max-height: 16;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 8px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-translate-x: -2;
+    -fx-translate-y: 2;
+}

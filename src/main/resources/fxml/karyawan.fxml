@@ -30,90 +30,90 @@
   <left>
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
       <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
-        <Label styleClass="logo-icon" text="🏪" />
+        <Label styleClass="logo-icon" text="🏪"/>
         <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
-          <Label styleClass="logo-title" text="StoreMS" />
-          <Label styleClass="logo-sub" text="Manajemen Toko" />
+          <Label styleClass="logo-title" text="StoreMS"/>
+          <Label styleClass="logo-sub" text="Manajemen Toko"/>
         </VBox>
       </HBox>
-      <Separator styleClass="sidebar-divider" />
+      <Separator styleClass="sidebar-divider"/>
       <VBox fx:id="navMenu" spacing="2" styleClass="nav-menu" VBox.vgrow="ALWAYS">
         <VBox.margin>
-          <Insets bottom="10" top="10" />
+          <Insets bottom="10" top="10"/>
         </VBox.margin>
         <children>
           <HBox fx:id="navDashboard" alignment="CENTER_LEFT" onMouseClicked="#onNavDashboard" spacing="10" styleClass="nav-item, nav-active">
             <children>
-              <Rectangle height="0" styleClass="nav-active-bar" width="3" />
-              <Label styleClass="nav-icon" text="⊞" />
-              <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard" />
+              <Rectangle height="0" styleClass="nav-active-bar" width="3"/>
+              <Label styleClass="nav-icon" text="⊞"/>
+              <Label fx:id="navLblDashboard" styleClass="nav-label" text="Dashboard"/>
             </children>
           </HBox>
           <HBox fx:id="navProduk" alignment="CENTER_LEFT" onMouseClicked="#onNavProduk" spacing="10" styleClass="nav-item">
             <children>
-              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-              <Label styleClass="nav-icon" text="📦" />
-              <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk" />
+              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+              <Label styleClass="nav-icon" text="📦"/>
+              <Label fx:id="navLblProduk" styleClass="nav-label" text="Produk"/>
             </children>
           </HBox>
           <HBox fx:id="navKaryawan" alignment="CENTER_LEFT" onMouseClicked="#onNavKaryawan" spacing="10" styleClass="nav-item">
             <children>
-              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-              <Label styleClass="nav-icon" text="👥" />
-              <Label fx:id="navLblKaryawan" styleClass="nav-label" text="Karyawan" />
+              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+              <Label styleClass="nav-icon" text="👥"/>
+              <Label fx:id="navLblKaryawan" styleClass="nav-label" text="Karyawan"/>
             </children>
           </HBox>
           <HBox fx:id="navKasir" alignment="CENTER_LEFT" onMouseClicked="#onNavKasir" spacing="10" styleClass="nav-item">
             <children>
-              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-              <Label styleClass="nav-icon" text="🛒" />
-              <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi" />
+              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+              <Label styleClass="nav-icon" text="🛒"/>
+              <Label fx:id="navLblKasir" styleClass="nav-label" text="Transaksi"/>
             </children>
           </HBox>
           <HBox fx:id="navPiutang" alignment="CENTER_LEFT" onMouseClicked="#onNavPiutang" spacing="10" styleClass="nav-item">
             <children>
-              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-              <Label styleClass="nav-icon" text="💰" />
-              <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang" />
+              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+              <Label styleClass="nav-icon" text="💰"/>
+              <Label fx:id="navLblPiutang" styleClass="nav-label" text="Piutang"/>
             </children>
           </HBox>
           <HBox fx:id="navLaporan" alignment="CENTER_LEFT" onMouseClicked="#onNavLaporan" spacing="10" styleClass="nav-item">
             <children>
-              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-              <Label styleClass="nav-icon" text="📈" />
-              <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan" />
+              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+              <Label styleClass="nav-icon" text="📈"/>
+              <Label fx:id="navLblLaporan" styleClass="nav-label" text="Laporan"/>
             </children>
           </HBox>
           <HBox fx:id="navPengaturan" alignment="CENTER_LEFT" onMouseClicked="#onNavPengaturan" spacing="10" styleClass="nav-item">
             <children>
-              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-              <Label styleClass="nav-icon" text="⚙️" />
-              <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Pengaturan" />
+              <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+              <Label styleClass="nav-icon" text="⚙️"/>
+              <Label fx:id="navLblPengaturan" styleClass="nav-label" text="Pengaturan"/>
             </children>
           </HBox>
         </children>
       </VBox>
-      <Separator styleClass="sidebar-divider" />
+      <Separator styleClass="sidebar-divider"/>
       <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
-            <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
-               <children>
-                  <ImageView fx:id="imgAvatarGooglenavbar" fitHeight="30.0" fitWidth="30.0" managed="false" pickOnBounds="true" preserveRatio="false" visible="false" />
-                  <Label fx:id="lblAvatarnavbar" styleClass="topbar-avatar" text="A" />
-               </children>
-            </VBox>
+        <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
+          <children>
+            <ImageView fx:id="imgAvatarGooglenavbar" fitHeight="30.0" fitWidth="30.0" managed="false" pickOnBounds="true" preserveRatio="false" visible="false"/>
+            <Label fx:id="lblAvatarnavbar" styleClass="topbar-avatar" text="A"/>
+          </children>
+        </VBox>
         <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
-          <Label fx:id="navllblakun" styleClass="user-name" text="Admin" />
-          <Label fx:id="navlblnama" styleClass="user-role" text="Administrator" />
+          <Label fx:id="navllblakun" styleClass="user-name" text="Admin"/>
+          <Label fx:id="navlblnama" styleClass="user-role" text="Administrator"/>
         </VBox>
       </HBox>
-         <HBox fx:id="navLogout" alignment="CENTER_LEFT" onMouseClicked="#onNavLogout" onMouseEntered="#onNavLogoutHover" onMouseExited="#onNavLogoutExit" prefHeight="49.0" prefWidth="219.0" spacing="10" style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
-            <children>
-               <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
-               <Label style="-fx-font-size: 16px; -fx-text-fill: #FF5C7C; -fx-min-width: 26; -fx-alignment: CENTER;" text="🚪" />
-               <Label fx:id="navLblLogout" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #FF5C7C;" text="Logout" />
-            </children>
-         </HBox>
-      <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀" />
+      <HBox fx:id="navLogout" alignment="CENTER_LEFT" onMouseClicked="#onNavLogout" onMouseEntered="#onNavLogoutHover" onMouseExited="#onNavLogoutExit" prefHeight="49.0" prefWidth="219.0" spacing="10" style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
+        <children>
+          <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3"/>
+          <Label style="-fx-font-size: 16px; -fx-text-fill: #FF5C7C; -fx-min-width: 26; -fx-alignment: CENTER;" text="🚪"/>
+          <Label fx:id="navLblLogout" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #FF5C7C;" text="Logout"/>
+        </children>
+      </HBox>
+      <Button fx:id="toggleBtn" maxWidth="Infinity" onAction="#onToggleSidebar" styleClass="toggle-btn" text="◀"/>
     </VBox>
   </left>
 
@@ -125,19 +125,20 @@
       <!-- Top Bar -->
       <HBox alignment="CENTER_LEFT" spacing="12" styleClass="topbar">
         <VBox spacing="1" HBox.hgrow="ALWAYS">
-          <Label styleClass="page-title" text="Manajemen Karyawan" />
-               <Label fx:id="tanggal" styleClass="page-date" text="Senin, 16 Juni 2025" />
+          <Label styleClass="page-title" text="Manajemen Karyawan"/>
+          <Label fx:id="tanggal" styleClass="page-date" text="Senin, 16 Juni 2025"/>
         </VBox>
         <StackPane styleClass="notif-wrapper">
-          <Button styleClass="notif-btn" text="🔔" />
-          <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />
+          <Button onAction="#onNotif" styleClass="notif-btn" text="🔔"/>
+          <Label fx:id="notifBadge" styleClass="notif-badge" text="" 
+                                         StackPane.alignment="TOP_RIGHT" visible="false"/>
         </StackPane>
-            <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
-               <children>
-                  <ImageView fx:id="imgAvatarGoogletopbar" fitHeight="30.0" fitWidth="30.0" managed="false" pickOnBounds="true" preserveRatio="false" visible="false" />
-                  <Label fx:id="lblAvatartopbar" styleClass="topbar-avatar" text="A" />
-               </children>
-            </VBox>
+        <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
+          <children>
+            <ImageView fx:id="imgAvatarGoogletopbar" fitHeight="30.0" fitWidth="30.0" managed="false" pickOnBounds="true" preserveRatio="false" visible="false"/>
+            <Label fx:id="lblAvatartopbar" styleClass="topbar-avatar" text="A"/>
+          </children>
+        </VBox>
       </HBox>
       <!-- Tab Pane -->
       <TabPane fx:id="tabPane" styleClass="tab-pane" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
@@ -148,85 +149,85 @@
           <ScrollPane fitToWidth="true" styleClass="content-scroll" VBox.vgrow="ALWAYS">
             <VBox spacing="16" styleClass="content-inner">
               <VBox.margin>
-                <Insets />
+                <Insets/>
               </VBox.margin>
               <!-- ── CARD FORM ─────────────────────────── -->
               <VBox spacing="14" styleClass="card">
                 <!-- Card Header -->
                 <HBox alignment="CENTER_LEFT" spacing="8">
-                  <Label style="-fx-font-size:16px;" text="📋" />
-                  <Label styleClass="card-title" text="DATA KARYAWAN CAFE" />
+                  <Label style="-fx-font-size:16px;" text="📋"/>
+                  <Label styleClass="card-title" text="DATA KARYAWAN CAFE"/>
                 </HBox>
-                <Separator styleClass="sep" />
+                <Separator styleClass="sep"/>
                 <!-- Grid Form  (6 kolom: label | field | spacer | label | field) -->
                 <GridPane hgap="14" vgap="12">
                   <columnConstraints>
-                    <ColumnConstraints minWidth="110" prefWidth="120" />
-                    <ColumnConstraints hgrow="ALWAYS" minWidth="160" />
-                    <ColumnConstraints minWidth="24" prefWidth="24" />
-                    <ColumnConstraints minWidth="110" prefWidth="120" />
-                    <ColumnConstraints hgrow="ALWAYS" minWidth="160" />
+                    <ColumnConstraints minWidth="110" prefWidth="120"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="160"/>
+                    <ColumnConstraints minWidth="24" prefWidth="24"/>
+                    <ColumnConstraints minWidth="110" prefWidth="120"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="160"/>
                   </columnConstraints>
                   <rowConstraints>
-                    <RowConstraints minHeight="36.0" />
-                    <RowConstraints minHeight="36.0" />
-                    <RowConstraints minHeight="36.0" />
-                    <RowConstraints minHeight="36.0" />
-                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0"/>
+                    <RowConstraints minHeight="36.0"/>
+                    <RowConstraints minHeight="36.0"/>
+                    <RowConstraints minHeight="36.0"/>
+                    <RowConstraints minHeight="36.0"/>
                   </rowConstraints>
                   <!-- Row 0 -->
-                  <Label styleClass="form-label" text="ID Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                  <TextField fx:id="txtIdKaryawan" editable="false" promptText="Auto-generate" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                  <Label styleClass="form-label" text="No HP" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                  <TextField fx:id="txtNoHp" promptText="08xxxxxxxxxx" styleClass="form-field" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                  <Label styleClass="form-label" text="ID Karyawan" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                  <TextField fx:id="txtIdKaryawan" editable="false" promptText="Auto-generate" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                  <Label styleClass="form-label" text="No HP" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                  <TextField fx:id="txtNoHp" promptText="08xxxxxxxxxx" styleClass="form-field" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
                   <!-- Row 1 -->
-                  <Label styleClass="form-label" text="Nama Lengkap" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                  <TextField fx:id="txtNamaKaryawan" promptText="Nama karyawan" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label styleClass="form-label" text="Alamat" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <TextArea fx:id="txtAlamat" promptText="Alamat lengkap..." styleClass="form-textarea" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.rowSpan="2" />
+                  <Label styleClass="form-label" text="Nama Lengkap" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                  <TextField fx:id="txtNamaKaryawan" promptText="Nama karyawan" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                  <Label styleClass="form-label" text="Alamat" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                  <TextArea fx:id="txtAlamat" promptText="Alamat lengkap..." styleClass="form-textarea" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.rowSpan="2"/>
                   <!-- Row 2 -->
-                  <Label styleClass="form-label" text="Jenis Kelamin" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <ComboBox fx:id="cmbJenisKelamin" maxWidth="Infinity" promptText="Pilih..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS" />
+                  <Label styleClass="form-label" text="Jenis Kelamin" GridPane.columnIndex="3" GridPane.rowIndex="3"/>
+                  <ComboBox fx:id="cmbJenisKelamin" maxWidth="Infinity" promptText="Pilih..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS"/>
                   <!-- Row 3 (NEW) -->
-                  <Label styleClass="form-label" text="Username" GridPane.rowIndex="2" />
-                  <TextField fx:id="txtUsername" promptText="Username login" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label styleClass="form-label" text="Password" GridPane.rowIndex="3" />
-                  <TextField fx:id="txtPassword" promptText="Password" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label styleClass="form-label" text="Username" GridPane.rowIndex="2"/>
+                  <TextField fx:id="txtUsername" promptText="Username login" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                  <Label styleClass="form-label" text="Password" GridPane.rowIndex="3"/>
+                  <TextField fx:id="txtPassword" promptText="Password" styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                   <!-- Row 4 -->
-                  <Label styleClass="form-label" text="Status Kerja" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                  <ComboBox fx:id="cmbStatusKerja" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="4" />
-                  <Label styleClass="form-label" text="Tanggal Masuk" GridPane.rowIndex="4" />
-                  <DatePicker fx:id="dpTanggalMasuk" prefWidth="343.0" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <Label styleClass="form-label" text="Status Kerja" GridPane.columnIndex="3" GridPane.rowIndex="4"/>
+                  <ComboBox fx:id="cmbStatusKerja" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="4"/>
+                  <Label styleClass="form-label" text="Tanggal Masuk" GridPane.rowIndex="4"/>
+                  <DatePicker fx:id="dpTanggalMasuk" prefWidth="343.0" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
                 </GridPane>
                 <!-- Tombol Aksi -->
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                  <Button minWidth="100" onAction="#tambahKaryawan" styleClass="btn-base, btn-tambah" text="＋ Tambah" />
-                  <Button minWidth="100" onAction="#simpanKaryawan" styleClass="btn-base, btn-simpan" text="💾 Simpan" />
-                  <Button minWidth="100" onAction="#ubahKaryawan" styleClass="btn-base, btn-ubah" text="✏ Ubah" />
-                  <Button minWidth="100" onAction="#hapusKaryawan" styleClass="btn-base, btn-hapus" text="🗑 Hapus" />
-                  <Button minWidth="100" onAction="#resetKaryawan" styleClass="btn-base, btn-reset" text="↺ Reset" />
+                  <Button minWidth="100" onAction="#tambahKaryawan" styleClass="btn-base, btn-tambah" text="＋ Tambah"/>
+                  <Button minWidth="100" onAction="#simpanKaryawan" styleClass="btn-base, btn-simpan" text="💾 Simpan"/>
+                  <Button minWidth="100" onAction="#ubahKaryawan" styleClass="btn-base, btn-ubah" text="✏ Ubah"/>
+                  <Button minWidth="100" onAction="#hapusKaryawan" styleClass="btn-base, btn-hapus" text="🗑 Hapus"/>
+                  <Button minWidth="100" onAction="#resetKaryawan" styleClass="btn-base, btn-reset" text="↺ Reset"/>
                 </HBox>
               </VBox>
               <!-- ── TABLE DAFTAR KARYAWAN ─────────────── -->
               <VBox spacing="10">
                 <HBox alignment="CENTER_LEFT" spacing="8">
-                  <Label style="-fx-font-size:14px;" text="📋" />
-                  <Label styleClass="section-title" text="Daftar Karyawan" />
+                  <Label style="-fx-font-size:14px;" text="📋"/>
+                  <Label styleClass="section-title" text="Daftar Karyawan"/>
                 </HBox>
                 <TableView fx:id="tableKaryawan" minHeight="280" prefHeight="320" styleClass="table-karyawan" VBox.vgrow="ALWAYS">
                   <columns>
-                    <TableColumn fx:id="colId" minWidth="80" prefWidth="90" text="ID" />
-                    <TableColumn fx:id="colNama" minWidth="120" prefWidth="160" text="Nama Lengkap" />
-                    <TableColumn fx:id="colUsername" minWidth="100" prefWidth="120" text="Username" />
-                    <TableColumn fx:id="colJenisKelamin" minWidth="90" prefWidth="110" text="Jenis Kelamin" />
-                    <TableColumn fx:id="colNoHp" minWidth="110" prefWidth="130" text="No HP" />
-                    <TableColumn fx:id="colTglMasuk" minWidth="90" prefWidth="110" text="Tgl Masuk" />
-                    <TableColumn fx:id="colAlamat" minWidth="140" prefWidth="180" text="Alamat" />
-                    <TableColumn fx:id="colStatus" minWidth="80" prefWidth="100" text="Status" />
-                    <TableColumn fx:id="colRole" minWidth="80" prefWidth="90" text="Role" />
+                    <TableColumn fx:id="colId" minWidth="80" prefWidth="90" text="ID"/>
+                    <TableColumn fx:id="colNama" minWidth="120" prefWidth="160" text="Nama Lengkap"/>
+                    <TableColumn fx:id="colUsername" minWidth="100" prefWidth="120" text="Username"/>
+                    <TableColumn fx:id="colJenisKelamin" minWidth="90" prefWidth="110" text="Jenis Kelamin"/>
+                    <TableColumn fx:id="colNoHp" minWidth="110" prefWidth="130" text="No HP"/>
+                    <TableColumn fx:id="colTglMasuk" minWidth="90" prefWidth="110" text="Tgl Masuk"/>
+                    <TableColumn fx:id="colAlamat" minWidth="140" prefWidth="180" text="Alamat"/>
+                    <TableColumn fx:id="colStatus" minWidth="80" prefWidth="100" text="Status"/>
+                    <TableColumn fx:id="colRole" minWidth="80" prefWidth="90" text="Role"/>
                   </columns>
                   <placeholder>
-                    <Label style="-fx-text-fill:#8B8FA8;" text="Belum ada data karyawan" />
+                    <Label style="-fx-text-fill:#8B8FA8;" text="Belum ada data karyawan"/>
                   </placeholder>
                 </TableView>
               </VBox>
@@ -242,60 +243,60 @@
               <!-- ── CARD FORM ABSENSI ─────────────────── -->
               <VBox spacing="14" styleClass="card">
                 <HBox alignment="CENTER_LEFT" spacing="8">
-                  <Label style="-fx-font-size:16px;" text="📅" />
-                  <Label styleClass="card-title" text="FORM ABSENSI KARYAWAN" />
+                  <Label style="-fx-font-size:16px;" text="📅"/>
+                  <Label styleClass="card-title" text="FORM ABSENSI KARYAWAN"/>
                 </HBox>
-                <Separator styleClass="sep" />
+                <Separator styleClass="sep"/>
                 <GridPane hgap="14" vgap="12">
                   <columnConstraints>
-                    <ColumnConstraints minWidth="120" prefWidth="130" />
-                    <ColumnConstraints hgrow="ALWAYS" minWidth="160" />
-                    <ColumnConstraints minWidth="24" prefWidth="24" />
-                    <ColumnConstraints minWidth="120" prefWidth="130" />
-                    <ColumnConstraints hgrow="ALWAYS" minWidth="160" />
+                    <ColumnConstraints minWidth="120" prefWidth="130"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="160"/>
+                    <ColumnConstraints minWidth="24" prefWidth="24"/>
+                    <ColumnConstraints minWidth="120" prefWidth="130"/>
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="160"/>
                   </columnConstraints>
                   <rowConstraints>
-                    <RowConstraints minHeight="36.0" />
-                    <RowConstraints minHeight="36.0" />
-                    <RowConstraints minHeight="36.0" />
+                    <RowConstraints minHeight="36.0"/>
+                    <RowConstraints minHeight="36.0"/>
+                    <RowConstraints minHeight="36.0"/>
                   </rowConstraints>
                   <!-- Row 0 -->
-                  <Label styleClass="form-label" text="Tanggal Absensi" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                  <DatePicker fx:id="dpTanggalAbsensi" maxWidth="Infinity" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                  <Label styleClass="form-label" text="Shift Masuk" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                  <ComboBox fx:id="cmbShift" maxWidth="Infinity" promptText="Pilih shift..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="0" />
-                  <ComboBox fx:id="cmbPilihKaryawan" maxWidth="Infinity" prefWidth="200.0" promptText="ID Karyawan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <Label styleClass="form-label" text="Status Kehadiran" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="cmbStatusKehadiran" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <Label styleClass="form-label" text="Tanggal Absensi" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                  <DatePicker fx:id="dpTanggalAbsensi" maxWidth="Infinity" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                  <Label styleClass="form-label" text="Shift Masuk" GridPane.columnIndex="3" GridPane.rowIndex="0"/>
+                  <ComboBox fx:id="cmbShift" maxWidth="Infinity" promptText="Pilih shift..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+                  <ComboBox fx:id="cmbPilihKaryawan" maxWidth="Infinity" prefWidth="200.0" promptText="ID Karyawan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                  <Label styleClass="form-label" text="Status Kehadiran" GridPane.columnIndex="3" GridPane.rowIndex="1"/>
+                  <ComboBox fx:id="cmbStatusKehadiran" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="1"/>
                   <!-- Row 2 -->
-                  <Label styleClass="form-label" text="Nama Karyawan" GridPane.rowIndex="1" />
-                           <TextField fx:id="txtNamaAbsensi" editable="false" maxWidth="Infinity" prefWidth="187.0" promptText="Auto-fill..." styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                           <Label prefWidth="71.0" styleClass="form-label" text="Pilih Karyawan" GridPane.rowIndex="2" />
+                  <Label styleClass="form-label" text="Nama Karyawan" GridPane.rowIndex="1"/>
+                  <TextField fx:id="txtNamaAbsensi" editable="false" maxWidth="Infinity" prefWidth="187.0" promptText="Auto-fill..." styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                  <Label prefWidth="71.0" styleClass="form-label" text="Pilih Karyawan" GridPane.rowIndex="2"/>
                 </GridPane>
                 <!-- Tombol Absensi -->
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                  <Button minWidth="140" onAction="#simpanAbsensi" styleClass="btn-base, btn-tambah" text="💾 Simpan Absensi" />
-                  <Button minWidth="100" onAction="#ubahAbsensi" styleClass="btn-base, btn-ubah" text="✏ Ubah" />
-                  <Button minWidth="100" onAction="#hapusAbsensi" styleClass="btn-base, btn-hapus" text="🗑 Hapus" />
-                  <Button minWidth="100" onAction="#resetAbsensi" styleClass="btn-base, btn-reset" text="↺ Reset" />
+                  <Button minWidth="140" onAction="#simpanAbsensi" styleClass="btn-base, btn-tambah" text="💾 Simpan Absensi"/>
+                  <Button minWidth="100" onAction="#ubahAbsensi" styleClass="btn-base, btn-ubah" text="✏ Ubah"/>
+                  <Button minWidth="100" onAction="#hapusAbsensi" styleClass="btn-base, btn-hapus" text="🗑 Hapus"/>
+                  <Button minWidth="100" onAction="#resetAbsensi" styleClass="btn-base, btn-reset" text="↺ Reset"/>
                 </HBox>
               </VBox>
               <!-- ── TABLE ABSENSI ──────────────────────── -->
               <VBox spacing="10">
                 <HBox alignment="CENTER_LEFT" spacing="8">
-                  <Label style="-fx-font-size:14px;" text="📋" />
-                  <Label styleClass="section-title" text="Daftar Absensi" />
+                  <Label style="-fx-font-size:14px;" text="📋"/>
+                  <Label styleClass="section-title" text="Daftar Absensi"/>
                 </HBox>
                 <TableView fx:id="tableAbsensi" minHeight="280" prefHeight="320" styleClass="table-absensi" VBox.vgrow="ALWAYS">
                   <columns>
-                    <TableColumn fx:id="colAbsTanggal" minWidth="90" prefWidth="120" text="Tanggal" />
-                    <TableColumn fx:id="colAbsId" minWidth="70" prefWidth="90" text="ID" />
-                    <TableColumn fx:id="colAbsNama" minWidth="120" prefWidth="180" text="Nama" />
-                    <TableColumn fx:id="colAbsShift" minWidth="80" prefWidth="100" text="Shift" />
-                    <TableColumn fx:id="colAbsStatus" minWidth="90" prefWidth="110" text="Status" />
+                    <TableColumn fx:id="colAbsTanggal" minWidth="90" prefWidth="120" text="Tanggal"/>
+                    <TableColumn fx:id="colAbsId" minWidth="70" prefWidth="90" text="ID"/>
+                    <TableColumn fx:id="colAbsNama" minWidth="120" prefWidth="180" text="Nama"/>
+                    <TableColumn fx:id="colAbsShift" minWidth="80" prefWidth="100" text="Shift"/>
+                    <TableColumn fx:id="colAbsStatus" minWidth="90" prefWidth="110" text="Status"/>
                   </columns>
                   <placeholder>
-                    <Label style="-fx-text-fill:#8B8FA8;" text="Belum ada data absensi" />
+                    <Label style="-fx-text-fill:#8B8FA8;" text="Belum ada data absensi"/>
                   </placeholder>
                 </TableView>
               </VBox>

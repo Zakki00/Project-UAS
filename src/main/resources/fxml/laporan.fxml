@@ -135,9 +135,10 @@
                <Label fx:id="tanggal" styleClass="page-date" text="Senin, 16 Juni 2025" />
         </VBox>
         <!-- Notif -->
-        <StackPane styleClass="notif-wrapper">
-          <Button onAction="#onNotif" styleClass="notif-btn" text="🔔" />
-          <Label styleClass="notif-badge" text="" StackPane.alignment="TOP_RIGHT" />
+         <StackPane styleClass="notif-wrapper">
+          <Button onAction="#onNotif" styleClass="notif-btn" text="🔔"/>
+          <Label fx:id="notifBadge" styleClass="notif-badge" text="" 
+                               StackPane.alignment="TOP_RIGHT" visible="false"/>
         </StackPane>
             <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
                <children>

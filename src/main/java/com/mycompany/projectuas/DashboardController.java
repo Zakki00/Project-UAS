@@ -4,6 +4,7 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -36,18 +37,17 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 import javafx.util.Duration;
 
 public class DashboardController implements Initializable {
     @FXML
     private Label tanggal;
 
-    //======================================================
-    //FOTO PROFILE
-    //=======================================================
+    // ======================================================
+    // FOTO PROFILE
+    // =======================================================
+    @FXML
+    private Label notifBadge;
     @FXML
     private Label lblAvatarnavbar;
     @FXML
@@ -257,10 +257,13 @@ public class DashboardController implements Initializable {
 
     }
 
-    //======================================================
-    //SETUP FORM
-    //======================================================
+    // ======================================================
+    // SETUP FORM
+    // ======================================================
     private void setupForm() {
+        // notif---------------
+        Notifikasi.updateBadge(notifBadge);
+
         // ====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
@@ -434,7 +437,7 @@ public class DashboardController implements Initializable {
         navLogout.setOnMouseEntered(e -> navLogout.setStyle(styleHover));
         navLogout.setOnMouseExited(e -> navLogout.setStyle(styleNormal));
     }
-    
+
     // =====================================
     // LOG OUT
     // =====================================
@@ -474,7 +477,7 @@ public class DashboardController implements Initializable {
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
-       
+
     }
 
     @FXML
@@ -518,7 +521,6 @@ public class DashboardController implements Initializable {
         new navigation().navigataeToPengaturan();
         ((Stage) navPengaturan.getScene().getWindow()).close();
     }
-
 
     // ═══════════════════════════════════════════════════════
     // KPI ORIGINAL
@@ -675,8 +677,7 @@ public class DashboardController implements Initializable {
     // ═══════════════════════════════════════════════════════
 
     private void loadShiftData() {
-        
-      
+
         int jamSekarang = java.time.LocalTime.now().getHour();
 
         applyRoundedClip(wrapperPagi);
@@ -820,8 +821,8 @@ public class DashboardController implements Initializable {
         lblStatusPagi.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
 
         lblStatusPagi.getStyleClass().add(pagiAktif
-                        ? "shift-status-aktif"
-                        : "shift-status-nonaktif");
+                ? "shift-status-aktif"
+                : "shift-status-nonaktif");
 
         lblStatusMalam.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
 
@@ -1105,6 +1106,7 @@ public class DashboardController implements Initializable {
             animateFadeIn(row, 150 + i * 80);
         }
     }
+
     // ═══════════════════════════════════════════════════════
     // STOCK LIST
     // ═══════════════════════════════════════════════════════
@@ -1252,7 +1254,7 @@ public class DashboardController implements Initializable {
 
             Label lblTotal = new Label(terjual + " unit");
             lblTotal.getStyleClass().add("bar-total");
-            
+
             ProgressBar pb = new ProgressBar(0);
             pb.getStyleClass().add("bar-progress");
             pb.setPrefHeight(12);
@@ -1460,7 +1462,7 @@ public class DashboardController implements Initializable {
             HBox row = new HBox(10, lblNama, pb, lblTotal);
             row.setAlignment(Pos.CENTER_LEFT);
             row.getStyleClass().add("bar-row");
-            
+
             vboxKategori.getChildren().add(row);
             animateProgressBar(pb, pct, 100 + i * 80);
             animateFadeIn(row, 100 + i * 80);
@@ -1505,17 +1507,13 @@ public class DashboardController implements Initializable {
     }
 
     // ═══════════════════════════════════════════════════════
-    // OTHER HANDLERS
+    // NOTIFIKASI
     // ═══════════════════════════════════════════════════════
+
     @FXML
     private void onNotif() {
-        System.out.println("Notifikasi dibuka");
+        Stage stage = (Stage) notifBadge.getScene().getWindow();
+        Notifikasi.show(stage);
     }
-
-    @FXML
-    private void onLihatSemua() {
-        System.out.println("Lihat semua transaksi");
-    }
-
 
 }

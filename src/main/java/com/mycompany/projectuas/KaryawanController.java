@@ -1,7 +1,6 @@
 package com.mycompany.projectuas;
 
 import java.net.URL;
-import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -26,8 +25,6 @@ import javafx.scene.image.ImageView;
 import javafx.animation.Timeline;
 import javafx.util.Callback;
 import javafx.util.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 public class KaryawanController implements Initializable {
@@ -36,6 +33,8 @@ public class KaryawanController implements Initializable {
     // ======================================================
     // FOTO PROFILE
     // =======================================================
+    @FXML
+    private Label notifBadge;
     @FXML
     private Label lblAvatarnavbar;
     @FXML
@@ -218,6 +217,9 @@ public class KaryawanController implements Initializable {
     //SETUP FORM
     //=======================================================
     private void setupForm(){
+        // notif---------------
+        Notifikasi.updateBadge(notifBadge);
+
         // ====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
@@ -1091,6 +1093,17 @@ public class KaryawanController implements Initializable {
         cmbShift.setValue(null);
         cmbStatusKehadiran.setValue(null);
         tableAbsensi.getSelectionModel().clearSelection();
+    }
+
+
+    // ═══════════════════════════════════════════════════════
+    // NOTIFIKASI
+    // ═══════════════════════════════════════════════════════
+
+    @FXML
+    private void onNotif() {
+        Stage stage = (Stage) notifBadge.getScene().getWindow();
+        Notifikasi.show(stage);
     }
 
 }

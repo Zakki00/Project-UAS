@@ -59,9 +59,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+
 
 public class LaporanController implements Initializable {
     @FXML
@@ -69,6 +67,9 @@ public class LaporanController implements Initializable {
     // ======================================================
     // FOTO PROFILE
     // =======================================================
+    
+    @FXML
+    private Label notifBadge;
     @FXML
     private Label lblAvatarnavbar;
     @FXML
@@ -557,6 +558,9 @@ public class LaporanController implements Initializable {
     // FORM & TABEL LAPORAN
     // ═══════════════════════════════════════════════════════
     private void setupForm() {
+        // notif---------------
+        Notifikasi.updateBadge(notifBadge);
+
         // ====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
@@ -1713,17 +1717,19 @@ public class LaporanController implements Initializable {
     }
 
     // ═══════════════════════════════════════════════════════
-    // OTHER HANDLERS
+    // NOTIFIKASI
     // ═══════════════════════════════════════════════════════
-    @FXML
-    private void onNotif() {
-        System.out.println("Notifikasi dibuka");
-    }
 
     @FXML
-    private void onLihatSemua() {
-        System.out.println("Lihat semua transaksi");
+    private void onNotif() {
+        Stage stage = (Stage) notifBadge.getScene().getWindow();
+        Notifikasi.show(stage);
     }
+    
+    // ═══════════════════════════════════════════════════════
+    // OTHER HANDLERS
+    // ═══════════════════════════════════════════════════════
+ 
 
     private void applyRoundedClip(StackPane pane) {
         Rectangle clip = new Rectangle();

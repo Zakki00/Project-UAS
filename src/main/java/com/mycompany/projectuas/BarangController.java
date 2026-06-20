@@ -13,7 +13,6 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 import com.mycompany.Model.BarangModel;
-import com.mycompany.Model.PiutangModel;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -39,7 +38,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -48,7 +46,6 @@ import javafx.util.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-
 import java.util.List;
 
 public class BarangController implements Initializable {
@@ -57,6 +54,10 @@ public class BarangController implements Initializable {
     // ======================================================
     // FOTO PROFILE
     // =======================================================
+    
+    @FXML
+    private Label notifBadge;
+    
     @FXML
     private Label lblAvatarnavbar;
     @FXML
@@ -69,6 +70,7 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // FXML — FORM
     // ═══════════════════════════════════════════════════════
+
     @FXML
     private TextField txtNama;
     @FXML
@@ -191,6 +193,7 @@ public class BarangController implements Initializable {
         setupFrom();
         loadDataFromDB();
         cariBarang();
+        
     }
 
 
@@ -199,6 +202,10 @@ public class BarangController implements Initializable {
     //SETUP FROM
     //==============================================
     private void setupFrom(){
+        //=========notifikasi
+         // notif---------------
+        Notifikasi.updateBadge(notifBadge);
+
         //====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
@@ -805,4 +812,16 @@ public class BarangController implements Initializable {
         ((Stage) navPengaturan.getScene().getWindow()).close();
     }
 
+
+
+     // ═══════════════════════════════════════════════════════
+    // NOTIFIKASI
+    // ═══════════════════════════════════════════════════════
+
+
+    @FXML
+    private void onNotif() {
+        Stage stage = (Stage) notifBadge.getScene().getWindow();
+        Notifikasi.show(stage);
+    }
 }

@@ -52,6 +52,8 @@ public class PengaturanController implements Initializable {
     // FOTO PROFILE
     // =======================================================
     @FXML
+    private Label notifBadge;
+    @FXML
     private Label lblAvatarnavbar;
     @FXML
     private Label lblAvatartopbar;
@@ -506,6 +508,9 @@ public class PengaturanController implements Initializable {
     // TAB HANDLERS
     // ══════════════════════════════════════
     private void setupForm() {
+        // notif---------------
+        Notifikasi.updateBadge(notifBadge);
+
         // ====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
@@ -839,16 +844,14 @@ public class PengaturanController implements Initializable {
         t.start();
     }
 
-    // ======================
-    // OTHER HANDLES
-    @FXML
-    private void onNotif() {
-        System.out.println("Notifikasi dibuka");
-    }
+    // ═══════════════════════════════════════════════════════
+    // NOTIFIKASI
+    // ═══════════════════════════════════════════════════════
 
     @FXML
-    private void onLihatSemua() {
-        System.out.println("Lihat semua transaksi");
+    private void onNotif() {
+        Stage stage = (Stage) notifBadge.getScene().getWindow();
+        Notifikasi.show(stage);
     }
 
 }

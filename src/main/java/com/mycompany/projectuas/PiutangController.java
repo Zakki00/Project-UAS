@@ -31,7 +31,6 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 public class PiutangController implements Initializable {
     @FXML
@@ -39,6 +38,8 @@ public class PiutangController implements Initializable {
     // ======================================================
     // FOTO PROFILE
     // =======================================================
+    @FXML
+    private Label notifBadge;
     @FXML
     private Label lblAvatarnavbar;
     @FXML
@@ -218,6 +219,9 @@ public class PiutangController implements Initializable {
 
 
     private void setupForm(){
+        // notif---------------
+        Notifikasi.updateBadge(notifBadge);
+
         // ====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
@@ -937,17 +941,13 @@ public class PiutangController implements Initializable {
     }
 
     // ═══════════════════════════════════════════════════════
-    // HANDLER LAIN-LAIN
+    // NOTIFIKASI
     // ═══════════════════════════════════════════════════════
 
     @FXML
     private void onNotif() {
-        System.out.println("Notifikasi dibuka");
-    }
-
-    @FXML
-    private void onLihatSemua() {
-        System.out.println("Lihat semua transaksi");
+        Stage stage = (Stage) notifBadge.getScene().getWindow();
+        Notifikasi.show(stage);
     }
 
     // ═══════════════════════════════════════════════════════
