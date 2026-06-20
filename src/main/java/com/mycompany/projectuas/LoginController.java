@@ -13,7 +13,6 @@ import com.mycompany.services.GoogleDriveService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
@@ -114,7 +113,7 @@ public class LoginController implements Initializable {
                         boolean restore = service.restoreBackupAll();
                         System.out.println("Restore = " + restore);
                         session.googleUser = user; // simpan ke session
-                        String cekSql = "SELECT id_user, username, nama_lengkap, role, foto_profil email FROM tb_user WHERE email = ?";
+                        String cekSql = "SELECT id_user, username, nama_lengkap, email, role, foto_profil FROM tb_user WHERE email = ?";
                         List<Object[]> hasil = koneksi.ambilData(cekSql, user.getEmail());
                         System.out.println("data admin berdasarkan email" + hasil.size());
 

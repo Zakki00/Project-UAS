@@ -87,6 +87,8 @@ public class BarangController implements Initializable {
     private Label lblFilePath;
     @FXML
     private TextField txtCari;
+    @FXML
+    private Button tambahBarang;
 
     // ═══════════════════════════════════════════════════════
     // FXML — TABEL
@@ -245,6 +247,7 @@ public class BarangController implements Initializable {
             }
             isUpdatingHarga = false;
         });
+
     }
 
 
@@ -330,14 +333,21 @@ public class BarangController implements Initializable {
     // ========================================
     // SELECTED DATA
     //=========================================
-    private void selectedData(){
+    private boolean updateData = false;
+    
+    private void selectedData() {
         filteredData = new FilteredList<>(masterData, p -> true);
         tabelBarang.setItems(filteredData);
 
-        // ── Listener pilih baris tabel ──
         tabelBarang.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal == null)
+            if (newVal == null) {
+                updateData = false;
+                tambahBarang.setDisable(false); // ← tidak ada yang dipilih, tombol aktif
                 return;
+            }
+            updateData = true;
+            tambahBarang.setDisable(true); // ← ada yang dipilih, tombol nonaktif
+
             txtNama.setText(newVal.getNama());
             cmbKategori.setValue(newVal.getKategori());
             txtStok.setText(String.valueOf(newVal.getStok()));
@@ -550,6 +560,7 @@ public class BarangController implements Initializable {
                         Popup.PopupType.ERROR, getStage());
             }
         });
+        
     }
 
     @FXML
@@ -563,6 +574,8 @@ public class BarangController implements Initializable {
         txtDeskripsi.clear();
         lblFilePath.setText("Tidak ada file dipilih");
         tabelBarang.getSelectionModel().clearSelection();
+        updateData = false;
+        tambahBarang.setDisable(false);
     }
 
 

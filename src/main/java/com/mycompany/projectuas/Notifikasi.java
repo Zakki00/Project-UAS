@@ -162,7 +162,10 @@ public class Notifikasi {
                 Item item = items.get(i);
 
                 Label icon = new Label(item.icon());
-                icon.setStyle("-fx-font-size: 18px; -fx-min-width: 28;");
+                icon.setStyle(
+                        "-fx-font-size: 18px;" +
+                                "-fx-min-width: 28;" +
+                                "-fx-text-fill: white;");
 
                 Label judul = new Label(item.judul());
                 judul.setStyle(
