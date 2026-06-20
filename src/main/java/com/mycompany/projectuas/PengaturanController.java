@@ -670,6 +670,8 @@ public class PengaturanController implements Initializable {
                     selesai.play();
                     lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
                     loadLastBackupTime();
+                    Popup popup = new Popup();
+                    popup.showSuccessPopup("Berhasil", "Backup Data Di Googl Drive Berhasil Di Lakukan");
 
                 } else {
                     Timeline selesai = new Timeline(

@@ -235,6 +235,12 @@ public class KaryawanController implements Initializable {
             navlblnama.setText(session.nama);
         }
 
+
+        txtNamaKaryawan.setTextFormatter(new TextFormatter<>(change -> {
+            change.setText(change.getText().toUpperCase());
+            return change;
+        }));
+
     }
     // ═══════════════════════════════════════════════════════
     // SIDEBAR TOGGLE

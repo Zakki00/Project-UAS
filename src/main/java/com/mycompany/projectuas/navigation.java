@@ -31,7 +31,9 @@ public class navigation {
     public void navigateToSignup() {
         navigateTo("signup.fxml", "Signup");
     }
-   
+    public void navgateToLupaPassword(){
+        navigateTo("lupaPasaword.fxml", "Lupa Password");
+    }
 
     public void navigateToDashboard() {
         navigateTo("dashboard.fxml", "Dashboard");

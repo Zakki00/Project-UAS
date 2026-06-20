@@ -52,8 +52,6 @@ public class LoginController implements Initializable {
     }
 
 
-
-
     //=========================================
     // CEK APAKAH APLIKASI SUDAH MEMLIKI OWNER
     //=========================================
@@ -294,7 +292,7 @@ public class LoginController implements Initializable {
             navigation nav = new navigation();
             nav.navigateToDashboard();
             Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
-            new Popup().showSuccessPopup("Selmat Datang " + session.username, "Selamat Datang Dan Selamat Bekerja! @" + session.nama);
+            new Popup().showSuccessPopup("Selamat Datang " + session.username, "Selamat Datang Dan Selamat Bekerja! @" + session.nama);
 
             ownerStage.close();
             return;
@@ -330,7 +328,14 @@ public class LoginController implements Initializable {
         }
     }
 
-   
+    @FXML
+    private void handleForgotPassword(ActionEvent event) {
+        navigation nav = new navigation();
+        nav.navgateToLupaPassword();
+        Stage stage= (Stage) loginBtn.getScene().getWindow();
+        stage.close();
+    }
+
    
 
     public void loadRememberedCredentials() {
