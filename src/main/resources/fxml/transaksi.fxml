@@ -157,7 +157,7 @@
             <!-- Search bar -->
             <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box">
               <Label styleClass="search-icon" text="🔍" />
-              <TextField fx:id="tfCari" promptText="Cari produk atau scan barcode..." styleClass="search-field" HBox.hgrow="ALWAYS" />
+              <TextField fx:id="tfCari" promptText="Cari Nama Produk" styleClass="search-field" HBox.hgrow="ALWAYS" />
               <Button fx:id="btnClearSearch" onAction="#onClearSearch" styleClass="btn-clear" text="✕" />
             </HBox>
             <!-- pesan paket ps -->
