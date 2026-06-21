@@ -263,10 +263,10 @@
                   <Label styleClass="form-label" text="Tanggal Absensi" GridPane.columnIndex="0" GridPane.rowIndex="0" />
                   <DatePicker fx:id="dpTanggalAbsensi" maxWidth="Infinity" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                   <Label styleClass="form-label" text="Shift Masuk" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                  <ComboBox fx:id="cmbShift" maxWidth="Infinity" promptText="Pilih shift..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+                  <ComboBox fx:id="cmbShift" maxWidth="Infinity" promptText="Pilih shift..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS" />
                   <ComboBox fx:id="cmbPilihKaryawan" maxWidth="Infinity" prefWidth="200.0" promptText="ID Karyawan..." styleClass="form-combo" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label styleClass="form-label" text="Status Kehadiran" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <ComboBox fx:id="cmbStatusKehadiran" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="cmbStatusKehadiran" maxWidth="Infinity" prefWidth="411.0" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" />
                   <!-- Row 2 -->
                   <Label styleClass="form-label" text="Nama Karyawan" GridPane.rowIndex="1" />
                   <TextField fx:id="txtNamaAbsensi" editable="false" maxWidth="Infinity" prefWidth="187.0" promptText="Auto-fill..." styleClass="form-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
