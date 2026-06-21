@@ -28,7 +28,7 @@
       <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
         <Label styleClass="logo-icon" text="☕" />
         <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
-          <Label styleClass="logo-title" text="StoreMS" />
+          <Label styleClass="logo-title" text="Enjoy Cafe" />
           <Label styleClass="logo-sub" text="Sistem Informasi" />
         </VBox>
       </HBox>
