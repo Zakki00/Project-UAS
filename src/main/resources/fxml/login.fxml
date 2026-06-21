@@ -27,12 +27,12 @@
         <StackPane alignment="CENTER" styleClass="icon-wrapper">
           <Label styleClass="store-icon" text="🏪" />
         </StackPane>
-        <Label styleClass="brand-name" text="StoreMS">
+        <Label styleClass="brand-name" text="Enjoy Cafe">
           <VBox.margin>
             <Insets top="18" />
           </VBox.margin>
         </Label>
-        <Label styleClass="brand-tagline" text="Sistem Manajemen Toko">
+        <Label styleClass="brand-tagline" text="Sistem Informasi">
           <VBox.margin>
             <Insets top="4" />
           </VBox.margin>

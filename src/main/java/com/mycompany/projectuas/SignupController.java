@@ -6,6 +6,8 @@ import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 
 import com.mycompany.Model.GoogleUser;
+import com.mycompany.services.AutoBackupService;
+import com.mycompany.services.GoogleDriveService;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -196,6 +198,19 @@ public class SignupController implements Initializable {
             prefs.put("username", username);
             prefs.put("password", password);
             prefs.putBoolean("remember", true);
+
+            //---melakukan backup
+            GoogleDriveService googleDriveService = new GoogleDriveService();
+            googleDriveService.uploadBackupAll();
+
+            //---set sesion
+            session.role = role;
+            session.email = googleUser.getEmail();
+            session.username = username;
+            session.nama = nama;
+            session.googleUser.setProfilePictureUrl(googleUser.getProfilePictureUrl());
+
+            //---navigasi ke dashbord---
             navigation nav = new navigation();
             nav.navigateToDashboard();
             Stage stage = (Stage) loginBtn.getScene().getWindow();

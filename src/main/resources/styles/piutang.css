@@ -529,6 +529,15 @@
 .table-piutang .table-row-cell:odd {
   -fx-background-color: #1e2138;
 }
+.table-piutang .table-row-cell:empty {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent;
+}
+
+.table-piutang .table-row-cell:empty .table-cell {
+  -fx-background-color: transparent;
+  -fx-border-color: transparent;
+}
 
 .table-piutang .table-row-cell:hover {
   -fx-background-color: #252840;

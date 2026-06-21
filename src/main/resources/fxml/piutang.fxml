@@ -220,7 +220,7 @@
             </VBox>
 
             <!-- PANEL KANAN -->
-            <VBox prefHeight="766.0" prefWidth="284.0" spacing="12.0" styleClass="panel-kanan" HBox.hgrow="ALWAYS">
+            <VBox prefWidth="360.0" spacing="12.0" styleClass="panel-kanan">
               <padding>
                 <Insets left="10.0" top="12.0" />
               </padding>

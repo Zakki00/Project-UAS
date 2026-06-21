@@ -112,7 +112,7 @@ public class LoginController implements Initializable {
                         GoogleDriveService service = new GoogleDriveService();
                         boolean restore = service.restoreBackupAll();
                         System.out.println("Restore = " + restore);
-                        session.googleUser = user; // simpan ke session
+                        session.googleUser = user; 
                         String cekSql = "SELECT id_user, username, nama_lengkap, email, role, foto_profil FROM tb_user WHERE email = ?";
                         List<Object[]> hasil = koneksi.ambilData(cekSql, user.getEmail());
                         System.out.println("data admin berdasarkan email" + hasil.size());
