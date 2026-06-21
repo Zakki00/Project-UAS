@@ -974,6 +974,25 @@
     -fx-border-radius: 20;
 }
 
+.kasir-chip {
+    -fx-padding: 5 12;
+    -fx-background-radius: 20;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* Shift Pagi */
+.chip-pagi {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+/* Shift Malam */
+.chip-malam {
+    -fx-background-color: #1f2937;
+    -fx-text-fill: white;
+}
+
 /* ── BASE CARD ───────────────────────────────── */
 .shift-card {
     -fx-background-radius: 20;
@@ -1015,6 +1034,7 @@
 /* Icon kasir pagi */
 .shift-pagi-icon {
     -fx-font-size: 22px;
+    -fx-text-fill: #1A1A2E;
 }
 
 
@@ -1235,10 +1255,8 @@
 
 
 .kasir-chip {
-    -fx-background-color: rgba(255, 255, 255, 0.18);
     -fx-background-radius: 20;
     -fx-padding: 5 12 5 12;
-    -fx-text-fill: rgb(255, 255, 255);
     -fx-font-size: 11px;
     -fx-font-weight: bold;
 }

@@ -21,11 +21,11 @@
       <children>
         <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
           <children>
-            <Label styleClass="logo-icon" text="🏪" />
+            <Label styleClass="logo-icon" text="☕" />
             <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
               <children>
-                <Label styleClass="logo-title" text="StoreMS" />
-                <Label styleClass="logo-sub" text="Manajemen Toko" />
+                <Label styleClass="logo-title" text="Enjoy Cafe" />
+                <Label styleClass="logo-sub" text="Sistem Informasi" />
               </children>
             </VBox>
           </children>

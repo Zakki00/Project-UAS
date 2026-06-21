@@ -30,10 +30,10 @@
   <left>
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
       <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
-        <Label styleClass="logo-icon" text="🏪" />
+        <Label styleClass="logo-icon" text="☕" />
         <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
-          <Label styleClass="logo-title" text="StoreMS" />
-          <Label styleClass="logo-sub" text="Manajemen Toko" />
+          <Label styleClass="logo-title" text="Enjoy Cafe" />
+          <Label styleClass="logo-sub" text="Sistem Informasi" />
         </VBox>
       </HBox>
       <Separator styleClass="sidebar-divider" />

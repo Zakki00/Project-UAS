@@ -912,12 +912,12 @@ public class LaporanController implements Initializable {
         loadKasirShift(
                 "06:00:00",
                 "12:00:00",
-                flowKasirPagi);
+                flowKasirPagi,true);
 
         loadKasirShift(
                 "12:00:00",
                 "23:00:00",
-                flowKasirMalam);
+                flowKasirMalam,false);
 
         updateStatusDot();
     }
@@ -980,27 +980,26 @@ public class LaporanController implements Initializable {
     private void loadKasirShift(
             String jamMulai,
             String jamSelesai,
-            FlowPane flowPane) {
+            FlowPane flowPane,
+            boolean shiftPagi) {
 
         String sql = """
-                    SELECT DISTINCT u.nama_lengkap
-                    FROM tb_transaksi t
-                    JOIN tb_karyawan u ON u.id_karyawan = t.id_karyawan
-                    WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
-                      AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
-                    ORDER BY u.nama_lengkap
+                SELECT DISTINCT u.nama_lengkap
+                FROM tb_transaksi t
+                JOIN tb_karyawan u ON u.id_karyawan = t.id_karyawan
+                WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                  AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
+                ORDER BY u.nama_lengkap
                 """;
 
-        List<Object[]> data = koneksi.ambilData(
-                sql,
-                jamMulai,
-                jamSelesai);
+        List<Object[]> data = koneksi.ambilData(sql, jamMulai, jamSelesai);
 
         flowPane.getChildren().clear();
 
         if (data.isEmpty()) {
             Label chip = new Label("Tidak ada kasir");
             chip.getStyleClass().add("kasir-chip");
+            chip.getStyleClass().add(shiftPagi ? "chip-pagi" : "chip-malam");
             flowPane.getChildren().add(chip);
             return;
         }
@@ -1008,6 +1007,7 @@ public class LaporanController implements Initializable {
         for (Object[] row : data) {
             Label chip = new Label(String.valueOf(row[0]));
             chip.getStyleClass().add("kasir-chip");
+            chip.getStyleClass().add(shiftPagi ? "chip-pagi" : "chip-malam");
             flowPane.getChildren().add(chip);
         }
     }

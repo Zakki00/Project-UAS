@@ -33,10 +33,10 @@
     <VBox fx:id="sidebar" minWidth="60" prefWidth="220" styleClass="sidebar">
       <!-- Logo Row -->
       <HBox fx:id="logoRow" alignment="CENTER_LEFT" spacing="10" styleClass="logo-row">
-        <Label styleClass="logo-icon" text="🏪" />
+        <Label styleClass="logo-icon" text="☕" />
         <VBox fx:id="logoBrand" spacing="1" styleClass="logo-brand">
-          <Label styleClass="logo-title" text="StoreMS" />
-          <Label styleClass="logo-sub" text="Manajemen Toko" />
+          <Label styleClass="logo-title" text="Enjoy Cafe" />
+          <Label styleClass="logo-sub" text="Sistem Informasi" />
         </VBox>
       </HBox>
       <Separator styleClass="sidebar-divider" />
@@ -136,9 +136,8 @@
         </VBox>
         <!-- Notif -->
          <StackPane styleClass="notif-wrapper">
-          <Button onAction="#onNotif" styleClass="notif-btn" text="🔔"/>
-          <Label fx:id="notifBadge" styleClass="notif-badge" text="" 
-                               StackPane.alignment="TOP_RIGHT" visible="false"/>
+          <Button onAction="#onNotif" styleClass="notif-btn" text="🔔" />
+          <Label fx:id="notifBadge" styleClass="notif-badge" text="" visible="false" StackPane.alignment="TOP_RIGHT" />
         </StackPane>
             <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
                <children>

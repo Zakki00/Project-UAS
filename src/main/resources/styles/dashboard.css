@@ -945,6 +945,7 @@
 /* Icon kasir pagi */
 .shift-pagi-icon {
     -fx-font-size: 22px;
+    -fx-text-fill: #1A1A2E;
 }
 
 
