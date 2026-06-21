@@ -23,7 +23,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
 
-<BorderPane prefHeight="900" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/karyawan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.KaryawanController">
+<BorderPane prefHeight="900.0" prefWidth="1080" styleClass="root-pane" stylesheets="@../styles/karyawan.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.mycompany.projectuas.KaryawanController">
   <!-- ══════════════════════════════════════════════════
          SIDEBAR  (sama seperti milik Anda)
     ═══════════════════════════════════════════════════ -->
@@ -196,7 +196,7 @@
                   <Label styleClass="form-label" text="Status Kerja" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                   <ComboBox fx:id="cmbStatusKerja" maxWidth="Infinity" promptText="Pilih status..." styleClass="form-combo" GridPane.columnIndex="4" GridPane.rowIndex="4" />
                   <Label styleClass="form-label" text="Tanggal Masuk" GridPane.rowIndex="4" />
-                  <DatePicker fx:id="dpTanggalMasuk" prefWidth="343.0" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                  <DatePicker fx:id="dpTanggalMasuk" maxWidth="1.7976931348623157E308" styleClass="form-datepicker" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="4" GridPane.vgrow="ALWAYS" />
                 </GridPane>
                 <!-- Tombol Aksi -->
                 <HBox alignment="CENTER_LEFT" spacing="10">
@@ -207,6 +207,21 @@
                   <Button minWidth="100" onAction="#resetKaryawan" styleClass="btn-base, btn-reset" text="↺ Reset" />
                 </HBox>
               </VBox>
+                     <HBox alignment="CENTER_LEFT" spacing="12" styleClass="panel-pencarian">
+                        <padding>
+                           <Insets bottom="12.0" right="12.0" top="12.0" />
+                        </padding>
+                        <children>
+                           <Label styleClass="lbl-pencarian" text="Nama Karyawan" />
+                           <HBox alignment="CENTER_LEFT" spacing="8" styleClass="search-box" HBox.hgrow="ALWAYS">
+                              <children>
+                                 <Label styleClass="search-icon" text="🔍" />
+                                 <TextField fx:id="tfPencarianKaryawan" promptText="Cari Nama Karyawan" styleClass="search-field" HBox.hgrow="ALWAYS" />
+                                 <Button onAction="#onClearSearchKaryawan" styleClass="btn-clear" text="✕" />
+                              </children>
+                           </HBox>
+                        </children>
+                     </HBox>
               <!-- ── TABLE DAFTAR KARYAWAN ─────────────── -->
               <VBox spacing="10" VBox.vgrow="ALWAYS">
                 <HBox alignment="CENTER_LEFT" spacing="8">
@@ -280,6 +295,23 @@
                   <Button minWidth="100" onAction="#resetAbsensi" styleClass="btn-base, btn-reset" text="↺ Reset" />
                 </HBox>
               </VBox>
+                     <HBox alignment="CENTER_LEFT" spacing="12" styleClass="panel-pencarian">
+                        <padding>
+                           <Insets bottom="12.0" right="12.0" top="12.0" />
+                        </padding>
+                        <children>
+                           <Label styleClass="lbl-pencarian" text="Nama Karyawan" />
+                           <HBox alignment="CENTER_LEFT" prefHeight="34.0" prefWidth="322.0" spacing="8" styleClass="search-box" HBox.hgrow="ALWAYS">
+                              <children>
+                                 <Label styleClass="search-icon" text="🔍" />
+                                 <TextField fx:id="tfPencarianAbsensi" promptText="Cari Nama Karyawan" styleClass="search-field" HBox.hgrow="ALWAYS" />
+                                 <Button onAction="#onClearSearchAbsensi" styleClass="btn-clear" text="✕" />
+                              </children>
+                           </HBox>
+                           <Label styleClass="lbl-pencarian" text="Tanggal" HBox.hgrow="ALWAYS" />
+                           <DatePicker fx:id="datePickerCari" maxWidth="Infinity" prefHeight="34.0" prefWidth="266.0" styleClass="form-datepicker" />
+                        </children>
+                     </HBox>
               <!-- ── TABLE ABSENSI ──────────────────────── -->
               <VBox spacing="10" VBox.vgrow="ALWAYS">
                 <HBox alignment="CENTER_LEFT" spacing="8">

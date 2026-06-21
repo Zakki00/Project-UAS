@@ -27,14 +27,27 @@ public class session {
     public static void applyFotoProfile(Label labelInisial1, Label labelInisial2,
             ImageView imageView1, ImageView imageView2) {
 
-        imageView1.setClip(new Circle(15, 15, 15)); // topbar → 44x44
-        imageView2.setClip(new Circle(15, 15, 15)); // sidebar → 44x44
-        if ("Admin".equalsIgnoreCase(session.role)) {
+        imageView1.setClip(new Circle(15, 15, 15));
+        imageView2.setClip(new Circle(15, 15, 15));
+
+        if ("Admin".equalsIgnoreCase(session.role) && session.googleUser != null) {
             String photoUrl = session.googleUser.getProfilePictureUrl();
 
             if (photoUrl != null && !photoUrl.isEmpty()) {
-                imageView1.setImage(new javafx.scene.image.Image(photoUrl, true));
-                imageView2.setImage(new javafx.scene.image.Image(photoUrl, true));
+                Image img1 = new Image(photoUrl, true);
+                Image img2 = new Image(photoUrl, true);
+
+                // Kalau gambar gagal load (tidak ada internet)
+                img1.errorProperty().addListener((obs, old, isError) -> {
+                    if (isError) {
+                        javafx.application.Platform.runLater(() -> tampilInisial(
+                                labelInisial1, labelInisial2,
+                                imageView1, imageView2));
+                    }
+                });
+
+                imageView1.setImage(img1);
+                imageView2.setImage(img2);
 
                 imageView1.setVisible(true);
                 imageView1.setManaged(true);
@@ -47,49 +60,34 @@ public class session {
                 labelInisial2.setManaged(false);
 
             } else {
-                imageView1.setVisible(false);
-                imageView1.setManaged(false);
-                imageView2.setVisible(false);
-                imageView2.setManaged(false);
-
-                labelInisial1.setVisible(true);
-                labelInisial1.setManaged(true);
-                labelInisial2.setVisible(true);
-                labelInisial2.setManaged(true);
-
-                if (session.nama != null && !session.nama.isBlank()) {
-                    labelInisial1.setText(
-                            String.valueOf(session.nama.charAt(0)).toUpperCase());
-                    labelInisial2.setText(
-                            String.valueOf(session.nama.charAt(0)).toUpperCase());
-                } else {
-                    labelInisial1.setText("A");
-                    labelInisial2.setText("A");
-                }
-
-               
+                tampilInisial(labelInisial1, labelInisial2, imageView1, imageView2);
             }
-        }else{
-            imageView1.setVisible(false);
-            imageView1.setManaged(false);
-            imageView2.setVisible(false);
-            imageView2.setManaged(false);
 
-            labelInisial1.setVisible(true);
-            labelInisial1.setManaged(true);
-            labelInisial2.setVisible(true);
-            labelInisial2.setManaged(true);
-
-            if (session.nama != null && !session.nama.isBlank()) {
-                labelInisial1.setText(
-                        String.valueOf(session.nama.charAt(0)).toUpperCase());
-                labelInisial2.setText(
-                        String.valueOf(session.nama.charAt(0)).toUpperCase());
-            } else {
-                labelInisial1.setText("A");
-                labelInisial2.setText("A");
-            }
+        } else {
+            tampilInisial(labelInisial1, labelInisial2, imageView1, imageView2);
         }
+    }
+
+    // Helper — tampilkan inisial, sembunyikan imageview
+    private static void tampilInisial(Label labelInisial1, Label labelInisial2,
+            ImageView imageView1, ImageView imageView2) {
+
+        imageView1.setVisible(false);
+        imageView1.setManaged(false);
+        imageView2.setVisible(false);
+        imageView2.setManaged(false);
+
+        labelInisial1.setVisible(true);
+        labelInisial1.setManaged(true);
+        labelInisial2.setVisible(true);
+        labelInisial2.setManaged(true);
+
+        String inisial = (session.nama != null && !session.nama.isBlank())
+                ? String.valueOf(session.nama.charAt(0)).toUpperCase()
+                : "A";
+
+        labelInisial1.setText(inisial);
+        labelInisial2.setText(inisial);
     }
    
     

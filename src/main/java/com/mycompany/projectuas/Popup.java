@@ -22,7 +22,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -540,12 +539,54 @@ public class Popup {
         avatarBorder.setStroke(Color.web("#00d084"));
         avatarBorder.setStrokeWidth(2);
 
-        // Load foto dari URL Google
+        // === DEKLARASI avatarStack DULU sebelum try ===
+        StackPane avatarStack = new StackPane();
+        avatarStack.setPrefSize(90, 90);
+        avatarStack.setMaxSize(90, 90);
+
+        // === HELPER: buat pane inisial ===
+        java.util.function.Supplier<StackPane> buildInisialPane = () -> {
+            String inisial = (user.getName() != null && !user.getName().isBlank())
+                    ? String.valueOf(user.getName().charAt(0)).toUpperCase()
+                    : "?";
+
+            Label lblInisial = new Label(inisial);
+            lblInisial.setStyle(
+                    "-fx-text-fill: #ffffff;"
+                            + "-fx-font-size: 28px;"
+                            + "-fx-font-weight: bold;");
+
+            Circle bgInisial = new Circle(40);
+            bgInisial.setFill(Color.web("#6C63FF"));
+
+            StackPane inisialPane = new StackPane(bgInisial, lblInisial);
+            inisialPane.setPrefSize(80, 80);
+            inisialPane.setMaxSize(80, 80);
+            inisialPane.setClip(new Circle(40, 40, 40));
+            StackPane.setAlignment(inisialPane, Pos.CENTER);
+            return inisialPane;
+        };
+
+        // === LOAD FOTO DARI URL GOOGLE ===
         try {
-            Image img = new Image(user.getProfilePictureUrl(), true); // true = background load
+            Image img = new Image(user.getProfilePictureUrl(), true);
+
+            // Kalau gambar gagal load (tidak ada internet / URL invalid)
+            img.errorProperty().addListener((obs, oldVal, isError) -> {
+                if (isError) {
+                    Platform.runLater(() -> {
+                        avatarStack.getChildren().remove(avatar);
+                        avatarStack.getChildren().add(0, buildInisialPane.get());
+                    });
+                }
+            });
+
             avatar.setImage(img);
+            avatarStack.getChildren().addAll(avatarBorder, avatar);
+
         } catch (Exception e) {
-            // Fallback: inisial nama
+            // Langsung tampilkan inisial kalau exception
+            avatarStack.getChildren().addAll(avatarBorder, buildInisialPane.get());
         }
 
         // === CENTANG DI POJOK KANAN BAWAH (seperti Chrome) ===
@@ -575,18 +616,11 @@ public class Popup {
         badge.setPrefSize(28, 28);
         badge.setMaxSize(28, 28);
 
-        // === GABUNG FOTO + BADGE ===
-        StackPane avatarStack = new StackPane();
-        avatarStack.setPrefSize(90, 90);
-        avatarStack.setMaxSize(90, 90);
-
-        StackPane.setAlignment(avatar, Pos.CENTER);
-        StackPane.setAlignment(avatarBorder, Pos.CENTER);
+        // Tambahkan badge ke avatarStack
         StackPane.setAlignment(badge, Pos.BOTTOM_RIGHT);
         badge.setTranslateX(4);
         badge.setTranslateY(4);
-
-        avatarStack.getChildren().addAll(avatarBorder, avatar, badge);
+        avatarStack.getChildren().add(badge);
 
         // Animasi pop badge masuk
         badge.setScaleX(0);
@@ -698,7 +732,6 @@ public class Popup {
 
         popup.show();
     }
-
     public class LoginProgressDialog {
 
         private static final int TIMEOUT_SECONDS = 120; // 2 menit

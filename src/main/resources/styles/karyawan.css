@@ -944,3 +944,51 @@
   -fx-translate-x: -2;
   -fx-translate-y: 2;
 }
+
+
+/* ── HEADER pencarian ────────────────────────── */
+.panel-pencarian {
+  -fx-background-color: #1a1d2e;
+  -fx-background-radius: 10;
+
+  -fx-border-color: transparent transparent #2e3250 transparent;
+  -fx-border-width: 1;
+  -fx-border-radius: 10;
+
+  -fx-padding: 20 30 20 30;
+}
+
+.lbl-pencarian {
+  -fx-text-fill: #8b8fa8;
+  -fx-font-size: 12px;
+ 
+}
+
+.tf-pelanggan {
+  -fx-background-color: #252840;
+  -fx-border-color: #2e3250;
+  -fx-border-width: 1;
+  -fx-border-radius: 8;
+  -fx-background-radius: 8;
+  -fx-text-fill: #ffffff;
+  -fx-prompt-text-fill: #8b8fa8;
+  -fx-font-size: 12px;
+  -fx-padding: 8 12 8 12;
+}
+
+.tf-pelanggan:focused {
+  -fx-border-color: #6c63ff;
+}
+/* //search-box */
+.btn-clear {
+  -fx-background-color: transparent;
+  -fx-text-fill: #8b8fa8;
+  -fx-font-size: 11px;
+  -fx-cursor: hand;
+  -fx-padding: 2 4 2 4;
+  -fx-border-width: 0;
+}
+
+.btn-clear:hover {
+  -fx-text-fill: #ff5c7c;
+}

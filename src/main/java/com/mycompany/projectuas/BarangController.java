@@ -289,38 +289,58 @@ public class BarangController implements Initializable {
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty || item == null || item.isBlank()) {
                     setGraphic(null);
                     setText(null);
                     return;
                 }
+
                 try {
                     Image img = null;
-                    var stream = getClass().getResourceAsStream("/image-barang/" + item);
-                    if (stream != null) {
-                        img = new Image(stream);
-                    } else {
-                        String appData = System.getenv("APPDATA");
-                        File imgFile = (appData != null && !appData.isEmpty())
-                                ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
-                                : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
-                        if (imgFile.exists())
-                            img = new Image(imgFile.toURI().toString());
+
+                    // ── 1. Cek di AppData (prioritas utama, untuk .exe) ──
+                    String appData = System.getenv("APPDATA");
+                    File imgFile = (appData != null && !appData.isEmpty())
+                            ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
+                            : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
+
+                    if (imgFile.exists()) {
+                        img = new Image(imgFile.toURI().toString());
                     }
+
+                    // ── 2. Cek di classpath (untuk development/IDE) ───────
+                    if (img == null) {
+                        var stream = getClass().getResourceAsStream("/image-barang/" + item);
+                        if (stream != null) {
+                            img = new Image(stream);
+                        }
+                    }
+
+                    // ── 3. Fallback not_found.png ─────────────────────────
+                    if (img == null) {
+                        var notFound = getClass().getResourceAsStream("/image/not_found.png");
+                        if (notFound != null) {
+                            img = new Image(notFound);
+                        }
+                    }
+
                     if (img != null) {
                         imageView.setImage(img);
                         setGraphic(imageView);
-                        setText(null);
                     } else {
                         setGraphic(null);
-                        setText(item);
                     }
+                    setText(null);
+
                 } catch (Exception e) {
+                    e.printStackTrace();
                     setGraphic(null);
                     setText(null);
                 }
             }
         });
+
         
         // ── Kolom status ──
         colStatus.setCellValueFactory(cellData -> {
