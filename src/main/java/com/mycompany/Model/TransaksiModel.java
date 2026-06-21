@@ -1,10 +1,8 @@
 package com.mycompany.Model;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class TransaksiModel {
@@ -15,8 +13,6 @@ public class TransaksiModel {
     public static Long total;
     public static String metodeBayar = "TUNAI";
     public static int noTrx = 1;
-
-    private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
 
     // ── Model ─────────────────────────────────────────────
     public static class Produk {

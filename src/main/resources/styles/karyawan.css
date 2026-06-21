@@ -770,6 +770,10 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
+.table-karyawan .table-cell,
+.table-absensi .table-cell{
+  -fx-alignment: CENTER;
+}
 
 .table-karyawan .table-row-cell:hover,
 .table-absensi .table-row-cell:hover {
@@ -790,7 +794,7 @@
     -fx-font-size: 12px;
     -fx-padding: 0 12 0 12;
     -fx-border-color: transparent;
-    -fx-alignment: CENTER_LEFT;
+    -fx-alignment: CENTER;
 }
 
 /* Kolom pertama */
@@ -808,11 +812,6 @@
     -fx-font-weight: bold;
 }
 
-.table-karyawan .table-cell.center,
-.table-absensi .table-cell.center {
-    -fx-alignment: CENTER;
-    -fx-text-fill: #8b8fa8;
-}
 
 /* SCROLLBAR */
 .table-karyawan .scroll-bar,

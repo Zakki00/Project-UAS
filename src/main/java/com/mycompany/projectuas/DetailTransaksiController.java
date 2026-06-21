@@ -387,7 +387,7 @@ public class DetailTransaksiController implements Initializable {
         TransaksiModel.keranjang.clear();
         TransaksiModel.pesananPs = null;
         transaksiController.renderKeranjang();
-        transaksiController.updateSummary();
+        transaksiController.perbaruiRingkasanBayar();
         closeForm(btnSimpan);
     }
 

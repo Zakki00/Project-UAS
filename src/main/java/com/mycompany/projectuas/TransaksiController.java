@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package com.mycompany.projectuas;
 
 import java.net.URL;
@@ -26,6 +22,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -43,23 +41,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.scene.Node;
-import javafx.geometry.Rectangle2D;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
-/**
- * FXML Controller class
- *
- * @author zakki mubarroq
- */
 public class TransaksiController implements Initializable {
+
+    // ═══════════════════════════════════════════════════════
+    // FXML — TOPBAR
+    // ═══════════════════════════════════════════════════════
     @FXML
     private Label tanggal;
-    // ======================================================
-    // FOTO PROFILE
-    // =======================================================
     @FXML
     private Label notifBadge;
     @FXML
@@ -71,7 +62,9 @@ public class TransaksiController implements Initializable {
     @FXML
     private ImageView imgAvatarGoogletopbar;
 
-    // ── FXML refs ────────────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // FXML — AREA PRODUK
+    // ═══════════════════════════════════════════════════════
     @FXML
     private FlowPane flowProduk;
     @FXML
@@ -82,14 +75,12 @@ public class TransaksiController implements Initializable {
     private Label lblJumlahProduk;
     @FXML
     private Button btnClearSearch;
+    @FXML
+    private ScrollPane scrolpane;
 
     // ═══════════════════════════════════════════════════════
     // FXML — SIDEBAR
     // ═══════════════════════════════════════════════════════
-    @FXML
-    private HBox navLogout;
-    @FXML
-    private Label navLblLogout;
     @FXML
     private VBox sidebar;
     @FXML
@@ -107,6 +98,8 @@ public class TransaksiController implements Initializable {
 
     // Nav items
     @FXML
+    private HBox navLogout;
+    @FXML
     private HBox navDashboard;
     @FXML
     private HBox navProduk;
@@ -123,6 +116,8 @@ public class TransaksiController implements Initializable {
 
     // Nav labels
     @FXML
+    private Label navLblLogout;
+    @FXML
     private Label navLblDashboard;
     @FXML
     private Label navLblProduk;
@@ -130,10 +125,8 @@ public class TransaksiController implements Initializable {
     private Label navLblKaryawan;
     @FXML
     private Label navLblKasir;
-
     @FXML
     private Label navLblPiutang;
-
     @FXML
     private Label navLblLaporan;
     @FXML
@@ -143,10 +136,13 @@ public class TransaksiController implements Initializable {
     @FXML
     private Label navlblnama;
 
-    // ==========================
+    // ═══════════════════════════════════════════════════════
+    // FXML — KERANJANG & SUMMARY
+    // ═══════════════════════════════════════════════════════
     @FXML
     private Button btnProduk;
-
+    @FXML
+    private Button btnPS;
     @FXML
     private VBox vboxKeranjang;
     @FXML
@@ -157,14 +153,12 @@ public class TransaksiController implements Initializable {
     private Label lblNamaKasir;
     @FXML
     private Label lblShift;
-
     @FXML
     private VBox totalBox;
     @FXML
     private Label lblSubtotal;
     @FXML
     private Label lblDiskon;
-
     @FXML
     private Label lblTotal;
     @FXML
@@ -175,8 +169,6 @@ public class TransaksiController implements Initializable {
     private Label lblKembalian;
     @FXML
     private VBox tunaiBox;
-    @FXML
-    private Button btnPS;
     @FXML
     private Button btnQris;
     @FXML
@@ -193,13 +185,10 @@ public class TransaksiController implements Initializable {
     private Button btnQuick20;
     @FXML
     private Button btnQuick50;
-    @FXML
-    private ScrollPane scrolpane;
 
-    // rental ps
-
-    // pesana paket ps
-    // ── FXML refs ──────────────────────────────────
+    // ═══════════════════════════════════════════════════════
+    // FXML — RENTAL PS
+    // ═══════════════════════════════════════════════════════
     @FXML
     private VBox boxRentalPs;
     @FXML
@@ -215,41 +204,142 @@ public class TransaksiController implements Initializable {
     @FXML
     private Button btnMenMin, btnMenPlus;
 
-    // ── Variables ──────────────────────────────────────────────
-
-    // ═════════════════════════════════════════════════════
-    // INITIALIZE
-    // ═════════════════════════════════════════════════════
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        setupForm();
-        loadproduk();
-        setupKategori();
-        setupSearch();
-        renderProduk(semuaProduk);
-        setActiveNav(navKasir);
-        updateSummary();
-        setupMetodeBayar();
-        setupMenu();
-        setupNavHover();
-        setupLogoutHover();
-
-    }
-
-    private boolean sidebarCollapsed = false;
+    // ═══════════════════════════════════════════════════════
+    // KONSTANTA & VARIABEL
+    // ═══════════════════════════════════════════════════════
+    private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
+    private static final long HARGA_30_MENIT = 3_000;
+    private static final long HARGA_1_JAM = 5_000;
 
-    private final java.util.List<Produk> semuaProduk = TransaksiModel.semuaProduk;
-    private static final NumberFormat FMT = NumberFormat.getInstance(new Locale("id", "ID"));
+    private final List<Produk> semuaProduk = TransaksiModel.semuaProduk;
+
+    private boolean sidebarCollapsed = false;
+    private boolean pembayaraanQris = false;
+    private boolean isUpdating = false;
+
+    // State rental PS
+    private int jamPs = 0;
+    private int menitPs = 0;
+    private int activePreset = -1;
+
+    // State pembayaran
+    long kembalian = 0;
+    long tunai = 0;
 
     // ═══════════════════════════════════════════════════════
-    // SIDEBAR TOGGLE
+    // INITIALIZE
+    // ═══════════════════════════════════════════════════════
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        inisialisasiForm();
+        muatDataProduk();
+        inisialisasiKategori();
+        inisialisasiPencarianProduk();
+        tampilkanSemuaProduk();
+        setActiveNav(navKasir);
+        perbaruiRingkasanBayar();
+        inisialisasiMetodeBayar();
+        inisialisasiMenuUtama();
+        setupNavHover();
+        setupLogoutHover();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // INISIALISASI FORM
+    // ═══════════════════════════════════════════════════════
+    private void inisialisasiForm() {
+        Notifikasi.updateBadge(notifBadge);
+
+        Locale localeID = new Locale("id", "ID");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
+        tanggal.setText(LocalDate.now().format(formatter));
+
+        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
+                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
+
+        navllblakun.setText(session.role);
+        navlblnama.setText(session.nama);
+
+        int jamSekarang = java.time.LocalTime.now().getHour();
+        lblShift.setText((jamSekarang >= 6 && jamSekarang < 12) ? "Shift Siang" : "Shift Malam");
+
+        TransaksiModel.keranjang.clear();
+        TransaksiModel.pesananPs = null;
+        TransaksiModel.semuaProduk.clear();
+
+        btnBayar.setDisable(true);
+        tfTunai.setDisable(true);
+        lblKembalian.setText("Rp 0");
+        btnQuick5.setDisable(true);
+        btnQuick10.setDisable(true);
+        btnQuick20.setDisable(true);
+        btnQuick50.setDisable(true);
+        boxRentalPs.setVisible(false);
+        boxRentalPs.setManaged(false);
+        lblNamaKasir.setText(session.nama);
+
+        tfDiskon.setTextFormatter(new TextFormatter<>(change -> {
+            String text = change.getControlNewText();
+            return text.matches("\\d{0,3}") ? change : null;
+        }));
+    }
+
+    private void inisialisasiKategori() {
+        Set<String> cats = new LinkedHashSet<>();
+        cats.add("Semua Kategori");
+        semuaProduk.forEach(p -> cats.add(p.kategori));
+        cbKategori.setItems(FXCollections.observableArrayList(cats));
+        cbKategori.setValue("Semua Kategori");
+        cbKategori.setOnAction(e -> filterProduk());
+    }
+
+    private void inisialisasiPencarianProduk() {
+        tfCari.textProperty().addListener((obs, o, n) -> filterProduk());
+    }
+
+    private void inisialisasiMetodeBayar() {
+        btnTunai.getStyleClass().add("pay-method-active");
+
+        btnQris.setOnAction(e -> {
+            TransaksiModel.metodeBayar = "QRIS";
+            pembayaraanQris = true;
+            btnQris.getStyleClass().add("pay-method-active");
+            btnTunai.getStyleClass().remove("pay-method-active");
+            tunaiBox.setVisible(false);
+            tunaiBox.setManaged(false);
+            QuickBox.setVisible(false);
+            QuickBox.setManaged(false);
+        });
+
+        btnTunai.setOnAction(e -> {
+            TransaksiModel.metodeBayar = "Tunai";
+            pembayaraanQris = false;
+            btnQris.getStyleClass().remove("pay-method-active");
+            btnTunai.getStyleClass().add("pay-method-active");
+            tunaiBox.setVisible(true);
+            tunaiBox.setManaged(true);
+            QuickBox.setVisible(true);
+            QuickBox.setManaged(true);
+        });
+    }
+
+    private void inisialisasiMenuUtama() {
+        btnProduk.getStyleClass().add("btn-menu-active");
+
+        btnProduk.setOnAction(e -> tampilkanMenuProduk());
+        btnPS.setOnAction(e -> tampilkanMenuRentalPs());
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // SIDEBAR
     // ═══════════════════════════════════════════════════════
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
         double targetWidth = sidebarCollapsed ? SIDEBAR_MINI : SIDEBAR_FULL;
+
         Timeline timeline = new Timeline(
                 new KeyFrame(Duration.ZERO,
                         new KeyValue(sidebar.prefWidthProperty(), sidebar.getPrefWidth()),
@@ -257,8 +347,9 @@ public class TransaksiController implements Initializable {
                 new KeyFrame(Duration.millis(350),
                         new KeyValue(sidebar.prefWidthProperty(), targetWidth),
                         new KeyValue(sidebar.minWidthProperty(), targetWidth)));
+
         if (sidebarCollapsed) {
-            hideSidebarText();
+            sembunyikanTeksSidebar();
             toggleBtn.setText("▶");
             logoRow.setAlignment(Pos.CENTER);
             logoRow.setPadding(new Insets(18, 0, 18, 0));
@@ -266,7 +357,7 @@ public class TransaksiController implements Initializable {
             userRow.setPadding(new Insets(12, 0, 12, 0));
         } else {
             timeline.setOnFinished(e -> {
-                showSidebarText();
+                tampilkanTeksSidebar();
                 logoRow.setAlignment(Pos.CENTER_LEFT);
                 logoRow.setPadding(new Insets(18, 16, 18, 16));
                 userRow.setAlignment(Pos.CENTER_LEFT);
@@ -274,27 +365,28 @@ public class TransaksiController implements Initializable {
             });
             toggleBtn.setText("◀");
         }
+
         updateNavPadding(sidebarCollapsed);
         timeline.play();
     }
 
-    private void hideSidebarText() {
+    private void sembunyikanTeksSidebar() {
         logoBrand.setVisible(false);
         logoBrand.setManaged(false);
         userInfo.setVisible(false);
         userInfo.setManaged(false);
-        setNavLabelsVisible(false);
+        aturVisibilitasLabelNav(false);
     }
 
-    private void showSidebarText() {
+    private void tampilkanTeksSidebar() {
         logoBrand.setVisible(true);
         logoBrand.setManaged(true);
         userInfo.setVisible(true);
         userInfo.setManaged(true);
-        setNavLabelsVisible(true);
+        aturVisibilitasLabelNav(true);
     }
 
-    private void setNavLabelsVisible(boolean visible) {
+    private void aturVisibilitasLabelNav(boolean visible) {
         List<Label> labels = List.of(
                 navLblDashboard, navLblProduk, navLblKaryawan,
                 navLblKasir, navLblPiutang, navLblLaporan,
@@ -308,20 +400,17 @@ public class TransaksiController implements Initializable {
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
         List<HBox> items = List.of(navDashboard, navProduk, navKaryawan,
-                navKasir, navPiutang, navLaporan, navPengaturan); // navLogout DIKELUARKAN
+                navKasir, navPiutang, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
         }
-
-        // navLogout dihandle terpisah — hanya alignment & padding, tanpa setStyle()
         navLogout.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
         navLogout.setPadding(pad);
     }
 
     private void setActiveNav(HBox selected) {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir,
-                navLaporan, navPengaturan); // navLogout DIKELUARKAN
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -331,66 +420,44 @@ public class TransaksiController implements Initializable {
     }
 
     private void setupNavHover() {
-        List<HBox> all = List.of(navDashboard, navProduk, navKasir,
-                navLaporan, navPengaturan); // navLogout DIKELUARKAN
+        List<HBox> all = List.of(navDashboard, navProduk, navKasir, navLaporan, navPengaturan);
         for (HBox item : all) {
-            item.setOnMouseEntered(e -> item.setStyle(
-                    "-fx-background-color: #252840; -fx-background-radius: 10;"));
+            item.setOnMouseEntered(e -> item.setStyle("-fx-background-color: #252840; -fx-background-radius: 10;"));
             item.setOnMouseExited(e -> item.setStyle(""));
         }
     }
 
-    // Tambahkan method baru ini
     private void setupLogoutHover() {
-        String styleNormal = "-fx-background-color: transparent;" +
-                "-fx-background-radius: 10;" +
-                "-fx-cursor: hand;";
-
-        String styleHover = "-fx-background-color: #FF5C7C26;" +
-                "-fx-background-radius: 10;" +
-                "-fx-cursor: hand;";
-
+        String styleNormal = "-fx-background-color: transparent; -fx-background-radius: 10; -fx-cursor: hand;";
+        String styleHover = "-fx-background-color: #FF5C7C26; -fx-background-radius: 10; -fx-cursor: hand;";
         navLogout.setStyle(styleNormal);
         navLogout.setOnMouseEntered(e -> navLogout.setStyle(styleHover));
         navLogout.setOnMouseExited(e -> navLogout.setStyle(styleNormal));
     }
 
-    // =====================================
-    // LOG OUT
-    // =====================================
-
+    // ═══════════════════════════════════════════════════════
+    // NAV HANDLERS
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onNavLogout() {
-        new Popup().showConfirmPopup(
-                "Konfirmasi Logout",
-                "Yakin ingin keluar dari aplikasi?",
-                () -> {
-                    new navigation().navigateToLogin();
-                    ((Stage) navLogout.getScene().getWindow()).close();
-                });
+        new Popup().showConfirmPopup("Konfirmasi Logout", "Yakin ingin keluar dari aplikasi?", () -> {
+            new navigation().navigateToLogin();
+            ((Stage) navLogout.getScene().getWindow()).close();
+        });
     }
 
     @FXML
     private void onNavLogoutHover() {
         navLogout.setStyle(
-                "-fx-background-color: #FF5C7C26;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-padding: 10 14 10 0;");
+                "-fx-background-color: #FF5C7C26; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;");
     }
 
     @FXML
     private void onNavLogoutExit() {
         navLogout.setStyle(
-                "-fx-background-color: transparent;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-cursor: hand;" +
-                        "-fx-padding: 10 14 10 0;");
+                "-fx-background-color: transparent; -fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;");
     }
 
-    // ═══════════════════════════════════════════════════════
-    // NAV HANDLERS
-    // ═══════════════════════════════════════════════════════
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
@@ -415,7 +482,6 @@ public class TransaksiController implements Initializable {
     @FXML
     private void onNavKasir() {
         setActiveNav(navKasir);
-
     }
 
     @FXML
@@ -439,255 +505,252 @@ public class TransaksiController implements Initializable {
         ((Stage) navPengaturan.getScene().getWindow()).close();
     }
 
-    // ──data ────────────────────────────────────────
-    private void loadproduk() {
+    // ═══════════════════════════════════════════════════════
+    // MENU UTAMA (PRODUK / PS)
+    // ═══════════════════════════════════════════════════════
+    private void tampilkanMenuProduk() {
+        btnProduk.getStyleClass().add("btn-menu-active");
+        btnPS.getStyleClass().remove("btn-menu-active");
+        boxRentalPs.setVisible(false);
+        boxRentalPs.setManaged(false);
+        scrolpane.setVisible(true);
+        scrolpane.setManaged(true);
+        cbKategori.setDisable(false);
+    }
+
+    private void tampilkanMenuRentalPs() {
+        boxRentalPs.setVisible(true);
+        boxRentalPs.setManaged(true);
+        scrolpane.setVisible(false);
+        scrolpane.setManaged(false);
+        btnProduk.getStyleClass().remove("btn-menu-active");
+        btnPS.getStyleClass().add("btn-menu-active");
+        cbKategori.setDisable(true);
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // DATA PRODUK
+    // ═══════════════════════════════════════════════════════
+    private void muatDataProduk() {
         String sql = "SELECT * FROM tb_barang";
         List<Object[]> data = koneksi.ambilData(sql);
         for (Object[] row : data) {
-            int id = (int) row[0];
-            String nama = (String) row[1];
-            int harga = (int) row[2];
-            String kategori = (String) row[3];
-            int stok = (int) row[4];
-            String description = (String) row[5];
-            String imageUrl = (String) row[6];
-
-            semuaProduk.add(new Produk(id, nama, harga, kategori, stok, description, imageUrl));
+            semuaProduk.add(new Produk(
+                    (int) row[0],
+                    (String) row[1],
+                    (int) row[2],
+                    (String) row[3],
+                    (int) row[4],
+                    (String) row[5],
+                    (String) row[6]));
         }
     }
 
-    private void setupKategori() {
-        Set<String> cats = new LinkedHashSet<>();
-        cats.add("Semua Kategori");
-        semuaProduk.forEach(p -> cats.add(p.kategori));
-        cbKategori.setItems(FXCollections.observableArrayList(cats));
+    private void tampilkanSemuaProduk() {
+        renderDaftarProduk(semuaProduk);
+    }
+
+    private void filterProduk() {
+        String query = tfCari.getText().toLowerCase().trim();
+        String kat = cbKategori.getValue();
+
+        StringBuilder sql = new StringBuilder("SELECT * FROM tb_barang WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+
+        if (kat != null && !kat.equals("Semua Kategori")) {
+            sql.append(" AND kategori = ?");
+            params.add(kat);
+        }
+        if (!query.isEmpty()) {
+            sql.append(" AND nama_barang LIKE ?");
+            params.add("%" + query + "%");
+        }
+
+        List<Object[]> hasil = params.isEmpty()
+                ? koneksi.ambilData(sql.toString())
+                : koneksi.ambilData(sql.toString(), params.toArray());
+
+        List<Produk> list = new ArrayList<>();
+        for (Object[] row : hasil) {
+            list.add(new Produk(
+                    (int) row[0], (String) row[1], (int) row[2],
+                    (String) row[3], (int) row[4], (String) row[5], (String) row[6]));
+        }
+
+        renderDaftarProduk(list);
+    }
+
+    @FXML
+    private void onClearSearch() {
+        tfCari.clear();
         cbKategori.setValue("Semua Kategori");
-        cbKategori.setOnAction(e -> filterProduk());
+        renderDaftarProduk(semuaProduk);
     }
 
-    private void setupSearch() {
-        tfCari.textProperty().addListener((obs, o, n) -> filterProduk());
-    }
-
-    // setupa form
-    private void setupForm() {
-        // notif---------------
-        Notifikasi.updateBadge(notifBadge);
-
-        // ====tanggal====
-        Locale localeID = new Locale("id", "ID");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
-        tanggal.setText(LocalDate.now().format(formatter));
-
-        session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
-                imgAvatarGoogletopbar, imgAvatarGooglenavbar);
-        if (session.email == "") {
-            navllblakun.setText(session.role);
-            navlblnama.setText(session.nama);
-        } else {
-            navllblakun.setText(session.role);
-            navlblnama.setText(session.nama);
-        }
-
-        int jamSekarang = java.time.LocalTime.now().getHour();
-        if (jamSekarang >= 6 && jamSekarang < 12) {
-            lblShift.setText("Shift Siang");
-        } else {
-            lblShift.setText("Shift Malam");
-        }
-        TransaksiModel.keranjang.clear();
-        TransaksiModel.pesananPs = null;
-        TransaksiModel.semuaProduk.clear();
-        btnBayar.setDisable(true);
-        tfTunai.setDisable(true);
-        lblKembalian.setText("Rp 0");
-        btnQuick5.setDisable(true);
-        btnQuick10.setDisable(true);
-        btnQuick20.setDisable(true);
-        btnQuick50.setDisable(true);
-        boxRentalPs.setVisible(false);
-        boxRentalPs.setManaged(false);
-        lblNamaKasir.setText(session.nama);
-
-        tfDiskon.setTextFormatter(new TextFormatter<>(change -> {
-            String text = change.getControlNewText();
-
-            if (text.matches("\\d{0,3}")) {
-                return change;
-            }
-
-            return null;
-        }));
-    }
-
-    // ═════════════════════════════════════════════════════
-    // RENDER PRODUK CARDS
-    // ═════════════════════════════════════════════════════
-    public void renderProduk(List<Produk> list) {
+    // ═══════════════════════════════════════════════════════
+    // RENDER DAFTAR PRODUK
+    // ═══════════════════════════════════════════════════════
+    public void renderDaftarProduk(List<Produk> list) {
         flowProduk.getChildren().clear();
         for (Produk p : list) {
-            flowProduk.getChildren().add(buildProdukCard(p));
+            flowProduk.getChildren().add(buildKartuProduk(p));
         }
         lblJumlahProduk.setText(list.size() + " produk");
     }
 
-    private VBox buildProdukCard(Produk p) {
+    /** Membangun card UI untuk satu produk di area pilih produk */
+    private VBox buildKartuProduk(Produk p) {
         boolean habis = p.stok == 0;
         boolean stokSedikit = p.stok > 0 && p.stok <= 5;
 
-        // ── ImageView ──────────────────────────────────
+        // Gambar produk
         ImageView img = new ImageView();
         img.setFitWidth(170);
         img.setFitHeight(120);
         img.setPreserveRatio(false);
         img.setSmooth(true);
-
         img.imageProperty().addListener((obs, oldImg, newImg) -> {
             if (newImg == null)
                 return;
-
             if (newImg.isBackgroundLoading()) {
                 newImg.progressProperty().addListener((o, ov, nv) -> {
-                    if (nv.doubleValue() >= 1.0) {
-                        applyCoverViewport(img, newImg, 170, 120);
-                    }
+                    if (nv.doubleValue() >= 1.0)
+                        terapkanCoverViewport(img, newImg, 170, 120);
                 });
             } else {
-                applyCoverViewport(img, newImg, 170, 120);
+                terapkanCoverViewport(img, newImg, 170, 120);
             }
         });
-
-        try {
-            String imageName = p.imageUrl;
-            if (imageName == null || imageName.isBlank()) {
-                var url = getClass().getResource("/image/not_found.png");
-                if (url != null)
-                    img.setImage(new Image(url.toExternalForm()));
-            } else {
-                String appData = System.getenv("APPDATA");
-                File imgFile = (appData != null && !appData.isEmpty())
-                        ? new File(appData + "\\ProjectUAS\\image-barang\\" + imageName)
-                        : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + imageName);
-
-                if (imgFile.exists()) {
-                    img.setImage(new Image(imgFile.toURI().toString()));
-                } else {
-                    var url = getClass().getResource("/image-barang/" + imageName);
-                    if (url != null) {
-                        img.setImage(new Image(url.toExternalForm()));
-                    } else {
-                        var notFound = getClass().getResource("/image/not_found.png");
-                        if (notFound != null)
-                            img.setImage(new Image(notFound.toExternalForm()));
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        muatGambarProduk(img, p.imageUrl);
 
         StackPane imgWrapper = new StackPane(img);
         imgWrapper.getStyleClass().add("produk-card-img-wrapper");
         imgWrapper.setPrefSize(170, 120);
         imgWrapper.setMinSize(170, 120);
         imgWrapper.setMaxSize(170, 120);
-        imgWrapper.setClip(null);
-        applyRoundedClip(imgWrapper);
+        terapkanKlipBulat(imgWrapper);
 
-        // ── Nama ───────────────────────────────────────
-        Label nama = new Label(p.nama);
-        nama.getStyleClass().add("produk-card-nama");
-        nama.setAlignment(Pos.CENTER);
-        nama.setMaxWidth(Double.MAX_VALUE);
-        nama.setWrapText(false);
+        // Label nama
+        Label lblNama = new Label(p.nama);
+        lblNama.getStyleClass().add("produk-card-nama");
+        lblNama.setAlignment(Pos.CENTER);
+        lblNama.setMaxWidth(Double.MAX_VALUE);
+        lblNama.setWrapText(false);
 
-        // ── Deskripsi (2 baris + Tooltip) ─────────────
-        Label desc = new Label(p.description);
-        desc.getStyleClass().add("produk-card-desc");
-        desc.setAlignment(Pos.CENTER);
-        desc.setMaxWidth(Double.MAX_VALUE);
-        desc.setWrapText(true);
-        desc.setMinHeight(32);
-        desc.setMaxHeight(32);
-        desc.setPrefHeight(32);
-
+        // Label deskripsi + tooltip
+        Label lblDesc = new Label(p.description);
+        lblDesc.getStyleClass().add("produk-card-desc");
+        lblDesc.setAlignment(Pos.CENTER);
+        lblDesc.setMaxWidth(Double.MAX_VALUE);
+        lblDesc.setWrapText(true);
+        lblDesc.setMinHeight(32);
+        lblDesc.setMaxHeight(32);
+        lblDesc.setPrefHeight(32);
         if (p.description != null && !p.description.isBlank()) {
             Tooltip tooltip = new Tooltip(p.description);
             tooltip.setWrapText(true);
             tooltip.setMaxWidth(200);
             tooltip.getStyleClass().add("produk-card-tooltip");
             tooltip.setShowDelay(Duration.millis(300));
-            Tooltip.install(desc, tooltip);
+            Tooltip.install(lblDesc, tooltip);
         }
 
-        // ── Harga ──────────────────────────────────────
-        Label harga = new Label("Rp " + FMT.format(p.harga));
-        harga.getStyleClass().add("produk-card-harga");
-        harga.setAlignment(Pos.CENTER);
-        harga.setMaxWidth(Double.MAX_VALUE);
+        // Label harga
+        Label lblHarga = new Label("Rp " + FMT.format(p.harga));
+        lblHarga.getStyleClass().add("produk-card-harga");
+        lblHarga.setAlignment(Pos.CENTER);
+        lblHarga.setMaxWidth(Double.MAX_VALUE);
 
-        // ── Stok ───────────────────────────────────────
-        Node stokNode;
-        if (habis) {
-            Label badge = new Label("Stok habis");
-            badge.getStyleClass().add("produk-card-badge-habis");
-            HBox badgeWrap = new HBox(badge);
-            badgeWrap.setAlignment(Pos.CENTER);
-            badgeWrap.setMinHeight(24);
-            stokNode = badgeWrap;
-        } else {
-            Label stok = new Label("Stok: " + p.stok);
-            stok.setAlignment(Pos.CENTER);
-            stok.setMaxWidth(Double.MAX_VALUE);
-            stok.setMinHeight(24);
-            stok.getStyleClass().add(stokSedikit ? "produk-card-stok-warn" : "produk-card-stok");
-            stokNode = stok;
-        }
+        // Label / badge stok
+        Node stokNode = buildBadgeStok(p, habis, stokSedikit);
 
-        // ── Tombol Tambah ──────────────────────────────
+        // Tombol tambah
         Button btnTambah = new Button("+ Tambah");
         btnTambah.getStyleClass().add("btn-tambah-card");
         btnTambah.setDisable(habis);
         btnTambah.setMaxWidth(Double.MAX_VALUE);
         btnTambah.setOnAction(e -> tambahKeKeranjang(p));
 
-        // ── Body ───────────────────────────────────────
-        VBox body = new VBox(4, nama, desc, harga, stokNode, btnTambah);
+        // Susun body card
+        VBox body = new VBox(4, lblNama, lblDesc, lblHarga, stokNode, btnTambah);
         body.setAlignment(Pos.CENTER);
         body.setPadding(new Insets(10, 12, 14, 12));
 
-        // ── Card ───────────────────────────────────────
         VBox card = new VBox(0, imgWrapper, body);
         card.setAlignment(Pos.TOP_CENTER);
         card.setPrefWidth(170);
         card.getStyleClass().add(habis ? "produk-card produk-card-habis" : "produk-card");
-
-        if (!habis) {
+        if (!habis)
             card.setOnMouseClicked(e -> tambahKeKeranjang(p));
-        }
 
         return card;
     }
 
-    private void applyCoverViewport(ImageView imgView, Image image, double targetW, double targetH) {
-        double imgW = image.getWidth();
-        double imgH = image.getHeight();
-
-        if (imgW <= 0 || imgH <= 0)
-            return;
-
-        double scale = Math.max(targetW / imgW, targetH / imgH);
-
-        double cropW = targetW / scale;
-        double cropH = targetH / scale;
-
-        double cropX = (imgW - cropW) / 2;
-        double cropY = (imgH - cropH) / 2;
-
-        imgView.setViewport(new Rectangle2D(cropX, cropY, cropW, cropH));
+    /** Membangun node badge / label stok produk */
+    private Node buildBadgeStok(Produk p, boolean habis, boolean stokSedikit) {
+        if (habis) {
+            Label badge = new Label("Stok habis");
+            badge.getStyleClass().add("produk-card-badge-habis");
+            HBox wrapper = new HBox(badge);
+            wrapper.setAlignment(Pos.CENTER);
+            wrapper.setMinHeight(24);
+            return wrapper;
+        }
+        Label lblStok = new Label("Stok: " + p.stok);
+        lblStok.setAlignment(Pos.CENTER);
+        lblStok.setMaxWidth(Double.MAX_VALUE);
+        lblStok.setMinHeight(24);
+        lblStok.getStyleClass().add(stokSedikit ? "produk-card-stok-warn" : "produk-card-stok");
+        return lblStok;
     }
 
-    private void applyRoundedClip(StackPane pane) {
+    /**
+     * Memuat gambar produk ke ImageView, fallback ke not_found.png jika tidak ada
+     */
+    private void muatGambarProduk(ImageView img, String imageUrl) {
+        try {
+            if (imageUrl == null || imageUrl.isBlank()) {
+                muatGambarDefault(img);
+                return;
+            }
+            String appData = System.getenv("APPDATA");
+            File imgFile = (appData != null && !appData.isEmpty())
+                    ? new File(appData + "\\ProjectUAS\\image-barang\\" + imageUrl)
+                    : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + imageUrl);
+
+            if (imgFile.exists()) {
+                img.setImage(new Image(imgFile.toURI().toString()));
+            } else {
+                var url = getClass().getResource("/image-barang/" + imageUrl);
+                if (url != null) {
+                    img.setImage(new Image(url.toExternalForm()));
+                } else {
+                    muatGambarDefault(img);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void muatGambarDefault(ImageView img) {
+        var url = getClass().getResource("/image/not_found.png");
+        if (url != null)
+            img.setImage(new Image(url.toExternalForm()));
+    }
+
+    private void terapkanCoverViewport(ImageView imgView, Image image, double targetW, double targetH) {
+        double imgW = image.getWidth();
+        double imgH = image.getHeight();
+        if (imgW <= 0 || imgH <= 0)
+            return;
+        double scale = Math.max(targetW / imgW, targetH / imgH);
+        double cropW = targetW / scale;
+        double cropH = targetH / scale;
+        imgView.setViewport(new Rectangle2D((imgW - cropW) / 2, (imgH - cropH) / 2, cropW, cropH));
+    }
+
+    private void terapkanKlipBulat(StackPane pane) {
         Rectangle clip = new Rectangle();
         clip.widthProperty().bind(pane.widthProperty());
         clip.heightProperty().bind(pane.heightProperty());
@@ -696,71 +759,19 @@ public class TransaksiController implements Initializable {
         pane.setClip(clip);
     }
 
-    // ═════════════════════════════════════════════════════
-    // FILTER
-    // ═════════════════════════════════════════════════════
-    private void filterProduk() {
-        String query = tfCari.getText().toLowerCase().trim();
-        String kat = cbKategori.getValue();
-
-        // ── Bangun SQL dinamis ────────────────────────
-        StringBuilder sql = new StringBuilder("SELECT * FROM tb_barang WHERE 1=1");
-        java.util.List<Object> params = new java.util.ArrayList<>();
-
-        // tambah filter kategori hanya jika bukan "Semua Kategori"
-        if (kat != null && !kat.equals("Semua Kategori")) {
-            sql.append(" AND kategori = ?");
-            params.add(kat);
-        }
-
-        // tambah filter nama hanya jika ada ketikan
-        if (!query.isEmpty()) {
-            sql.append(" AND nama_barang LIKE ?");
-            params.add("%" + query + "%");
-        }
-
-        // ── Ambil data ────────────────────────────────
-        List<Object[]> hasil = params.isEmpty() ? koneksi.ambilData(sql.toString())
-                : koneksi.ambilData(sql.toString(), params.toArray());
-        List<Produk> list = new ArrayList<>();
-
-        for (Object[] row : hasil) {
-            int id = (int) row[0];
-            String nama = (String) row[1];
-            int harga = (int) row[2];
-            String kategori = (String) row[3];
-            int stok = (int) row[4];
-            String description = (String) row[5];
-            String imageUrl = (String) row[6];
-
-            list.add(new Produk(id, nama, harga, kategori, stok, description, imageUrl));
-        }
-
-        renderProduk(list);
-    }
-
-    @FXML
-    private void onClearSearch() {
-        tfCari.clear();
-        cbKategori.setValue("Semua Kategori");
-        renderProduk(semuaProduk);
-    }
-
-    // ═════════════════════════════════════════════════════
-    // KERANJANG
-    // ═════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    // KERANJANG BELANJA
+    // ═══════════════════════════════════════════════════════
     private void tambahKeKeranjang(Produk p) {
         if (TransaksiModel.keranjang.containsKey(p.id)) {
             CartItem ci = TransaksiModel.keranjang.get(p.id);
-            if (ci.qty < p.stok) {
+            if (ci.qty < p.stok)
                 ci.qty++;
-            }
         } else {
             TransaksiModel.keranjang.put(p.id, new CartItem(p));
         }
         renderKeranjang();
-        updateSummary();
-
+        perbaruiRingkasanBayar();
     }
 
     public void renderKeranjang() {
@@ -774,17 +785,14 @@ public class TransaksiController implements Initializable {
 
         int totalItem = 0;
 
-        // Barang
         for (CartItem ci : TransaksiModel.keranjang.values()) {
             totalItem += ci.qty;
-            vboxKeranjang.getChildren().add(buildCartItem(ci));
+            vboxKeranjang.getChildren().add(buildItemKeranjangProduk(ci));
         }
 
-        // Rental PS
         if (TransaksiModel.pesananPs != null) {
             totalItem++;
-            vboxKeranjang.getChildren()
-                    .add(buildItemPs(TransaksiModel.pesananPs));
+            vboxKeranjang.getChildren().add(buildItemKeranjangPs(TransaksiModel.pesananPs));
         }
 
         lblJumlahItem.setText(totalItem + " item");
@@ -800,182 +808,204 @@ public class TransaksiController implements Initializable {
         tfDiskon.setText("0");
     }
 
-    private HBox buildCartItem(CartItem ci) {
-        // Nama & harga satuan
-        Label nama = new Label(ci.produk.nama);
-        nama.getStyleClass().add("cart-item-nama");
+    /** Membangun tampilan satu item produk di keranjang belanja */
+    private HBox buildItemKeranjangProduk(CartItem ci) {
 
-        Label hargaSatuan = new Label("@ Rp " + FMT.format(ci.produk.harga));
-        hargaSatuan.getStyleClass().add("cart-item-harga");
+        // ── Kolom Kiri: Info & Kontrol ─────────────────
+        Label lblNama = new Label(ci.produk.nama);
+        lblNama.getStyleClass().add("cart-item-nama");
 
-        VBox infoBox = new VBox(2, nama, hargaSatuan);
-        infoBox.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
+        Label lblHargaSatuan = new Label("@ Rp " + FMT.format(ci.produk.harga));
+        lblHargaSatuan.getStyleClass().add("cart-item-harga");
 
-        // Qty control
-        Button btnMin = new Button("−");
-        btnMin.getStyleClass().add("btn-qty");
-        btnMin.setOnAction(e -> {
+        Button btnKurang = new Button("−");
+        btnKurang.getStyleClass().add("btn-qty");
+        btnKurang.setOnAction(e -> {
             if (ci.qty > 1) {
                 ci.qty--;
             } else {
                 TransaksiModel.keranjang.remove(ci.produk.id);
             }
             renderKeranjang();
-            updateSummary();
+            perbaruiRingkasanBayar();
         });
 
-        Label qtyLabel = new Label(String.valueOf(ci.qty));
-        qtyLabel.getStyleClass().add("lbl-qty");
+        Label lblQty = new Label(String.valueOf(ci.qty));
+        lblQty.getStyleClass().add("lbl-qty");
 
-        Button btnPlus = new Button("+");
-        btnPlus.getStyleClass().add("btn-qty");
-        btnPlus.setDisable(ci.qty >= ci.produk.stok);
-        btnPlus.setOnAction(e -> {
-            if (ci.qty < ci.produk.stok) {
+        Button btnTambah = new Button("+");
+        btnTambah.getStyleClass().add("btn-qty");
+        btnTambah.setDisable(ci.qty >= ci.produk.stok);
+        btnTambah.setOnAction(e -> {
+            if (ci.qty < ci.produk.stok)
                 ci.qty++;
-            }
             renderKeranjang();
-            updateSummary();
+            perbaruiRingkasanBayar();
         });
 
-        HBox qtyBox = new HBox(4, btnMin, qtyLabel, btnPlus);
-        qtyBox.setAlignment(Pos.CENTER);
+        HBox qtyBox = new HBox(4, btnKurang, lblQty, btnTambah);
+        qtyBox.setAlignment(Pos.CENTER_LEFT);
 
-        // Subtotal
-        Label subtotal = new Label("Rp " + FMT.format(ci.subtotal()));
-        subtotal.getStyleClass().add("cart-item-subtotal");
+        Label lblSubtotalItem = new Label("Rp " + FMT.format(ci.subtotal()));
+        lblSubtotalItem.getStyleClass().add("cart-item-subtotal");
 
-        // Hapus
+        VBox kiriBox = new VBox(4, lblNama, lblHargaSatuan, qtyBox, lblSubtotalItem);
+        kiriBox.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(kiriBox, Priority.ALWAYS);
+
+        // ── Kolom Tengah: Gambar Produk ────────────────
+        ImageView img = new ImageView();
+        img.setFitWidth(70);
+        img.setFitHeight(70);
+        img.setPreserveRatio(false);
+        img.setSmooth(true);
+        img.imageProperty().addListener((obs, oldImg, newImg) -> {
+            if (newImg == null)
+                return;
+            if (newImg.isBackgroundLoading()) {
+                newImg.progressProperty().addListener((o, ov, nv) -> {
+                    if (nv.doubleValue() >= 1.0)
+                        terapkanCoverViewport(img, newImg, 70, 70);
+                });
+            } else {
+                terapkanCoverViewport(img, newImg, 70, 70);
+            }
+        });
+        muatGambarProduk(img, ci.produk.imageUrl);
+
+        StackPane imgWrapper = new StackPane(img);
+        imgWrapper.setPrefSize(70, 70);
+        imgWrapper.setMinSize(70, 70);
+        imgWrapper.setMaxSize(70, 70);
+        terapkanKlipBulat(imgWrapper);
+
+        // ── Kolom Kanan: Tombol Hapus ──────────────────
         Button btnHapus = new Button("✕");
         btnHapus.getStyleClass().add("btn-hapus-item");
         btnHapus.setOnAction(e -> {
             TransaksiModel.keranjang.remove(ci.produk.id);
             renderKeranjang();
-            updateSummary();
+            perbaruiRingkasanBayar();
         });
 
-        // Row bawah: qty + subtotal + hapus
-        HBox bottomRow = new HBox(8, qtyBox, subtotal, btnHapus);
-        bottomRow.setAlignment(Pos.CENTER_LEFT);
+        VBox kananBox = new VBox(btnHapus);
+        kananBox.setAlignment(Pos.TOP_CENTER);
 
-        VBox content = new VBox(6, infoBox, bottomRow);
-        HBox item = new HBox(content);
+        // ── Gabungkan 3 Kolom ─────────────────────────
+        HBox item = new HBox(8, kiriBox, imgWrapper, kananBox);
+        item.setAlignment(Pos.CENTER_LEFT);
         item.getStyleClass().add("cart-item");
         return item;
     }
 
-    // ═════════════════════════════════════════════════════
-    // SUMMARY
-    // ═════════════════════════════════════════════════════
-    long kembalian;
-    long tunai;
+    /** Membangun tampilan item rental PS di keranjang belanja */
+    private HBox buildItemKeranjangPs(ItemPs itemPs) {
+        Label lblNama = new Label("Play Station");
+        lblNama.getStyleClass().add("cart-item-nama");
 
-    public void updateSummary() {
+        Label lblHargaSatuan = new Label("1 Jam Rp 5.000 / 30 Menit Rp 3.000");
+        lblHargaSatuan.getStyleClass().add("cart-item-harga");
 
-        // Subtotal barang
+        VBox infoBox = new VBox(2, lblNama, lblHargaSatuan);
+        infoBox.setAlignment(Pos.CENTER_LEFT);
+
+        // Tombol hapus — pojok kanan atas
+        Button btnHapus = new Button("✕");
+        btnHapus.getStyleClass().add("btn-hapus-item");
+        btnHapus.setOnAction(e -> {
+            TransaksiModel.pesananPs = null;
+            renderKeranjang();
+            perbaruiRingkasanBayar();
+        });
+
+        HBox topRow = new HBox(infoBox, btnHapus);
+        topRow.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
+
+        // Kontrol durasi
+        Button btnKurangDurasi = new Button("−");
+        btnKurangDurasi.getStyleClass().add("btn-qty");
+        btnKurangDurasi.setOnAction(e -> {
+            int menitSekarang = (itemPs.durasiJam * 60) + itemPs.durasiMenit;
+            if (menitSekarang > 30) {
+                menitSekarang -= 30;
+                itemPs.durasiJam = menitSekarang / 60;
+                itemPs.durasiMenit = menitSekarang % 60;
+                itemPs.harga = hitungHargaPs(menitSekarang);
+                renderKeranjang();
+                perbaruiRingkasanBayar();
+            }
+        });
+
+        Label lblDurasi = new Label(formatTeksDurasi(itemPs.durasiJam, itemPs.durasiMenit));
+        lblDurasi.getStyleClass().add("lbl-qty");
+
+        Button btnTambahDurasi = new Button("+");
+        btnTambahDurasi.getStyleClass().add("btn-qty");
+        btnTambahDurasi.setOnAction(e -> {
+            int menitSekarang = (itemPs.durasiJam * 60) + itemPs.durasiMenit + 30;
+            itemPs.durasiJam = menitSekarang / 60;
+            itemPs.durasiMenit = menitSekarang % 60;
+            itemPs.harga = hitungHargaPs(menitSekarang);
+            renderKeranjang();
+            perbaruiRingkasanBayar();
+        });
+
+        HBox durasiBox = new HBox(4, btnKurangDurasi, lblDurasi, btnTambahDurasi);
+        durasiBox.setAlignment(Pos.CENTER_LEFT);
+
+        // Subtotal — paling bawah
+        Label lblSubtotalItem = new Label("Rp " + FMT.format(itemPs.harga));
+        lblSubtotalItem.getStyleClass().add("cart-item-subtotal");
+
+        VBox content = new VBox(4, topRow, durasiBox, lblSubtotalItem);
+        content.setAlignment(Pos.CENTER_LEFT);
+
+        HBox item = new HBox(content);
+        HBox.setHgrow(content, Priority.ALWAYS);
+        item.getStyleClass().add("cart-item");
+        return item;
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // RINGKASAN PEMBAYARAN
+    // ═══════════════════════════════════════════════════════
+    public void perbaruiRingkasanBayar() {
         long subtotalBarang = TransaksiModel.keranjang.values()
-                .stream()
-                .mapToLong(CartItem::subtotal)
-                .sum();
+                .stream().mapToLong(CartItem::subtotal).sum();
 
-        // Subtotal rental PS
-        long subtotalPs = 0;
+        long subtotalPs = (TransaksiModel.pesananPs != null)
+                ? TransaksiModel.pesananPs.harga
+                : 0;
 
-        // Total subtotal transaksi
         TransaksiModel.subtotal = subtotalBarang + subtotalPs;
 
-        double diskonPct = parseDouble(
-                tfDiskon.getText().replaceAll("[^0-9]", ""));
-
+        double diskonPct = parseDouble(tfDiskon.getText().replaceAll("[^0-9]", ""));
         long diskon = (long) (TransaksiModel.subtotal * diskonPct / 100.0);
-
         TransaksiModel.total = TransaksiModel.subtotal - diskon;
 
         lblSubtotal.setText("Rp " + FMT.format(TransaksiModel.subtotal));
         lblDiskon.setText("- Rp " + FMT.format(diskon));
         lblTotal.setText("Rp " + FMT.format(TransaksiModel.total));
 
-        // Kembalian
-        tunai = parseLong(
-                tfTunai.getText().replaceAll("[^0-9]", ""));
-
+        tunai = parseLong(tfTunai.getText().replaceAll("[^0-9]", ""));
         kembalian = tunai - TransaksiModel.total;
 
-        lblKembalian.setText(
-                kembalian >= 0
-                        ? "Kembalian Rp " + FMT.format(kembalian)
-                        : "Kurang Rp " + FMT.format(Math.abs(kembalian)));
-
-        lblKembalian.setStyle(
-                kembalian >= 0
-                        ? "-fx-text-fill: #00E5A0;"
-                        : "-fx-text-fill: #FF5C7C;");
+        lblKembalian.setText(kembalian >= 0
+                ? "Kembalian Rp " + FMT.format(kembalian)
+                : "Kurang Rp " + FMT.format(Math.abs(kembalian)));
+        lblKembalian.setStyle(kembalian >= 0
+                ? "-fx-text-fill: #00E5A0;"
+                : "-fx-text-fill: #FF5C7C;");
     }
 
-    // ═════════════════════════════════════════════════════
-    // METODE PEMBAYARAN LAIN
-    // ═════════════════════════════════════════════════════
-    boolean pembayaraanQris = false;
-
-    void setupMetodeBayar() {
-        System.out.println(btnQris.getStyleClass());
-        btnTunai.getStyleClass().add("pay-method-active");
-        btnQris.setOnAction(e -> {
-            TransaksiModel.metodeBayar = "QRIS";
-            pembayaraanQris = true;
-            btnQris.getStyleClass().add("pay-method-active");
-            btnTunai.getStyleClass().remove("pay-method-active");
-            tunaiBox.setVisible(false);
-            tunaiBox.setManaged(false);
-            QuickBox.setVisible(false);
-            QuickBox.setManaged(false);
-        });
-        btnTunai.setOnAction(e -> {
-            TransaksiModel.metodeBayar = "Tunai";
-            pembayaraanQris = false;
-            btnQris.getStyleClass().remove("pay-method-active");
-            btnTunai.getStyleClass().add("pay-method-active");
-            tunaiBox.setVisible(true);
-            tunaiBox.setManaged(true);
-            QuickBox.setVisible(true);
-            QuickBox.setManaged(true);
-        });
-    }
-
-    void setupMenu() {
-        btnProduk.getStyleClass().add("btn-menu-active");
-        btnProduk.setOnAction(e -> {
-            btnProduk.getStyleClass().add("btn-menu-active");
-            btnPS.getStyleClass().remove("btn-menu-active");
-            boxRentalPs.setVisible(false);
-            boxRentalPs.setManaged(false);
-            scrolpane.setVisible(true);
-            scrolpane.setManaged(true);
-            cbKategori.setDisable(false);
-
-        });
-        btnPS.setOnAction(e -> {
-            boxRentalPs.setVisible(true);
-            boxRentalPs.setManaged(true);
-            scrolpane.setVisible(false);
-            scrolpane.setManaged(false);
-            btnProduk.getStyleClass().remove("btn-menu-active");
-            btnPS.getStyleClass().add("btn-menu-active");
-            cbKategori.setDisable(true);
-
-        });
-    }
-
-    // ═════════════════════════════════════════════════════
-    // HANDLERS
-    // ══════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
+    // HANDLERS PEMBAYARAN
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onDiskonChanged() {
-        updateSummary();
+        perbaruiRingkasanBayar();
     }
-
-    private boolean isUpdating = false;
 
     @FXML
     private void onTunaiChanged() {
@@ -986,160 +1016,258 @@ public class TransaksiController implements Initializable {
         if (raw.isEmpty()) {
             tfTunai.setText("");
             isUpdating = false;
-            updateSummary();
+            perbaruiRingkasanBayar();
+            return;
         }
         long value = Long.parseLong(raw);
         tfTunai.setText("Rp " + FMT.format(value));
         tfTunai.positionCaret(tfTunai.getText().length());
         isUpdating = false;
-        updateSummary();
+        perbaruiRingkasanBayar();
     }
 
     @FXML
     private void onKosongkanKeranjang() {
         TransaksiModel.keranjang.clear();
         TransaksiModel.pesananPs = null;
-
         renderKeranjang();
-        updateSummary();
+        perbaruiRingkasanBayar();
     }
 
-    // Quick nominal tunai
     @FXML
     private void onQuick5() {
         tfTunai.setText("5.000");
-        updateSummary();
+        perbaruiRingkasanBayar();
     }
 
     @FXML
     private void onQuick10() {
         tfTunai.setText("10.000");
-        updateSummary();
+        perbaruiRingkasanBayar();
     }
 
     @FXML
     private void onQuick20() {
         tfTunai.setText("20.000");
-        updateSummary();
+        perbaruiRingkasanBayar();
     }
 
     @FXML
     private void onQuick50() {
         tfTunai.setText("50.000");
-        updateSummary();
+        perbaruiRingkasanBayar();
     }
 
-    // Proses bayar
     @FXML
     private void onProsesBayar() {
         Stage ownerStage = (Stage) btnBayar.getScene().getWindow();
-        if (TransaksiModel.keranjang.isEmpty()
-                && TransaksiModel.pesananPs == null) {
+
+        if (TransaksiModel.keranjang.isEmpty() && TransaksiModel.pesananPs == null)
             return;
-        }
+
         if ("Admin".equals(session.role)) {
             new Popup().showConfirmPopup("OTORITAS",
-                    "Proses Pembayaran Tidak Dapat Di Lakukan Karena Role Tidak Sesuai, Silahkan Login Dengan Akun Karyawan",
+                    "Proses Pembayaran Tidak Dapat Dilakukan Karena Role Tidak Sesuai, Silahkan Login Dengan Akun Karyawan",
                     () -> {
-                        return;
                     });
             return;
         }
+
         if (pembayaraanQris) {
-            String sqlTransaksi = "INSERT INTO tb_transaksi "
-                    + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
-
-            koneksi.eksekusiQuery(sqlTransaksi, session.id, TransaksiModel.total, TransaksiModel.total, 0, 0,
-                    "Lunas",
-                    "");
-
+            simpanTransaksi(TransaksiModel.total, TransaksiModel.total, 0, 0, "Lunas");
         } else {
             if (tfTunai.getText() == null || tfTunai.getText().isBlank() || tunai < 1000) {
-                new Popup().showModernPopup(
-                        "WARNING",
-                        "Uang Pembyaran Minimal Rp.1000",
+                new Popup().showModernPopup("WARNING", "Uang Pembayaran Minimal Rp.1000",
                         Popup.PopupType.WARNING, ownerStage);
                 return;
-            } else {
-                if (kembalian >= 0) {
-
-                    String sqlTransaksi = "INSERT INTO tb_transaksi "
-                            + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
-
-                    koneksi.eksekusiQuery(sqlTransaksi, session.id, TransaksiModel.total, tunai, kembalian, 0,
-                            "Lunas",
-                            "");
-
-                } else {
-
-                    String sqlTransaksi = "INSERT INTO tb_transaksi "
-                            + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
-                            + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
-
-                    koneksi.eksekusiQuery(sqlTransaksi, session.id, TransaksiModel.total, tunai, 0,
-                            Math.abs(kembalian),
-                            "Belum Lunas", "");
-                }
             }
-
+            if (kembalian >= 0) {
+                simpanTransaksi(tunai, kembalian, 0, 0, "Lunas");
+            } else {
+                simpanTransaksi(tunai, 0, Math.abs(kembalian), 0, "Belum Lunas");
+            }
         }
 
-        for (CartItem item : TransaksiModel.keranjang.values()) {
-
-            String sqlUpdateStok = "UPDATE tb_barang SET stok = stok - ? WHERE id_barang = ?";
-
-            koneksi.eksekusiQuery(sqlUpdateStok, item.qty, item.produk.id);
-            System.out.println("Berhasil update stok barang ID: " + item.produk.id +
-                    " qty: " + item.qty);
-        }
-
-        String sql_idtransaksi = "SELECT id_transaksi FROM tb_transaksi ORDER BY id_transaksi DESC LIMIT 1";
-
-        List<Object[]> data = koneksi.ambilData(sql_idtransaksi);
-
-        if (!data.isEmpty() && TransaksiModel.pesananPs != null) {
-
-            int idTransaksi = ((Number) data.get(0)[0]).intValue();
-
-            int totalMenit = (TransaksiModel.pesananPs.durasiJam * 60)
-                    + TransaksiModel.pesananPs.durasiMenit;
-
-            String sql = "INSERT INTO tb_paket_ps "
-                    + "(id_transaksi, durasi, harga) "
-                    + "VALUES (?, ?, ?)";
-
-            koneksi.eksekusiQuery(
-                    sql,
-                    idTransaksi,
-                    totalMenit,
-                    TransaksiModel.pesananPs.harga);
-        }
-        // Update stok di database
+        perbaruiStokProduk();
+        simpanPaketPsJikaAda();
 
         semuaProduk.clear();
-        loadproduk();
+        muatDataProduk();
         onClearSearch();
 
-        // TODO: simpan ke database, cetak struk, dll.
-        System.out.println("=== TRANSAKSI BERHASIL ===");
-        System.out.println("No: #TRX-" + String.format("%04d", TransaksiModel.noTrx));
-        System.out.println("Metode: " + TransaksiModel.metodeBayar);
         tfTunai.clear();
-
-        navigation nav = new navigation();
-        Stage stage = (Stage) btnBayar.getScene().getWindow();
-        nav.detailTransaksi(stage, this);
-        // TransaksiModel.keranjang.clear();
-        // TransaksiModel.pesananPs = null;
-
+        new navigation().detailTransaksi((Stage) btnBayar.getScene().getWindow(), this);
     }
 
-    // ── Helpers ───────────────────────────────────────────
+    private void simpanTransaksi(long uangBayar, long kembalianVal, long kekurangan, long dummy, String status) {
+        String sql = "INSERT INTO tb_transaksi "
+                + "(id_karyawan, total_pembayaran, uang_pembayaran, kembalian, kekurangan, status_pembayaran, tanggal_transaksi, pelanggan) "
+                + "VALUES (?, ?, ?, ?, ?, ?, DATETIME('now','localtime'), ?)";
+        koneksi.eksekusiQuery(sql, session.id, TransaksiModel.total, uangBayar, kembalianVal, kekurangan, status, "");
+    }
+
+    private void perbaruiStokProduk() {
+        for (CartItem item : TransaksiModel.keranjang.values()) {
+            koneksi.eksekusiQuery("UPDATE tb_barang SET stok = stok - ? WHERE id_barang = ?",
+                    item.qty, item.produk.id);
+        }
+    }
+
+    private void simpanPaketPsJikaAda() {
+        List<Object[]> data = koneksi.ambilData(
+                "SELECT id_transaksi FROM tb_transaksi ORDER BY id_transaksi DESC LIMIT 1");
+        if (!data.isEmpty() && TransaksiModel.pesananPs != null) {
+            int idTransaksi = ((Number) data.get(0)[0]).intValue();
+            int totalMenit = (TransaksiModel.pesananPs.durasiJam * 60) + TransaksiModel.pesananPs.durasiMenit;
+            koneksi.eksekusiQuery(
+                    "INSERT INTO tb_paket_ps (id_transaksi, durasi, harga) VALUES (?, ?, ?)",
+                    idTransaksi, totalMenit, TransaksiModel.pesananPs.harga);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // RENTAL PS — PRESET & SPINNER
+    // ═══════════════════════════════════════════════════════
+    @FXML
+    private void onPreset1() {
+        terapkanPresetPs(0, 30, 1);
+    }
+
+    @FXML
+    private void onPreset2() {
+        terapkanPresetPs(1, 0, 2);
+    }
+
+    @FXML
+    private void onPreset3() {
+        terapkanPresetPs(1, 30, 3);
+    }
+
+    @FXML
+    private void onPreset4() {
+        terapkanPresetPs(2, 0, 4);
+    }
+
+    private void terapkanPresetPs(int j, int m, int presetNo) {
+        jamPs = j;
+        menitPs = m;
+        activePreset = presetNo;
+        lblJam.setText(String.valueOf(jamPs));
+        lblMenit.setText(String.valueOf(menitPs));
+        resetGayaPreset();
+        new Button[] { btnPreset1, btnPreset2, btnPreset3, btnPreset4 }[presetNo - 1]
+                .getStyleClass().add("preset-btn-active");
+        perbaruiTampilanRentalPs();
+    }
+
+    private void resetGayaPreset() {
+        for (Button b : new Button[] { btnPreset1, btnPreset2, btnPreset3, btnPreset4 }) {
+            b.getStyleClass().setAll("preset-btn");
+        }
+    }
+
+    @FXML
+    private void onJamPlus() {
+        jamPs++;
+        activePreset = -1;
+        resetGayaPreset();
+        lblJam.setText(String.valueOf(jamPs));
+        perbaruiTampilanRentalPs();
+    }
+
+    @FXML
+    private void onJamMin() {
+        if (jamPs > 0) {
+            jamPs--;
+            activePreset = -1;
+            resetGayaPreset();
+            lblJam.setText(String.valueOf(jamPs));
+            perbaruiTampilanRentalPs();
+        }
+    }
+
+    @FXML
+    private void onMenitPlus() {
+        menitPs = (menitPs == 0) ? 30 : 0;
+        if (menitPs == 0)
+            jamPs++;
+        activePreset = -1;
+        resetGayaPreset();
+        lblJam.setText(String.valueOf(jamPs));
+        lblMenit.setText(String.valueOf(menitPs));
+        perbaruiTampilanRentalPs();
+    }
+
+    @FXML
+    private void onMenitMin() {
+        if (menitPs == 30) {
+            menitPs = 0;
+        } else if (jamPs > 0) {
+            jamPs--;
+            menitPs = 30;
+        }
+        activePreset = -1;
+        resetGayaPreset();
+        lblJam.setText(String.valueOf(jamPs));
+        lblMenit.setText(String.valueOf(menitPs));
+        perbaruiTampilanRentalPs();
+    }
+
+    private void perbaruiTampilanRentalPs() {
+        int totalMenit = (jamPs * 60) + menitPs;
+        long harga = hitungHargaPs(totalMenit);
+        lblDurasiText.setText(totalMenit == 0 ? "-" : formatTeksDurasi(jamPs, menitPs));
+        lblHargaTotal.setText("Rp " + FMT.format(harga));
+        btnKonfirmasi.setDisable(totalMenit == 0);
+    }
+
+    private long hitungHargaPs(int totalMenit) {
+        if (totalMenit == 0)
+            return 0;
+        if (totalMenit == 30)
+            return HARGA_30_MENIT;
+        long jamPenuh = totalMenit / 60;
+        int sisaMenit = totalMenit % 60;
+        return (jamPenuh * HARGA_1_JAM) + (sisaMenit > 0 ? HARGA_30_MENIT : 0);
+    }
+
+    private String formatTeksDurasi(int j, int m) {
+        if (j == 0 && m == 0)
+            return "-";
+        if (j == 0)
+            return m + " Menit";
+        if (m == 0)
+            return j + " Jam";
+        return j + " Jam " + m + " Menit";
+    }
+
+    @FXML
+    private void onKonfirmasi() {
+        int totalMenit = (jamPs * 60) + menitPs;
+        TransaksiModel.pesananPs = new ItemPs(-1, jamPs, menitPs, hitungHargaPs(totalMenit));
+        renderKeranjang();
+        perbaruiRingkasanBayar();
+    }
+
+    @FXML
+    private void onBatal() {
+        tampilkanMenuProduk();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // NOTIFIKASI
+    // ═══════════════════════════════════════════════════════
+    @FXML
+    private void onNotif() {
+        Notifikasi.show((Stage) notifBadge.getScene().getWindow());
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // HELPER
+    // ═══════════════════════════════════════════════════════
     private double parseDouble(String s) {
         try {
-            return s == null || s.isBlank() ? 0 : Double.parseDouble(s.trim());
+            return (s == null || s.isBlank()) ? 0 : Double.parseDouble(s.trim());
         } catch (NumberFormatException e) {
             return 0;
         }
@@ -1147,334 +1275,12 @@ public class TransaksiController implements Initializable {
 
     private long parseLong(String s) {
         try {
-            return s == null || s.isBlank() ? 0 : Long.parseLong(s.trim());
+            return (s == null || s.isBlank()) ? 0 : Long.parseLong(s.trim());
         } catch (NumberFormatException e) {
             return 0;
         }
     }
 
-    @FXML
-    private void onRentalPs() {
-
-    }
-
-    // ── State ──────────────────────────────────────
-    private int jam = 0;
-    private int menit = 0; // hanya 0 atau 30
-    private int activePreset = -1; // -1 = custom
-
-    private TransaksiController transaksiController;
-
-    // private static final NumberFormat FMT = NumberFormat.getInstance(
-    // new Locale("id", "ID"));
-
-    // harga per 30 menit = Rp 3.000
-    // harga per 60 menit = Rp 5.000
-    // custom: 30 menit pertama = 3.000, tiap jam = 5.000
-    private static final long HARGA_30_MENIT = 3_000;
-    private static final long HARGA_1_JAM = 5_000;
-
-    // ── Setter dipanggil dari navigation ──────────
     public void setTransaksiController(TransaksiController tc) {
-        this.transaksiController = tc;
-    }
-
-    // ═══════════════════════════════════════════════
-    // PRESET HANDLERS
-    // ═══════════════════════════════════════════════
-    @FXML
-    private void onPreset1() {
-        setPreset(0, 30, 1);
-    } // 30 menit
-
-    @FXML
-    private void onPreset2() {
-        setPreset(1, 0, 2);
-    } // 1 jam
-
-    @FXML
-    private void onPreset3() {
-        setPreset(1, 30, 3);
-    } // 1,5 jam
-
-    @FXML
-    private void onPreset4() {
-        setPreset(2, 0, 4);
-    } // 2 jam
-
-    private void resetPresetStyle() {
-        for (Button b : new Button[] { btnPreset1, btnPreset2, btnPreset3, btnPreset4 }) {
-            b.getStyleClass().setAll("preset-btn");
-        }
-    }
-
-    private void setPreset(int j, int m, int presetNo) {
-
-        jam = j;
-        menit = m;
-        activePreset = presetNo;
-
-        lblJam.setText(String.valueOf(jam));
-        lblMenit.setText(String.valueOf(menit));
-
-        resetPresetStyle();
-
-        Button[] btns = { btnPreset1, btnPreset2, btnPreset3, btnPreset4 };
-
-        btns[presetNo - 1]
-                .getStyleClass()
-                .add("preset-btn-active");
-
-        updateDisplay();
-    }
-
-    // ═══════════════════════════════════════════════
-    // CUSTOM SPINNER HANDLERS
-    // ═══════════════════════════════════════════════
-    @FXML
-    private void onJamPlus() {
-        jam++;
-        activePreset = -1; // switch ke custom
-        resetPresetStyle();
-        lblJam.setText(String.valueOf(jam));
-        updateDisplay();
-    }
-
-    @FXML
-    private void onJamMin() {
-        if (jam > 0) {
-            jam--;
-            activePreset = -1;
-            resetPresetStyle();
-            lblJam.setText(String.valueOf(jam));
-            updateDisplay();
-        }
-    }
-
-    @FXML
-    private void onMenitPlus() {
-        menit = (menit == 0) ? 30 : 0;
-        if (menit == 0)
-            jam++; // overflow 30+30 = 1 jam
-        activePreset = -1;
-        resetPresetStyle();
-        lblJam.setText(String.valueOf(jam));
-        lblMenit.setText(String.valueOf(menit));
-        updateDisplay();
-    }
-
-    @FXML
-    private void onMenitMin() {
-        if (menit == 30) {
-            menit = 0;
-        } else if (jam > 0) {
-            jam--;
-            menit = 30;
-        }
-        activePreset = -1;
-        resetPresetStyle();
-        lblJam.setText(String.valueOf(jam));
-        lblMenit.setText(String.valueOf(menit));
-        updateDisplay();
-    }
-
-    // ═══════════════════════════════════════════════
-    // HITUNG HARGA & UPDATE DISPLAY
-    // ═══════════════════════════════════════════════
-    private void updateDisplay() {
-        int totalMenit = (jam * 60) + menit;
-        long harga = hitungHarga(totalMenit);
-
-        // teks durasi
-        String durasiText = buildDurasiText();
-        lblDurasiText.setText(totalMenit == 0 ? "-" : durasiText);
-        lblHargaTotal.setText("Rp " + FMT.format(harga));
-
-        // disable konfirmasi kalau durasi 0
-        btnKonfirmasi.setDisable(totalMenit == 0);
-    }
-
-    private long hitungHarga(int totalMenit) {
-        if (totalMenit == 0)
-            return 0;
-        if (totalMenit == 30)
-            return HARGA_30_MENIT; // 30 menit = 3.000
-
-        // tiap jam = 5.000, sisa 30 menit = 3.000
-        long jamPenuh = totalMenit / 60;
-        int sisaMenit = totalMenit % 60;
-        return (jamPenuh * HARGA_1_JAM) + (sisaMenit > 0 ? HARGA_30_MENIT : 0);
-    }
-
-    private String buildDurasiText() {
-        if (jam == 0 && menit == 0)
-            return "-";
-        if (jam == 0)
-            return menit + " Menit";
-        if (menit == 0)
-            return jam + " Jam";
-        return jam + " Jam " + menit + " Menit";
-    }
-
-    // ═══════════════════════════════════════════════
-    // KONFIRMASI — masuk ke keranjang
-    // ═══════════════════════════════════════════════
-    @FXML
-    private void onKonfirmasi() {
-
-        int totalMenit = (jam * 60) + menit;
-        long harga = hitungHarga(totalMenit);
-
-        TransaksiModel.pesananPs = new ItemPs(
-                -1,
-                jam,
-                menit,
-                harga);
-
-        renderKeranjang();
-        updateSummary();
-    }
-
-    @FXML
-    private void onBatal() {
-        Stage stage = (Stage) btnKonfirmasi.getScene().getWindow();
-        stage.close();
-    }
-
-    private HBox buildItemPs(ItemPs itemPs) {
-
-        Label nama = new Label("Play Station");
-        nama.getStyleClass().add("cart-item-nama");
-
-        Label hargaSatuan = new Label(
-                "1 Jam Rp 5.000 / 30 Menit Rp 3.000");
-        hargaSatuan.getStyleClass().add("cart-item-harga");
-
-        VBox infoBox = new VBox(2, nama, hargaSatuan);
-        infoBox.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
-
-        // ==================================================
-        // HITUNG TOTAL MENIT SAAT INI
-        // ==================================================
-        int totalMenit = (itemPs.durasiJam * 60)
-                + itemPs.durasiMenit;
-
-        // ==================================================
-        // BUTTON MINUS
-        // ==================================================
-        Button btnMin = new Button("−");
-        btnMin.getStyleClass().add("btn-qty");
-
-        btnMin.setOnAction(e -> {
-
-            int menitSekarang = (itemPs.durasiJam * 60)
-                    + itemPs.durasiMenit;
-
-            if (menitSekarang > 30) {
-
-                menitSekarang -= 30;
-
-                itemPs.durasiJam = menitSekarang / 60;
-                itemPs.durasiMenit = menitSekarang % 60;
-
-                itemPs.harga = hitungHarga(menitSekarang);
-
-                renderKeranjang();
-                updateSummary();
-            }
-        });
-
-        // ==================================================
-        // LABEL DURASI
-        // ==================================================
-        Label lblDurasi = new Label(
-                itemPs.durasiJam + " Jam "
-                        + itemPs.durasiMenit + " Menit");
-
-        lblDurasi.getStyleClass().add("lbl-qty");
-
-        // ==================================================
-        // BUTTON PLUS
-        // ==================================================
-        Button btnPlus = new Button("+");
-        btnPlus.getStyleClass().add("btn-qty");
-
-        btnPlus.setOnAction(e -> {
-
-            int menitSekarang = (itemPs.durasiJam * 60)
-                    + itemPs.durasiMenit;
-
-            menitSekarang += 30;
-
-            itemPs.durasiJam = menitSekarang / 60;
-            itemPs.durasiMenit = menitSekarang % 60;
-
-            itemPs.harga = hitungHarga(menitSekarang);
-
-            renderKeranjang();
-            updateSummary();
-        });
-
-        HBox durasiBox = new HBox(
-                5,
-                btnMin,
-                lblDurasi,
-                btnPlus);
-
-        durasiBox.setAlignment(Pos.CENTER_LEFT);
-
-        // ==================================================
-        // SUBTOTAL
-        // ==================================================
-        Label subtotal = new Label(
-                "Rp " + FMT.format(itemPs.harga));
-
-        subtotal.getStyleClass().add("cart-item-subtotal");
-
-        // ==================================================
-        // HAPUS
-        // ==================================================
-        Button btnHapus = new Button("✕");
-        btnHapus.getStyleClass().add("btn-hapus-item");
-
-        btnHapus.setOnAction(e -> {
-            TransaksiModel.pesananPs = null;
-
-            renderKeranjang();
-            updateSummary();
-        });
-
-        // ==================================================
-        // BOTTOM ROW
-        // ==================================================
-        HBox bottomRow = new HBox(
-                8,
-                durasiBox,
-                subtotal,
-                btnHapus);
-
-        bottomRow.setAlignment(Pos.CENTER_LEFT);
-
-        VBox content = new VBox(
-                6,
-                infoBox,
-                bottomRow);
-
-        HBox item = new HBox(content);
-        item.getStyleClass().add("cart-item");
-
-        return item;
-    }
-
-    // ═══════════════════════════════════════════════════════
-    // NOTIFIKASI
-    // ═══════════════════════════════════════════════════════
-
-    @FXML
-    private void onNotif() {
-        Stage stage = (Stage) notifBadge.getScene().getWindow();
-        Notifikasi.show(stage);
-    }
-
+        /* reserved */ }
 }

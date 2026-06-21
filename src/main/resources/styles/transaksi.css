@@ -535,6 +535,47 @@
 }
 
 /* ── PANEL KANAN — KERANJANG ─────────────────────────── */
+/* ═══════════════════════════════════════════════
+   SCROLLBAR KERANJANG
+═══════════════════════════════════════════════ */
+
+/* Track (latar belakang scrollbar) */
+.cart-scroll .scroll-bar:vertical {
+  -fx-background-color: transparent;
+  -fx-pref-width: 6px;
+}
+
+/* Thumb (bagian yang bisa digeser) */
+.cart-scroll .scroll-bar:vertical .thumb {
+  -fx-background-color: #6C63FF;
+  -fx-background-radius: 10px;
+  -fx-pref-width: 4px;
+}
+
+.cart-scroll .scroll-bar:vertical .thumb:hover {
+  -fx-background-color: #00D4FF;
+}
+
+/* Sembunyikan tombol panah atas/bawah */
+.cart-scroll .scroll-bar:vertical .increment-button,
+.cart-scroll .scroll-bar:vertical .decrement-button {
+  -fx-background-color: transparent;
+  -fx-pref-height: 0;
+  -fx-pref-width: 0;
+}
+
+.cart-scroll .scroll-bar:vertical .increment-arrow,
+.cart-scroll .scroll-bar:vertical .decrement-arrow {
+  -fx-shape: "";
+  -fx-pref-height: 0;
+  -fx-pref-width: 0;
+}
+
+/* Sembunyikan scrollbar horizontal */
+.cart-scroll .scroll-bar:horizontal {
+  -fx-pref-height: 0;
+  -fx-opacity: 0;
+}
 .badge-item {
   -fx-background-color: rgba(108, 99, 255, 0.2);
   -fx-border-color: #6c63ff;

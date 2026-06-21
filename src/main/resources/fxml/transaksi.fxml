@@ -149,7 +149,7 @@
               <Label styleClass="panel-title" text="Daftar Produk" HBox.hgrow="ALWAYS" />
               <!-- Filter kategori -->
               <ComboBox fx:id="cbKategori" prefWidth="160" promptText="Semua Kategori" styleClass="combo-kategori" />
-              <Button fx:id="btnPS" maxWidth="Infinity" onAction="#onRentalPs" prefHeight="32.0" prefWidth="145.0" styleClass="btn-menu" text="Play Staysion" textFill="#fc0000" />
+              <Button fx:id="btnPS" maxWidth="Infinity" prefHeight="32.0" prefWidth="145.0" styleClass="btn-menu" text="Play Staysion" textFill="#fc0000" />
               <Button fx:id="btnProduk" maxWidth="Infinity" prefHeight="32.0" prefWidth="145.0" styleClass="btn-menu" text="Produk" textFill="#fc0000" />
             </HBox>
             <!-- Search bar -->
@@ -303,7 +303,7 @@
             <VBox fx:id="totalBox" spacing="8" styleClass="summary-box">
               <!-- Subtotal -->
               <HBox alignment="CENTER_LEFT">
-                <Label styleClass="summary-label" text="Subtotal" HBox.hgrow="ALWAYS" />
+                <Label styleClass="summary-label" text="Subtotal " HBox.hgrow="ALWAYS" />
                 <Label fx:id="lblSubtotal" styleClass="summary-value" text="Rp 0" />
               </HBox>
               <!-- Diskon -->
