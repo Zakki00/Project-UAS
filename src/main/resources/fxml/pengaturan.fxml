@@ -274,7 +274,7 @@
           <VBox fx:id="panelTentang" spacing="20" styleClass="setting-panel">
             <Label styleClass="panel-title" text="Tentang Aplikasi" />
             <VBox alignment="CENTER" spacing="12" styleClass="about-card">
-              <Label styleClass="about-logo" text="🏪" />
+              <Label styleClass="about-logo" text="☕" />
               <Label styleClass="about-app-name" text="Enjoy Cafe" />
               <Label styleClass="about-version" text="Versi 1.0.0" />
               <Label styleClass="about-desc" text="Sistem Manajemen Toko Modern berbasis JavaFX" />
