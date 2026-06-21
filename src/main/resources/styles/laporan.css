@@ -478,14 +478,17 @@
 .filter-field:focused {
     -fx-border-color: #6C63FF;
 }
+/* ═══════════════════════════════════════════════════════════
+   FILTER DATEPICKER
+═════════════════════════════════════════════════════════════ */
 
-/* DatePicker */
 .filter-datepicker {
     -fx-background-color: #252840;
     -fx-border-color: #2E3250;
     -fx-border-width: 1;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
+    -fx-pref-height: 34;
 }
 
 .filter-datepicker .text-field {
@@ -493,20 +496,98 @@
     -fx-text-fill: #FFFFFF;
     -fx-prompt-text-fill: #8B8FA8;
     -fx-font-size: 11px;
-    -fx-padding: 7 4 7 12;
     -fx-border-width: 0;
-}
-
-.filter-datepicker:focused {
-    -fx-border-color: #6C63FF;
+    -fx-padding: 0 8 0 10;
 }
 
 .filter-datepicker .arrow-button {
     -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.filter-datepicker .arrow-button:hover {
+    -fx-background-color: rgba(108, 99, 255, 0.15);
+    -fx-background-radius: 6;
 }
 
 .filter-datepicker .arrow-button .arrow {
     -fx-background-color: #8B8FA8;
+}
+
+.filter-datepicker:focused,
+.filter-datepicker .text-field:focused {
+    -fx-border-color: #6C63FF;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   POPUP CALENDAR
+═════════════════════════════════════════════════════════════ */
+/* ── DatePicker Popup ────────────────────────────────────── */
+
+.date-picker-popup {
+    -fx-background-color: #252840;
+    -fx-border-color: #2E3250;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.date-picker-popup .month-year-pane {
+    -fx-background-color: #1A1D2E;
+}
+
+.date-picker-popup .month-year-pane .label {
+    -fx-text-fill: #FFFFFF;
+}
+
+.date-picker-popup .spinner .button {
+    -fx-background-color: transparent;
+}
+
+.date-picker-popup .spinner .button:hover {
+    -fx-background-color: rgba(108, 99, 255, 0.15);
+}
+
+.date-picker-popup .spinner .left-arrow,
+.date-picker-popup .spinner .right-arrow {
+    -fx-background-color: #FFFFFF;
+}
+
+.date-picker-popup .day-name-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8B8FA8;
+}
+
+.date-picker-popup .week-number-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #8B8FA8;
+}
+
+.date-picker-popup .day-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #000000;
+    -fx-background-radius: 6;
+}
+
+.date-picker-popup .day-cell:hover {
+    -fx-background-color: rgba(108, 99, 255, 0.18);
+}
+
+.date-picker-popup .selected {
+    -fx-background-color: #6C63FF;
+    -fx-text-fill: #000000;
+    -fx-background-radius: 6;
+}
+
+.date-picker-popup .today {
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+}
+
+.date-picker-popup .day-cell:disabled {
+    -fx-text-fill: #6F7390;
+    -fx-opacity: 0.5;
 }
 
 /* ComboBox */

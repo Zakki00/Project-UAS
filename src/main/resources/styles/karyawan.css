@@ -536,52 +536,71 @@
 .form-datepicker .text-field:focused {
   -fx-border-color: #6c63ff;
 }
-
 .date-picker-popup {
   -fx-background-color: #252840;
-  -fx-border-color: #2e3250;
+  -fx-border-color: #2E3250;
+  -fx-border-width: 1;
   -fx-border-radius: 10;
   -fx-background-radius: 10;
 }
 
 .date-picker-popup .month-year-pane {
-  -fx-background-color: #1a1d2e;
+  -fx-background-color: #1A1D2E;
+}
+
+.date-picker-popup .month-year-pane .label {
+  -fx-text-fill: #FFFFFF;
 }
 
 .date-picker-popup .spinner .button {
   -fx-background-color: transparent;
-  -fx-text-fill: #ffffff;
+}
+
+.date-picker-popup .spinner .button:hover {
+  -fx-background-color: rgba(108, 99, 255, 0.15);
+}
+
+.date-picker-popup .spinner .left-arrow,
+.date-picker-popup .spinner .right-arrow {
+  -fx-background-color: #FFFFFF;
+}
+
+.date-picker-popup .day-name-cell {
+  -fx-background-color: transparent;
+  -fx-text-fill: #8B8FA8;
+}
+
+.date-picker-popup .week-number-cell {
+  -fx-background-color: transparent;
+  -fx-text-fill: #8B8FA8;
 }
 
 .date-picker-popup .day-cell {
-  -fx-text-fill: #2e3250;
   -fx-background-color: transparent;
-}
-
-.date-picker-popup .day-cell:hover {
-  -fx-background-color: #eeff00;
+  -fx-text-fill: #000000;
   -fx-background-radius: 6;
 }
 
+.date-picker-popup .day-cell:hover {
+  -fx-background-color: rgba(108, 99, 255, 0.18);
+}
+
 .date-picker-popup .selected {
-  -fx-background-color: #6c63ff;
+  -fx-background-color: #6C63FF;
+  -fx-text-fill: #000000;
   -fx-background-radius: 6;
 }
 
 .date-picker-popup .today {
-  -fx-border-color: #6c63ff;
-  -fx-border-radius: 6;
+  -fx-border-color: #6C63FF;
   -fx-border-width: 1;
+  -fx-border-radius: 6;
 }
 
-.date-picker-popup .week-number-cell {
-  -fx-text-fill: #8b8fa8;
+.date-picker-popup .day-cell:disabled {
+  -fx-text-fill: #6F7390;
+  -fx-opacity: 0.5;
 }
-
-.date-picker-popup .day-name-cell {
-  -fx-text-fill: #8b8fa8;
-}
-
 /* ═══════════════════════════════════════════════════════════
    BUTTONS
 ════════════════════════════════════════════════════════════ */
