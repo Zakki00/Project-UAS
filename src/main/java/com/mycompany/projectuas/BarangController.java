@@ -174,6 +174,7 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // STATE
     // ═══════════════════════════════════════════════════════
+    private boolean perubahan_data = false;
     private boolean sidebarCollapsed = false;
     private boolean isUpdatingHarga = false;
 
@@ -365,7 +366,7 @@ public class BarangController implements Initializable {
     // ========================================
     // SELECTED DATA
     // =========================================
-    private boolean updateData = false;
+   
 
     private void selectedData() {
         filteredData = new FilteredList<>(masterData, p -> true);
@@ -373,13 +374,10 @@ public class BarangController implements Initializable {
 
         tabelBarang.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
-                updateData = false;
-                tambahBarang.setDisable(false); // ← tidak ada yang dipilih, tombol aktif
+                perubahan_data = false;
                 return;
             }
-            updateData = true;
-            tambahBarang.setDisable(true); // ← ada yang dipilih, tombol nonaktif
-
+            perubahan_data = true;
             txtNama.setText(newVal.getNama());
             cmbKategori.setValue(newVal.getKategori());
             txtStok.setText(String.valueOf(newVal.getStok()));
@@ -474,6 +472,9 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════════════════
     @FXML
     void tambahBarang(ActionEvent event) {
+        if(perubahan_data == true){
+            return;
+        }
         if (!isInputValid(false, null))
             return;
         try {
@@ -558,6 +559,7 @@ public class BarangController implements Initializable {
                         Popup.PopupType.ERROR, getStage());
             }
         });
+        perubahan_data = false;
     }
 
     @FXML
@@ -589,6 +591,7 @@ public class BarangController implements Initializable {
                         Popup.PopupType.ERROR, getStage());
             }
         });
+        perubahan_data = false;
 
     }
 
@@ -603,7 +606,7 @@ public class BarangController implements Initializable {
         txtDeskripsi.clear();
         lblFilePath.setText("Tidak ada file dipilih");
         tabelBarang.getSelectionModel().clearSelection();
-        updateData = false;
+        perubahan_data = false;
         tambahBarang.setDisable(false);
     }
 

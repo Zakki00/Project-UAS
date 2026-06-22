@@ -36,7 +36,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
@@ -890,33 +892,33 @@ public class LaporanController implements Initializable {
     private void loadShiftData() {
 
         loadShift(
-                "06:00:00",
-                "12:00:00",
+                "09:00:00",
+                "15:00:00",
                 lblTrxPagi,
                 lblItemPagi,
                 lblPaketPSPagi,
                 lblPendapatanPagi,
                 lblJamPagi,
-                "06:00 — 12:00");
+                "09:00 — 15:00");
 
         loadShift(
-                "12:00:00",
-                "21:00:00",
+                "15:00:00",
+                "04:00:00",
                 lblTrxMalam,
                 lblItemMalam,
                 lblPaketPSMalam,
                 lblPendapatanMalam,
                 lblJamMalam,
-                "12:00 — 21:00");
+                "15:00 — 04:00");
 
         loadKasirShift(
-                "06:00:00",
-                "12:00:00",
+                "09:00:00",
+                "15:00:00",
                 flowKasirPagi,true);
 
         loadKasirShift(
-                "12:00:00",
-                "23:00:00",
+                "15:00:00",
+                "04:00:00",
                 flowKasirMalam,false);
 
         updateStatusDot();
@@ -1636,7 +1638,7 @@ public class LaporanController implements Initializable {
     }
 
     /** Bar chart: transaksi per jam hari ini */
-    private void loadTransaksiPerJam() {
+     private void loadTransaksiPerJam() {
         String sql = """
                     SELECT strftime('%H', tanggal_transaksi) AS jam, COUNT(*) AS jumlah
                     FROM tb_transaksi
@@ -1644,23 +1646,46 @@ public class LaporanController implements Initializable {
                     GROUP BY jam ORDER BY jam
                 """;
         List<Object[]> data = koneksi.ambilData(sql);
+
         java.util.Map<String, Integer> mapJam = new java.util.LinkedHashMap<>();
-        for (int h = 7; h <= 22; h++)
+        for (int h = 0; h <= 23; h++) // ← fix: 0-23 bukan 0-24
             mapJam.put(String.format("%02d", h), 0);
+
         for (Object[] row : data) {
             String jam = String.valueOf(row[0]);
             if (mapJam.containsKey(jam))
                 mapJam.put(jam, ((Number) row[1]).intValue());
         }
+
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Transaksi");
         for (java.util.Map.Entry<String, Integer> entry : mapJam.entrySet()) {
             series.getData().add(new XYChart.Data<>(entry.getKey(), entry.getValue()));
         }
+
         jamChart.getData().clear();
         jamChart.getData().add(series);
+
+        // ── Fix Y-axis dan X-axis──
+        NumberAxis yAxis = (NumberAxis) jamChart.getYAxis();
+        CategoryAxis xAxis = (CategoryAxis) jamChart.getXAxis();
+
+        yAxis.setAutoRanging(false);
+        yAxis.setLowerBound(0);
+        yAxis.setUpperBound(Math.max(5, getMaxValue(mapJam) + 1)); // minimal skala 5
+        yAxis.setTickUnit(1);
+        yAxis.setMinorTickVisible(false);
+
+        xAxis.setLabel("Per Jam");
+        yAxis.setLabel("Jumlah");
+
         jamChart.setAnimated(true);
         animateFadeIn(jamChart, 300);
+    }
+
+    // helper ambil nilai maksimum dari map
+    private int getMaxValue(java.util.Map<String, Integer> map) {
+        return map.values().stream().mapToInt(Integer::intValue).max().orElse(0);
     }
 
     // ═══════════════════════════════════════════════════════

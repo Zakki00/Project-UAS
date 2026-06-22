@@ -190,7 +190,7 @@
                           <Label fx:id="lblStatusPagi" styleClass="shift-pagi-dot" text="●" />
                         </children>
                       </HBox>
-                      <Label fx:id="lblJamPagi" styleClass="shift-pagi-jam" text="06:00 — 12:00" />
+                      <Label fx:id="lblJamPagi" styleClass="shift-pagi-jam" text="09:00 — 15:00" />
                       <Separator styleClass="shift-pagi-divider" VBox.vgrow="NEVER" />
                       <VBox spacing="10" styleClass="shift-info-box">
                         <VBox.margin>
@@ -254,7 +254,7 @@
                           <Label fx:id="lblStatusMalam" styleClass="shift-malam-dot" text="●" />
                         </children>
                       </HBox>
-                      <Label fx:id="lblJamMalam" styleClass="shift-malam-jam" text="12:00 — 21:00" />
+                      <Label fx:id="lblJamMalam" styleClass="shift-malam-jam" text="15:00 — 04:00" />
                       <Separator styleClass="shift-malam-divider" VBox.vgrow="NEVER" />
                       <VBox spacing="10" styleClass="shift-info-box">
                         <VBox.margin>
@@ -464,7 +464,7 @@
               <VBox spacing="10" styleClass="card">
                 <Label styleClass="card-title" text="🕐 Transaksi per Jam" />
                 <Label styleClass="card-sub" text="Pola ramai hari ini" />
-                <BarChart fx:id="jamChart" legendVisible="false" maxHeight="180" prefHeight="180" styleClass="trx-chart" VBox.vgrow="ALWAYS">
+                <BarChart fx:id="jamChart" legendVisible="false" maxHeight="1.7976931348623157E308" styleClass="trx-chart" VBox.vgrow="ALWAYS">
                   <xAxis>
                     <CategoryAxis styleClass="chart-axis" />
                   </xAxis>

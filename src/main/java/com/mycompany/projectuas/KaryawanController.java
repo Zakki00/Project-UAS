@@ -212,6 +212,7 @@ public class KaryawanController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // KONSTANTA & VARIABEL
     // ═══════════════════════════════════════════════════════
+    private boolean perubahan_data = false;
     private boolean sidebarCollapsed = false;
     private static final double SIDEBAR_FULL = 220;
     private static final double SIDEBAR_MINI = 60;
@@ -634,8 +635,10 @@ public class KaryawanController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // KLIK BARIS → ISI FORM
     // ═══════════════════════════════════════════════════════
+
     private void setupTableClickKaryawan() {
         tableKaryawan.setOnMouseClicked(e -> {
+            perubahan_data = true;
             KaryawanModel selected = tableKaryawan.getSelectionModel().getSelectedItem();
             if (selected == null)
                 return;
@@ -657,6 +660,7 @@ public class KaryawanController implements Initializable {
 
     private void setupTableClickAbsensi() {
         tableAbsensi.setOnMouseClicked(e -> {
+            perubahan_data = true;
             AbsensiModel selected = tableAbsensi.getSelectionModel().getSelectedItem();
             if (selected == null)
                 return;
@@ -824,6 +828,9 @@ public class KaryawanController implements Initializable {
     // ═══════════════════════════════════════════════════════
     @FXML
     public void tambahKaryawan() {
+        if(perubahan_data == true){
+            return;
+        }
         if (!validasiKaryawan())
             return;
 
@@ -899,6 +906,7 @@ public class KaryawanController implements Initializable {
         new Popup().showModernPopup("SUCCESS", "Data karyawan berhasil diperbarui",
                 Popup.PopupType.SUCCESS, (Stage) txtIdKaryawan.getScene().getWindow());
         resetKaryawan();
+        perubahan_data = false;
     }
 
     @FXML
@@ -921,6 +929,7 @@ public class KaryawanController implements Initializable {
                             "Karyawan " + selected.getNamaLengkap() + " berhasil dihapus",
                             Popup.PopupType.SUCCESS, (Stage) tableKaryawan.getScene().getWindow());
                 });
+        perubahan_data = false;
     }
 
     @FXML
@@ -935,6 +944,7 @@ public class KaryawanController implements Initializable {
         txtAlamat.clear();
         tableKaryawan.getSelectionModel().clearSelection();
         generateNextId();
+        perubahan_data = false;
     }
 
     // ═══════════════════════════════════════════════════════
@@ -942,6 +952,9 @@ public class KaryawanController implements Initializable {
     // ═══════════════════════════════════════════════════════
     @FXML
     public void simpanAbsensi() {
+        if (perubahan_data == true) {
+            return;
+        }
         Stage stage = (Stage) tableAbsensi.getScene().getWindow();
 
         if (dpTanggalAbsensi.getValue() == null) {
@@ -960,6 +973,7 @@ public class KaryawanController implements Initializable {
             new Popup().showModernPopup("WARNING", "Pilih status kehadiran!", Popup.PopupType.WARNING, stage);
             return;
         }
+        
 
         String tgl = dpTanggalAbsensi.getValue().format(fmt);
         String idKary = cmbPilihKaryawan.getValue();
@@ -1020,6 +1034,7 @@ public class KaryawanController implements Initializable {
         new Popup().showModernPopup("SUCCESS", "Data absensi berhasil diperbarui",
                 Popup.PopupType.SUCCESS, stage);
         resetAbsensi();
+        perubahan_data = false;
     }
 
     @FXML
@@ -1038,6 +1053,7 @@ public class KaryawanController implements Initializable {
             new Popup().showModernPopup("SUCCESS", "Data absensi berhasil dihapus",
                     Popup.PopupType.SUCCESS, (Stage) tableAbsensi.getScene().getWindow());
         });
+        perubahan_data = false;
     }
 
     @FXML
@@ -1048,6 +1064,7 @@ public class KaryawanController implements Initializable {
         cmbShift.setValue(null);
         cmbStatusKehadiran.setValue(null);
         tableAbsensi.getSelectionModel().clearSelection();
+        perubahan_data = false;
     }
 
     // ═══════════════════════════════════════════════════════
