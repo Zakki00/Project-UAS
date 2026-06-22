@@ -4,17 +4,18 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.FileContent;
 import com.google.api.client.http.apache.v2.ApacheHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
-import com.mycompany.projectuas.Popup;
 
 public class GoogleDriveService {
 
@@ -58,7 +59,6 @@ public class GoogleDriveService {
         if (!getTokenFile().exists()) {
             throw new Exception("Belum login Google");
         }
-
         Credential credential = GoogleAuthService.loadCredential();
         if (credential == null)
             throw new Exception("Credential NULL");
@@ -85,32 +85,17 @@ public class GoogleDriveService {
     }
 
     private void uploadFileToDrive(Drive drive, File file, String namaFile) throws Exception {
-        try {
-            com.google.api.services.drive.model.File metadata = new com.google.api.services.drive.model.File();
-            metadata.setName(namaFile);
+        com.google.api.services.drive.model.File metadata = new com.google.api.services.drive.model.File();
+        metadata.setName(namaFile);
 
-            FileContent mediaContent = new FileContent("application/octet-stream", file);
+        FileContent mediaContent = new FileContent("application/octet-stream", file);
 
-            com.google.api.services.drive.model.File uploaded = drive.files()
-                    .create(metadata, mediaContent)
-                    .setFields("id,name")
-                    .execute();
+        com.google.api.services.drive.model.File uploaded = drive.files()
+                .create(metadata, mediaContent)
+                .setFields("id,name")
+                .execute();
 
-            System.out.println("Upload berhasil | ID = " + uploaded.getId() + " | Nama = " + uploaded.getName());
-
-        } catch (com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
-            int statusCode = e.getStatusCode();
-            if (statusCode == 403) {
-                throw new Exception(
-                        "IZIN_DITOLAK: Akses Google Drive ditolak. Silakan login ulang dan berikan izin akses Drive.");
-            } else if (statusCode == 401) {
-                throw new Exception("TOKEN_EXPIRED: Sesi Google telah kedaluwarsa. Silakan login ulang.");
-            } else {
-                throw new Exception("Google API Error " + statusCode + ": " + e.getMessage());
-            }
-        } catch (java.net.UnknownHostException e) {
-            throw new Exception("TIDAK_ADA_INTERNET: Tidak ada koneksi internet.");
-        }
+        System.out.println("Upload berhasil | ID = " + uploaded.getId() + " | Nama = " + uploaded.getName());
     }
 
     private String getFileIdFromDrive(Drive drive, String namaFile) throws Exception {
@@ -123,6 +108,39 @@ public class GoogleDriveService {
         if (result.getFiles().isEmpty())
             return null;
         return result.getFiles().get(0).getId();
+    }
+
+    // =========================================================================
+    // Error Helper — parse kode error dari exception
+    // =========================================================================
+
+    private String parseErrorCode(Exception e) {
+        if (e instanceof GoogleJsonResponseException) {
+            int code = ((GoogleJsonResponseException) e).getStatusCode();
+            if (code == 403)
+                return "IZIN_DITOLAK";
+            if (code == 401)
+                return "TOKEN_EXPIRED";
+            return "GOOGLE_ERROR_" + code;
+        }
+        if (e instanceof java.net.UnknownHostException)
+            return "TIDAK_ADA_INTERNET";
+        if (e instanceof IOException)
+            return "TIDAK_ADA_INTERNET";
+        if (e.getMessage() != null && e.getMessage().equals("Belum login Google"))
+            return "BELUM_LOGIN";
+        return null;
+    }
+
+    private void tanganiError(Exception e, Consumer<String> onError, String konteks) {
+        String kode = parseErrorCode(e);
+        if (kode != null) {
+            System.out.println("[" + konteks + "] Error: " + kode);
+            if (onError != null)
+                onError.accept(kode);
+        } else {
+            System.out.println("[" + konteks + "] Gagal: " + e.getMessage());
+        }
     }
 
     // =========================================================================
@@ -144,7 +162,6 @@ public class GoogleDriveService {
                     try (FileInputStream fis = new FileInputStream(file)) {
                         ZipEntry entry = new ZipEntry(file.getName());
                         zos.putNextEntry(entry);
-
                         byte[] buffer = new byte[4096];
                         int len;
                         while ((len = fis.read(buffer)) > 0) {
@@ -168,7 +185,6 @@ public class GoogleDriveService {
             ZipEntry entry;
             while ((entry = zis.getNextEntry()) != null) {
                 File outFile = new File(outputFolder, entry.getName());
-
                 try (FileOutputStream fos = new FileOutputStream(outFile)) {
                     byte[] buffer = new byte[4096];
                     int len;
@@ -187,10 +203,12 @@ public class GoogleDriveService {
     // Upload Backup Database
     // =========================================================================
 
-    public boolean uploadBackup() {
+    public boolean uploadBackup(Consumer<String> onError) {
         try {
             if (!getTokenFile().exists()) {
                 System.out.println("Token tidak ditemukan.");
+                if (onError != null)
+                    onError.accept("BELUM_LOGIN");
                 return false;
             }
 
@@ -207,31 +225,26 @@ public class GoogleDriveService {
             return true;
 
         } catch (Exception e) {
-            String msg = e.getMessage();
-            if (msg != null && msg.startsWith("IZIN_DITOLAK")) {
-                new Popup().showConfirmPopup("AKSES DI TOLAK", "⚠ Izin Google Drive ditolak. Silakan login ulang dan centang izin akses Drive.", null);
-            } else if (msg != null && msg.startsWith("TOKEN_EXPIRED")) {
-                System.out.println("⚠ Sesi Google kedaluwarsa. Silakan login ulang.");
-            } else if (msg != null && msg.startsWith("TIDAK_ADA_INTERNET")) {
-                System.out.println("⚠ Tidak ada koneksi internet.");
-            } else {
-                System.out.println("Backup gagal: " + msg);
-            }
+            tanganiError(e, onError, "uploadBackup");
             return false;
         }
+    }
+
+    public boolean uploadBackup() {
+        return uploadBackup(null);
     }
 
     // =========================================================================
     // Restore Backup Database
     // =========================================================================
 
-    public boolean restoreBackup() {
+    public boolean restoreBackup(Consumer<String> onError) {
         try {
             Drive drive = buildDrive();
 
             String fileId = getFileIdFromDrive(drive, "db_enjoy_cafe.db");
             if (fileId == null) {
-                System.out.println("Backup database tidak ditemukan di Google Drive");
+                System.out.println("Backup database tidak ditemukan di Google Drive.");
                 return false;
             }
 
@@ -249,29 +262,25 @@ public class GoogleDriveService {
             return true;
 
         } catch (Exception e) {
-            String msg = e.getMessage();
-            if (msg != null && msg.startsWith("IZIN_DITOLAK")) {
-                new Popup().showConfirmPopup("AKSES DI TOLAK",
-                        "⚠ Izin Google Drive ditolak. Silakan login ulang dan centang izin akses Drive.", null);
-            } else if (msg != null && msg.startsWith("TOKEN_EXPIRED")) {
-                System.out.println("⚠ Sesi Google kedaluwarsa. Silakan login ulang.");
-            } else if (msg != null && msg.startsWith("TIDAK_ADA_INTERNET")) {
-                System.out.println("⚠ Tidak ada koneksi internet.");
-            } else {
-                System.out.println("Restore gagal: " + msg);
-            }
+            tanganiError(e, onError, "restoreBackup");
             return false;
         }
+    }
+
+    public boolean restoreBackup() {
+        return restoreBackup(null);
     }
 
     // =========================================================================
     // Upload Backup Gambar
     // =========================================================================
 
-    public boolean uploadImageBackup() {
+    public boolean uploadImageBackup(Consumer<String> onError) {
         try {
             if (!getTokenFile().exists()) {
-                System.out.println("Token tidak ditemukan");
+                System.out.println("Token tidak ditemukan.");
+                if (onError != null)
+                    onError.accept("BELUM_LOGIN");
                 return false;
             }
 
@@ -279,111 +288,118 @@ public class GoogleDriveService {
             File[] files = imageFolder.listFiles();
             if (!imageFolder.exists() || files == null || files.length == 0) {
                 System.out.println("Folder gambar kosong, skip backup gambar.");
-                return true; // bukan error, hanya skip
+                return true;
             }
 
-            // Zip folder gambar
             File zipFile = getImageZipFile();
             zipFolder(imageFolder, zipFile);
 
             if (!zipFile.exists()) {
-                System.out.println("Zip gambar gagal dibuat");
+                System.out.println("Zip gambar gagal dibuat.");
                 return false;
             }
 
             Drive drive = buildDrive();
             hapusFileLama(drive, "images-backup.zip");
             uploadFileToDrive(drive, zipFile, "images-backup.zip");
-
-            // Hapus file zip sementara
             zipFile.delete();
 
             return true;
 
-        } catch (IOException e) {
-            System.out.println("Tidak ada koneksi internet. Backup gambar dibatalkan.");
-            return false;
-
         } catch (Exception e) {
-            System.out.println("Backup gambar gagal: " + e.getMessage());
+            tanganiError(e, onError, "uploadImageBackup");
             return false;
         }
+    }
+
+    public boolean uploadImageBackup() {
+        return uploadImageBackup(null);
     }
 
     // =========================================================================
     // Restore Backup Gambar
     // =========================================================================
 
-    public boolean restoreImageBackup() {
+    public boolean restoreImageBackup(Consumer<String> onError) {
         try {
             Drive drive = buildDrive();
 
             String fileId = getFileIdFromDrive(drive, "images-backup.zip");
             if (fileId == null) {
-                System.out.println("Backup gambar tidak ditemukan di Google Drive");
+                System.out.println("Backup gambar tidak ditemukan di Google Drive.");
                 return false;
             }
 
             System.out.println("File gambar ditemukan | ID = " + fileId);
 
-            // Download zip ke AppData sementara
             File zipFile = getImageZipFile();
             try (FileOutputStream output = new FileOutputStream(zipFile)) {
                 drive.files().get(fileId).executeMediaAndDownloadTo(output);
             }
 
-            // Extract ke folder image-barang
             File imageFolder = getImageFolder();
             extractZip(zipFile, imageFolder);
-
-            // Hapus file zip sementara
             zipFile.delete();
 
             System.out.println("Restore gambar berhasil ke: " + imageFolder.getAbsolutePath());
             return true;
 
-        } catch (IOException e) {
-            System.out.println("Tidak ada koneksi internet. Restore gambar dibatalkan.");
-            return false;
-
         } catch (Exception e) {
-            System.out.println("Restore gambar gagal: " + e.getMessage());
+            tanganiError(e, onError, "restoreImageBackup");
             return false;
         }
+    }
+
+    public boolean restoreImageBackup() {
+        return restoreImageBackup(null);
     }
 
     // =========================================================================
     // Backup Semua (DB + Gambar)
     // =========================================================================
 
-    public boolean uploadBackupAll() {
+    public boolean uploadBackupAll(Consumer<String> onError) {
         System.out.println("=== Memulai backup semua data ===");
 
-        boolean dbOk = uploadBackup();
+        boolean dbOk = uploadBackup(onError);
         System.out.println("Backup DB: " + (dbOk ? "Berhasil" : "Gagal"));
 
-        boolean imgOk = uploadImageBackup();
+        // Hanya lanjut backup gambar kalau db berhasil
+        if (!dbOk)
+            return false;
+
+        boolean imgOk = uploadImageBackup(onError);
         System.out.println("Backup Gambar: " + (imgOk ? "Berhasil" : "Gagal"));
 
-        return dbOk && imgOk;
+        return imgOk;
+    }
+
+    public boolean uploadBackupAll() {
+        return uploadBackupAll(null);
     }
 
     // =========================================================================
     // Restore Semua (DB + Gambar)
     // =========================================================================
 
-    public boolean restoreBackupAll() {
+    public boolean restoreBackupAll(Consumer<String> onError) {
         System.out.println("=== Memulai restore semua data ===");
 
-        boolean dbOk = restoreBackup();
+        boolean dbOk = restoreBackup(onError);
         System.out.println("Restore DB: " + (dbOk ? "Berhasil" : "Gagal"));
 
-        boolean imgOk = restoreImageBackup();
+        // Hanya lanjut restore gambar kalau db berhasil
+        if (!dbOk)
+            return false;
+
+        boolean imgOk = restoreImageBackup(onError);
         System.out.println("Restore Gambar: " + (imgOk ? "Berhasil" : "Gagal"));
 
-        return dbOk && imgOk;
-        
+        return imgOk;
+    }
 
+    public boolean restoreBackupAll() {
+        return restoreBackupAll(null);
     }
 
     // =========================================================================
@@ -413,12 +429,11 @@ public class GoogleDriveService {
             System.out.println("Backup terakhir = " + selisihJam + " jam lalu");
             return selisihJam >= intervalJam;
 
-        } catch (IOException e) {
-            System.out.println("Tidak ada koneksi internet. File Backup Tidak Dapat Di Baca.");
+        } catch (java.net.UnknownHostException e) {
+            System.out.println("Tidak ada koneksi internet.");
             return false;
-
         } catch (Exception e) {
-            System.out.println("Membaca File Backup Terkahir Gagal: " + e.getMessage());
+            System.out.println("Cek backup kadaluarsa gagal: " + e.getMessage());
             return false;
         }
     }
@@ -429,7 +444,6 @@ public class GoogleDriveService {
 
     public String getLastBackupTime() {
         try {
-            // Cek token dulu sebelum request ke internet
             if (!getTokenFile().exists()) {
                 return "Belum login Google";
             }

@@ -644,22 +644,62 @@ public class PengaturanController implements Initializable {
         pbBackup.setStyle("-fx-accent: #6C63FF;");
         pbBackup.setProgress(0.0);
 
-        // Animasi: naik pelan ke 0.85, lalu pulse opacity
         pbAnimTimeline = new Timeline(
-                // Fase 1: naik cepat ke 30%
                 new KeyFrame(Duration.millis(0),
                         new KeyValue(pbBackup.progressProperty(), 0.0)),
                 new KeyFrame(Duration.millis(600),
                         new KeyValue(pbBackup.progressProperty(), 0.3)),
-                // Fase 2: naik lambat ke 85%, berhenti di sini sampai upload selesai
                 new KeyFrame(Duration.millis(3000),
                         new KeyValue(pbBackup.progressProperty(), 0.85)));
-        pbAnimTimeline.setCycleCount(1); // cukup 1x, tidak bolak-balik
+        pbAnimTimeline.setCycleCount(1);
         pbAnimTimeline.play();
 
         Thread t = new Thread(() -> {
             GoogleDriveService service = new GoogleDriveService();
-            boolean backup = service.uploadBackupAll();
+
+            boolean backup = service.uploadBackupAll(errorKode -> {
+                Platform.runLater(() -> {
+                    Stage stage = (Stage) btnBackup.getScene().getWindow();
+
+                    if (errorKode.equals("IZIN_DITOLAK") || errorKode.equals("TOKEN_EXPIRED")) {
+                        new Popup().showConfirmPopup(
+                                "Akses Google Drive Ditolak",
+                                "Izin akses Google Drive ditolak atau sesi telah kedaluwarsa.\nSilakan login ulang dan berikan izin akses Drive.",
+                                () -> {
+
+                                    try {
+                                        prefs.clear();
+                                    } catch (BackingStoreException e) {
+                                        e.printStackTrace();
+                                    }
+                                    
+                                    navigation nav = new navigation();
+                                    nav.navigateToLogin();
+                                    stage.close();
+
+                                    session.id = 0;
+                                    session.googleUser = null;
+                                    session.username = "";
+                                    session.nama = "";
+                                    session.role = "";
+                                    session.email = "";
+                                });
+                               
+
+                    } else if (errorKode.equals("TIDAK_ADA_INTERNET")) {
+                        new Popup().showModernPopup(
+                                "Tidak Ada Internet",
+                                "Koneksi internet tidak tersedia. Periksa koneksi dan coba lagi.",
+                                Popup.PopupType.WARNING, stage);
+
+                    } else if (errorKode.equals("BELUM_LOGIN")) {
+                        new Popup().showModernPopup(
+                                "Belum Login Google",
+                                "Silakan login dengan akun Google terlebih dahulu.",
+                                Popup.PopupType.WARNING, stage);
+                    }
+                });
+            });
 
             Platform.runLater(() -> {
                 pbAnimTimeline.stop();
@@ -670,19 +710,17 @@ public class PengaturanController implements Initializable {
                                     new KeyValue(pbBackup.progressProperty(), pbBackup.getProgress())),
                             new KeyFrame(Duration.millis(400),
                                     new KeyValue(pbBackup.progressProperty(), 1.0)));
-
                     selesai.setOnFinished(ev -> {
                         Platform.runLater(() -> {
                             pbBackup.setStyle("-fx-accent: #00E5A0;");
                             pbBackup.applyCss();
                         });
                     });
-
                     selesai.play();
+
                     lblBackupStatus.setText("✅ Backup berhasil ke Google Drive");
                     loadLastBackupTime();
-                    Popup popup = new Popup();
-                    popup.showSuccessPopup("Berhasil", "Backup Data Di Googl Drive Berhasil Di Lakukan");
+                    new Popup().showSuccessPopup("Berhasil", "Backup data ke Google Drive berhasil dilakukan.");
 
                 } else {
                     Timeline selesai = new Timeline(
@@ -690,18 +728,14 @@ public class PengaturanController implements Initializable {
                                     new KeyValue(pbBackup.progressProperty(), pbBackup.getProgress())),
                             new KeyFrame(Duration.millis(400),
                                     new KeyValue(pbBackup.progressProperty(), 1.0)));
-
                     selesai.setOnFinished(ev -> {
                         Platform.runLater(() -> {
                             pbBackup.setStyle("-fx-accent: #FF5C7C;");
                             pbBackup.applyCss();
                         });
                     });
-                    Stage stage = (Stage) btnBackup.getScene().getWindow();
-                    Popup popup = new Popup();
-                    popup.showModernPopup("EROR", "Gagal Melakukan Backup Database", Popup.PopupType.ERROR, stage);
-
                     selesai.play();
+
                     lblBackupStatus.setText("❌ Upload Google Drive gagal");
                 }
             });
@@ -734,7 +768,6 @@ public class PengaturanController implements Initializable {
         pbBackup.setStyle("-fx-accent: #6C63FF;");
         pbBackup.setProgress(0.0);
 
-        // Animasi loading
         pbAnimTimeline = new Timeline(
                 new KeyFrame(Duration.millis(0),
                         new KeyValue(pbBackup.progressProperty(), 0.0)),
@@ -747,7 +780,48 @@ public class PengaturanController implements Initializable {
 
         Thread t = new Thread(() -> {
             GoogleDriveService driveService = new GoogleDriveService();
-            boolean restore = driveService.restoreBackupAll();
+
+            boolean restore = driveService.restoreBackupAll(errorKode -> {
+                Platform.runLater(() -> {
+                    Stage stage = (Stage) btnRestore.getScene().getWindow();
+
+                    if (errorKode.equals("IZIN_DITOLAK") || errorKode.equals("TOKEN_EXPIRED")) {
+                        new Popup().showConfirmPopup(
+                                "Akses Google Drive Ditolak",
+                                "Izin akses Google Drive ditolak atau sesi telah kedaluwarsa.\nSilakan login ulang dan berikan izin akses Drive.",
+                                () -> {
+                                    try {
+                                        prefs.clear();
+                                    } catch (BackingStoreException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    navigation nav = new navigation();
+                                    nav.navigateToLogin();
+                                    stage.close();
+
+                                    session.id = 0;
+                                    session.googleUser = null;
+                                    session.username = "";
+                                    session.nama = "";
+                                    session.role = "";
+                                    session.email = "";
+                                });
+
+                    } else if (errorKode.equals("TIDAK_ADA_INTERNET")) {
+                        new Popup().showModernPopup(
+                                "Tidak Ada Internet",
+                                "Koneksi internet tidak tersedia. Periksa koneksi dan coba lagi.",
+                                Popup.PopupType.WARNING, stage);
+
+                    } else if (errorKode.equals("BELUM_LOGIN")) {
+                        new Popup().showModernPopup(
+                                "Belum Login Google",
+                                "Silakan login dengan akun Google terlebih dahulu.",
+                                Popup.PopupType.WARNING, stage);
+                    }
+                });
+            });
 
             Platform.runLater(() -> {
                 pbAnimTimeline.stop();
@@ -765,8 +839,8 @@ public class PengaturanController implements Initializable {
                     }));
                     selesai.play();
                     lblBackupStatus.setText("✅ Restore berhasil dari Google Drive");
-                    Popup popup = new Popup();
-                    popup.showSuccessPopup("Berhasil", "Restore Data Dari Googl Drive Berhasil Di Lakukan");
+                    new Popup().showSuccessPopup("Berhasil", "Restore data dari Google Drive berhasil dilakukan.");
+
                 } else {
                     selesai.setOnFinished(ev -> Platform.runLater(() -> {
                         pbBackup.setStyle("-fx-accent: #FF5C7C;");
@@ -774,8 +848,8 @@ public class PengaturanController implements Initializable {
                     }));
                     selesai.play();
                     Stage stage = (Stage) btnRestore.getScene().getWindow();
-                    Popup popup = new Popup();
-                    popup.showModernPopup("EROR", "Gagal Melakukan Restore Database", Popup.PopupType.ERROR, stage);
+                    new Popup().showModernPopup("Error", "Gagal melakukan restore database.", Popup.PopupType.ERROR,
+                            stage);
                     lblBackupStatus.setText("❌ Restore dari Google Drive gagal");
                 }
             });
