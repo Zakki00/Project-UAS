@@ -67,7 +67,7 @@ public class LoginController implements Initializable {
         List<Object[]> admin = koneksi.ambilData(sql_admin);
         String Admin = prefs.get("Admin", null);
         if (Admin == null || admin.isEmpty()) {
-            System.out.print("Admin Belum Di Daftarkan Sebagai Pemilik Aplikasi" + Admin);
+            System.out.println("Admin Belum Di Daftarkan Sebagai Pemilik Aplikasi" + Admin);
             btnGoogle.setVisible(true);
             btnGoogle.setManaged(true);
             try {
@@ -123,8 +123,8 @@ public class LoginController implements Initializable {
                             session.id = (int) row[0];
                             session.username = (String) row[1];
                             session.nama = (String) row[2];
-                            session.role = (String) row[3];
-                            session.email = (String) row[4];
+                            session.email = (String) row[3];
+                            session.role = (String) row[4];
                             googleUser.setProfilePictureUrl((String) row[5]);
                             navigation nav = new navigation();
                             prefs.put("Admin", "Admin");
@@ -137,6 +137,7 @@ public class LoginController implements Initializable {
                                     "Selamat datang Kembali, " + user.getName() + "!", user);
 
                             System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
+                            System.out.println("Role Yang Aktif saat ini adalah " + session.role);
                         } else {
 
                             navigation nav = new navigation();

@@ -14,6 +14,7 @@ import com.google.api.client.http.apache.v2.ApacheHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
+import com.mycompany.projectuas.Popup;
 
 public class GoogleDriveService {
 
@@ -84,7 +85,7 @@ public class GoogleDriveService {
     }
 
     private void uploadFileToDrive(Drive drive, File file, String namaFile) throws Exception {
-        try{
+        try {
             com.google.api.services.drive.model.File metadata = new com.google.api.services.drive.model.File();
             metadata.setName(namaFile);
 
@@ -96,9 +97,19 @@ public class GoogleDriveService {
                     .execute();
 
             System.out.println("Upload berhasil | ID = " + uploaded.getId() + " | Nama = " + uploaded.getName());
-        }catch(Exception e){
-            System.out.println("Gagal Terhubung Internet");
-            return;
+
+        } catch (com.google.api.client.googleapis.json.GoogleJsonResponseException e) {
+            int statusCode = e.getStatusCode();
+            if (statusCode == 403) {
+                throw new Exception(
+                        "IZIN_DITOLAK: Akses Google Drive ditolak. Silakan login ulang dan berikan izin akses Drive.");
+            } else if (statusCode == 401) {
+                throw new Exception("TOKEN_EXPIRED: Sesi Google telah kedaluwarsa. Silakan login ulang.");
+            } else {
+                throw new Exception("Google API Error " + statusCode + ": " + e.getMessage());
+            }
+        } catch (java.net.UnknownHostException e) {
+            throw new Exception("TIDAK_ADA_INTERNET: Tidak ada koneksi internet.");
         }
     }
 
@@ -179,7 +190,7 @@ public class GoogleDriveService {
     public boolean uploadBackup() {
         try {
             if (!getTokenFile().exists()) {
-                System.out.println("Token tidak ditemukan: " + getTokenFile().getAbsolutePath());
+                System.out.println("Token tidak ditemukan.");
                 return false;
             }
 
@@ -187,24 +198,25 @@ public class GoogleDriveService {
             hapusFileLama(drive, "db_enjoy_cafe.db");
 
             File uploadFile = getDbFile();
-            System.out.println("Path DB = " + uploadFile.getAbsolutePath());
-            System.out.println("Ada File = " + uploadFile.exists());
-            System.out.println("Ukuran = " + uploadFile.length());
-
             if (!uploadFile.exists()) {
-                System.out.println("File database tidak ditemukan");
+                System.out.println("File database tidak ditemukan.");
                 return false;
             }
 
             uploadFileToDrive(drive, uploadFile, "db_enjoy_cafe.db");
             return true;
 
-        } catch (IOException e) {
-            System.out.println("Tidak ada koneksi internet. Backup database dibatalkan.");
-            return false;
-
         } catch (Exception e) {
-            System.out.println("Backup database gagal: " + e.getMessage());
+            String msg = e.getMessage();
+            if (msg != null && msg.startsWith("IZIN_DITOLAK")) {
+                new Popup().showConfirmPopup("AKSES DI TOLAK", "⚠ Izin Google Drive ditolak. Silakan login ulang dan centang izin akses Drive.", null);
+            } else if (msg != null && msg.startsWith("TOKEN_EXPIRED")) {
+                System.out.println("⚠ Sesi Google kedaluwarsa. Silakan login ulang.");
+            } else if (msg != null && msg.startsWith("TIDAK_ADA_INTERNET")) {
+                System.out.println("⚠ Tidak ada koneksi internet.");
+            } else {
+                System.out.println("Backup gagal: " + msg);
+            }
             return false;
         }
     }
@@ -236,12 +248,18 @@ public class GoogleDriveService {
             System.out.println("Restore database berhasil ke: " + localDb.getAbsolutePath());
             return true;
 
-        } catch (IOException e) {
-            System.out.println("Tidak ada koneksi internet. Restore database dibatalkan.");
-            return false;
-
         } catch (Exception e) {
-            System.out.println("Restore database gagal: " + e.getMessage());
+            String msg = e.getMessage();
+            if (msg != null && msg.startsWith("IZIN_DITOLAK")) {
+                new Popup().showConfirmPopup("AKSES DI TOLAK",
+                        "⚠ Izin Google Drive ditolak. Silakan login ulang dan centang izin akses Drive.", null);
+            } else if (msg != null && msg.startsWith("TOKEN_EXPIRED")) {
+                System.out.println("⚠ Sesi Google kedaluwarsa. Silakan login ulang.");
+            } else if (msg != null && msg.startsWith("TIDAK_ADA_INTERNET")) {
+                System.out.println("⚠ Tidak ada koneksi internet.");
+            } else {
+                System.out.println("Restore gagal: " + msg);
+            }
             return false;
         }
     }

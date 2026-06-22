@@ -184,18 +184,6 @@ public class GoogleAuthService {
         return folder;
     }
 
-    private boolean tryCreateFolder(File folder) {
-        try {
-            if (folder.exists()) {
-                return folder.isDirectory() && folder.canWrite();
-            }
-            return folder.mkdirs();
-        } catch (Exception e) {
-            writeLog("tryCreateFolder failed for " + folder.getAbsolutePath() + ": " + e.getClass().getSimpleName()
-                    + " - " + e.getMessage());
-            return false;
-        }
-    }
 
     /**
      * Login sinkronus (blocking). Gunakan loginAsync() untuk JavaFX.

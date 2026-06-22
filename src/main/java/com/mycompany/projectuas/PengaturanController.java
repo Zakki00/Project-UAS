@@ -623,6 +623,12 @@ public class PengaturanController implements Initializable {
                     Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
                     stage.close();
                 });
+        session.id = 0;
+        session.googleUser = null;
+        session.username ="";
+        session.nama = "";
+        session.role = "";
+        session.email = "";
     }
 
     // ══════════════════════════════════════
@@ -691,6 +697,9 @@ public class PengaturanController implements Initializable {
                             pbBackup.applyCss();
                         });
                     });
+                    Stage stage = (Stage) btnBackup.getScene().getWindow();
+                    Popup popup = new Popup();
+                    popup.showModernPopup("EROR", "Gagal Melakukan Backup Database", Popup.PopupType.ERROR, stage);
 
                     selesai.play();
                     lblBackupStatus.setText("❌ Upload Google Drive gagal");
