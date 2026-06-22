@@ -201,7 +201,6 @@
                 <!-- Tombol Aksi -->
                 <HBox alignment="CENTER_LEFT" spacing="10">
                   <Button minWidth="100" onAction="#tambahKaryawan" styleClass="btn-base, btn-tambah" text="＋ Tambah" />
-                  <Button minWidth="100" onAction="#simpanKaryawan" styleClass="btn-base, btn-simpan" text="💾 Simpan" />
                   <Button minWidth="100" onAction="#ubahKaryawan" styleClass="btn-base, btn-ubah" text="✏ Ubah" />
                   <Button minWidth="100" onAction="#hapusKaryawan" styleClass="btn-base, btn-hapus" text="🗑 Hapus" />
                   <Button minWidth="100" onAction="#resetKaryawan" styleClass="btn-base, btn-reset" text="↺ Reset" />

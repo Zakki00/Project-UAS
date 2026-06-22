@@ -137,8 +137,7 @@ public class KaryawanController implements Initializable {
     // ═══════════════════════════════════════════════════════
     @FXML
     private TextField tfPencarianKaryawan;
-    @FXML
-    private Button btnClearSearch;
+
 
     // ═══════════════════════════════════════════════════════
     // FXML — TABLE KARYAWAN
@@ -264,6 +263,13 @@ public class KaryawanController implements Initializable {
             change.setText(change.getText().toUpperCase());
             return change;
         }));
+
+        setupDatePickerFormat(dpTanggalMasuk);
+        setupDatePickerFormat(dpTanggalAbsensi);
+        setupDatePickerFormat(datePickerCari);
+
+        dpTanggalMasuk.setValue(LocalDate.now());
+        dpTanggalAbsensi.setValue(LocalDate.now());
     }
 
     // ═══════════════════════════════════════════════════════
@@ -852,8 +858,9 @@ public class KaryawanController implements Initializable {
         resetKaryawan();
     }
 
+
     @FXML
-    public void simpanKaryawan() {
+    public void ubahKaryawan() {
         KaryawanModel selected = tableKaryawan.getSelectionModel().getSelectedItem();
         if (selected == null) {
             new Popup().showModernPopup("WARNING", "Pilih karyawan di tabel terlebih dahulu",
@@ -895,11 +902,6 @@ public class KaryawanController implements Initializable {
     }
 
     @FXML
-    public void ubahKaryawan() {
-        simpanKaryawan();
-    }
-
-    @FXML
     public void hapusKaryawan() {
         KaryawanModel selected = tableKaryawan.getSelectionModel().getSelectedItem();
         if (selected == null) {
@@ -928,7 +930,7 @@ public class KaryawanController implements Initializable {
         txtPassword.clear();
         cmbJenisKelamin.setValue(null);
         txtNoHp.clear();
-        dpTanggalMasuk.setValue(null);
+        dpTanggalMasuk.setValue(LocalDate.now());
         cmbStatusKerja.setValue(null);
         txtAlamat.clear();
         tableKaryawan.getSelectionModel().clearSelection();
@@ -1040,7 +1042,7 @@ public class KaryawanController implements Initializable {
 
     @FXML
     public void resetAbsensi() {
-        dpTanggalAbsensi.setValue(null);
+        dpTanggalAbsensi.setValue(LocalDate.now());
         cmbPilihKaryawan.setValue(null);
         txtNamaAbsensi.clear();
         cmbShift.setValue(null);
@@ -1054,5 +1056,23 @@ public class KaryawanController implements Initializable {
     @FXML
     private void onNotif() {
         Notifikasi.show((Stage) notifBadge.getScene().getWindow());
+    }
+
+
+    //============================================================
+    // OTHER HANDELER
+    //============================================================
+    private void setupDatePickerFormat(DatePicker dp) {
+        dp.setConverter(new javafx.util.StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                return date != null ? date.format(fmt) : "";
+            }
+
+            @Override
+            public LocalDate fromString(String s) {
+                return (s != null && !s.isBlank()) ? LocalDate.parse(s, fmt) : null;
+            }
+        });
     }
 }
