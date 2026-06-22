@@ -203,3 +203,89 @@ FROM
 GROUP BY
     t.id_transaksi
 ORDER BY t.id_transaksi DESC;
+
+
+
+SELECT
+    id_transaksi,
+    uang_pembayaran,
+    kembalian,
+    (uang_pembayaran - kembalian) AS total
+FROM tb_transaksi;
+
+
+SELECT
+    COUNT(DISTINCT t.id_transaksi) AS total_trx,
+    COALESCE(
+        SUM(
+            CASE
+                WHEN dt.id_barang IS NOT NULL THEN dt.jumlah
+                ELSE 0
+            END
+        ),
+        0
+    ) AS total_item,
+    COALESCE(
+        COUNT(DISTINCT ps.id_paket_ps),
+        0
+    ) AS total_paket_ps,
+    (
+        SELECT COALESCE(
+                SUM(uang_pembayaran - kembalian), 0
+            )
+        FROM tb_transaksi t2
+        WHERE
+            DATE(t2.tanggal_transaksi) = DATE('now', 'localtime')
+            AND TIME(t2.tanggal_transaksi) BETWEEN ? AND ?
+    ) AS pendapatan
+FROM
+    tb_transaksi t
+    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+    LEFT JOIN tb_paket_ps ps ON t.id_transaksi = ps.id_transaksi
+WHERE
+    DATE(t.tanggal_transaksi) = DATE('now', 'localtime')
+    AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
+
+
+
+
+    -- Coba shift pagi (06:00 - 12:00)
+SELECT
+    COUNT(DISTINCT t.id_transaksi) AS total_trx,
+    COALESCE(
+        SUM(
+            CASE
+                WHEN dt.id_barang IS NOT NULL THEN dt.jumlah
+                ELSE 0
+            END
+        ),
+        0
+    ) AS total_item,
+    COALESCE(
+        COUNT(DISTINCT ps.id_paket_ps),
+        0
+    ) AS total_paket_ps,
+    COALESCE(
+        SUM(
+            t.uang_pembayaran - COALESCE(t.kembalian, 0)
+        ),
+        0
+    ) AS pendapatan
+FROM
+    tb_transaksi t
+    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
+    LEFT JOIN tb_paket_ps ps ON t.id_transaksi = ps.id_transaksi
+WHERE
+    DATE(t.tanggal_transaksi) = DATE('now', 'localtime')
+    AND TIME(t.tanggal_transaksi) BETWEEN '12:00:00' AND '15:00:00';
+
+
+    SELECT
+    id_transaksi,
+    uang_pembayaran,
+    kembalian,
+    uang_pembayaran - COALESCE(kembalian, 0) AS pendapatan_per_trx
+FROM tb_transaksi
+WHERE
+    DATE(tanggal_transaksi) = DATE('now', 'localtime')
+    AND TIME(tanggal_transaksi) BETWEEN '12:00:00' AND '15:00:00';

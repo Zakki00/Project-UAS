@@ -37,7 +37,7 @@
       </VBox>
       <!-- nama -->
        <VBox spacing="6">
-        <Label styleClass="field-label" text="Username" />
+        <Label styleClass="field-label" text="Nama" />
         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="field-box">
           <Label styleClass="field-icon" text="👤" />
           <TextField fx:id="tfnama" promptText="Masukkan nama..." styleClass="field-input" HBox.hgrow="ALWAYS" />
