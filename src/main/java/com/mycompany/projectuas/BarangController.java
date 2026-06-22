@@ -35,6 +35,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -54,10 +55,10 @@ public class BarangController implements Initializable {
     // ======================================================
     // FOTO PROFILE
     // =======================================================
-    
+
     @FXML
     private Label notifBadge;
-    
+
     @FXML
     private Label lblAvatarnavbar;
     @FXML
@@ -195,25 +196,23 @@ public class BarangController implements Initializable {
         setupFrom();
         loadDataFromDB();
         cariBarang();
-        
+
     }
 
-
-
-    //==============================================
-    //SETUP FROM
-    //==============================================
-    private void setupFrom(){
-        //=========notifikasi
-         // notif---------------
+    // ==============================================
+    // SETUP FROM
+    // ==============================================
+    private void setupFrom() {
+        // =========notifikasi
+        // notif---------------
         Notifikasi.updateBadge(notifBadge);
 
-        //====tanggal====
+        // ====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
         tanggal.setText(LocalDate.now().format(formatter));
 
-        //======= foto profile
+        // ======= foto profile
         session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
                 imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {
@@ -223,8 +222,7 @@ public class BarangController implements Initializable {
             navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
-       
-        
+
         cmbKategori.setItems(FXCollections.observableArrayList("Makanan", "Minuman"));
 
         // ── Validasi txtStok hanya angka ──
@@ -248,15 +246,31 @@ public class BarangController implements Initializable {
             isUpdatingHarga = false;
         });
 
+        //=============Capitalize Each Word
+        txtNama.setTextFormatter(new TextFormatter<>(change -> {
+            String text = change.getText();
+            if (text.isEmpty())
+                return change;
+
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < text.length(); i++) {
+                int pos = change.getRangeStart() + i;
+                // Kapitalkan jika posisi 0 atau karakter sebelumnya spasi
+                String full = change.getControlText();
+                boolean awalKata = pos == 0 || (pos <= full.length() && full.charAt(pos - 1) == ' ');
+                result.append(awalKata ? Character.toUpperCase(text.charAt(i)) : text.charAt(i));
+            }
+            change.setText(result.toString());
+            return change;
+        }));
+
     }
 
+    // ==============================================
+    // SETUP TABLE
+    // ==============================================
 
-
-    //==============================================
-    //SETUP TABLE
-    //==============================================
-    
-    private void setUpTable(){
+    private void setUpTable() {
         // ── Kolom tabel ──
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colNama.setCellValueFactory(new PropertyValueFactory<>("nama"));
@@ -341,7 +355,6 @@ public class BarangController implements Initializable {
             }
         });
 
-        
         // ── Kolom status ──
         colStatus.setCellValueFactory(cellData -> {
             int stok = cellData.getValue().getStok();
@@ -349,12 +362,11 @@ public class BarangController implements Initializable {
         });
     }
 
-
     // ========================================
     // SELECTED DATA
-    //=========================================
+    // =========================================
     private boolean updateData = false;
-    
+
     private void selectedData() {
         filteredData = new FilteredList<>(masterData, p -> true);
         tabelBarang.setItems(filteredData);
@@ -380,9 +392,6 @@ public class BarangController implements Initializable {
             isUpdatingHarga = false;
         });
     }
-
-
-
 
     // ═══════════════════════════════════════════════════════
     // HELPER — AMBIL NILAI HARGA
@@ -580,7 +589,7 @@ public class BarangController implements Initializable {
                         Popup.PopupType.ERROR, getStage());
             }
         });
-        
+
     }
 
     @FXML
@@ -598,7 +607,6 @@ public class BarangController implements Initializable {
         tambahBarang.setDisable(false);
     }
 
-
     private void cariBarang() {
         txtCari.textProperty().addListener((obs, oldVal, newVal) -> {
             String keyword = newVal.toLowerCase();
@@ -610,7 +618,7 @@ public class BarangController implements Initializable {
             });
         });
     }
-    
+
     @FXML
     private void onClearSearch() {
         txtCari.setText("Cari Nama Barang");
@@ -807,7 +815,7 @@ public class BarangController implements Initializable {
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
-       
+
     }
 
     @FXML
@@ -845,12 +853,9 @@ public class BarangController implements Initializable {
         ((Stage) navPengaturan.getScene().getWindow()).close();
     }
 
-
-
-     // ═══════════════════════════════════════════════════════
+    // ═══════════════════════════════════════════════════════
     // NOTIFIKASI
     // ═══════════════════════════════════════════════════════
-
 
     @FXML
     private void onNotif() {

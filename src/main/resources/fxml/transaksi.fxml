@@ -84,6 +84,9 @@
               </children>
             </HBox>
           </children>
+               <VBox.margin>
+                  <Insets bottom="10.0" top="10.0" />
+               </VBox.margin>
         </VBox>
         <Separator styleClass="sidebar-divider" />
         <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
