@@ -10,6 +10,7 @@ import java.util.ResourceBundle;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import com.mycompany.Model.GoogleUser;
 import com.mycompany.projectuas.Popup.PopupType;
 import com.mycompany.services.GoogleDriveService;
 
@@ -440,47 +441,35 @@ public class PengaturanController implements Initializable {
         System.out.println(session.role);
 
         if ("Admin".equalsIgnoreCase(role)) {
-
-          
-            
-           
             lblRoleAkun.setText(role);
             String photoUrl = session.googleUser.getProfilePictureUrl();
 
-            if (!photoUrl.isEmpty()) {
-                imgAvatarGoogle.setImage(new Image(photoUrl, true));
-                imgAvatarGoogle1.setImage(new Image(photoUrl, true));
+            if (photoUrl != null && !photoUrl.isEmpty()) {
+                Image img1 = new Image(photoUrl, true);
+                Image img2 = new Image(photoUrl, true);
+
+                // Fallback ke inisial kalau gambar gagal load (tidak ada internet)
+                img1.errorProperty().addListener((obs, old, isError) -> {
+                    if (isError) {
+                        javafx.application.Platform.runLater(() -> tampilInisial());
+                    }
+                });
+
+                imgAvatarGoogle.setImage(img1);
+                imgAvatarGoogle1.setImage(img2);
 
                 imgAvatarGoogle.setVisible(true);
                 imgAvatarGoogle.setManaged(true);
-
                 imgAvatarGoogle1.setVisible(true);
                 imgAvatarGoogle1.setManaged(true);
 
                 lblAvatarInisial.setVisible(false);
                 lblAvatarInisial.setManaged(false);
-
                 lblAvatarInisial1.setVisible(false);
                 lblAvatarInisial1.setManaged(false);
+
             } else {
-                imgAvatarGoogle.setVisible(false);
-
-                imgAvatarGoogle.setVisible(false);
-                imgAvatarGoogle1.setVisible(false);
-                imgAvatarGoogle1.setManaged(false);
-
-                lblAvatarInisial.setVisible(true);
-                lblAvatarInisial.setManaged(true);
-                lblAvatarInisial1.setVisible(true);
-                lblAvatarInisial1.setManaged(true);
-
-                if (session.nama != null && !session.nama.isBlank()) {
-                    lblAvatarInisial.setText(
-                            String.valueOf(session.nama.charAt(0)).toUpperCase());
-                } else {
-                    lblAvatarInisial.setText("A");
-                }
-
+                tampilInisial();
             }
 
         } else {
@@ -502,6 +491,25 @@ public class PengaturanController implements Initializable {
                 lblAvatarInisial.setText("A");
             }
         }
+    }
+    
+    private void tampilInisial() {
+        imgAvatarGoogle.setVisible(false);
+        imgAvatarGoogle.setManaged(false);
+        imgAvatarGoogle1.setVisible(false);
+        imgAvatarGoogle1.setManaged(false);
+
+        lblAvatarInisial.setVisible(true);
+        lblAvatarInisial.setManaged(true);
+        lblAvatarInisial1.setVisible(true);
+        lblAvatarInisial1.setManaged(true);
+
+        String inisial = (session.nama != null && !session.nama.isBlank())
+                ? String.valueOf(session.nama.charAt(0)).toUpperCase()
+                : "A";
+
+        lblAvatarInisial.setText(inisial);
+        lblAvatarInisial1.setText(inisial);
     }
 
     // ══════════════════════════════════════
@@ -581,9 +589,100 @@ public class PengaturanController implements Initializable {
         String nama = tfEditNama.getText().trim();
         String username = tfEditUsername.getText().trim();
         String password = pfEditPassword.getText().trim();
+        // VALIDASI NAMA
+        Stage stage = (Stage) btnSimpanSeting.getScene().getWindow();
+        
+        // VALIDASI NAMA
+        if (nama.isEmpty() || nama.equals("Masukkan nama...")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Nama tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
 
-        if (nama.isEmpty() || username.isEmpty()) {
-            showAlert("Peringatan", "Nama dan username tidak boleh kosong!");
+        // VALIDASI USERNAME
+        if (username.isEmpty() || username.equals("Masukkan username...")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
+        if (!koneksi.ambilData(cekSql, username).isEmpty()) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username sudah digunakan",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (username.length() < 4) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username minimal 4 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!username.matches("[a-zA-Z0-9_]+")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username hanya boleh huruf, angka, dan underscore",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        // VALIDASI PASSWORD
+        if (password.isEmpty() || password.equals("Masukkan password...")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (password.length() < 6) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password minimal 6 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf besar!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf kecil!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung angka!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 

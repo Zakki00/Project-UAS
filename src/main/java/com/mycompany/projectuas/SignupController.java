@@ -126,54 +126,99 @@ public class SignupController implements Initializable {
         String username = tfUsername.getText().trim();
         String password = pfPassword.getText().trim();
         // VALIDASI NAMA
-        if (nama.isEmpty() || username.equals("Masukkan username...")) {
-            showError(errnama, "Username tidak boleh kosong!");
+        Stage stage = (Stage) btnShowPass.getScene().getWindow();
+        
+        // VALIDASI NAMA
+        if (nama.isEmpty() || nama.equals("Masukkan nama...")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Nama tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
+
         // VALIDASI USERNAME
         if (username.isEmpty() || username.equals("Masukkan username...")) {
-            showError(errUsername, "Username tidak boleh kosong!");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
+
         String cekSql = "SELECT id_user FROM tb_user WHERE username = ?";
         if (!koneksi.ambilData(cekSql, username).isEmpty()) {
-            showError(errUsername, "Username sudah digunakan");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username sudah digunakan",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         if (username.length() < 4) {
-            showError(errUsername, "Username minimal 4 karakter!");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username minimal 4 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         if (!username.matches("[a-zA-Z0-9_]+")) {
-            showError(errUsername, "Username hanya boleh huruf, angka, dan underscore");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username hanya boleh huruf, angka, dan underscore",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         // VALIDASI PASSWORD
         if (password.isEmpty() || password.equals("Masukkan password...")) {
-            showError(errPassword, "Password tidak boleh kosong!");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         if (password.length() < 6) {
-            showError(errPassword, "Password minimal 6 karakter!");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password minimal 6 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         if (!password.matches(".*[A-Z].*")) {
-            showError(errPassword, "Password harus mengandung huruf besar!");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf besar!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         if (!password.matches(".*[a-z].*")) {
-            showError(errPassword, "Password harus mengandung huruf kecil!");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf kecil!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         if (!password.matches(".*\\d.*")) {
-            showError(errPassword, "Password harus mengandung angka!");
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung angka!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
@@ -213,7 +258,6 @@ public class SignupController implements Initializable {
             //---navigasi ke dashbord---
             navigation nav = new navigation();
             nav.navigateToDashboard();
-            Stage stage = (Stage) loginBtn.getScene().getWindow();
             popupHelper.showGoogleSuccessPopup("Selamat Datang", "Selamat Datang " + googleUser.getName(), googleUser);
             stage.close();
 

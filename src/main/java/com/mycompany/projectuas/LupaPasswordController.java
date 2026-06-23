@@ -86,6 +86,7 @@ public class LupaPasswordController implements Initializable {
     @FXML
     private void handleReset(ActionEvent event) {
         Stage stage = (Stage) tfinput.getScene().getWindow();
+
         String role = cmbRole.getValue();
         String input = tfinput.getText().trim();
         String usernameBaru = tfUsernameBaru.getText().trim();
@@ -94,8 +95,11 @@ public class LupaPasswordController implements Initializable {
 
         // ── Validasi Role ──
         if (role == null) {
-            new Popup().showModernPopup("WARNING", "Pilih role terlebih dahulu!",
-                    Popup.PopupType.WARNING, stage);
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Pilih role terlebih dahulu!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
@@ -104,35 +108,100 @@ public class LupaPasswordController implements Initializable {
             String pesan = role.equals("Admin")
                     ? "Email tidak boleh kosong!"
                     : "Nama lengkap tidak boleh kosong!";
-            new Popup().showModernPopup("WARNING", pesan,
-                    Popup.PopupType.WARNING, stage);
+            new Popup().showModernPopup("WARNING", pesan, Popup.PopupType.WARNING, stage);
             return;
         }
 
         // ── Validasi Username Baru ──
         if (usernameBaru.isEmpty()) {
-            new Popup().showModernPopup("WARNING", "Username baru tidak boleh kosong!",
-                    Popup.PopupType.WARNING, stage);
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username baru tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (usernameBaru.length() < 4) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username baru minimal 4 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (usernameBaru.length() > 20) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username baru maksimal 20 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!usernameBaru.matches("[a-zA-Z0-9_]+")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username hanya boleh huruf, angka, dan underscore!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         // ── Validasi Password Baru ──
         if (passwordBaru.isBlank()) {
-            new Popup().showModernPopup("WARNING", "Password baru tidak boleh kosong!",
-                    Popup.PopupType.WARNING, stage);
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password baru tidak boleh kosong!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         if (passwordBaru.length() < 6) {
-            new Popup().showModernPopup("WARNING", "Password baru minimal 6 karakter!",
-                    Popup.PopupType.WARNING, stage);
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password baru minimal 6 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!passwordBaru.matches(".*[A-Z].*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf besar!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!passwordBaru.matches(".*[a-z].*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf kecil!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return;
+        }
+
+        if (!passwordBaru.matches(".*\\d.*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung angka!",
+                    Popup.PopupType.WARNING,
+                    stage);
             return;
         }
 
         // ── Validasi Konfirmasi Password ──
         if (!passwordBaru.equals(konfirmasi)) {
-            new Popup().showModernPopup("ERROR", "Konfirmasi password tidak cocok!",
-                    Popup.PopupType.ERROR, stage);
+            new Popup().showModernPopup(
+                    "ERROR",
+                    "Konfirmasi password tidak cocok!",
+                    Popup.PopupType.ERROR,
+                    stage);
             return;
         }
 
@@ -175,9 +244,10 @@ public class LupaPasswordController implements Initializable {
                 "Username dan password admin berhasil direset!",
                 Popup.PopupType.SUCCESS, stage);
         bersihkanForm();
-
+        prefs.put("Admin", "Admin");
         prefs.put("username", usernameBaru);
         prefs.put("password", passwordBaru);
+        prefs.putBoolean("remember", true);
     }
 
     private void resetKaryawan(String nama, String usernameBaru, String passwordBaru, Stage stage) {
@@ -204,20 +274,20 @@ public class LupaPasswordController implements Initializable {
             return;
         }
 
-        // Update username dan password
+        // Update username dan password — password di-hash agar konsisten
         koneksi.eksekusiQuery(
                 "UPDATE tb_karyawan SET username = ?, password = ? WHERE nama_lengkap = ?",
-                usernameBaru, passwordBaru, nama);
+                usernameBaru, hashPassword(passwordBaru), nama);
 
         new Popup().showModernPopup("SUCCESS",
                 "Username dan password karyawan berhasil direset!",
                 Popup.PopupType.SUCCESS, stage);
         bersihkanForm();
-
+        prefs.put("Admin", "Admin");
         prefs.put("username", usernameBaru);
         prefs.put("password", passwordBaru);
+        prefs.putBoolean("remember", true);
     }
-
     @FXML
     private void togglePasswordBaru() {
         showPasswordBaru = !showPasswordBaru;

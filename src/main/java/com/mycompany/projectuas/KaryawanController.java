@@ -138,7 +138,6 @@ public class KaryawanController implements Initializable {
     @FXML
     private TextField tfPencarianKaryawan;
 
-
     // ═══════════════════════════════════════════════════════
     // FXML — TABLE KARYAWAN
     // ═══════════════════════════════════════════════════════
@@ -778,6 +777,8 @@ public class KaryawanController implements Initializable {
     // VALIDASI KARYAWAN
     // ═══════════════════════════════════════════════════════
     private boolean validasiKaryawan() {
+        String username = txtUsername.getText().trim();
+        String password = txtPassword.getText().trim();
         Stage stage = (Stage) txtIdKaryawan.getScene().getWindow();
 
         if (txtNamaKaryawan.getText().isBlank()) {
@@ -813,6 +814,80 @@ public class KaryawanController implements Initializable {
             new Popup().showModernPopup("WARNING", "Password wajib diisi!", Popup.PopupType.WARNING, stage);
             return false;
         }
+
+    
+
+        String cekSql = "SELECT id_user FROM tb_karyawan WHERE username = ?";
+        if (!koneksi.ambilData(cekSql, txtUsername).isEmpty()) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username sudah digunakan",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return false;
+
+        }
+
+        if (username.length() < 4) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username minimal 4 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return false;
+
+        }
+
+        if (!username.matches("[a-zA-Z0-9_]+")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Username hanya boleh huruf, angka, dan underscore",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return false;
+
+        }
+
+        if (password.length() < 6) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password minimal 6 karakter!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return false;
+
+        }
+
+        if (!password.matches(".*[A-Z].*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf besar!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return false;
+
+        }
+
+        if (!password.matches(".*[a-z].*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung huruf kecil!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return false;
+
+        }
+
+        if (!password.matches(".*\\d.*")) {
+            new Popup().showModernPopup(
+                    "WARNING",
+                    "Password harus mengandung angka!",
+                    Popup.PopupType.WARNING,
+                    stage);
+            return false;
+
+        }
+
         return true;
     }
 
@@ -828,7 +903,7 @@ public class KaryawanController implements Initializable {
     // ═══════════════════════════════════════════════════════
     @FXML
     public void tambahKaryawan() {
-        if(perubahan_data == true){
+        if (perubahan_data == true) {
             return;
         }
         if (!validasiKaryawan())
@@ -864,7 +939,6 @@ public class KaryawanController implements Initializable {
 
         resetKaryawan();
     }
-
 
     @FXML
     public void ubahKaryawan() {
@@ -973,7 +1047,6 @@ public class KaryawanController implements Initializable {
             new Popup().showModernPopup("WARNING", "Pilih status kehadiran!", Popup.PopupType.WARNING, stage);
             return;
         }
-        
 
         String tgl = dpTanggalAbsensi.getValue().format(fmt);
         String idKary = cmbPilihKaryawan.getValue();
@@ -1075,10 +1148,9 @@ public class KaryawanController implements Initializable {
         Notifikasi.show((Stage) notifBadge.getScene().getWindow());
     }
 
-
-    //============================================================
+    // ============================================================
     // OTHER HANDELER
-    //============================================================
+    // ============================================================
     private void setupDatePickerFormat(DatePicker dp) {
         dp.setConverter(new javafx.util.StringConverter<LocalDate>() {
             @Override
