@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import java.util.prefs.Preferences;
 
@@ -49,6 +51,12 @@ public class LupaPasswordController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+      setupForm();
+    }
+
+
+    // setup form
+    private void setupForm(){
         cmbRole.setItems(FXCollections.observableArrayList("Admin", "Karyawan"));
 
         // Bind show/hide password
@@ -81,6 +89,12 @@ public class LupaPasswordController implements Initializable {
             bersihkanForm();
         });
 
+        //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) btnEyeKonfirmasi.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     @FXML

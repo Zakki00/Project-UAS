@@ -13,6 +13,7 @@ import com.mycompany.Model.PiutangModel.DataHutang;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,6 +28,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 import java.time.LocalDate;
@@ -236,6 +238,13 @@ public class PiutangController implements Initializable {
             navllblakun.setText(session.role);
             navlblnama.setText(session.nama);
         }
+
+          //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) navMenu.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     // ── Kelompok setup saat initialize ──────────────────────

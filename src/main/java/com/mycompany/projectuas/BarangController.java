@@ -265,6 +265,12 @@ public class BarangController implements Initializable {
             return change;
         }));
 
+        //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) navMenu.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     // ==============================================

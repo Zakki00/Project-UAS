@@ -10,6 +10,7 @@ import java.util.prefs.Preferences;
 import com.mycompany.Model.GoogleUser;
 import com.mycompany.services.GoogleDriveService;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
@@ -24,7 +26,7 @@ import javafx.stage.Stage;
  * resources/fxml/login.fxml
  */
 public class LoginController implements Initializable {
-    
+
     @FXML
     private Button btnGoogle;
     @FXML
@@ -50,10 +52,9 @@ public class LoginController implements Initializable {
 
     }
 
-
-    //=========================================
+    // =========================================
     // CEK APAKAH APLIKASI SUDAH MEMLIKI OWNER
-    //=========================================
+    // =========================================
     GoogleUser googleUser = new GoogleUser();
     session session = new session();
 
@@ -87,9 +88,15 @@ public class LoginController implements Initializable {
             googleUser.setProfilePictureUrl((String) admin.get(0)[6]);
         }
 
+        // =====================
+        // logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) loginBtn.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
+
     }
-
-
 
     // ==========================================
     // HANDLE LOGIN MENGGUNAKAN GOOGLE
@@ -112,7 +119,7 @@ public class LoginController implements Initializable {
                         GoogleDriveService service = new GoogleDriveService();
                         boolean restore = service.restoreBackupAll();
                         System.out.println("Restore = " + restore);
-                        session.googleUser = user; 
+                        session.googleUser = user;
                         String cekSql = "SELECT id_user, username, nama_lengkap, email, role, foto_profil FROM tb_user WHERE email = ?";
                         List<Object[]> hasil = koneksi.ambilData(cekSql, user.getEmail());
                         System.out.println("data admin berdasarkan email" + hasil.size());
@@ -173,11 +180,9 @@ public class LoginController implements Initializable {
                 });
     }
 
-
-    //==========================================
+    // ==========================================
     // HANDLE LOGIN UMUM
-    //==========================================
-
+    // ==========================================
 
     @FXML
     private void handleLogin(ActionEvent event) {
@@ -226,7 +231,7 @@ public class LoginController implements Initializable {
             session.email = (String) resultUser.get(0)[5];
             googleUser.setProfilePictureUrl((String) resultUser.get(0)[6]);
 
-            //  isi semua data GoogleUser
+            // isi semua data GoogleUser
             sesigoogle.setName((String) resultUser.get(0)[3]);
             sesigoogle.setEmail((String) resultUser.get(0)[5]);
             sesigoogle.setProfilePictureUrl((String) resultUser.get(0)[6]);
@@ -241,8 +246,6 @@ public class LoginController implements Initializable {
                 prefs.remove("password");
                 prefs.putBoolean("remember", false);
             }
-
-            
 
             navigation nav = new navigation();
             nav.navigateToDashboard();
@@ -288,11 +291,11 @@ public class LoginController implements Initializable {
                 prefs.putBoolean("remember", false);
             }
 
-
             navigation nav = new navigation();
             nav.navigateToDashboard();
             Stage ownerStage = (Stage) loginBtn.getScene().getWindow();
-            new Popup().showSuccessPopup("Selamat Datang " + session.username, "Selamat Datang Dan Selamat Bekerja! @" + session.nama);
+            new Popup().showSuccessPopup("Selamat Datang " + session.username,
+                    "Selamat Datang Dan Selamat Bekerja! @" + session.nama);
 
             ownerStage.close();
             return;
@@ -332,11 +335,9 @@ public class LoginController implements Initializable {
     private void handleForgotPassword(ActionEvent event) {
         navigation nav = new navigation();
         nav.navgateToLupaPassword();
-        Stage stage= (Stage) loginBtn.getScene().getWindow();
+        Stage stage = (Stage) loginBtn.getScene().getWindow();
         stage.close();
     }
-
-   
 
     public void loadRememberedCredentials() {
         if (prefs.getBoolean("remember", false)) {
@@ -346,10 +347,9 @@ public class LoginController implements Initializable {
         }
     }
 
-
-    //=================================
-    //HASHING PASWORD
-    //=================================
+    // =================================
+    // HASHING PASWORD
+    // =================================
 
     public String hashPassword(String password) {
         try {

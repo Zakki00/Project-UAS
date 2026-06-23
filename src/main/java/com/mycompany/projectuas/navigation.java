@@ -7,6 +7,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -30,8 +31,10 @@ public class navigation {
 
     public void navigateToSignup() {
         navigateTo("signup.fxml", "Signup");
+
     }
-    public void navgateToLupaPassword(){
+
+    public void navgateToLupaPassword() {
         navigateTo("lupaPasaword.fxml", "Lupa Password");
     }
 

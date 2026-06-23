@@ -56,6 +56,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
@@ -589,6 +590,13 @@ public class LaporanController implements Initializable {
         });
         applyRoundedClip(wrapperPagi);
         applyRoundedClip(wrapperMalam);
+
+        //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) navMenu.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     private void loadLaporanTransaksi() {

@@ -17,6 +17,7 @@ import java.io.File;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -330,6 +331,14 @@ public class TransaksiController implements Initializable {
 
         btnProduk.setOnAction(e -> tampilkanMenuProduk());
         btnPS.setOnAction(e -> tampilkanMenuRentalPs());
+
+
+          //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) navMenu.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     // ═══════════════════════════════════════════════════════

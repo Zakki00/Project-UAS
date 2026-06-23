@@ -24,6 +24,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -81,7 +82,18 @@ public class DetailTransaksiController implements Initializable {
         setupLayout();
         renderList();
         setupAnimasiMasuk();
+        setupForm();
 
+    }
+
+    //setup form
+    private void setupForm(){
+        //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) btnBatal.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     // ANIMASI HELPER---------------------

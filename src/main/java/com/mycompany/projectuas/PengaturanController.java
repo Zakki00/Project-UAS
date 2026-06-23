@@ -567,6 +567,13 @@ public class PengaturanController implements Initializable {
             cardAkunGoogle.setVisible(false);
             cardAkunGoogle.setManaged(false);
         }
+
+        // ===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) navMenu.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     // ══════════════════════════════════════

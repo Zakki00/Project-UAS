@@ -21,8 +21,10 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import java.util.Locale;
@@ -270,6 +272,13 @@ public class KaryawanController implements Initializable {
 
         dpTanggalMasuk.setValue(LocalDate.now());
         dpTanggalAbsensi.setValue(LocalDate.now());
+
+        //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) navMenu.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     // ═══════════════════════════════════════════════════════

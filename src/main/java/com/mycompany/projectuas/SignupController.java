@@ -9,6 +9,7 @@ import com.mycompany.Model.GoogleUser;
 import com.mycompany.services.AutoBackupService;
 import com.mycompany.services.GoogleDriveService;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -16,6 +17,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -77,6 +79,13 @@ public class SignupController implements Initializable {
         tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errnama));
         tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errUsername));
         pfPassword.textProperty().addListener((o, ov, nv) -> clearError(errPassword));
+
+          //===logo
+        Platform.runLater(() -> {
+            Stage stage = (Stage) btnShowPass.getScene().getWindow();
+            Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
+            stage.getIcons().add(icon);
+        });
     }
 
     // ═══════════════════════════════════════════════
