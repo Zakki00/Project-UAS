@@ -55,6 +55,8 @@
           <mainClass>com.mycompany.projectuas.App</mainClass>
           <options>
             <option>--add-modules java.desktop</option>
+            <option>--enable-native-access=javafx.graphics,ALL-UNNAMED</option>
+            <option>--enable-final-field-mutation=ALL-UNNAMED</option>
           </options>
         </configuration>
       </plugin>
