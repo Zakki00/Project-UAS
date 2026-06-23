@@ -9,4 +9,5 @@
     ],
     "java.jdt.ls.java.home": "C:\\oracleJdk-26",
     "java.configuration.updateBuildConfiguration": "interactive",
+    "python-envs.defaultEnvManager": "ms-python.python:system",
 }
