@@ -52,9 +52,6 @@ import java.util.List;
 public class BarangController implements Initializable {
     @FXML
     private Label tanggal;
-    // ======================================================
-    // FOTO PROFILE
-    // =======================================================
 
     @FXML
     private Label notifBadge;
@@ -71,7 +68,6 @@ public class BarangController implements Initializable {
     // ═══════════════════════════════════════════════════════
     // FXML — FORM
     // ═══════════════════════════════════════════════════════
-
     @FXML
     private TextField txtNama;
     @FXML
@@ -90,6 +86,8 @@ public class BarangController implements Initializable {
     private TextField txtCari;
     @FXML
     private Button tambahBarang;
+    @FXML
+    private HBox searchBoxContainer;
 
     // ═══════════════════════════════════════════════════════
     // FXML — TABEL
@@ -197,23 +195,15 @@ public class BarangController implements Initializable {
         setupFrom();
         loadDataFromDB();
         cariBarang();
-
     }
 
-    // ==============================================
-    // SETUP FROM
-    // ==============================================
     private void setupFrom() {
-        // =========notifikasi
-        // notif---------------
         Notifikasi.updateBadge(notifBadge);
 
-        // ====tanggal====
         Locale localeID = new Locale("id", "ID");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy", localeID);
         tanggal.setText(LocalDate.now().format(formatter));
 
-        // ======= foto profile
         session.applyFotoProfile(lblAvatartopbar, lblAvatarnavbar,
                 imgAvatarGoogletopbar, imgAvatarGooglenavbar);
         if (session.email == "") {
@@ -226,13 +216,11 @@ public class BarangController implements Initializable {
 
         cmbKategori.setItems(FXCollections.observableArrayList("Makanan", "Minuman"));
 
-        // ── Validasi txtStok hanya angka ──
         txtStok.textProperty().addListener((obs, oldVal, newVal) -> {
             if (!newVal.matches("\\d*"))
                 txtStok.setText(newVal.replaceAll("[^\\d]", ""));
         });
 
-        // ── txtHarga format Rp otomatis ──
         txtHarga.textProperty().addListener((obs, oldVal, newVal) -> {
             if (isUpdatingHarga)
                 return;
@@ -247,7 +235,6 @@ public class BarangController implements Initializable {
             isUpdatingHarga = false;
         });
 
-        //=============Capitalize Each Word
         txtNama.setTextFormatter(new TextFormatter<>(change -> {
             String text = change.getText();
             if (text.isEmpty())
@@ -256,7 +243,6 @@ public class BarangController implements Initializable {
             StringBuilder result = new StringBuilder();
             for (int i = 0; i < text.length(); i++) {
                 int pos = change.getRangeStart() + i;
-                // Kapitalkan jika posisi 0 atau karakter sebelumnya spasi
                 String full = change.getControlText();
                 boolean awalKata = pos == 0 || (pos <= full.length() && full.charAt(pos - 1) == ' ');
                 result.append(awalKata ? Character.toUpperCase(text.charAt(i)) : text.charAt(i));
@@ -265,7 +251,6 @@ public class BarangController implements Initializable {
             return change;
         }));
 
-        //===logo
         Platform.runLater(() -> {
             Stage stage = (Stage) navMenu.getScene().getWindow();
             Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
@@ -273,20 +258,45 @@ public class BarangController implements Initializable {
         });
     }
 
-    // ==============================================
+    // ═══════════════════════════════════════════════════════
     // SETUP TABLE
-    // ==============================================
-
+    // ═══════════════════════════════════════════════════════
     private void setUpTable() {
-        // ── Kolom tabel ──
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        
+        // ── [BARIS UPDATE - EFEK REALTIME HIGHLIGHT PADA NAMA BARANG SAAT DICARI] ──
         colNama.setCellValueFactory(new PropertyValueFactory<>("nama"));
+        colNama.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                    getStyleClass().remove("text-search-match");
+                } else {
+                    setText(item);
+                    String keyword = (txtCari.getText() != null) ? txtCari.getText().toLowerCase().trim() : "";
+                    if (keyword.equals("cari nama barang")) keyword = "";
+                    
+                    // Jika teks nama barang mengandung kata kunci pencarian, beri kelas style khusus efek cahaya
+                    if (!keyword.isEmpty() && item.toLowerCase().contains(keyword)) {
+                        if (!getStyleClass().contains("text-search-match")) {
+                            getStyleClass().add("text-search-match");
+                        }
+                    } else {
+                        getStyleClass().remove("text-search-match");
+                        setStyle(""); 
+                    }
+                }
+            }
+        });
+
         colKategori.setCellValueFactory(new PropertyValueFactory<>("kategori"));
         colStok.setCellValueFactory(new PropertyValueFactory<>("stok"));
         colDeskripsi.setCellValueFactory(new PropertyValueFactory<>("deskripsi"));
         tabelBarang.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        // ── Kolom harga format Rp ──
         colHarga.setCellValueFactory(new PropertyValueFactory<>("harga"));
         colHarga.setCellFactory(col -> new TableCell<>() {
             @Override
@@ -297,7 +307,6 @@ public class BarangController implements Initializable {
             }
         });
 
-        // ── Kolom gambar ──
         colGambar.setCellValueFactory(new PropertyValueFactory<>("gambar"));
         colGambar.setCellFactory(column -> new TableCell<>() {
             private final ImageView imageView = new ImageView();
@@ -319,8 +328,6 @@ public class BarangController implements Initializable {
 
                 try {
                     Image img = null;
-
-                    // ── 1. Cek di AppData (prioritas utama, untuk .exe) ──
                     String appData = System.getenv("APPDATA");
                     File imgFile = (appData != null && !appData.isEmpty())
                             ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
@@ -330,7 +337,6 @@ public class BarangController implements Initializable {
                         img = new Image(imgFile.toURI().toString());
                     }
 
-                    // ── 2. Cek di classpath (untuk development/IDE) ───────
                     if (img == null) {
                         var stream = getClass().getResourceAsStream("/image-barang/" + item);
                         if (stream != null) {
@@ -338,7 +344,6 @@ public class BarangController implements Initializable {
                         }
                     }
 
-                    // ── 3. Fallback not_found.png ─────────────────────────
                     if (img == null) {
                         var notFound = getClass().getResourceAsStream("/image/not_found.png");
                         if (notFound != null) {
@@ -362,17 +367,42 @@ public class BarangController implements Initializable {
             }
         });
 
-        // ── Kolom status ──
         colStatus.setCellValueFactory(cellData -> {
             int stok = cellData.getValue().getStok();
-            return new SimpleStringProperty(stok > 0 ? "Tersedia" : "Habis");
+            if (stok > 10) {
+                return new SimpleStringProperty("Tersedia");
+            } else if (stok > 0) {
+                return new SimpleStringProperty("Stok Menipis");
+            } else {
+                return new SimpleStringProperty("Habis");
+            }
+        });
+
+        colStatus.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty || item == null) {
+                    setGraphic(null);
+                    setText(null);
+                } else {
+                    Label statusLabel = new Label(item);
+                    statusLabel.getStyleClass().clear();
+
+                    if (item.equals("Tersedia")) {
+                        statusLabel.getStyleClass().add("badge-tersedia");
+                    } else if (item.equals("Stok Menipis")) {
+                        statusLabel.getStyleClass().add("badge-menipis");
+                    } else if (item.equals("Habis")) {
+                        statusLabel.getStyleClass().add("badge-tidak-tersedia");
+                    }
+
+                    setGraphic(statusLabel);
+                }
+            }
         });
     }
-
-    // ========================================
-    // SELECTED DATA
-    // =========================================
-   
 
     private void selectedData() {
         filteredData = new FilteredList<>(masterData, p -> true);
@@ -380,7 +410,6 @@ public class BarangController implements Initializable {
 
         tabelBarang.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
-                perubahan_data = false;
                 return;
             }
             perubahan_data = true;
@@ -397,9 +426,6 @@ public class BarangController implements Initializable {
         });
     }
 
-    // ═══════════════════════════════════════════════════════
-    // HELPER — AMBIL NILAI HARGA
-    // ═══════════════════════════════════════════════════════
     private int getHargaValue() {
         String angkaSaja = txtHarga.getText().replaceAll("[^\\d]", "");
         if (angkaSaja.isEmpty())
@@ -411,14 +437,10 @@ public class BarangController implements Initializable {
         }
     }
 
-    // ── Ambil Stage aktif ──
     private Stage getStage() {
         return (Stage) txtNama.getScene().getWindow();
     }
 
-    // ═══════════════════════════════════════════════════════
-    // VALIDASI INPUT
-    // ═══════════════════════════════════════════════════════
     private boolean isInputValid(boolean isUpdate, BarangModel dipilih) {
         StringBuilder pesan = new StringBuilder();
 
@@ -426,10 +448,31 @@ public class BarangController implements Initializable {
             pesan.append("- Nama barang wajib diisi.\n");
         if (cmbKategori.getValue() == null)
             pesan.append("- Kategori wajib dipilih.\n");
-        if (txtHarga.getText().trim().isEmpty() || getHargaValue() <= 0)
+        
+        String hargaRaw = txtHarga.getText().replaceAll("[^\\d]", "");
+        if (txtHarga.getText().trim().isEmpty() || getHargaValue() <= 0) {
             pesan.append("- Harga wajib diisi dan harus lebih dari 0.\n");
-        if (txtStok.getText().trim().isEmpty())
+        } else {
+            try {
+                long hargaCek = Long.parseLong(hargaRaw);
+                if (hargaCek > 100000000) {
+                    pesan.append("- Harga tidak wajar (Maksimal Rp 100.000.000).\n");
+                }
+            } catch (NumberFormatException e) {
+                pesan.append("- Format harga melebihi kapasitas sistem.\n");
+            }
+        }
+
+        if (txtStok.getText().trim().isEmpty()) {
             pesan.append("- Stok wajib diisi.\n");
+        } else {
+            int stokCek = Integer.parseInt(txtStok.getText().trim());
+            if (stokCek < 0) {
+                pesan.append("- Jumlah stok tidak boleh bernilai negatif.\n");
+            } else if (stokCek > 9999) {
+                pesan.append("- Jumlah stok maksimal adalah 9.999 pcs.\n");
+            }
+        }
 
         boolean gambarBaru = !lblFilePath.getText().equals("Tidak ada file dipilih");
         boolean gambarLama = isUpdate && dipilih != null
@@ -447,35 +490,44 @@ public class BarangController implements Initializable {
         return true;
     }
 
-    // ═══════════════════════════════════════════════════════
-    // LOAD DATA DARI DATABASE
-    // ═══════════════════════════════════════════════════════
     private void loadDataFromDB() {
         masterData.clear();
+        int jumlahStokMenipis = 0;
+        
         String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_path FROM tb_barang";
         try (Connection conn = koneksi.getConnection();
                 PreparedStatement ps = conn.prepareStatement(query);
                 ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
+                int stok = rs.getInt("stok");
+                if (stok <= 10) {
+                    jumlahStokMenipis++;
+                }
+
                 masterData.add(new BarangModel(
                         rs.getInt("id_barang"),
                         rs.getString("nama_barang"),
                         rs.getString("kategori"),
                         rs.getInt("harga"),
-                        rs.getInt("stok"),
+                        stok,
                         rs.getString("deskripsi"),
                         rs.getString("image_path")));
             }
+            
+            if (jumlahStokMenipis > 0) {
+                notifBadge.setText(String.valueOf(jumlahStokMenipis));
+                notifBadge.setVisible(true);
+            } else {
+                notifBadge.setVisible(false);
+            }
+
         } catch (SQLException e) {
             new Popup().showModernPopup("ERROR DATABASE", "Gagal memuat data: " + e.getMessage(),
                     Popup.PopupType.ERROR, getStage());
         }
     }
 
-    // ═══════════════════════════════════════════════════════
-    // CRUD
-    // ═══════════════════════════════════════════════════════
     @FXML
     void tambahBarang(ActionEvent event) {
         if(perubahan_data == true){
@@ -483,8 +535,24 @@ public class BarangController implements Initializable {
         }
         if (!isInputValid(false, null))
             return;
+            
+        String nama = txtNama.getText().trim();
+        String queryCek = "SELECT COUNT(*) FROM tb_barang WHERE nama_barang = ?";
+        try (Connection conn = koneksi.getConnection();
+             PreparedStatement psCek = conn.prepareStatement(queryCek)) {
+            psCek.setString(1, nama);
+            try (ResultSet rsCek = psCek.executeQuery()) {
+                if (rsCek.next() && rsCek.getInt(1) > 0) {
+                    new Popup().showModernPopup("DUPLIKASI DATA", "Produk \"" + nama + "\" sudah terdaftar di sistem!", 
+                            Popup.PopupType.WARNING, getStage());
+                    return;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         try {
-            String nama = txtNama.getText().trim();
             String kategori = cmbKategori.getValue();
             int harga = getHargaValue();
             int stok = Integer.parseInt(txtStok.getText().trim());
@@ -528,9 +596,25 @@ public class BarangController implements Initializable {
         if (!isInputValid(true, dipilih))
             return;
 
+        String nama = txtNama.getText().trim();
+        String queryCek = "SELECT COUNT(*) FROM tb_barang WHERE nama_barang = ? AND id_barang != ?";
+        try (Connection conn = koneksi.getConnection();
+             PreparedStatement psCek = conn.prepareStatement(queryCek)) {
+            psCek.setString(1, nama);
+            psCek.setInt(2, dipilih.getId());
+            try (ResultSet rsCek = psCek.executeQuery()) {
+                if (rsCek.next() && rsCek.getInt(1) > 0) {
+                    new Popup().showModernPopup("DUPLIKASI DATA", "Nama produk \"" + nama + "\" sudah digunakan oleh produk lain!", 
+                            Popup.PopupType.WARNING, getStage());
+                    return;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         new Popup().showConfirmPopup("UBAH BARANG", "Apakah Anda yakin ingin mengubah data barang ini?", () -> {
             try {
-                String nama = txtNama.getText().trim();
                 String kategori = cmbKategori.getValue();
                 int harga = getHargaValue();
                 int stok = Integer.parseInt(txtStok.getText().trim());
@@ -598,39 +682,75 @@ public class BarangController implements Initializable {
             }
         });
         perubahan_data = false;
-
     }
 
+    // ══════════════════════════════════════════════════════════════════════
+    // [BARIS UPDATE - PERBAIKAN BUG STUCK DATA SAAT TOMBOL RESET DITEKAN]
+    // ══════════════════════════════════════════════════════════════════════
     @FXML
     void clearForm(ActionEvent event) {
+        // Kunci perbaikan bug: Hapus/clear seleksi row tabel terlebih dahulu
+        tabelBarang.getSelectionModel().clearSelection();
+        perubahan_data = false;
+
+        // Setelah dilepas bindingnya, kosongkan total field input teks dan combo box
+        txtNama.setText("");
         txtNama.clear();
+        
         cmbKategori.setValue(null);
+        cmbKategori.getSelectionModel().clearSelection();
+        
         isUpdatingHarga = true;
         txtHarga.clear();
         isUpdatingHarga = false;
+        
         txtStok.clear();
         txtDeskripsi.clear();
         lblFilePath.setText("Tidak ada file dipilih");
-        tabelBarang.getSelectionModel().clearSelection();
-        perubahan_data = false;
         tambahBarang.setDisable(false);
     }
 
     private void cariBarang() {
         txtCari.textProperty().addListener((obs, oldVal, newVal) -> {
-            String keyword = newVal.toLowerCase();
-            filteredData.setPredicate(barang -> {
-                if (keyword == null || keyword.isEmpty())
-                    return true;
-                return barang.getNama().toLowerCase().contains(keyword)
-                        || barang.getKategori().toLowerCase().contains(keyword);
-            });
+            if (newVal != null && !newVal.isEmpty() && !newVal.equals("Cari Nama Barang")) {
+                if (!searchBoxContainer.getStyleClass().contains("search-box-active-glow")) {
+                    searchBoxContainer.getStyleClass().add("search-box-active-glow");
+                }
+            } else {
+                searchBoxContainer.getStyleClass().remove("search-box-active-glow");
+            }
+            jalankanMultiFilter();
+            tabelBarang.refresh(); // ── [BARIS UPDATE] Paksa tabel merender ulang warna nama barang ──
+        });
+
+        cmbKategori.valueProperty().addListener((obs, oldVal, newVal) -> {
+            jalankanMultiFilter();
+            tabelBarang.refresh();
+        });
+    }
+
+    private void jalankanMultiFilter() {
+        String keywordText = txtCari.getText() != null ? txtCari.getText().toLowerCase().trim() : "";
+        if (keywordText.equals("cari nama barang")) keywordText = "";
+        
+        String kategoriSelected = cmbKategori.getValue();
+
+        final String finalKeyword = keywordText;
+        filteredData.setPredicate(barang -> {
+            boolean cocokTeks = finalKeyword.isEmpty() || 
+                               barang.getNama().toLowerCase().contains(finalKeyword);
+            boolean cocokKategori = (kategoriSelected == null) || 
+                                   barang.getKategori().equalsIgnoreCase(kategoriSelected);
+
+            return cocokTeks && cocokKategori;
         });
     }
 
     @FXML
     private void onClearSearch() {
         txtCari.setText("Cari Nama Barang");
+        cmbKategori.setValue(null);
+        searchBoxContainer.getStyleClass().remove("search-box-active-glow");
         loadDataFromDB();
         setUpTable();
     }
@@ -646,6 +766,14 @@ public class BarangController implements Initializable {
         File file = fc.showOpenDialog(getStage());
         if (file == null)
             return;
+
+        long ukuranByte = file.length();
+        long maksimalByte = 2 * 1024 * 1024;
+        if (ukuranByte > maksimalByte) {
+            new Popup().showModernPopup("FILE TERLALU BESAR", "Ukuran foto melebihi 2MB! Silakan pilih foto yang lebih kecil.", 
+                    Popup.PopupType.WARNING, getStage());
+            return;
+        }
 
         try {
             String appData = System.getenv("APPDATA");
@@ -666,9 +794,6 @@ public class BarangController implements Initializable {
         }
     }
 
-    // ═══════════════════════════════════════════════════════
-    // SIDEBAR TOGGLE
-    // ═══════════════════════════════════════════════════════
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
@@ -731,20 +856,18 @@ public class BarangController implements Initializable {
     private void updateNavPadding(boolean collapsed) {
         Insets pad = collapsed ? new Insets(10, 0, 10, 0) : new Insets(10, 14, 10, 0);
         List<HBox> items = List.of(navDashboard, navProduk, navKaryawan,
-                navKasir, navPiutang, navLaporan, navPengaturan); // navLogout DIKELUARKAN
+                navKasir, navPiutang, navLaporan, navPengaturan);
         for (HBox item : items) {
             item.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
             item.setPadding(pad);
         }
-
-        // navLogout dihandle terpisah — hanya alignment & padding, tanpa setStyle()
         navLogout.setAlignment(collapsed ? Pos.CENTER : Pos.CENTER_LEFT);
         navLogout.setPadding(pad);
     }
 
     private void setActiveNav(HBox selected) {
         List<HBox> all = List.of(navDashboard, navProduk, navKasir,
-                navLaporan, navPengaturan); // navLogout DIKELUARKAN
+                navLaporan, navPengaturan);
         for (HBox item : all) {
             item.getStyleClass().removeAll("nav-active");
             if (!item.getStyleClass().contains("nav-item"))
@@ -755,7 +878,7 @@ public class BarangController implements Initializable {
 
     private void setupNavHover() {
         List<HBox> all = List.of(navDashboard, navProduk, navKasir,
-                navLaporan, navPengaturan); // navLogout DIKELUARKAN
+                navLaporan, navPengaturan);
         for (HBox item : all) {
             item.setOnMouseEntered(e -> item.setStyle(
                     "-fx-background-color: #252840; -fx-background-radius: 10;"));
@@ -763,7 +886,6 @@ public class BarangController implements Initializable {
         }
     }
 
-    // Tambahkan method baru ini
     private void setupLogoutHover() {
         String styleNormal = "-fx-background-color: transparent;" +
                 "-fx-background-radius: 10;" +
@@ -777,10 +899,6 @@ public class BarangController implements Initializable {
         navLogout.setOnMouseEntered(e -> navLogout.setStyle(styleHover));
         navLogout.setOnMouseExited(e -> navLogout.setStyle(styleNormal));
     }
-
-    // =====================================
-    // LOG OUT
-    // =====================================
 
     @FXML
     private void onNavLogout() {
@@ -811,9 +929,6 @@ public class BarangController implements Initializable {
                         "-fx-padding: 10 14 10 0;");
     }
 
-    // ═══════════════════════════════════════════════════════
-    // NAV HANDLERS
-    // ═══════════════════════════════════════════════════════
     @FXML
     private void onNavDashboard() {
         setActiveNav(navDashboard);
@@ -824,7 +939,6 @@ public class BarangController implements Initializable {
     @FXML
     private void onNavProduk() {
         setActiveNav(navProduk);
-
     }
 
     @FXML
@@ -861,10 +975,6 @@ public class BarangController implements Initializable {
         new navigation().navigataeToPengaturan();
         ((Stage) navPengaturan.getScene().getWindow()).close();
     }
-
-    // ═══════════════════════════════════════════════════════
-    // NOTIFIKASI
-    // ═══════════════════════════════════════════════════════
 
     @FXML
     private void onNotif() {
