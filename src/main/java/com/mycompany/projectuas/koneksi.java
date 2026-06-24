@@ -6,10 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.File;
-
 
 public class koneksi {
     private static final String URL = "jdbc:sqlite:" + getDbPath();
@@ -33,9 +33,9 @@ public class koneksi {
         // Fallback: development di VSCode
         return "src/main/resources/db/db_enjoy_cafe.db";
     }
-    
+
     public static void koneksi() {
-        
+
         try (Connection connection = getConnection()) {
             System.out.println("Koneksi berhasil! Database: " + connection.getCatalog());
         } catch (SQLException e) {
@@ -48,18 +48,41 @@ public class koneksi {
 
     }
 
-    public static void eksekusiQuery(String query, Object... params) {
+    public static boolean eksekusiQueryBoolean(String query, Object... params) {
         try (Connection connection = getConnection(); PreparedStatement ps = connection.prepareStatement(query)) {
             for (int i = 0; i < params.length; i++) {
                 ps.setObject(i + 1, params[i]);
             }
             ps.executeUpdate();
             System.out.println("Query berhasil dieksekusi!");
-
+            return true;
         } catch (SQLException e) {
             System.err.println("Gagal mengeksekusi query: " + e.getMessage());
+            return false;
         }
+    }
 
+    public static void eksekusiQuery(String query, Object... params) {
+        eksekusiQueryBoolean(query, params);
+    }
+
+    public static long eksekusiInsert(String query, Object... params) {
+        try (Connection connection = getConnection();
+                PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ps.executeUpdate();
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1);
+                }
+            }
+            return -1;
+        } catch (SQLException e) {
+            System.err.println("Gagal mengeksekusi insert: " + e.getMessage());
+            return -1;
+        }
     }
 
     public static List<Object[]> ambilData(String query) {

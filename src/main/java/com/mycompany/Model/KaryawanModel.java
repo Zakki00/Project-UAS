@@ -5,6 +5,7 @@ import javafx.beans.property.*;
 public class KaryawanModel {
 
     private final StringProperty idKaryawan;
+    private final StringProperty idUser;
     private final StringProperty username;
     private final StringProperty password;
 
@@ -19,6 +20,7 @@ public class KaryawanModel {
 
     public KaryawanModel(
             String idKaryawan,
+            String idUser,
             String username,
             String password,
             String namaLengkap,
@@ -29,6 +31,7 @@ public class KaryawanModel {
             String alamat,
             String role) {
         this.idKaryawan = new SimpleStringProperty(idKaryawan);
+        this.idUser = new SimpleStringProperty(idUser);
         this.username = new SimpleStringProperty(username);
         this.password = new SimpleStringProperty(password);
         this.namaLengkap = new SimpleStringProperty(namaLengkap);
@@ -38,6 +41,21 @@ public class KaryawanModel {
         this.statusKerja = new SimpleStringProperty(statusKerja);
         this.alamat = new SimpleStringProperty(alamat);
         this.role = new SimpleStringProperty(role);
+    }
+
+    public KaryawanModel(
+            String idKaryawan,
+            String username,
+            String password,
+            String namaLengkap,
+            String jenisKelamin,
+            String noHp,
+            String tanggalMasuk,
+            String statusKerja,
+            String alamat,
+            String role) {
+        this(idKaryawan, "", username, password, namaLengkap, jenisKelamin, noHp, tanggalMasuk, statusKerja, alamat,
+                role);
     }
 
     // ── ID ─────────────────────────────
@@ -51,6 +69,19 @@ public class KaryawanModel {
 
     public void setIdKaryawan(String v) {
         idKaryawan.set(v);
+    }
+
+    // ── ID USER ─────────────────────────
+    public StringProperty idUserProperty() {
+        return idUser;
+    }
+
+    public String getIdUser() {
+        return idUser.get();
+    }
+
+    public void setIdUser(String v) {
+        idUser.set(v);
     }
 
     // ── USERNAME ───────────────────────

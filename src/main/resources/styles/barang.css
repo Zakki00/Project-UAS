@@ -168,7 +168,6 @@
 .main-content {
     -fx-background-color: #0F1117;
 }
-
 /* ── TOP BAR ─────────────────────────────────────────────── */
 .topbar {
     -fx-background-color: #1A1D2E;
@@ -207,7 +206,6 @@
 
 .search-field {
     -fx-background-color: transparent;
-    -fx-control-inner-background: transparent;
     -fx-text-fill: #FFFFFF;
     -fx-prompt-text-fill: #8B8FA8;
     -fx-font-size: 11px;
@@ -218,7 +216,6 @@
 
 .search-field:focused {
     -fx-background-color: transparent;
-    -fx-control-inner-background: transparent;
 }
 
 .notif-wrapper {
@@ -242,6 +239,36 @@
 
 .notif-btn:hover {
     -fx-background-color: #2E3250;
+}
+
+.notif-badge {
+    -fx-background-color: #FF5C7C;
+    -fx-background-radius: 50;
+    -fx-min-width: 8;
+    -fx-min-height: 8;
+    -fx-max-width: 8;
+    -fx-max-height: 8;
+    -fx-translate-x: -2;
+    -fx-translate-y: 2;
+}
+
+.topbar-avatar {
+    -fx-min-width: 34;
+    -fx-min-height: 34;
+    -fx-max-width: 34;
+    -fx-max-height: 34;
+    -fx-pref-width: 34;
+    -fx-pref-height: 34;
+    -fx-background-color: rgba(108, 99, 255, 0.25);
+    -fx-border-color: #6C63FF;
+    -fx-border-width: 2;
+    -fx-background-radius: 50;
+    -fx-border-radius: 50;
+    -fx-text-fill: #6C63FF;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
 }
 
 /* ── BODY SCROLL ─────────────────────────────────────────── */
@@ -1394,8 +1421,8 @@
     -fx-text-fill: #FFD166 !important;
     -fx-font-weight: bold;
     -fx-effect: dropshadow(three-pass-box, rgba(255, 209, 102, 0.4), 6, 0, 0, 0);
-} ACTIVE GLOW EFFECT
-════════════════════════════════════════════════════════════ */
+} 
+
 .search-box-active-glow {
     -fx-border-color: #6C63FF;
     -fx-effect: dropshadow(three-pass-box, rgba(108, 99, 255, 0.65), 12, 0.4, 0, 0);

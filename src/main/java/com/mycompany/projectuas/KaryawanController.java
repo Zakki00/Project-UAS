@@ -273,7 +273,7 @@ public class KaryawanController implements Initializable {
         dpTanggalMasuk.setValue(LocalDate.now());
         dpTanggalAbsensi.setValue(LocalDate.now());
 
-        //===logo
+        // ===logo
         Platform.runLater(() -> {
             Stage stage = (Stage) navMenu.getScene().getWindow();
             Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
@@ -693,26 +693,29 @@ public class KaryawanController implements Initializable {
         karyawanFilter.clear();
         try {
             List<Object[]> data = koneksi.ambilData(
-                    "SELECT id_karyawan, username, password, nama_lengkap, " +
-                            "jenis_kelamin, no_hp, tanggal_masuk, status_kerja, alamat, role " +
-                            "FROM tb_karyawan ORDER BY id_karyawan");
+                    "SELECT k.id_karyawan, k.id_user, k.username, k.password, k.nama_lengkap, " +
+                            "k.jenis_kelamin, k.no_hp, k.tanggal_masuk, k.status_kerja, k.alamat, k.role " +
+                            "FROM tb_karyawan k " +
+                            "LEFT JOIN tb_user u ON k.id_user = u.id_user " +
+                            "ORDER BY k.id_karyawan");
 
             ObservableList<String> idList = FXCollections.observableArrayList();
 
             for (Object[] row : data) {
                 String id = row[0] != null ? row[0].toString() : "";
-                String username = row[1] != null ? row[1].toString() : "";
-                String password = row[2] != null ? row[2].toString() : "";
-                String nama = row[3] != null ? row[3].toString() : "";
-                String jenisKelamin = row[4] != null ? row[4].toString() : "";
-                String noHp = row[5] != null ? row[5].toString() : "";
-                String tglMasuk = row[6] != null ? row[6].toString() : "";
-                String statusKerja = row[7] != null ? row[7].toString() : "";
-                String alamat = row[8] != null ? row[8].toString() : "";
-                String role = row[9] != null ? row[9].toString() : "";
+                String idUser = row[1] != null ? row[1].toString() : "";
+                String username = row[2] != null ? row[2].toString() : "";
+                String password = row[3] != null ? row[3].toString() : "";
+                String nama = row[4] != null ? row[4].toString() : "";
+                String jenisKelamin = row[5] != null ? row[5].toString() : "";
+                String noHp = row[6] != null ? row[6].toString() : "";
+                String tglMasuk = row[7] != null ? row[7].toString() : "";
+                String statusKerja = row[8] != null ? row[8].toString() : "";
+                String alamat = row[9] != null ? row[9].toString() : "";
+                String role = row[10] != null ? row[10].toString() : "";
 
                 karyawanList.add(new KaryawanModel(
-                        id, username, password, nama,
+                        id, idUser, username, password, nama,
                         jenisKelamin, noHp, tglMasuk,
                         statusKerja, alamat, role));
                 idList.add(id);
@@ -824,19 +827,6 @@ public class KaryawanController implements Initializable {
             return false;
         }
 
-    
-
-        String cekSql = "SELECT id_user FROM tb_karyawan WHERE username = ?";
-        if (!koneksi.ambilData(cekSql, txtUsername).isEmpty()) {
-            new Popup().showModernPopup(
-                    "WARNING",
-                    "Username sudah digunakan",
-                    Popup.PopupType.WARNING,
-                    stage);
-            return false;
-
-        }
-
         if (username.length() < 4) {
             new Popup().showModernPopup(
                     "WARNING",
@@ -900,11 +890,31 @@ public class KaryawanController implements Initializable {
         return true;
     }
 
-    private boolean isDuplicateUsername(String username, String excludeId) {
-        List<Object[]> data = koneksi.ambilData(
-                "SELECT id_karyawan FROM tb_karyawan WHERE username=? AND id_karyawan != ?",
-                username, excludeId);
-        return !data.isEmpty();
+    private boolean isDuplicateUsername(String username, String excludeUserId) {
+        if (excludeUserId == null || excludeUserId.isBlank()) {
+            return !koneksi.ambilData("SELECT id_user FROM tb_user WHERE username = ?", username).isEmpty();
+        }
+        return !koneksi.ambilData("SELECT id_user FROM tb_user WHERE username = ? AND id_user != ?",
+                username, excludeUserId).isEmpty();
+    }
+
+    private long createUserForKaryawan(String username, String password, String nama, String role) {
+        return koneksi.eksekusiInsert(
+                "INSERT INTO tb_user (username, password, nama_lengkap, role, email, foto_profil) VALUES (?, ?, ?, ?, ?, ?)",
+                username, password, nama, role, "", "");
+    }
+
+    private boolean updateUserForKaryawan(String idUser, String username, String password, String nama, String role) {
+        return koneksi.eksekusiQueryBoolean(
+                "UPDATE tb_user SET username=?, password=?, nama_lengkap=?, role=? WHERE id_user=?",
+                username, password, nama, role, idUser);
+    }
+
+    private boolean deleteUserForKaryawan(String idUser) {
+        if (idUser == null || idUser.isBlank()) {
+            return false;
+        }
+        return koneksi.eksekusiQueryBoolean("DELETE FROM tb_user WHERE id_user=?", idUser);
     }
 
     // ═══════════════════════════════════════════════════════
@@ -927,17 +937,44 @@ public class KaryawanController implements Initializable {
 
         String id = txtIdKaryawan.getText();
         String tgl = dpTanggalMasuk.getValue().format(fmt);
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
+        String nama = txtNamaKaryawan.getText();
+        String role = "Karyawan";
 
-        koneksi.eksekusiQuery(
-                "INSERT INTO tb_karyawan (id_karyawan, username, password, nama_lengkap, jenis_kelamin, no_hp, tanggal_masuk, status_kerja, alamat, role) VALUES (?,?,?,?,?,?,?,?,?,?)",
-                id, txtUsername.getText(), txtPassword.getText(), txtNamaKaryawan.getText(),
+        if (isDuplicateUsername(username, "")) {
+            new Popup().showModernPopup("ERROR",
+                    "Username '" + username + "' sudah digunakan karyawan lain!",
+                    Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
+            return;
+        }
+
+        long idUser = createUserForKaryawan(username, password, nama, role);
+        if (idUser == -1) {
+            new Popup().showModernPopup("ERROR",
+                    "Gagal membuat akun pengguna untuk karyawan.",
+                    Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
+            return;
+        }
+
+        boolean success = koneksi.eksekusiQueryBoolean(
+                "INSERT INTO tb_karyawan (id_karyawan, id_user, username, password, nama_lengkap, jenis_kelamin, no_hp, tanggal_masuk, status_kerja, alamat, role) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                id, idUser, username, password, nama,
                 cmbJenisKelamin.getValue(), txtNoHp.getText(), tgl,
-                cmbStatusKerja.getValue(), txtAlamat.getText(), "Karyawan");
+                cmbStatusKerja.getValue(), txtAlamat.getText(), role);
+
+        if (!success) {
+            deleteUserForKaryawan(String.valueOf(idUser));
+            new Popup().showModernPopup("ERROR",
+                    "Gagal menyimpan data karyawan.",
+                    Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
+            return;
+        }
 
         KaryawanModel baru = new KaryawanModel(
-                id, txtUsername.getText(), txtPassword.getText(), txtNamaKaryawan.getText(),
+                id, String.valueOf(idUser), username, password, nama,
                 cmbJenisKelamin.getValue(), txtNoHp.getText(), tgl,
-                cmbStatusKerja.getValue(), txtAlamat.getText(), "Karyawan");
+                cmbStatusKerja.getValue(), txtAlamat.getText(), role);
 
         karyawanList.add(baru);
         karyawanFilter.add(baru);
@@ -960,9 +997,21 @@ public class KaryawanController implements Initializable {
         if (!validasiKaryawan())
             return;
 
-        if (isDuplicateUsername(txtUsername.getText(), selected.getIdKaryawan())) {
+        String username = txtUsername.getText();
+        String password = txtPassword.getText();
+        String nama = txtNamaKaryawan.getText();
+        String role = "Karyawan";
+
+        if (isDuplicateUsername(username, selected.getIdUser())) {
             new Popup().showModernPopup("ERROR",
-                    "Username '" + txtUsername.getText() + "' sudah digunakan karyawan lain!",
+                    "Username '" + username + "' sudah digunakan karyawan lain!",
+                    Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
+            return;
+        }
+
+        if (!updateUserForKaryawan(selected.getIdUser(), username, password, nama, role)) {
+            new Popup().showModernPopup("ERROR",
+                    "Gagal memperbarui akun pengguna.",
                     Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
             return;
         }
@@ -971,14 +1020,14 @@ public class KaryawanController implements Initializable {
 
         koneksi.eksekusiQuery(
                 "UPDATE tb_karyawan SET username=?, password=?, nama_lengkap=?, jenis_kelamin=?, no_hp=?, tanggal_masuk=?, status_kerja=?, alamat=?, role=? WHERE id_karyawan=?",
-                txtUsername.getText(), txtPassword.getText(), txtNamaKaryawan.getText(),
+                username, password, nama,
                 cmbJenisKelamin.getValue(), txtNoHp.getText(), tgl,
-                cmbStatusKerja.getValue(), txtAlamat.getText(), "Karyawan",
+                cmbStatusKerja.getValue(), txtAlamat.getText(), role,
                 selected.getIdKaryawan());
 
-        selected.setUsername(txtUsername.getText());
-        selected.setPassword(txtPassword.getText());
-        selected.setNamaLengkap(txtNamaKaryawan.getText());
+        selected.setUsername(username);
+        selected.setPassword(password);
+        selected.setNamaLengkap(nama);
         selected.setJenisKelamin(cmbJenisKelamin.getValue());
         selected.setNoHp(txtNoHp.getText());
         selected.setTanggalMasuk(tgl);
@@ -1002,8 +1051,11 @@ public class KaryawanController implements Initializable {
         }
         new Popup().showConfirmPopup("Hapus Karyawan",
                 "Yakin ingin menghapus karyawan " + selected.getNamaLengkap() + "?", () -> {
-                    koneksi.eksekusiQuery("DELETE FROM tb_karyawan WHERE id_karyawan=?",
+                    boolean deleted = koneksi.eksekusiQueryBoolean("DELETE FROM tb_karyawan WHERE id_karyawan=?",
                             selected.getIdKaryawan());
+                    if (deleted) {
+                        deleteUserForKaryawan(selected.getIdUser());
+                    }
                     karyawanList.remove(selected);
                     karyawanFilter.remove(selected);
                     cmbPilihKaryawan.getItems().remove(selected.getIdKaryawan());
