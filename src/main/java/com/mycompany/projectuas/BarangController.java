@@ -11,6 +11,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.mycompany.Model.BarangModel;
 
@@ -22,6 +24,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -181,6 +184,13 @@ public class BarangController implements Initializable {
 
     private ObservableList<BarangModel> masterData = FXCollections.observableArrayList();
     private FilteredList<BarangModel> filteredData;
+    
+    private final Map<String, Image> imageCache = new HashMap<>(); 
+    private File lastSelectedFolder = null; 
+
+    // Variabel publik sinkronisasi rincian kelompok ke form popup notifikasi
+    public static int jumlahHabis = 0;
+    public static int jumlahMenipis = 0;
 
     // ═══════════════════════════════════════════════════════
     // INITIALIZE
@@ -258,13 +268,8 @@ public class BarangController implements Initializable {
         });
     }
 
-    // ═══════════════════════════════════════════════════════
-    // SETUP TABLE
-    // ═══════════════════════════════════════════════════════
     private void setUpTable() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        
-        // ── [BARIS UPDATE - EFEK REALTIME HIGHLIGHT PADA NAMA BARANG SAAT DICARI] ──
         colNama.setCellValueFactory(new PropertyValueFactory<>("nama"));
         colNama.setCellFactory(column -> new TableCell<>() {
             @Override
@@ -272,22 +277,8 @@ public class BarangController implements Initializable {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
-                    setStyle("");
-                    getStyleClass().remove("text-search-match");
                 } else {
                     setText(item);
-                    String keyword = (txtCari.getText() != null) ? txtCari.getText().toLowerCase().trim() : "";
-                    if (keyword.equals("cari nama barang")) keyword = "";
-                    
-                    // Jika teks nama barang mengandung kata kunci pencarian, beri kelas style khusus efek cahaya
-                    if (!keyword.isEmpty() && item.toLowerCase().contains(keyword)) {
-                        if (!getStyleClass().contains("text-search-match")) {
-                            getStyleClass().add("text-search-match");
-                        }
-                    } else {
-                        getStyleClass().remove("text-search-match");
-                        setStyle(""); 
-                    }
                 }
             }
         });
@@ -314,14 +305,22 @@ public class BarangController implements Initializable {
                 imageView.setFitWidth(50);
                 imageView.setFitHeight(50);
                 imageView.setPreserveRatio(true);
+                imageView.setCache(true);
             }
 
             @Override
             protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
+                super.updateItem(empty || item == null || item.isBlank() ? null : item, empty);
 
                 if (empty || item == null || item.isBlank()) {
                     setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                if (imageCache.containsKey(item)) {
+                    imageView.setImage(imageCache.get(item));
+                    setGraphic(imageView);
                     setText(null);
                     return;
                 }
@@ -334,24 +333,25 @@ public class BarangController implements Initializable {
                             : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
 
                     if (imgFile.exists()) {
-                        img = new Image(imgFile.toURI().toString());
+                        img = new Image(imgFile.toURI().toString(), 100, 100, true, true);
                     }
 
                     if (img == null) {
                         var stream = getClass().getResourceAsStream("/image-barang/" + item);
                         if (stream != null) {
-                            img = new Image(stream);
+                            img = new Image(stream, 100, 100, true, true);
                         }
                     }
 
                     if (img == null) {
                         var notFound = getClass().getResourceAsStream("/image/not_found.png");
                         if (notFound != null) {
-                            img = new Image(notFound);
+                            img = new Image(notFound, 100, 100, true, true);
                         }
                     }
 
                     if (img != null) {
+                        imageCache.put(item, img);
                         imageView.setImage(img);
                         setGraphic(imageView);
                     } else {
@@ -360,7 +360,6 @@ public class BarangController implements Initializable {
                     setText(null);
 
                 } catch (Exception e) {
-                    e.printStackTrace();
                     setGraphic(null);
                     setText(null);
                 }
@@ -406,7 +405,11 @@ public class BarangController implements Initializable {
 
     private void selectedData() {
         filteredData = new FilteredList<>(masterData, p -> true);
-        tabelBarang.setItems(filteredData);
+        
+        SortedList<BarangModel> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(tabelBarang.comparatorProperty());
+        
+        tabelBarang.setItems(sortedData);
 
         tabelBarang.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) {
@@ -435,10 +438,6 @@ public class BarangController implements Initializable {
         } catch (NumberFormatException e) {
             return 0;
         }
-    }
-
-    private Stage getStage() {
-        return (Stage) txtNama.getScene().getWindow();
     }
 
     private boolean isInputValid(boolean isUpdate, BarangModel dipilih) {
@@ -483,7 +482,7 @@ public class BarangController implements Initializable {
             pesan.append("- Gambar barang wajib dipilih.\n");
 
         if (pesan.length() > 0) {
-            new Popup().showModernPopup("VALIDASI GAGAL", pesan.toString().trim(),
+            new Popup().showModernPopup("PERINGATAN", pesan.toString().trim(),
                     Popup.PopupType.WARNING, getStage());
             return false;
         }
@@ -492,7 +491,9 @@ public class BarangController implements Initializable {
 
     private void loadDataFromDB() {
         masterData.clear();
-        int jumlahStokMenipis = 0;
+        
+        jumlahHabis = 0;
+        jumlahMenipis = 0;
         
         String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_path FROM tb_barang";
         try (Connection conn = koneksi.getConnection();
@@ -501,8 +502,11 @@ public class BarangController implements Initializable {
 
             while (rs.next()) {
                 int stok = rs.getInt("stok");
-                if (stok <= 10) {
-                    jumlahStokMenipis++;
+                
+                if (stok == 0) {
+                    jumlahHabis++;
+                } else if (stok <= 10) {
+                    jumlahMenipis++;
                 }
 
                 masterData.add(new BarangModel(
@@ -515,8 +519,12 @@ public class BarangController implements Initializable {
                         rs.getString("image_path")));
             }
             
-            if (jumlahStokMenipis > 0) {
-                notifBadge.setText(String.valueOf(jumlahStokMenipis));
+            int totalKelompokNotif = 0;
+            if (jumlahHabis > 0) totalKelompokNotif++;   
+            if (jumlahMenipis > 0) totalKelompokNotif++; 
+
+            if (totalKelompokNotif > 0) {
+                notifBadge.setText(String.valueOf(totalKelompokNotif));
                 notifBadge.setVisible(true);
             } else {
                 notifBadge.setVisible(false);
@@ -636,6 +644,10 @@ public class BarangController implements Initializable {
                     ps.executeUpdate();
                 }
 
+                if (dipilih.getGambar() != null) {
+                    imageCache.remove(dipilih.getGambar());
+                }
+
                 loadDataFromDB();
                 clearForm(null);
                 new Popup().showModernPopup("BERHASIL", "Barang \"" + nama + "\" berhasil diubah.",
@@ -671,6 +683,10 @@ public class BarangController implements Initializable {
                     ps.executeUpdate();
                 }
 
+                if (dipilih.getGambar() != null) {
+                    imageCache.remove(dipilih.getGambar());
+                }
+
                 loadDataFromDB();
                 clearForm(null);
                 new Popup().showModernPopup("BERHASIL", "Barang \"" + namaBarang + "\" telah dihapus.",
@@ -684,16 +700,11 @@ public class BarangController implements Initializable {
         perubahan_data = false;
     }
 
-    // ══════════════════════════════════════════════════════════════════════
-    // [BARIS UPDATE - PERBAIKAN BUG STUCK DATA SAAT TOMBOL RESET DITEKAN]
-    // ══════════════════════════════════════════════════════════════════════
     @FXML
     void clearForm(ActionEvent event) {
-        // Kunci perbaikan bug: Hapus/clear seleksi row tabel terlebih dahulu
         tabelBarang.getSelectionModel().clearSelection();
         perubahan_data = false;
 
-        // Setelah dilepas bindingnya, kosongkan total field input teks dan combo box
         txtNama.setText("");
         txtNama.clear();
         
@@ -708,6 +719,8 @@ public class BarangController implements Initializable {
         txtDeskripsi.clear();
         lblFilePath.setText("Tidak ada file dipilih");
         tambahBarang.setDisable(false);
+        
+        jalankanMultiFilter();
     }
 
     private void cariBarang() {
@@ -720,12 +733,6 @@ public class BarangController implements Initializable {
                 searchBoxContainer.getStyleClass().remove("search-box-active-glow");
             }
             jalankanMultiFilter();
-            tabelBarang.refresh(); // ── [BARIS UPDATE] Paksa tabel merender ulang warna nama barang ──
-        });
-
-        cmbKategori.valueProperty().addListener((obs, oldVal, newVal) -> {
-            jalankanMultiFilter();
-            tabelBarang.refresh();
         });
     }
 
@@ -733,24 +740,17 @@ public class BarangController implements Initializable {
         String keywordText = txtCari.getText() != null ? txtCari.getText().toLowerCase().trim() : "";
         if (keywordText.equals("cari nama barang")) keywordText = "";
         
-        String kategoriSelected = cmbKategori.getValue();
-
         final String finalKeyword = keywordText;
         filteredData.setPredicate(barang -> {
-            boolean cocokTeks = finalKeyword.isEmpty() || 
-                               barang.getNama().toLowerCase().contains(finalKeyword);
-            boolean cocokKategori = (kategoriSelected == null) || 
-                                   barang.getKategori().equalsIgnoreCase(kategoriSelected);
-
-            return cocokTeks && cocokKategori;
+            return finalKeyword.isEmpty() || barang.getNama().toLowerCase().contains(finalKeyword);
         });
     }
 
     @FXML
     private void onClearSearch() {
         txtCari.setText("Cari Nama Barang");
-        cmbKategori.setValue(null);
         searchBoxContainer.getStyleClass().remove("search-box-active-glow");
+        perubahan_data = false;
         loadDataFromDB();
         setUpTable();
     }
@@ -763,9 +763,15 @@ public class BarangController implements Initializable {
                         "Gambar (*.png, *.jpg, *.jpeg, *.webp, *.jfif)",
                         "*.png", "*.jpg", "*.jpeg", "*.webp", "*.jfif"));
 
+        if (lastSelectedFolder != null && lastSelectedFolder.exists()) {
+            fc.setInitialDirectory(lastSelectedFolder);
+        }
+
         File file = fc.showOpenDialog(getStage());
         if (file == null)
             return;
+
+        lastSelectedFolder = file.getParentFile();
 
         long ukuranByte = file.length();
         long maksimalByte = 2 * 1024 * 1024;
@@ -786,6 +792,8 @@ public class BarangController implements Initializable {
 
             Path tujuan = Path.of(imgFolder.getAbsolutePath(), file.getName());
             Files.copy(file.toPath(), tujuan, StandardCopyOption.REPLACE_EXISTING);
+            
+            imageCache.remove(file.getName());
             lblFilePath.setText(file.getName());
 
         } catch (IOException e) {
@@ -794,6 +802,13 @@ public class BarangController implements Initializable {
         }
     }
 
+    private Stage getStage() {
+        return (Stage) txtNama.getScene().getWindow();
+    }
+
+    // ═══════════════════════════════════════════════════════
+    // [KUNCI FORMAT AWAL] SIDEBAR TOGGLE & NAVIGATIONS
+    // ═══════════════════════════════════════════════════════
     @FXML
     private void onToggleSidebar() {
         sidebarCollapsed = !sidebarCollapsed;
@@ -979,6 +994,6 @@ public class BarangController implements Initializable {
     @FXML
     private void onNotif() {
         Stage stage = (Stage) notifBadge.getScene().getWindow();
-        Notifikasi.show(stage);
+        Notifikasi.show(stage); 
     }
 }

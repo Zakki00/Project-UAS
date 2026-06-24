@@ -85,6 +85,7 @@
         </children>
       </VBox>
       <Separator styleClass="sidebar-divider" />
+      
       <HBox fx:id="userRow" alignment="CENTER_LEFT" spacing="8" styleClass="user-row">
         <VBox alignment="CENTER" minHeight="44.0" minWidth="65.0" prefHeight="44.0" prefWidth="65.0" styleClass="topbar-avatar">
           <children>
@@ -92,11 +93,12 @@
             <Label fx:id="lblAvatarnavbar" styleClass="topbar-avatar" text="A" />
           </children>
         </VBox>
-        <VBox fx:id="userInfo" spacing="1">
+        <VBox fx:id="userInfo" spacing="1" styleClass="user-info">
           <Label fx:id="navllblakun" styleClass="user-name" text="Admin" />
           <Label fx:id="navlblnama" styleClass="user-role" text="Administrator" />
         </VBox>
       </HBox>
+      
       <HBox fx:id="navLogout" alignment="CENTER_LEFT" onMouseClicked="#onNavLogout" onMouseEntered="#onNavLogoutHover" onMouseExited="#onNavLogoutExit" prefHeight="49.0" prefWidth="219.0" spacing="10" style="-fx-background-radius: 10; -fx-cursor: hand; -fx-padding: 10 14 10 0;">
         <children>
           <Rectangle height="0" styleClass="nav-active-bar-hidden" width="3" />
