@@ -299,72 +299,78 @@ public class BarangController implements Initializable {
         });
 
         colGambar.setCellValueFactory(new PropertyValueFactory<>("gambar"));
-        colGambar.setCellFactory(column -> new TableCell<>() {
-            private final ImageView imageView = new ImageView();
-            {
-                imageView.setFitWidth(50);
-                imageView.setFitHeight(50);
-                imageView.setPreserveRatio(true);
-                imageView.setCache(true);
+colGambar.setCellFactory(column -> new TableCell<>() {
+    private final ImageView imageView = new ImageView();
+    private final javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(50, 50);
+    {
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
+        imageView.setPreserveRatio(false);
+        imageView.setSmooth(true);
+        imageView.setCache(true);
+        clip.setArcWidth(6);
+        clip.setArcHeight(6);
+        imageView.setClip(clip);
+        setAlignment(Pos.CENTER);
+    }
+
+    @Override
+    protected void updateItem(String item, boolean empty) {
+        super.updateItem(empty || item == null || item.isBlank() ? null : item, empty);
+
+        if (empty || item == null || item.isBlank()) {
+            setGraphic(null);
+            setText(null);
+            return;
+        }
+
+        if (imageCache.containsKey(item)) {
+            imageView.setImage(imageCache.get(item));
+            setGraphic(imageView);
+            setText(null);
+            return;
+        }
+
+        try {
+            Image img = null;
+            String appData = System.getenv("APPDATA");
+            File imgFile = (appData != null && !appData.isEmpty())
+                    ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
+                    : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
+
+            if (imgFile.exists()) {
+                img = new Image(imgFile.toURI().toString(), 100, 100, true, true);
             }
 
-            @Override
-            protected void updateItem(String item, boolean empty) {
-                super.updateItem(empty || item == null || item.isBlank() ? null : item, empty);
-
-                if (empty || item == null || item.isBlank()) {
-                    setGraphic(null);
-                    setText(null);
-                    return;
-                }
-
-                if (imageCache.containsKey(item)) {
-                    imageView.setImage(imageCache.get(item));
-                    setGraphic(imageView);
-                    setText(null);
-                    return;
-                }
-
-                try {
-                    Image img = null;
-                    String appData = System.getenv("APPDATA");
-                    File imgFile = (appData != null && !appData.isEmpty())
-                            ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
-                            : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
-
-                    if (imgFile.exists()) {
-                        img = new Image(imgFile.toURI().toString(), 100, 100, true, true);
-                    }
-
-                    if (img == null) {
-                        var stream = getClass().getResourceAsStream("/image-barang/" + item);
-                        if (stream != null) {
-                            img = new Image(stream, 100, 100, true, true);
-                        }
-                    }
-
-                    if (img == null) {
-                        var notFound = getClass().getResourceAsStream("/image/not_found.png");
-                        if (notFound != null) {
-                            img = new Image(notFound, 100, 100, true, true);
-                        }
-                    }
-
-                    if (img != null) {
-                        imageCache.put(item, img);
-                        imageView.setImage(img);
-                        setGraphic(imageView);
-                    } else {
-                        setGraphic(null);
-                    }
-                    setText(null);
-
-                } catch (Exception e) {
-                    setGraphic(null);
-                    setText(null);
+            if (img == null) {
+                var stream = getClass().getResourceAsStream("/image-barang/" + item);
+                if (stream != null) {
+                    img = new Image(stream, 100, 100, true, true);
                 }
             }
-        });
+
+            if (img == null) {
+                var notFound = getClass().getResourceAsStream("/image/not_found.png");
+                if (notFound != null) {
+                    img = new Image(notFound, 100, 100, true, true);
+                }
+            }
+
+            if (img != null) {
+                imageCache.put(item, img);
+                imageView.setImage(img);
+                setGraphic(imageView);
+            } else {
+                setGraphic(null);
+            }
+            setText(null);
+
+        } catch (Exception e) {
+            setGraphic(null);
+            setText(null);
+        }
+    }
+});
 
         colStatus.setCellValueFactory(cellData -> {
             int stok = cellData.getValue().getStok();
