@@ -81,11 +81,11 @@ public class LoginController implements Initializable {
             btnGoogle.setVisible(false);
             btnGoogle.setManaged(false);
             session.id = (int) admin.get(0)[0];
-            session.username = (String) admin.get(0)[1];
-            session.nama = (String) admin.get(0)[3];
-            session.role = (String) admin.get(0)[4];
-            session.email = (String) admin.get(0)[5];
-            googleUser.setProfilePictureUrl((String) admin.get(0)[6]);
+            session.username = String.valueOf(admin.get(0)[1]);
+            session.nama = String.valueOf(admin.get(0)[3]);
+            session.role = String.valueOf(admin.get(0)[4]);
+            session.email = String.valueOf(admin.get(0)[5]);
+            googleUser.setProfilePictureUrl(String.valueOf(admin.get(0)[6]));
         }
 
         // =====================
@@ -225,11 +225,11 @@ public class LoginController implements Initializable {
             GoogleUser sesigoogle = new GoogleUser();
 
             session.id = resultUser.get(0)[0];
-            session.username = (String) resultUser.get(0)[1];
-            session.nama = (String) resultUser.get(0)[3];
-            session.role = (String) resultUser.get(0)[4];
-            session.email = (String) resultUser.get(0)[5];
-            googleUser.setProfilePictureUrl((String) resultUser.get(0)[6]);
+            session.username = String.valueOf(resultUser.get(0)[1]);
+            session.nama = String.valueOf(resultUser.get(0)[3]);
+            session.role = String.valueOf(resultUser.get(0)[4]);
+            session.email = String.valueOf(resultUser.get(0)[5]);
+            googleUser.setProfilePictureUrl(String.valueOf(resultUser.get(0)[6]));
 
             // isi semua data GoogleUser
             sesigoogle.setName((String) resultUser.get(0)[3]);
@@ -276,9 +276,9 @@ public class LoginController implements Initializable {
         if (!resultKaryawan.isEmpty()) {
 
             session.id = resultKaryawan.get(0)[0];
-            session.username = (String) resultKaryawan.get(0)[1];
-            session.nama = (String) resultKaryawan.get(0)[3];
-            session.role = (String) resultKaryawan.get(0)[9];
+            session.username = String.valueOf(resultKaryawan.get(0)[1]);
+            session.nama = String.valueOf(resultKaryawan.get(0)[3]);
+            session.role = String.valueOf(resultKaryawan.get(0)[9]);
             session.email = "";
 
             if (rememberMe.isSelected()) {

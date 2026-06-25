@@ -719,6 +719,8 @@ public class PengaturanController implements Initializable {
         Popup popup = new Popup();
         popup.showConfirmPopup("Log Out", "Apakah Anda Yakin Keluar Dari Akun " + session.email,
                 () -> {
+                    GoogleDriveService service = new GoogleDriveService();
+                    service.uploadBackupAll();
                     try {
                         prefs.clear();
                     } catch (BackingStoreException e) {
