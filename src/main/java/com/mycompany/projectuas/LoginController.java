@@ -276,9 +276,9 @@ public class LoginController implements Initializable {
         if (!resultKaryawan.isEmpty()) {
 
             session.id = resultKaryawan.get(0)[0];
-            session.username = String.valueOf(resultKaryawan.get(0)[1]);
-            session.nama = String.valueOf(resultKaryawan.get(0)[3]);
-            session.role = String.valueOf(resultKaryawan.get(0)[9]);
+            session.username = String.valueOf(resultKaryawan.get(0)[2]);
+            session.nama = String.valueOf(resultKaryawan.get(0)[4]);
+            session.role = String.valueOf(resultKaryawan.get(0)[10]);
             session.email = "";
 
             if (rememberMe.isSelected()) {

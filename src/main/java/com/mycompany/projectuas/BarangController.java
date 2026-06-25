@@ -184,9 +184,9 @@ public class BarangController implements Initializable {
 
     private ObservableList<BarangModel> masterData = FXCollections.observableArrayList();
     private FilteredList<BarangModel> filteredData;
-    
-    private final Map<String, Image> imageCache = new HashMap<>(); 
-    private File lastSelectedFolder = null; 
+
+    private final Map<String, Image> imageCache = new HashMap<>();
+    private File lastSelectedFolder = null;
 
     // Variabel publik sinkronisasi rincian kelompok ke form popup notifikasi
     public static int jumlahHabis = 0;
@@ -299,78 +299,78 @@ public class BarangController implements Initializable {
         });
 
         colGambar.setCellValueFactory(new PropertyValueFactory<>("gambar"));
-colGambar.setCellFactory(column -> new TableCell<>() {
-    private final ImageView imageView = new ImageView();
-    private final javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(50, 50);
-    {
-        imageView.setFitWidth(50);
-        imageView.setFitHeight(50);
-        imageView.setPreserveRatio(false);
-        imageView.setSmooth(true);
-        imageView.setCache(true);
-        clip.setArcWidth(6);
-        clip.setArcHeight(6);
-        imageView.setClip(clip);
-        setAlignment(Pos.CENTER);
-    }
-
-    @Override
-    protected void updateItem(String item, boolean empty) {
-        super.updateItem(empty || item == null || item.isBlank() ? null : item, empty);
-
-        if (empty || item == null || item.isBlank()) {
-            setGraphic(null);
-            setText(null);
-            return;
-        }
-
-        if (imageCache.containsKey(item)) {
-            imageView.setImage(imageCache.get(item));
-            setGraphic(imageView);
-            setText(null);
-            return;
-        }
-
-        try {
-            Image img = null;
-            String appData = System.getenv("APPDATA");
-            File imgFile = (appData != null && !appData.isEmpty())
-                    ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
-                    : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
-
-            if (imgFile.exists()) {
-                img = new Image(imgFile.toURI().toString(), 100, 100, true, true);
+        colGambar.setCellFactory(column -> new TableCell<>() {
+            private final ImageView imageView = new ImageView();
+            private final javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(50, 50);
+            {
+                imageView.setFitWidth(50);
+                imageView.setFitHeight(50);
+                imageView.setPreserveRatio(false);
+                imageView.setSmooth(true);
+                imageView.setCache(true);
+                clip.setArcWidth(6);
+                clip.setArcHeight(6);
+                imageView.setClip(clip);
+                setAlignment(Pos.CENTER);
             }
 
-            if (img == null) {
-                var stream = getClass().getResourceAsStream("/image-barang/" + item);
-                if (stream != null) {
-                    img = new Image(stream, 100, 100, true, true);
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(empty || item == null || item.isBlank() ? null : item, empty);
+
+                if (empty || item == null || item.isBlank()) {
+                    setGraphic(null);
+                    setText(null);
+                    return;
+                }
+
+                if (imageCache.containsKey(item)) {
+                    imageView.setImage(imageCache.get(item));
+                    setGraphic(imageView);
+                    setText(null);
+                    return;
+                }
+
+                try {
+                    Image img = null;
+                    String appData = System.getenv("APPDATA");
+                    File imgFile = (appData != null && !appData.isEmpty())
+                            ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
+                            : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
+
+                    if (imgFile.exists()) {
+                        img = new Image(imgFile.toURI().toString(), 100, 100, true, true);
+                    }
+
+                    if (img == null) {
+                        var stream = getClass().getResourceAsStream("/image-barang/" + item);
+                        if (stream != null) {
+                            img = new Image(stream, 100, 100, true, true);
+                        }
+                    }
+
+                    if (img == null) {
+                        var notFound = getClass().getResourceAsStream("/image/not_found.png");
+                        if (notFound != null) {
+                            img = new Image(notFound, 100, 100, true, true);
+                        }
+                    }
+
+                    if (img != null) {
+                        imageCache.put(item, img);
+                        imageView.setImage(img);
+                        setGraphic(imageView);
+                    } else {
+                        setGraphic(null);
+                    }
+                    setText(null);
+
+                } catch (Exception e) {
+                    setGraphic(null);
+                    setText(null);
                 }
             }
-
-            if (img == null) {
-                var notFound = getClass().getResourceAsStream("/image/not_found.png");
-                if (notFound != null) {
-                    img = new Image(notFound, 100, 100, true, true);
-                }
-            }
-
-            if (img != null) {
-                imageCache.put(item, img);
-                imageView.setImage(img);
-                setGraphic(imageView);
-            } else {
-                setGraphic(null);
-            }
-            setText(null);
-
-        } catch (Exception e) {
-            setGraphic(null);
-            setText(null);
-        }
-    }
-});
+        });
 
         colStatus.setCellValueFactory(cellData -> {
             int stok = cellData.getValue().getStok();
@@ -411,10 +411,10 @@ colGambar.setCellFactory(column -> new TableCell<>() {
 
     private void selectedData() {
         filteredData = new FilteredList<>(masterData, p -> true);
-        
+
         SortedList<BarangModel> sortedData = new SortedList<>(filteredData);
         sortedData.comparatorProperty().bind(tabelBarang.comparatorProperty());
-        
+
         tabelBarang.setItems(sortedData);
 
         tabelBarang.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
@@ -453,7 +453,7 @@ colGambar.setCellFactory(column -> new TableCell<>() {
             pesan.append("- Nama barang wajib diisi.\n");
         if (cmbKategori.getValue() == null)
             pesan.append("- Kategori wajib dipilih.\n");
-        
+
         String hargaRaw = txtHarga.getText().replaceAll("[^\\d]", "");
         if (txtHarga.getText().trim().isEmpty() || getHargaValue() <= 0) {
             pesan.append("- Harga wajib diisi dan harus lebih dari 0.\n");
@@ -497,10 +497,10 @@ colGambar.setCellFactory(column -> new TableCell<>() {
 
     private void loadDataFromDB() {
         masterData.clear();
-        
+
         jumlahHabis = 0;
         jumlahMenipis = 0;
-        
+
         String query = "SELECT id_barang, nama_barang, kategori, harga, stok, deskripsi, image_path FROM tb_barang";
         try (Connection conn = koneksi.getConnection();
                 PreparedStatement ps = conn.prepareStatement(query);
@@ -508,7 +508,7 @@ colGambar.setCellFactory(column -> new TableCell<>() {
 
             while (rs.next()) {
                 int stok = rs.getInt("stok");
-                
+
                 if (stok == 0) {
                     jumlahHabis++;
                 } else if (stok <= 10) {
@@ -524,10 +524,12 @@ colGambar.setCellFactory(column -> new TableCell<>() {
                         rs.getString("deskripsi"),
                         rs.getString("image_path")));
             }
-            
+
             int totalKelompokNotif = 0;
-            if (jumlahHabis > 0) totalKelompokNotif++;   
-            if (jumlahMenipis > 0) totalKelompokNotif++; 
+            if (jumlahHabis > 0)
+                totalKelompokNotif++;
+            if (jumlahMenipis > 0)
+                totalKelompokNotif++;
 
             if (totalKelompokNotif > 0) {
                 notifBadge.setText(String.valueOf(totalKelompokNotif));
@@ -544,20 +546,20 @@ colGambar.setCellFactory(column -> new TableCell<>() {
 
     @FXML
     void tambahBarang(ActionEvent event) {
-        if(perubahan_data == true){
+        if (perubahan_data == true) {
             return;
         }
         if (!isInputValid(false, null))
             return;
-            
+
         String nama = txtNama.getText().trim();
         String queryCek = "SELECT COUNT(*) FROM tb_barang WHERE nama_barang = ?";
         try (Connection conn = koneksi.getConnection();
-             PreparedStatement psCek = conn.prepareStatement(queryCek)) {
+                PreparedStatement psCek = conn.prepareStatement(queryCek)) {
             psCek.setString(1, nama);
             try (ResultSet rsCek = psCek.executeQuery()) {
                 if (rsCek.next() && rsCek.getInt(1) > 0) {
-                    new Popup().showModernPopup("DUPLIKASI DATA", "Produk \"" + nama + "\" sudah terdaftar di sistem!", 
+                    new Popup().showModernPopup("DUPLIKASI DATA", "Produk \"" + nama + "\" sudah terdaftar di sistem!",
                             Popup.PopupType.WARNING, getStage());
                     return;
                 }
@@ -613,12 +615,13 @@ colGambar.setCellFactory(column -> new TableCell<>() {
         String nama = txtNama.getText().trim();
         String queryCek = "SELECT COUNT(*) FROM tb_barang WHERE nama_barang = ? AND id_barang != ?";
         try (Connection conn = koneksi.getConnection();
-             PreparedStatement psCek = conn.prepareStatement(queryCek)) {
+                PreparedStatement psCek = conn.prepareStatement(queryCek)) {
             psCek.setString(1, nama);
             psCek.setInt(2, dipilih.getId());
             try (ResultSet rsCek = psCek.executeQuery()) {
                 if (rsCek.next() && rsCek.getInt(1) > 0) {
-                    new Popup().showModernPopup("DUPLIKASI DATA", "Nama produk \"" + nama + "\" sudah digunakan oleh produk lain!", 
+                    new Popup().showModernPopup("DUPLIKASI DATA",
+                            "Nama produk \"" + nama + "\" sudah digunakan oleh produk lain!",
                             Popup.PopupType.WARNING, getStage());
                     return;
                 }
@@ -713,19 +716,19 @@ colGambar.setCellFactory(column -> new TableCell<>() {
 
         txtNama.setText("");
         txtNama.clear();
-        
+
         cmbKategori.setValue(null);
         cmbKategori.getSelectionModel().clearSelection();
-        
+
         isUpdatingHarga = true;
         txtHarga.clear();
         isUpdatingHarga = false;
-        
+
         txtStok.clear();
         txtDeskripsi.clear();
         lblFilePath.setText("Tidak ada file dipilih");
         tambahBarang.setDisable(false);
-        
+
         jalankanMultiFilter();
     }
 
@@ -744,8 +747,9 @@ colGambar.setCellFactory(column -> new TableCell<>() {
 
     private void jalankanMultiFilter() {
         String keywordText = txtCari.getText() != null ? txtCari.getText().toLowerCase().trim() : "";
-        if (keywordText.equals("cari nama barang")) keywordText = "";
-        
+        if (keywordText.equals("cari nama barang"))
+            keywordText = "";
+
         final String finalKeyword = keywordText;
         filteredData.setPredicate(barang -> {
             return finalKeyword.isEmpty() || barang.getNama().toLowerCase().contains(finalKeyword);
@@ -782,7 +786,8 @@ colGambar.setCellFactory(column -> new TableCell<>() {
         long ukuranByte = file.length();
         long maksimalByte = 2 * 1024 * 1024;
         if (ukuranByte > maksimalByte) {
-            new Popup().showModernPopup("FILE TERLALU BESAR", "Ukuran foto melebihi 2MB! Silakan pilih foto yang lebih kecil.", 
+            new Popup().showModernPopup("FILE TERLALU BESAR",
+                    "Ukuran foto melebihi 2MB! Silakan pilih foto yang lebih kecil.",
                     Popup.PopupType.WARNING, getStage());
             return;
         }
@@ -798,7 +803,7 @@ colGambar.setCellFactory(column -> new TableCell<>() {
 
             Path tujuan = Path.of(imgFolder.getAbsolutePath(), file.getName());
             Files.copy(file.toPath(), tujuan, StandardCopyOption.REPLACE_EXISTING);
-            
+
             imageCache.remove(file.getName());
             lblFilePath.setText(file.getName());
 
@@ -1000,6 +1005,6 @@ colGambar.setCellFactory(column -> new TableCell<>() {
     @FXML
     private void onNotif() {
         Stage stage = (Stage) notifBadge.getScene().getWindow();
-        Notifikasi.show(stage); 
+        Notifikasi.show(stage);
     }
 }
