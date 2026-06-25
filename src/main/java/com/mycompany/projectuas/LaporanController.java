@@ -63,14 +63,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-
 public class LaporanController implements Initializable {
     @FXML
     private Label tanggal;
     // ======================================================
     // FOTO PROFILE
     // =======================================================
-    
+
     @FXML
     private Label notifBadge;
     @FXML
@@ -250,7 +249,7 @@ public class LaporanController implements Initializable {
     private Label lblStatusPagi;
     @FXML
     private Label lblJamPagi;
-  
+
     @FXML
     private Label lblTrxMalam;
     @FXML
@@ -540,7 +539,7 @@ public class LaporanController implements Initializable {
     @FXML
     private void onNavLaporan() {
         setActiveNav(navLaporan);
-       
+
     }
 
     @FXML
@@ -579,7 +578,6 @@ public class LaporanController implements Initializable {
             navlblnama.setText(session.nama);
         }
 
-
         cbStatusPembayaran.getItems().addAll("Semua", "Lunas", "Belum Lunas");
         cbStatusPembayaran.setOnAction(e -> loadLaporanTransaksi());
         dpTanggal.setOnAction(e -> loadLaporanTransaksi());
@@ -591,7 +589,7 @@ public class LaporanController implements Initializable {
         applyRoundedClip(wrapperPagi);
         applyRoundedClip(wrapperMalam);
 
-        //===logo
+        // ===logo
         Platform.runLater(() -> {
             Stage stage = (Stage) navMenu.getScene().getWindow();
             Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
@@ -922,17 +920,19 @@ public class LaporanController implements Initializable {
         loadKasirShift(
                 "09:00:00",
                 "15:00:00",
-                flowKasirPagi,true);
+                flowKasirPagi, true);
 
         loadKasirShift(
                 "15:00:00",
                 "04:00:00",
-                flowKasirMalam,false);
+                flowKasirMalam, false);
 
         updateStatusDot();
     }
 
-    private void loadShift(String jamMulai, String jamSelesai,
+    private void loadShift(
+            String jamMulai,
+            String jamSelesai,
             Label lblTrx,
             Label lblItem,
             Label lblPaketPS,
@@ -940,7 +940,13 @@ public class LaporanController implements Initializable {
             Label lblJam,
             String jamText) {
 
-        String sql = """
+        String sql;
+        List<Object[]> data;
+
+        // Shift normal (09:00 - 15:00)
+        if (jamMulai.compareTo(jamSelesai) < 0) {
+
+            sql = """
                     SELECT
                         COUNT(DISTINCT t.id_transaksi) AS total_trx,
                         COALESCE(
@@ -961,12 +967,53 @@ public class LaporanController implements Initializable {
                         ON t.id_transaksi = ps.id_transaksi
                     WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
                       AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
-                """;
+                    """;
 
-        List<Object[]> data = koneksi.ambilData(
-                sql,
-                jamMulai,
-                jamSelesai);
+            data = koneksi.ambilData(
+                    sql,
+                    jamMulai,
+                    jamSelesai);
+
+        } else {
+
+            // Shift malam (15:00 - 04:00)
+
+            sql = """
+                    SELECT
+                        COUNT(DISTINCT t.id_transaksi) AS total_trx,
+                        COALESCE(
+                            SUM(
+                                CASE
+                                    WHEN dt.id_barang IS NOT NULL
+                                    THEN dt.jumlah
+                                    ELSE 0
+                                END
+                            ),
+                        0) AS total_item,
+                        COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
+                        COALESCE(SUM(t.total_pembayaran),0) AS pendapatan
+                    FROM tb_transaksi t
+                    LEFT JOIN tb_detail_transaksi dt
+                        ON t.id_transaksi = dt.id_transaksi
+                    LEFT JOIN tb_paket_ps ps
+                        ON t.id_transaksi = ps.id_transaksi
+                    WHERE
+                        (
+                            DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                            AND TIME(t.tanggal_transaksi) >= ?
+                        )
+                        OR
+                        (
+                            DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                            AND TIME(t.tanggal_transaksi) < ?
+                        )
+                    """;
+
+            data = koneksi.ambilData(
+                    sql,
+                    jamMulai,
+                    jamSelesai);
+        }
 
         lblJam.setText(jamText);
 
@@ -974,10 +1021,10 @@ public class LaporanController implements Initializable {
             lblTrx.setText("0");
             lblItem.setText("0");
             lblPaketPS.setText("0");
+            
             lblPendapatan.setText("Rp 0");
             return;
         }
-        
 
         Object[] row = data.get(0);
 
@@ -1024,8 +1071,8 @@ public class LaporanController implements Initializable {
 
     private void updateStatusDot() {
         int jam = java.time.LocalTime.now().getHour();
-        boolean pagiAktif = jam >= 6 && jam < 12;
-        boolean malamAktif = jam >= 12 && jam < 21;
+        boolean pagiAktif = jam >= 9 && jam < 15;
+        boolean malamAktif = jam >= 15 || jam < 4;
         lblStatusPagi.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
         lblStatusPagi.getStyleClass().add(pagiAktif ? "shift-status-aktif" : "shift-status-nonaktif");
         lblStatusMalam.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
@@ -1646,7 +1693,7 @@ public class LaporanController implements Initializable {
     }
 
     /** Bar chart: transaksi per jam hari ini */
-     private void loadTransaksiPerJam() {
+    private void loadTransaksiPerJam() {
         String sql = """
                     SELECT strftime('%H', tanggal_transaksi) AS jam, COUNT(*) AS jumlah
                     FROM tb_transaksi
@@ -1758,11 +1805,10 @@ public class LaporanController implements Initializable {
         Stage stage = (Stage) notifBadge.getScene().getWindow();
         Notifikasi.show(stage);
     }
-    
+
     // ═══════════════════════════════════════════════════════
     // OTHER HANDLERS
     // ═══════════════════════════════════════════════════════
- 
 
     private void applyRoundedClip(StackPane pane) {
         Rectangle clip = new Rectangle();

@@ -692,7 +692,7 @@ public class DashboardController implements Initializable {
         applyRoundedClip(wrapperPagi);
         applyRoundedClip(wrapperMalam);
 
-        if (jamSekarang >= 6 && jamSekarang < 12) {
+        if (jamSekarang >= 9 && jamSekarang < 15) {
             lblUsernamePagi.setText(session.username);
             lblNamaPagi.setText(session.nama);
 
@@ -712,7 +712,7 @@ public class DashboardController implements Initializable {
                     lblJamPagi,
                     "09:00 — 15:00");
 
-        } else if (jamSekarang >= 12 && jamSekarang < 21) {
+        } else if (jamSekarang >= 15 || jamSekarang < 4) {
             lblUsernameMalam.setText(session.username);
             lblNamaMalam.setText(session.nama);
 
@@ -774,33 +774,79 @@ public class DashboardController implements Initializable {
             Label lblJam,
             String jamText) {
 
-        String sql = """
-                    SELECT
-                        COUNT(DISTINCT t.id_transaksi) AS total_trx,
-                        COALESCE(
-                            SUM(
-                                CASE
-                                    WHEN dt.id_barang IS NOT NULL
-                                    THEN dt.jumlah
-                                    ELSE 0
-                                END
-                            ),
-                        0) AS total_item,
-                        COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
-                        COALESCE(SUM(t.total_pembayaran),0) AS pendapatan
-                    FROM tb_transaksi t
-                    LEFT JOIN tb_detail_transaksi dt
-                        ON t.id_transaksi = dt.id_transaksi
-                    LEFT JOIN tb_paket_ps ps
-                        ON t.id_transaksi = ps.id_transaksi
-                    WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
-                      AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
-                """;
+        String sql;
 
-        List<Object[]> data = koneksi.ambilData(
-                sql,
-                jamMulai,
-                jamSelesai);
+        List<Object[]> data;
+
+        // Shift normal (09:00 - 15:00)
+        if (jamMulai.compareTo(jamSelesai) < 0) {
+
+            sql = """
+                        SELECT
+                            COUNT(DISTINCT t.id_transaksi) AS total_trx,
+                            COALESCE(
+                                SUM(
+                                    CASE
+                                        WHEN dt.id_barang IS NOT NULL
+                                        THEN dt.jumlah
+                                        ELSE 0
+                                    END
+                                ),
+                            0) AS total_item,
+                            COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
+                            COALESCE(SUM(t.total_pembayaran),0) AS pendapatan
+                        FROM tb_transaksi t
+                        LEFT JOIN tb_detail_transaksi dt
+                            ON t.id_transaksi = dt.id_transaksi
+                        LEFT JOIN tb_paket_ps ps
+                            ON t.id_transaksi = ps.id_transaksi
+                        WHERE DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                          AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
+                    """;
+
+            data = koneksi.ambilData(
+                    sql,
+                    jamMulai,
+                    jamSelesai);
+
+        } else {
+
+            // Shift malam (15:00 - 04:00)
+
+            sql = """
+                        SELECT
+                            COUNT(DISTINCT t.id_transaksi) AS total_trx,
+                            COALESCE(
+                                SUM(
+                                    CASE
+                                        WHEN dt.id_barang IS NOT NULL
+                                        THEN dt.jumlah
+                                        ELSE 0
+                                    END
+                                ),
+                            0) AS total_item,
+                            COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
+                            COALESCE(SUM(t.total_pembayaran),0) AS pendapatan
+                        FROM tb_transaksi t
+                        LEFT JOIN tb_detail_transaksi dt
+                            ON t.id_transaksi = dt.id_transaksi
+                        LEFT JOIN tb_paket_ps ps
+                            ON t.id_transaksi = ps.id_transaksi
+                        WHERE (
+                                DATE(t.tanggal_transaksi)=DATE('now','localtime')
+                                AND TIME(t.tanggal_transaksi) >= ?
+                              )
+                           OR (
+                                DATE(t.tanggal_transaksi)=DATE('now','localtime','-1 day')
+                                AND TIME(t.tanggal_transaksi) < ?
+                              )
+                    """;
+
+            data = koneksi.ambilData(
+                    sql,
+                    jamMulai,
+                    jamSelesai);
+        }
 
         lblJam.setText(jamText);
 
@@ -824,8 +870,8 @@ public class DashboardController implements Initializable {
 
         int jam = java.time.LocalTime.now().getHour();
 
-        boolean pagiAktif = jam >= 6 && jam < 12;
-        boolean malamAktif = jam >= 12 && jam < 21;
+        boolean pagiAktif = jam >= 9 && jam < 15;
+        boolean malamAktif = jam >= 15 || jam < 4;
 
         lblStatusPagi.getStyleClass().removeAll("shift-status-aktif", "shift-status-nonaktif");
 
