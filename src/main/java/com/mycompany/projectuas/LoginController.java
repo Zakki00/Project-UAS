@@ -105,79 +105,81 @@ public class LoginController implements Initializable {
     @FXML
     private void onLoginGoogle() {
         Stage primaryStage = (Stage) btnGoogle.getScene().getWindow();
-
         Popup popupHelper = new Popup();
         Popup.LoginProgressDialog progressDialog = popupHelper.new LoginProgressDialog(primaryStage);
 
         progressDialog.show(
-
                 user -> {
                     System.out.println("DEBUG: SUCCESS CALLBACK MASUK");
                     googleUser = user;
+                    session.googleUser = user;
 
-                    try {
-                        GoogleDriveService service = new GoogleDriveService();
-                        boolean restore = service.restoreBackupAll();
-                        System.out.println("Restore = " + restore);
-                        session.googleUser = user;
-                        String cekSql = "SELECT id_user, username, nama_lengkap, email, role, foto_profil FROM tb_user WHERE email = ?";
-                        List<Object[]> hasil = koneksi.ambilData(cekSql, user.getEmail());
-                        System.out.println("data admin berdasarkan email" + hasil.size());
+                    // Tampilkan loading dulu sebelum restore
+                    Platform.runLater(() -> {
+                        Stage loadingStage = showLoadingOverlay(primaryStage);
 
-                        if (!hasil.isEmpty()) {
-                            Object[] row = hasil.get(0);
+                        javafx.concurrent.Task<List<Object[]>> restoreTask = new javafx.concurrent.Task<>() {
+                            @Override
+                            protected List<Object[]> call() throws Exception {
+                                GoogleDriveService service = new GoogleDriveService();
+                                service.restoreBackupAll();
+                                String cekSql = "SELECT id_user, username, nama_lengkap, email, role, foto_profil FROM tb_user WHERE email = ?";
+                                return koneksi.ambilData(cekSql, user.getEmail());
+                            }
+                        };
 
-                            session.id = (int) row[0];
-                            session.username = (String) row[1];
-                            session.nama = (String) row[2];
-                            session.email = (String) row[3];
-                            session.role = (String) row[4];
-                            googleUser.setProfilePictureUrl((String) row[5]);
-                            navigation nav = new navigation();
-                            prefs.put("Admin", "Admin");
-                            nav.navigateToDashboard();
-                            Stage stage = (Stage) btnGoogle.getScene().getWindow();
-                            stage.close();
+                        restoreTask.setOnSucceeded(e -> {
+                            loadingStage.close();
+                            List<Object[]> hasil = restoreTask.getValue();
 
-                            // // ── Tampilkan popup sukses dengan nama user ─────────────────
-                            popupHelper.showGoogleSuccessPopup("Selamat Datang Kembali",
-                                    "Selamat datang Kembali, " + user.getName() + "!", user);
+                            if (!hasil.isEmpty()) {
+                                Object[] row = hasil.get(0);
+                                session.id = (int) row[0];
+                                session.username = (String) row[1];
+                                session.nama = (String) row[2];
+                                session.email = (String) row[3];
+                                session.role = (String) row[4];
+                                googleUser.setProfilePictureUrl((String) row[5]);
+                                prefs.put("Admin", "Admin");
 
-                            System.out.println("Google User: " + user.getEmail() + " - " + user.getName());
-                            System.out.println("Role Yang Aktif saat ini adalah " + session.role);
-                        } else {
+                                new navigation().navigateToDashboard();
+                                primaryStage.close();
+                                popupHelper.showGoogleSuccessPopup(
+                                        "Selamat Datang Kembali",
+                                        "Selamat datang kembali, " + user.getName() + "!",
+                                        user);
+                            } else {
+                                new navigation().navigateToSignup();
+                                primaryStage.close();
+                            }
+                        });
 
-                            navigation nav = new navigation();
-                            nav.navigateToSignup();
-                            Stage stage = (Stage) btnGoogle.getScene().getWindow();
-                            stage.close();
+                        restoreTask.setOnFailed(e -> {
+                            loadingStage.close();
+                            Throwable err = restoreTask.getException();
+                            err.printStackTrace();
+                            popupHelper.showModernPopup(
+                                    "Error",
+                                    "Gagal memverifikasi akun.",
+                                    Popup.PopupType.ERROR,
+                                    primaryStage);
+                        });
 
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        popupHelper.showModernPopup(
-                                "Error",
-                                "Gagal memverifikasi akun.",
-                                Popup.PopupType.ERROR, primaryStage);
-                    }
+                        Thread t = new Thread(restoreTask);
+                        t.setDaemon(true);
+                        t.start();
+                    });
                 },
 
-                // Browser ditutup sebelum login selesai
-                () -> {
-                    popupHelper.showModernPopup(
-                            "Login Dibatalkan",
-                            "Browser ditutup sebelum login selesai.",
-                            Popup.PopupType.WARNING, primaryStage);
-                },
+                () -> popupHelper.showModernPopup(
+                        "Login Dibatalkan",
+                        "Browser ditutup sebelum login selesai.",
+                        Popup.PopupType.WARNING, primaryStage),
 
-                // Timeout 120 detik
-                () -> {
-                    popupHelper.showModernPopup(
-                            "Waktu Habis",
-                            "Login tidak diselesaikan dalam 120 detik.",
-                            Popup.PopupType.WARNING, primaryStage);
-                });
+                () -> popupHelper.showModernPopup(
+                        "Waktu Habis",
+                        "Login tidak diselesaikan dalam 120 detik.",
+                        Popup.PopupType.WARNING, primaryStage));
     }
 
     // ==========================================
@@ -345,6 +347,77 @@ public class LoginController implements Initializable {
             passwordField.setText(prefs.get("password", ""));
             rememberMe.setSelected(true);
         }
+    }
+
+    //===================================
+    //ANIMASI LOADING
+    //===================================
+    private Stage showLoadingOverlay(Stage owner) {
+        Stage loadingStage = new Stage();
+        loadingStage.initOwner(owner);
+        loadingStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+        loadingStage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+
+        javafx.scene.control.ProgressIndicator spinner = new javafx.scene.control.ProgressIndicator(-1);
+        spinner.setPrefSize(52, 52);
+        spinner.setStyle("-fx-progress-color: #6C63FF; -fx-background-color: transparent;");
+
+        javafx.scene.control.Label d1 = makeDot("#6C63FF");
+        javafx.scene.control.Label d2 = makeDot("#00D4FF");
+        javafx.scene.control.Label d3 = makeDot("#00E5A0");
+        javafx.scene.layout.HBox dots = new javafx.scene.layout.HBox(8, d1, d2, d3);
+        dots.setAlignment(javafx.geometry.Pos.CENTER);
+        animateDot(d1, 0);
+        animateDot(d2, 200);
+        animateDot(d3, 400);
+
+        javafx.scene.control.Label lbl = new javafx.scene.control.Label("Mohon tunggu sebentar...");
+        lbl.setStyle("-fx-text-fill: #8B8FA8; -fx-font-size: 14px;");
+
+        javafx.scene.layout.VBox card = new javafx.scene.layout.VBox(20, spinner, dots, lbl);
+        card.setAlignment(javafx.geometry.Pos.CENTER);
+        card.setStyle(
+                "-fx-background-color: #1A1D2E;" +
+                        "-fx-background-radius: 16;" +
+                        "-fx-border-color: #2E3250;" +
+                        "-fx-border-radius: 16;" +
+                        "-fx-border-width: 1;" +
+                        "-fx-padding: 40 56 40 56;");
+
+        javafx.scene.Scene scene = new javafx.scene.Scene(card);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        loadingStage.setScene(scene);
+
+        loadingStage.setOnShown(e -> {
+            loadingStage.setX(owner.getX() + (owner.getWidth() - loadingStage.getWidth()) / 2);
+            loadingStage.setY(owner.getY() + (owner.getHeight() - loadingStage.getHeight()) / 2);
+        });
+
+        loadingStage.show();
+        return loadingStage;
+    }
+
+    private javafx.scene.control.Label makeDot(String color) {
+        javafx.scene.control.Label dot = new javafx.scene.control.Label();
+        dot.setPrefSize(8, 8);
+        dot.setMinSize(8, 8);
+        dot.setMaxSize(8, 8);
+        dot.setStyle(
+                "-fx-background-color: " + color + ";" +
+                        "-fx-background-radius: 4;" +
+                        "-fx-opacity: 0.4;");
+        return dot;
+    }
+
+    private void animateDot(javafx.scene.control.Label dot, int delayMs) {
+        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(
+                javafx.util.Duration.millis(600), dot);
+        ft.setFromValue(0.4);
+        ft.setToValue(1.0);
+        ft.setAutoReverse(true);
+        ft.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        ft.setDelay(javafx.util.Duration.millis(delayMs));
+        ft.play();
     }
 
     // =================================

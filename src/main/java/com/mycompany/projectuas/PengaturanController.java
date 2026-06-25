@@ -719,24 +719,41 @@ public class PengaturanController implements Initializable {
         Popup popup = new Popup();
         popup.showConfirmPopup("Log Out", "Apakah Anda Yakin Keluar Dari Akun " + session.email,
                 () -> {
-                    GoogleDriveService service = new GoogleDriveService();
-                    service.uploadBackupAll();
-                    try {
-                        prefs.clear();
-                    } catch (BackingStoreException e) {
-                        e.printStackTrace();
-                    }
-                    navigation nav = new navigation();
-                    nav.navigateToLogin();
                     Stage stage = (Stage) navLblPengaturan.getScene().getWindow();
-                    stage.close();
+                    Stage loadingStage = showLoadingOverlay(stage);
+
+                    javafx.concurrent.Task<Void> task = new javafx.concurrent.Task<>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            new GoogleDriveService().uploadBackupAll();
+                            return null;
+                        }
+                    };
+
+                    Runnable onDone = () -> {
+                        loadingStage.close();
+                        try {
+                            prefs.clear();
+                        } catch (java.util.prefs.BackingStoreException e) {
+                            e.printStackTrace();
+                        }
+                        session.id = 0;
+                        session.googleUser = null;
+                        session.username = "";
+                        session.nama = "";
+                        session.role = "";
+                        session.email = "";
+                        new navigation().navigateToLogin();
+                        stage.close();
+                    };
+
+                    task.setOnSucceeded(e -> onDone.run());
+                    task.setOnFailed(e -> onDone.run());
+
+                    Thread t = new Thread(task);
+                    t.setDaemon(true);
+                    t.start();
                 });
-        session.id = 0;
-        session.googleUser = null;
-        session.username ="";
-        session.nama = "";
-        session.role = "";
-        session.email = "";
     }
 
     // ══════════════════════════════════════
@@ -1033,6 +1050,78 @@ public class PengaturanController implements Initializable {
 
         t.setDaemon(true);
         t.start();
+    }
+
+
+    //=================================════════════════════════
+    //ANIIMASI
+    //=========================================================
+    private Stage showLoadingOverlay(Stage owner) {
+        Stage loadingStage = new Stage();
+        loadingStage.initOwner(owner);
+        loadingStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+        loadingStage.initStyle(javafx.stage.StageStyle.TRANSPARENT);
+
+        javafx.scene.control.ProgressIndicator spinner = new javafx.scene.control.ProgressIndicator(-1);
+        spinner.setPrefSize(52, 52);
+        spinner.setStyle("-fx-progress-color: #6C63FF; -fx-background-color: transparent;");
+
+        javafx.scene.control.Label d1 = makeDot("#6C63FF");
+        javafx.scene.control.Label d2 = makeDot("#00D4FF");
+        javafx.scene.control.Label d3 = makeDot("#00E5A0");
+        javafx.scene.layout.HBox dots = new javafx.scene.layout.HBox(8, d1, d2, d3);
+        dots.setAlignment(javafx.geometry.Pos.CENTER);
+        animateDot(d1, 0);
+        animateDot(d2, 200);
+        animateDot(d3, 400);
+
+        javafx.scene.control.Label lbl = new javafx.scene.control.Label("Mohon tunggu sebentar...");
+        lbl.setStyle("-fx-text-fill: #8B8FA8; -fx-font-size: 14px;");
+
+        javafx.scene.layout.VBox card = new javafx.scene.layout.VBox(20, spinner, dots, lbl);
+        card.setAlignment(javafx.geometry.Pos.CENTER);
+        card.setStyle(
+                "-fx-background-color: #1A1D2E;" +
+                        "-fx-background-radius: 16;" +
+                        "-fx-border-color: #2E3250;" +
+                        "-fx-border-radius: 16;" +
+                        "-fx-border-width: 1;" +
+                        "-fx-padding: 40 56 40 56;");
+
+        javafx.scene.Scene scene = new javafx.scene.Scene(card);
+        scene.setFill(javafx.scene.paint.Color.TRANSPARENT);
+        loadingStage.setScene(scene);
+
+        loadingStage.setOnShown(e -> {
+            loadingStage.setX(owner.getX() + (owner.getWidth() - loadingStage.getWidth()) / 2);
+            loadingStage.setY(owner.getY() + (owner.getHeight() - loadingStage.getHeight()) / 2);
+        });
+
+        loadingStage.show();
+        return loadingStage;
+    }
+
+    private javafx.scene.control.Label makeDot(String color) {
+        javafx.scene.control.Label dot = new javafx.scene.control.Label();
+        dot.setPrefSize(8, 8);
+        dot.setMinSize(8, 8);
+        dot.setMaxSize(8, 8);
+        dot.setStyle(
+                "-fx-background-color: " + color + ";" +
+                        "-fx-background-radius: 4;" +
+                        "-fx-opacity: 0.4;");
+        return dot;
+    }
+
+    private void animateDot(javafx.scene.control.Label dot, int delayMs) {
+        javafx.animation.FadeTransition ft = new javafx.animation.FadeTransition(
+                javafx.util.Duration.millis(600), dot);
+        ft.setFromValue(0.4);
+        ft.setToValue(1.0);
+        ft.setAutoReverse(true);
+        ft.setCycleCount(javafx.animation.Animation.INDEFINITE);
+        ft.setDelay(javafx.util.Duration.millis(delayMs));
+        ft.play();
     }
 
     // ═══════════════════════════════════════════════════════
