@@ -897,6 +897,7 @@ public class KaryawanController implements Initializable {
         return !koneksi.ambilData("SELECT id_user FROM tb_user WHERE username = ? AND id_user != ?",
                 username, excludeUserId).isEmpty();
     }
+    
 
     private long createUserForKaryawan(String username, String password, String nama, String role) {
         return koneksi.eksekusiInsert(
@@ -930,7 +931,7 @@ public class KaryawanController implements Initializable {
 
         if (isDuplicateUsername(txtUsername.getText(), "")) {
             new Popup().showModernPopup("ERROR",
-                    "Username '" + txtUsername.getText() + "' sudah digunakan karyawan lain!",
+                    "Username '" + txtUsername.getText() + "' sudah digunakan !",
                     Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
             return;
         }
@@ -944,7 +945,7 @@ public class KaryawanController implements Initializable {
 
         if (isDuplicateUsername(username, "")) {
             new Popup().showModernPopup("ERROR",
-                    "Username '" + username + "' sudah digunakan karyawan lain!",
+                    "Username '" + username + "' sudah digunakan!",
                     Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
             return;
         }
@@ -1004,7 +1005,7 @@ public class KaryawanController implements Initializable {
 
         if (isDuplicateUsername(username, selected.getIdUser())) {
             new Popup().showModernPopup("ERROR",
-                    "Username '" + username + "' sudah digunakan karyawan lain!",
+                    "Username '" + username + "' sudah digunakan!",
                     Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
             return;
         }

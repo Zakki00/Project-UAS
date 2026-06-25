@@ -1,5 +1,9 @@
+-- Active: 1782312655417@@127.0.0.1@3306@db_enjoy_cave
 -- ============================================
 -- HAPUS DATABASE LAMA (Opsional)
+-- ============================================
+-- ============================================
+-- HAPUS DATABASE JIKA SUDAH ADA
 -- ============================================
 DROP DATABASE IF EXISTS db_enjoy_cave;
 
@@ -10,6 +14,7 @@ CREATE DATABASE db_enjoy_cave CHARACTER
 SET
     utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+USE db_enjoy_cave;
 USE db_enjoy_cave;
 
 -- ============================================
@@ -30,18 +35,15 @@ CREATE TABLE tb_user (
 -- ============================================
 CREATE TABLE tb_karyawan (
     id_karyawan VARCHAR(20) PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
+    id_user INT NOT NULL UNIQUE,
     nama_lengkap VARCHAR(100) NOT NULL,
-    jenis_kelamin ENUM ('Laki-laki', 'Perempuan') NOT NULL,
+    jenis_kelamin ENUM('Laki-laki', 'Perempuan') NOT NULL,
     no_hp VARCHAR(20) NOT NULL,
     tanggal_masuk DATE NOT NULL,
-    status_kerja ENUM ('Aktif', 'Non Aktif') NOT NULL,
+    status_kerja ENUM('Aktif', 'Non Aktif') NOT NULL,
     alamat TEXT,
     role VARCHAR(30) NOT NULL,
-    created_by INT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_karyawan_user FOREIGN KEY (created_by) REFERENCES tb_user (id_user)
+    CONSTRAINT fk_karyawan_user FOREIGN KEY (id_user) REFERENCES tb_user (id_user)
 ) ENGINE = InnoDB;
 
 -- ============================================

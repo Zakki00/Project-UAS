@@ -1,8 +1,159 @@
--- TRANSAKSI PAGI
+-- ============================================
+-- DATA USER
+-- ============================================
+INSERT INTO
+    tb_user (
+        username,
+        password,
+        nama_lengkap,
+        role,
+        email,
+        foto_profil
+    )
+VALUES
+    (
+        'admin01',
+        'admin123',
+        'Budi Santoso',
+        'Admin',
+        'admin@enjoycafe.com',
+        'default.png'
+    ),
+    (
+        'kasir01',
+        'kasir123',
+        'Andi Pratama',
+        'Kasir',
+        'andi@enjoycafe.com',
+        'default.png'
+    ),
+    (
+        'kasir02',
+        'kasir123',
+        'Siti Rahma',
+        'Kasir',
+        'siti@enjoycafe.com',
+        'default.png'
+    );
 
+-- ============================================
+-- DATA KARYAWAN
+-- ============================================
+INSERT INTO
+    tb_karyawan (
+        id_karyawan,
+        id_user,
+        username,
+        password,
+        nama_lengkap,
+        jenis_kelamin,
+        no_hp,
+        tanggal_masuk,
+        status_kerja,
+        alamat,
+        role
+    )
+VALUES
+    (
+        'KRY001',
+        1,
+        'admin01',
+        'admin123',
+        'Budi Santoso',
+        'Laki-laki',
+        '081234567890',
+        '2025-01-10',
+        'Aktif',
+        'Surabaya',
+        'Admin'
+    ),
+    (
+        'KRY002',
+        2,
+        'kasir01',
+        'kasir123',
+        'Andi Pratama',
+        'Laki-laki',
+        '081298765432',
+        '2025-02-15',
+        'Aktif',
+        'Sidoarjo',
+        'Kasir'
+    ),
+    (
+        'KRY003',
+        3,
+        'kasir02',
+        'kasir123',
+        'Siti Rahma',
+        'Perempuan',
+        '082112223333',
+        '2025-03-01',
+        'Aktif',
+        'Gresik',
+        'Kasir'
+    );
+
+-- ============================================
+-- DATA BARANG
+-- ============================================
+INSERT INTO
+    tb_barang (
+        nama_barang,
+        harga,
+        kategori,
+        stok,
+        deskripsi,
+        image_path
+    )
+VALUES
+    (
+        'Mie Goreng',
+        12000,
+        'Makanan',
+        50,
+        'Mie goreng spesial',
+        'mie.png'
+    ),
+    (
+        'Es Teh',
+        5000,
+        'Minuman',
+        100,
+        'Es teh manis',
+        'esteh.png'
+    ),
+    (
+        'Kopi Hitam',
+        10000,
+        'Minuman',
+        40,
+        'Kopi hitam panas',
+        'kopi.png'
+    ),
+    (
+        'Roti Bakar',
+        15000,
+        'Makanan',
+        25,
+        'Roti bakar coklat',
+        'roti.png'
+    ),
+    (
+        'Air Mineral',
+        4000,
+        'Minuman',
+        80,
+        'Botol 600ml',
+        'air.png'
+    );
+
+-- ============================================
+-- DATA TRANSAKSI
+-- ============================================
 INSERT INTO
     tb_transaksi (
-        id_user,
+        id_karyawan,
         total_pembayaran,
         uang_pembayaran,
         kembalian,
@@ -11,152 +162,52 @@ INSERT INTO
         tanggal_transaksi,
         pelanggan
     )
-VALUES (
-        2,
+VALUES
+    (
+        'KRY002',
+        32000,
+        50000,
+        18000,
+        0,
+        'Lunas',
+        '2026-06-25 10:15:00',
+        'Rizky'
+    ),
+    (
+        'KRY003',
         25000,
         30000,
         5000,
         0,
         'Lunas',
-        '2026-06-13 07:15:00',
-        'Andi'
+        '2026-06-25 12:30:00',
+        'Dimas'
     ),
     (
-        2,
-        40000,
-        50000,
-        10000,
-        0,
-        'Lunas',
-        '2026-06-13 08:30:00',
-        'Budi'
-    ),
-    (
-        2,
-        35000,
-        50000,
-        15000,
-        0,
-        'Lunas',
-        '2026-06-13 10:45:00',
-        'Citra'
-    );
-    INSERT INTO
-    tb_detail_transaksi (
-        id_transaksi,
-        id_barang,
-        id_paket_ps,
-        jumlah,
-        harga
-    )
-VALUES (1, 1, NULL, 2, 10000),
-    (1, 2, NULL, 1, 5000),
-    (2, 1, NULL, 3, 10000),
-    (2, 3, NULL, 2, 5000),
-    (3, 2, NULL, 1, 5000);
-    INSERT INTO
-    tb_paket_ps (id_transaksi, durasi, harga)
-VALUES (2, 2, 20000),
-    (3, 3, 30000);
-    INSERT INTO
-    tb_detail_transaksi (
-        id_transaksi,
-        id_barang,
-        id_paket_ps,
-        jumlah,
-        harga
-    )
-VALUES (2, NULL, 1, 1, 20000),
-    (3, NULL, 2, 1, 30000);
-
-
-SELECT * FROM tb_paket_ps;
-
-
-
-SELECT ps.id_paket_ps, ps.id_transaksi, ps.durasi, ps.harga, t.tanggal_transaksi
-FROM
-    tb_paket_ps ps
-    JOIN tb_transaksi t ON ps.id_transaksi = t.id_transaksi
-WHERE
-    DATE(t.tanggal_transaksi) = DATE('now', 'localtime')
-    AND TIME(t.tanggal_transaksi) BETWEEN '06:00:00' AND '12:00:00';
-
-SELECT COUNT(*) AS total_paket_ps
-FROM
-    tb_paket_ps ps
-    JOIN tb_transaksi t ON ps.id_transaksi = t.id_transaksi
-WHERE
-    DATE(t.tanggal_transaksi) = DATE('now', 'localtime')
-    AND TIME(t.tanggal_transaksi) BETWEEN '06:00:00' AND '12:00:00';
-
-SELECT
-    id_transaksi,
-    tanggal_transaksi
-FROM tb_transaksi
-ORDER BY id_transaksi DESC;
-
-
-
-
-SELECT t.id_transaksi, t.tanggal_transaksi, dt.id_detail, ps.id_paket_ps
-FROM
-    tb_transaksi t
-    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-    LEFT JOIN tb_paket_ps ps ON t.id_transaksi = ps.id_transaksi
-WHERE
-    DATE(t.tanggal_transaksi) = DATE('now', 'localtime')
-    AND TIME(t.tanggal_transaksi) BETWEEN '06:00:00' AND '12:00:00';
-
-
-
-SELECT * FROM tb_paket_ps WHERE id_transaksi IN (70, 71, 72);
-
-INSERT INTO
-    tb_paket_ps (id_transaksi, durasi, harga)
-VALUES (71, 2, 30000);
-
-SELECT * FROM tb_paket_ps WHERE id_transaksi = 71;
-
-    INSERT INTO
-    tb_transaksi (
-        id_user,
-        total_pembayaran,
-        uang_pembayaran,
-        kembalian,
-        kekurangan,
-        status_pembayaran,
-        tanggal_transaksi,
-        pelanggan
-    )
-VALUES (
-        2,
-        15000,
-        20000,
-        5000,
-        0,
-        'Lunas',
-        '2026-06-13 08:15:00',
-        'Rizky'
-    ),
-    (
-        2,
-        30000,
-        50000,
+        'KRY002',
+        45000,
         20000,
         0,
-        'Lunas',
-        '2026-06-13 09:45:00',
+        25000,
+        'Belum Lunas',
+        '2026-06-25 14:00:00',
         'Fajar'
     );
 
-
-    INSERT INTO
+-- ============================================
+-- DATA PAKET PS
+-- ============================================
+INSERT INTO
     tb_paket_ps (id_transaksi, durasi, harga)
-VALUES (4, 1, 15000),
-    (5, 2, 30000);
+VALUES
+    (1, 2, 15000),
+    (3, 4, 30000);
 
-    INSERT INTO
+-- ============================================
+-- DETAIL TRANSAKSI
+-- ============================================
+-- Transaksi 1
+INSERT INTO
     tb_detail_transaksi (
         id_transaksi,
         id_barang,
@@ -164,10 +215,13 @@ VALUES (4, 1, 15000),
         jumlah,
         harga
     )
-VALUES (4, NULL, 1, 1, 15000),
-    (5, NULL, 2, 1, 30000);
+VALUES
+    (1, 1, NULL, 1, 12000),
+    (1, 2, NULL, 1, 5000),
+    (1, NULL, 1, 1, 15000);
 
-    INSERT INTO
+-- Transaksi 2
+INSERT INTO
     tb_detail_transaksi (
         id_transaksi,
         id_barang,
@@ -175,117 +229,30 @@ VALUES (4, NULL, 1, 1, 15000),
         jumlah,
         harga
     )
-VALUES (4, NULL, 1, 1, 15000),
-    (5, NULL, 2, 1, 30000);
+VALUES
+    (2, 4, NULL, 1, 15000),
+    (2, 3, NULL, 1, 10000);
 
+-- Transaksi 3
+INSERT INTO
+    tb_detail_transaksi (
+        id_transaksi,
+        id_barang,
+        id_paket_ps,
+        jumlah,
+        harga
+    )
+VALUES
+    (3, 1, NULL, 1, 12000),
+    (3, 2, NULL, 1, 3000),
+    (3, NULL, 2, 1, 30000);
 
-
-
-
-    SELECT
-    t.id_transaksi,
-    COUNT(dt.id_detail_transaksi) AS jumlah_detail_barang,
-    COUNT(ps.id_paket_ps) AS jumlah_paket_ps
-FROM
-    tb_transaksi t
-    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-    LEFT JOIN tb_paket_ps ps ON t.id_transaksi = ps.id_transaksi
-GROUP BY
-    t.id_transaksi
-ORDER BY t.id_transaksi DESC;
-
-
-
-SELECT t.id_transaksi, COUNT(dt.id_barang) AS jumlah_barang, COUNT(dt.id_paket_ps) AS jumlah_ps
-FROM
-    tb_transaksi t
-    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-GROUP BY
-    t.id_transaksi
-ORDER BY t.id_transaksi DESC;
-
-
-
-SELECT
-    id_transaksi,
-    uang_pembayaran,
-    kembalian,
-    (uang_pembayaran - kembalian) AS total
-FROM tb_transaksi;
-
-
-SELECT
-    COUNT(DISTINCT t.id_transaksi) AS total_trx,
-    COALESCE(
-        SUM(
-            CASE
-                WHEN dt.id_barang IS NOT NULL THEN dt.jumlah
-                ELSE 0
-            END
-        ),
-        0
-    ) AS total_item,
-    COALESCE(
-        COUNT(DISTINCT ps.id_paket_ps),
-        0
-    ) AS total_paket_ps,
-    (
-        SELECT COALESCE(
-                SUM(uang_pembayaran - kembalian), 0
-            )
-        FROM tb_transaksi t2
-        WHERE
-            DATE(t2.tanggal_transaksi) = DATE('now', 'localtime')
-            AND TIME(t2.tanggal_transaksi) BETWEEN ? AND ?
-    ) AS pendapatan
-FROM
-    tb_transaksi t
-    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-    LEFT JOIN tb_paket_ps ps ON t.id_transaksi = ps.id_transaksi
-WHERE
-    DATE(t.tanggal_transaksi) = DATE('now', 'localtime')
-    AND TIME(t.tanggal_transaksi) BETWEEN ? AND ?
-
-
-
-
-    -- Coba shift pagi (06:00 - 12:00)
-SELECT
-    COUNT(DISTINCT t.id_transaksi) AS total_trx,
-    COALESCE(
-        SUM(
-            CASE
-                WHEN dt.id_barang IS NOT NULL THEN dt.jumlah
-                ELSE 0
-            END
-        ),
-        0
-    ) AS total_item,
-    COALESCE(
-        COUNT(DISTINCT ps.id_paket_ps),
-        0
-    ) AS total_paket_ps,
-    COALESCE(
-        SUM(
-            t.uang_pembayaran - COALESCE(t.kembalian, 0)
-        ),
-        0
-    ) AS pendapatan
-FROM
-    tb_transaksi t
-    LEFT JOIN tb_detail_transaksi dt ON t.id_transaksi = dt.id_transaksi
-    LEFT JOIN tb_paket_ps ps ON t.id_transaksi = ps.id_transaksi
-WHERE
-    DATE(t.tanggal_transaksi) = DATE('now', 'localtime')
-    AND TIME(t.tanggal_transaksi) BETWEEN '12:00:00' AND '15:00:00';
-
-
-    SELECT
-    id_transaksi,
-    uang_pembayaran,
-    kembalian,
-    uang_pembayaran - COALESCE(kembalian, 0) AS pendapatan_per_trx
-FROM tb_transaksi
-WHERE
-    DATE(tanggal_transaksi) = DATE('now', 'localtime')
-    AND TIME(tanggal_transaksi) BETWEEN '12:00:00' AND '15:00:00';
+-- ============================================
+-- DATA ABSENSI
+-- ============================================
+INSERT INTO
+    tb_absensi (id_karyawan, tanggal, jam_masuk, status_kehadiran)
+VALUES
+    ('KRY001', '2026-06-25', '08:00:00', 'Hadir'),
+    ('KRY002', '2026-06-25', '08:05:00', 'Hadir'),
+    ('KRY003', '2026-06-25', '08:10:00', 'Hadir');
