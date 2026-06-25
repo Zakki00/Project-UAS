@@ -300,18 +300,28 @@ public class BarangController implements Initializable {
 
         colGambar.setCellValueFactory(new PropertyValueFactory<>("gambar"));
         colGambar.setCellFactory(column -> new TableCell<>() {
+            private static final double SIZE = 50;
             private final ImageView imageView = new ImageView();
-            private final javafx.scene.shape.Rectangle clip = new javafx.scene.shape.Rectangle(50, 50);
             {
-                imageView.setFitWidth(50);
-                imageView.setFitHeight(50);
+                imageView.setFitWidth(SIZE);
+                imageView.setFitHeight(SIZE);
                 imageView.setPreserveRatio(false);
                 imageView.setSmooth(true);
                 imageView.setCache(true);
-                clip.setArcWidth(6);
-                clip.setArcHeight(6);
-                imageView.setClip(clip);
                 setAlignment(Pos.CENTER);
+            }
+
+            private void setCroppedImage(Image img) {
+                double imgW = img.getWidth();
+                double imgH = img.getHeight();
+
+                // Tentukan area persegi terbesar di tengah gambar (square crop)
+                double cropSize = Math.min(imgW, imgH);
+                double x = (imgW - cropSize) / 2;
+                double y = (imgH - cropSize) / 2;
+
+                imageView.setViewport(new javafx.geometry.Rectangle2D(x, y, cropSize, cropSize));
+                imageView.setImage(img);
             }
 
             @Override
@@ -325,7 +335,7 @@ public class BarangController implements Initializable {
                 }
 
                 if (imageCache.containsKey(item)) {
-                    imageView.setImage(imageCache.get(item));
+                    setCroppedImage(imageCache.get(item));
                     setGraphic(imageView);
                     setText(null);
                     return;
@@ -339,26 +349,26 @@ public class BarangController implements Initializable {
                             : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
 
                     if (imgFile.exists()) {
-                        img = new Image(imgFile.toURI().toString(), 100, 100, true, true);
+                        img = new Image(imgFile.toURI().toString());
                     }
 
                     if (img == null) {
                         var stream = getClass().getResourceAsStream("/image-barang/" + item);
                         if (stream != null) {
-                            img = new Image(stream, 100, 100, true, true);
+                            img = new Image(stream);
                         }
                     }
 
                     if (img == null) {
                         var notFound = getClass().getResourceAsStream("/image/not_found.png");
                         if (notFound != null) {
-                            img = new Image(notFound, 100, 100, true, true);
+                            img = new Image(notFound);
                         }
                     }
 
                     if (img != null) {
                         imageCache.put(item, img);
-                        imageView.setImage(img);
+                        setCroppedImage(img);
                         setGraphic(imageView);
                     } else {
                         setGraphic(null);
