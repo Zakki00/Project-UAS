@@ -9,6 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>26</maven.compiler.source>
         <maven.compiler.target>26</maven.compiler.target>
+        <javafx.sdk.path>C:\javafx-sdk-26.0.1</javafx.sdk.path>
     </properties>
     <dependencies>
         <dependency>
@@ -41,13 +42,11 @@
             <artifactId>google-api-client</artifactId>
             <version>2.8.1</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.oauth-client</groupId>
             <artifactId>google-oauth-client-jetty</artifactId>
             <version>1.39.0</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.apis</groupId>
             <artifactId>google-api-services-drive</artifactId>
@@ -55,8 +54,9 @@
         </dependency>
     </dependencies>
     <build>
-
         <plugins>
+
+            <!-- 1. Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -65,6 +65,8 @@
                     <release>26</release>
                 </configuration>
             </plugin>
+
+            <!-- 2. JavaFX Maven Plugin -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -113,6 +115,8 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- 3. Shade Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -124,7 +128,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!-- Exclude JavaFX dari fat JAR (punya native lib) -->
                             <artifactSet>
                                 <excludes>
                                     <exclude>org.openjfx:*</exclude>
@@ -135,7 +138,6 @@
                                     implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.mycompany.projectuas.App</mainClass>
                                 </transformer>
-                                <!-- INI YANG KURANG! Untuk JDBC driver SPI -->
                                 <transformer
                                     implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                             </transformers>
@@ -153,7 +155,115 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-jar-to-input</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <includes>
+                                        <include>ProjectUAS-1.0-SNAPSHOT.jar</include>
+                                    </includes>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-javafx-libs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jpackage-input/javafx-libs</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${javafx.sdk.path}/lib</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
+            <!-- 5. jpackage -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jpackage</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>jpackage</executable>
+                            <arguments>
+                                <argument>--type</argument>
+                                <argument>exe</argument>
+
+                                <argument>--name</argument>
+                                <argument>Enjoy Cafe</argument>
+
+                                <argument>--app-version</argument>
+                                <argument>1.0</argument>
+
+                                <!-- input: folder berisi JAR + subfolder javafx-libs -->
+                                <argument>--input</argument>
+                                <argument>${project.build.directory}/jpackage-input</argument>
+
+                                <argument>--main-jar</argument>
+                                <argument>ProjectUAS-1.0-SNAPSHOT.jar</argument>
+
+                                <argument>--main-class</argument>
+                                <argument>com.mycompany.projectuas.App</argument>
+
+                                <argument>--runtime-image</argument>
+                                <argument>${java.home}</argument>
+
+                                <argument>--dest</argument>
+                                <argument>${project.build.directory}/installer</argument>
+
+                                <!-- $APPDIR = folder instalasi, javafx-libs ada di dalamnya -->
+                                <argument>--java-options</argument>
+                                <argument>--module-path</argument>
+                                <argument>--java-options</argument>
+                                <argument>$APPDIR/javafx-libs</argument>
+
+                                <argument>--java-options</argument>
+                                <argument>--add-modules</argument>
+                                <argument>--java-options</argument>
+                                <argument>
+                                    javafx.controls,javafx.fxml,java.desktop,jdk.crypto.ec,java.net.http</argument>
+
+                                <argument>--java-options</argument>
+                                <argument>--enable-native-access=javafx.graphics</argument>
+
+                                <argument>--java-options</argument>
+                                <argument>-Dfile.encoding=UTF-8</argument>
+
+                                <argument>--win-shortcut</argument>
+                                <argument>--win-menu</argument>
+                                <argument>--win-dir-chooser</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
 
         </plugins>
     </build>

@@ -1,33 +1,87 @@
 package com.mycompany.projectuas;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
+import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import com.mycompany.services.AutoBackupService;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-/**
- * JavaFX App
- */
 public class App extends Application {
 
     private static Scene scene;
+    private static File logFile;
+
+    // ── Tulis log ke file ──────────────────────────────────────────────
+
+    public static void writeLog(String pesan) {
+
+        try {
+
+            if (logFile == null) {
+
+                String appData = System.getenv("APPDATA");
+
+                logFile = new File(appData + "\\ProjectUAS\\app.log");
+
+                logFile.getParentFile().mkdirs();
+
+            }
+
+            String waktu = LocalDateTime.now()
+
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            try (FileWriter fw = new FileWriter(logFile, true)) {
+
+                fw.write("[" + waktu + "] " + pesan + "\n");
+
+            }
+
+        } catch (Exception ignored) {
+        }
+
+    }
 
     @Override
     public void start(Stage stage) throws IOException {
-        initDatabase();
-        scene = new Scene(loadFXML("login"), 1080, 900);
-        stage.setScene(scene);
-        stage.show();
-        koneksi.koneksi();
-        AutoBackupService.start();
+        writeLog("=== Aplikasi dimulai ===");
+
+        try {
+
+            initDatabase();
+            writeLog("initDatabase() selesai");
+
+            scene = new Scene(loadFXML("login"), 1080, 900);
+            writeLog("loadFXML login selesai");
+
+            stage.setScene(scene);
+            stage.show();
+            writeLog("stage.show() selesai");
+
+            koneksi.koneksi();
+            writeLog("koneksi.koneksi() selesai");
+
+            AutoBackupService.start();
+            writeLog("AutoBackupService.start() selesai");
+
+        } catch (Exception e) {
+
+            writeLog("ERROR di start(): " + e.getMessage());
+
+            for (StackTraceElement el : e.getStackTrace()) {
+
+                writeLog("  at " + el.toString());
+
+            }
+
+            throw e; // tetap lempar supaya JavaFX tahu ada error
+
+        }
+
     }
 
     static void setRoot(String fxml) throws IOException {
@@ -35,30 +89,62 @@ public class App extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/fxml/" + fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(
+                App.class.getResource("/fxml/" + fxml + ".fxml"));
         return fxmlLoader.load();
     }
 
     public static void main(String[] args) {
-        launch();
-    }
-    private void initDatabase() {
-    try {
-        String appData = System.getenv("APPDATA");
-        File dbFolder = new File(appData + "\\ProjectUAS\\db");
-        if (!dbFolder.exists()) dbFolder.mkdirs();
+        try {
 
-        File dbFile = new File(dbFolder, "db_enjoy_cafe.db");
-        if (!dbFile.exists()) {
-            // Copy dari dalam JAR ke AppData
-            try (InputStream in = getClass().getResourceAsStream("/db/db_enjoy_cafe.db");
-                 OutputStream out = new java.io.FileOutputStream(dbFile)) {
-                in.transferTo(out);
+            launch();
+        } catch (Exception e) {
+
+            writeLog("ERROR di main/launch(): " + e.getMessage());
+
+            for (StackTraceElement el : e.getStackTrace()) {
+
+                writeLog("  at " + el.toString());
+
             }
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-    }
-}
 
+        }
+
+    }
+
+    private void initDatabase() {
+        try {
+            String appData = System.getenv("APPDATA");
+            File dbFolder = new File(appData + "\\ProjectUAS\\db");
+            if (!dbFolder.exists())
+                dbFolder.mkdirs();
+
+            File dbFile = new File(dbFolder, "db_enjoy_cafe.db");
+            writeLog("Path DB: " + dbFile.getAbsolutePath());
+
+            writeLog("DB sudah ada: " + dbFile.exists());
+
+            if (!dbFile.exists()) {
+                try (InputStream in = getClass().getResourceAsStream(
+                        "/db/db_enjoy_cafe.db");
+                        OutputStream out = new FileOutputStream(dbFile)) {
+                    if (in == null) {
+
+                        writeLog("ERROR: db_enjoy_cafe.db tidak ditemukan di dalam JAR!");
+
+                        return;
+
+                    }
+
+                    in.transferTo(out);
+                    writeLog("DB berhasil disalin ke AppData");
+
+                }
+            }
+        } catch (Exception e) {
+            writeLog("ERROR di initDatabase(): " + e.getMessage());
+
+            e.printStackTrace();
+        }
+    }
 }
