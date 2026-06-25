@@ -25,7 +25,7 @@ public class koneksi {
     private static String getDbPath() {
         String appData = System.getenv("APPDATA");
         if (appData != null && !appData.isEmpty()) {
-            File appDataDb = new File(appData + "\\ProjectUAS\\db\\db_enjoy_cafe.db");
+            File appDataDb = new File(appData + "\\EnjoyCafe\\db\\db_enjoy_cafe.db");
             if (appDataDb.exists()) {
                 return appDataDb.getAbsolutePath();
             }

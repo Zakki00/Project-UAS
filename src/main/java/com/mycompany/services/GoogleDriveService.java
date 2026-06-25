@@ -26,29 +26,29 @@ public class GoogleDriveService {
     private static File getDbFile() {
         String appData = System.getenv("APPDATA");
         return (appData != null && !appData.isEmpty())
-                ? new File(appData + "\\ProjectUAS\\db\\db_enjoy_cafe.db")
-                : new File(System.getProperty("user.home") + "/ProjectUAS/db/db_enjoy_cafe.db");
+                ? new File(appData + "\\EnjoyCafe\\db\\db_enjoy_cafe.db")
+                : new File(System.getProperty("user.home") + "/EnjoyCafe/db/db_enjoy_cafe.db");
     }
 
     private static File getTokenFile() {
         String appData = System.getenv("APPDATA");
         return (appData != null && !appData.isEmpty())
-                ? new File(appData + "\\ProjectUAS\\tokens\\StoredCredential")
-                : new File(System.getProperty("user.home") + "/ProjectUAS/tokens/StoredCredential");
+                ? new File(appData + "\\EnjoyCafe\\tokens\\StoredCredential")
+                : new File(System.getProperty("user.home") + "/EnjoyCafe/tokens/StoredCredential");
     }
 
     private static File getImageFolder() {
         String appData = System.getenv("APPDATA");
         return (appData != null && !appData.isEmpty())
-                ? new File(appData + "\\ProjectUAS\\image-barang")
-                : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang");
+                ? new File(appData + "\\EnjoyCafe\\image-barang")
+                : new File(System.getProperty("user.home") + "/EnjoyCafe/image-barang");
     }
 
     private static File getImageZipFile() {
         String appData = System.getenv("APPDATA");
         return (appData != null && !appData.isEmpty())
-                ? new File(appData + "\\ProjectUAS\\images-backup.zip")
-                : new File(System.getProperty("user.home") + "/ProjectUAS/images-backup.zip");
+                ? new File(appData + "\\EnjoyCafe\\images-backup.zip")
+                : new File(System.getProperty("user.home") + "/EnjoyCafe/images-backup.zip");
     }
 
     // =========================================================================

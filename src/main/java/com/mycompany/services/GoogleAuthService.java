@@ -176,14 +176,13 @@ public class GoogleAuthService {
     private File resolveTokenFolder() {
         String appData = System.getenv("APPDATA");
         File folder = (appData != null && !appData.isEmpty())
-                ? new File(appData + "\\ProjectUAS\\tokens")
-                : new File(System.getProperty("user.home") + "/ProjectUAS/tokens");
+                ? new File(appData + "\\EnjoyCafe\\tokens")
+                : new File(System.getProperty("user.home") + "/EnjoyCafe/tokens");
         if (!folder.exists())
             folder.mkdirs();
         writeLog("Token folder: " + folder.getAbsolutePath());
         return folder;
     }
-
 
     /**
      * Login sinkronus (blocking). Gunakan loginAsync() untuk JavaFX.

@@ -9,7 +9,7 @@
         "name": "App",
         "request": "launch",
         "mainClass": "com.mycompany.projectuas/com.mycompany.projectuas.App",
-        "projectName": "ProjectUAS"
+        "projectName": "EnjoyCafe"
     },
     {
         "type": "java",
@@ -22,7 +22,7 @@
         "name": "App",
         "request": "launch",
         "mainClass": "com.mycompany.projectuas.App",
-        "projectName": "ProjectUAS"
+        "projectName": "EnjoyCafe"
     }
 ]
 }

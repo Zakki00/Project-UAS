@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.mycompany</groupId>
-    <artifactId>ProjectUAS</artifactId>
+    <artifactId>EnjoyCafe</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -172,7 +172,7 @@
                                 <resource>
                                     <directory>${project.build.directory}</directory>
                                     <includes>
-                                        <include>ProjectUAS-1.0-SNAPSHOT.jar</include>
+                                        <include>EnjoyCafe-1.0-SNAPSHOT.jar</include>
                                     </includes>
                                     <filtering>false</filtering>
                                 </resource>
@@ -227,7 +227,7 @@
                                 <argument>${project.build.directory}/jpackage-input</argument>
 
                                 <argument>--main-jar</argument>
-                                <argument>ProjectUAS-1.0-SNAPSHOT.jar</argument>
+                                <argument>EnjoyCafe-1.0-SNAPSHOT.jar</argument>
 
                                 <argument>--main-class</argument>
                                 <argument>com.mycompany.projectuas.App</argument>

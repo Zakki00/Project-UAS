@@ -332,8 +332,7 @@ public class TransaksiController implements Initializable {
         btnProduk.setOnAction(e -> tampilkanMenuProduk());
         btnPS.setOnAction(e -> tampilkanMenuRentalPs());
 
-
-          //===logo
+        // ===logo
         Platform.runLater(() -> {
             Stage stage = (Stage) navMenu.getScene().getWindow();
             Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
@@ -724,8 +723,8 @@ public class TransaksiController implements Initializable {
             }
             String appData = System.getenv("APPDATA");
             File imgFile = (appData != null && !appData.isEmpty())
-                    ? new File(appData + "\\ProjectUAS\\image-barang\\" + imageUrl)
-                    : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + imageUrl);
+                    ? new File(appData + "\\EnjoyCafe\\image-barang\\" + imageUrl)
+                    : new File(System.getProperty("user.home") + "/EnjoyCafe/image-barang/" + imageUrl);
 
             if (imgFile.exists()) {
                 img.setImage(new Image(imgFile.toURI().toString()));

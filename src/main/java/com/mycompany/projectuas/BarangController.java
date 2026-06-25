@@ -345,8 +345,8 @@ public class BarangController implements Initializable {
                     Image img = null;
                     String appData = System.getenv("APPDATA");
                     File imgFile = (appData != null && !appData.isEmpty())
-                            ? new File(appData + "\\ProjectUAS\\image-barang\\" + item)
-                            : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang/" + item);
+                            ? new File(appData + "\\EnjoyCafe\\image-barang\\" + item)
+                            : new File(System.getProperty("user.home") + "/EnjoyCafe/image-barang/" + item);
 
                     if (imgFile.exists()) {
                         img = new Image(imgFile.toURI().toString());
@@ -805,8 +805,8 @@ public class BarangController implements Initializable {
         try {
             String appData = System.getenv("APPDATA");
             File imgFolder = (appData != null && !appData.isEmpty())
-                    ? new File(appData + "\\ProjectUAS\\image-barang")
-                    : new File(System.getProperty("user.home") + "/ProjectUAS/image-barang");
+                    ? new File(appData + "\\EnjoyCafe\\image-barang")
+                    : new File(System.getProperty("user.home") + "/EnjoyCafe/image-barang");
 
             if (!imgFolder.exists())
                 imgFolder.mkdirs();
