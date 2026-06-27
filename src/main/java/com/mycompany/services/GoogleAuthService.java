@@ -610,8 +610,8 @@ public class GoogleAuthService {
         // GANTI dengan ini:
         String appData = System.getenv("APPDATA");
         File tokenFolder = (appData != null && !appData.isEmpty())
-                ? new File(appData + "\\ProjectUAS\\tokens")
-                : new File(System.getProperty("user.home") + "/ProjectUAS/tokens");
+                ? new File(appData + "\\EnjoyCafe\\tokens")
+                : new File(System.getProperty("user.home") + "/EnjoyCafe/tokens");
         if (!tokenFolder.exists())
             tokenFolder.mkdirs();
         FileDataStoreFactory dataStoreFactory = new FileDataStoreFactory(tokenFolder);

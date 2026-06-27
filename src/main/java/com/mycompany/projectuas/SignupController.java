@@ -1,13 +1,16 @@
 package com.mycompany.projectuas;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.sql.Connection;
 import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
-
 import com.mycompany.Model.GoogleUser;
-import com.mycompany.services.AutoBackupService;
 import com.mycompany.services.GoogleDriveService;
+import java.io.File;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -80,12 +83,17 @@ public class SignupController implements Initializable {
         tfUsername.textProperty().addListener((o, ov, nv) -> clearError(errUsername));
         pfPassword.textProperty().addListener((o, ov, nv) -> clearError(errPassword));
 
-          //===logo
+        // ===logo
         Platform.runLater(() -> {
             Stage stage = (Stage) btnShowPass.getScene().getWindow();
             Image icon = new Image(getClass().getResourceAsStream("/image/Logo.png"));
             stage.getIcons().add(icon);
         });
+        try {
+            resetDatabase();
+        } catch (Exception e) {
+            System.err.println("Gagal reset database: " + e.getMessage());
+        }
     }
 
     // ═══════════════════════════════════════════════
@@ -135,7 +143,7 @@ public class SignupController implements Initializable {
         String username = tfUsername.getText().trim();
         String password = pfPassword.getText().trim();
         Stage stage = (Stage) btnShowPass.getScene().getWindow();
-        
+
         // VALIDASI NAMA
         if (nama.isEmpty() || nama.equals("Masukkan nama...")) {
             new Popup().showModernPopup(
@@ -236,6 +244,8 @@ public class SignupController implements Initializable {
         prefs.put("Admin", role);
 
         try {
+           
+
             String sql = "INSERT INTO tb_user (username, password, nama_lengkap, role, email, foto_profil) VALUES (?, ?, ?, ?, ?, ?)";
             koneksi.eksekusiQuery(sql,
                     username,
@@ -308,7 +318,7 @@ public class SignupController implements Initializable {
         lbl.setVisible(false);
         lbl.setManaged(false);
     }
-    
+
     // Hash password pakai SHA-256
     private String hashPassword(String password) {
         try {
@@ -323,8 +333,6 @@ public class SignupController implements Initializable {
             return password; // fallback tanpa hash
         }
     }
-
-
 
     // ── Buat loading stage ──────────────────────────────────────────
     private Stage showLoadingOverlay(Stage owner) {
@@ -394,5 +402,55 @@ public class SignupController implements Initializable {
         ft.setCycleCount(javafx.animation.Animation.INDEFINITE);
         ft.setDelay(javafx.util.Duration.millis(delayMs));
         ft.play();
+    }
+
+    private void resetDatabase() throws Exception {
+        String appData = System.getenv("APPDATA");
+        File dbFile = new File(appData + "\\EnjoyCafe\\db\\db_enjoy_cafe.db");
+
+        // 1. Paksa tutup semua koneksi SQLite aktif dulu
+        closeAllSQLiteConnections();
+
+
+        // 2. Hapus file lama
+        if (dbFile.exists()) {
+            boolean deleted = dbFile.delete();
+            System.out.println("DB lama dihapus: " + deleted + " | path: " + dbFile.getAbsolutePath());
+
+            // Kalau gagal dihapus (masih dilock), tunggu sebentar dan coba lagi
+            if (!deleted) {
+                Thread.sleep(500);
+                deleted = dbFile.delete();
+                System.out.println("Retry hapus DB: " + deleted);
+            }
+        }
+
+        // 3. Pastikan folder ada
+        if (!dbFile.getParentFile().exists()) {
+            dbFile.getParentFile().mkdirs();
+        }
+
+        // 4. Copy db fresh dari dalam JAR/resources
+        try (InputStream in = getClass().getResourceAsStream("/db/db_enjoy_cafe.db");
+                OutputStream out = new FileOutputStream(dbFile)) {
+            if (in == null)
+                throw new Exception("db_enjoy_cafe.db tidak ditemukan di resources!");
+            in.transferTo(out);
+            System.out.println("DB fresh berhasil disalin ke: " + dbFile.getAbsolutePath());
+        }
+    }
+
+    private void closeAllSQLiteConnections() {
+        try {
+            // Coba ambil koneksi baru lalu langsung tutup — ini memaksa
+            // connection pool SQLite flush semua handle lama
+            try (Connection conn = koneksi.getConnection()) {
+                // jalankan PRAGMA untuk memastikan semua write selesai
+                conn.createStatement().execute("PRAGMA wal_checkpoint(FULL)");
+                System.out.println("SQLite checkpoint selesai");
+            }
+        } catch (Exception e) {
+            System.out.println("closeAllSQLiteConnections: " + e.getMessage());
+        }
     }
 }

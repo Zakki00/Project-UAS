@@ -794,7 +794,7 @@ public class DashboardController implements Initializable {
                                 ),
                             0) AS total_item,
                             COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
-                            COALESCE(SUM(t.total_pembayaran),0) AS pendapatan
+                            COALESCE(SUM(t.total_pembayaran - t.kekurangan),0) AS pendapatan
                         FROM tb_transaksi t
                         LEFT JOIN tb_detail_transaksi dt
                             ON t.id_transaksi = dt.id_transaksi
@@ -826,7 +826,7 @@ public class DashboardController implements Initializable {
                                 ),
                             0) AS total_item,
                             COALESCE(COUNT(DISTINCT ps.id_paket_ps),0) AS total_paket_ps,
-                            COALESCE(SUM(t.total_pembayaran),0) AS pendapatan
+                            COALESCE(SUM(t.total_pembayaran - t.kekurangan),0) AS pendapatan
                         FROM tb_transaksi t
                         LEFT JOIN tb_detail_transaksi dt
                             ON t.id_transaksi = dt.id_transaksi

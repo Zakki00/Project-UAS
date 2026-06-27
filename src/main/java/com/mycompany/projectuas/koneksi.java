@@ -12,15 +12,9 @@ import java.util.List;
 import java.io.File;
 
 public class koneksi {
-    private static final String URL = "jdbc:sqlite:" + getDbPath();
-    // private static final String URL =
-    // "jdbc:mysql://localhost:3306/db_enjoy_cave";
+    // HAPUS static final URL — ganti resolve dinamis
     private static final String USERNAME = "root";
     private static final String PASSWORD = "";
-
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
-    }
 
     private static String getDbPath() {
         String appData = System.getenv("APPDATA");
@@ -30,8 +24,14 @@ public class koneksi {
                 return appDataDb.getAbsolutePath();
             }
         }
-        // Fallback: development di VSCode
         return "src/main/resources/db/db_enjoy_cafe.db";
+        
+    }
+
+    // ← KUNCI: URL diresolve setiap kali getConnection() dipanggil
+    public static Connection getConnection() throws SQLException {
+        String url = "jdbc:sqlite:" + getDbPath();
+        return DriverManager.getConnection(url, USERNAME, PASSWORD);
     }
 
     public static void koneksi() {

@@ -25,7 +25,7 @@ public class App extends Application {
 
                 String appData = System.getenv("APPDATA");
 
-                logFile = new File(appData + "\\ProjectUAS\\app.log");
+                logFile = new File(appData + "\\EnjoyCafe\\app.log");
 
                 logFile.getParentFile().mkdirs();
 
@@ -115,7 +115,7 @@ public class App extends Application {
     private void initDatabase() {
         try {
             String appData = System.getenv("APPDATA");
-            File dbFolder = new File(appData + "\\ProjectUAS\\db");
+            File dbFolder = new File(appData + "\\EnjoyCafe\\db");
             if (!dbFolder.exists())
                 dbFolder.mkdirs();
 

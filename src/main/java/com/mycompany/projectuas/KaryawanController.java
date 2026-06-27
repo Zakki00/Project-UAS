@@ -899,24 +899,9 @@ public class KaryawanController implements Initializable {
     }
     
 
-    private long createUserForKaryawan(String username, String password, String nama, String role) {
-        return koneksi.eksekusiInsert(
-                "INSERT INTO tb_user (username, password, nama_lengkap, role, email, foto_profil) VALUES (?, ?, ?, ?, ?, ?)",
-                username, password, nama, role, "", "");
-    }
+    
 
-    private boolean updateUserForKaryawan(String idUser, String username, String password, String nama, String role) {
-        return koneksi.eksekusiQueryBoolean(
-                "UPDATE tb_user SET username=?, password=?, nama_lengkap=?, role=? WHERE id_user=?",
-                username, password, nama, role, idUser);
-    }
-
-    private boolean deleteUserForKaryawan(String idUser) {
-        if (idUser == null || idUser.isBlank()) {
-            return false;
-        }
-        return koneksi.eksekusiQueryBoolean("DELETE FROM tb_user WHERE id_user=?", idUser);
-    }
+   
 
     // ═══════════════════════════════════════════════════════
     // CRUD KARYAWAN
@@ -949,31 +934,17 @@ public class KaryawanController implements Initializable {
                     Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
             return;
         }
-
-        long idUser = createUserForKaryawan(username, password, nama, role);
-        if (idUser == -1) {
-            new Popup().showModernPopup("ERROR",
-                    "Gagal membuat akun pengguna untuk karyawan.",
-                    Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
-            return;
-        }
-
+        
+        int id_user = 1;
         boolean success = koneksi.eksekusiQueryBoolean(
                 "INSERT INTO tb_karyawan (id_karyawan, id_user, username, password, nama_lengkap, jenis_kelamin, no_hp, tanggal_masuk, status_kerja, alamat, role) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-                id, idUser, username, password, nama,
+                id, id_user, username, password, nama,
                 cmbJenisKelamin.getValue(), txtNoHp.getText(), tgl,
                 cmbStatusKerja.getValue(), txtAlamat.getText(), role);
 
-        if (!success) {
-            deleteUserForKaryawan(String.valueOf(idUser));
-            new Popup().showModernPopup("ERROR",
-                    "Gagal menyimpan data karyawan.",
-                    Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
-            return;
-        }
-
+        
         KaryawanModel baru = new KaryawanModel(
-                id, String.valueOf(idUser), username, password, nama,
+                id, String.valueOf(id_user), username, password, nama,
                 cmbJenisKelamin.getValue(), txtNoHp.getText(), tgl,
                 cmbStatusKerja.getValue(), txtAlamat.getText(), role);
 
@@ -1006,13 +977,6 @@ public class KaryawanController implements Initializable {
         if (isDuplicateUsername(username, selected.getIdUser())) {
             new Popup().showModernPopup("ERROR",
                     "Username '" + username + "' sudah digunakan!",
-                    Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
-            return;
-        }
-
-        if (!updateUserForKaryawan(selected.getIdUser(), username, password, nama, role)) {
-            new Popup().showModernPopup("ERROR",
-                    "Gagal memperbarui akun pengguna.",
                     Popup.PopupType.ERROR, (Stage) txtIdKaryawan.getScene().getWindow());
             return;
         }
@@ -1054,9 +1018,6 @@ public class KaryawanController implements Initializable {
                 "Yakin ingin menghapus karyawan " + selected.getNamaLengkap() + "?", () -> {
                     boolean deleted = koneksi.eksekusiQueryBoolean("DELETE FROM tb_karyawan WHERE id_karyawan=?",
                             selected.getIdKaryawan());
-                    if (deleted) {
-                        deleteUserForKaryawan(selected.getIdUser());
-                    }
                     karyawanList.remove(selected);
                     karyawanFilter.remove(selected);
                     cmbPilihKaryawan.getItems().remove(selected.getIdKaryawan());

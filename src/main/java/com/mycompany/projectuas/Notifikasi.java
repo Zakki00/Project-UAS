@@ -102,12 +102,12 @@ public class Notifikasi {
 
         // 4. Pergantian Shift
         int jam = java.time.LocalTime.now().getHour();
-        if (jam == 6) {
+        if (jam == 9 && jam < 15) {
             list.add(new Item("🌤", "Shift Pagi Dimulai",
-                    "Selamat bekerja! Shift pagi 06:00 — 12:00", "#00D4FF"));
-        } else if (jam == 12) {
+                    "Selamat bekerja! Shift pagi 09:00 — 15:00", "#00D4FF"));
+        } else if (jam == 15 || jam < 4) {
             list.add(new Item("🌙", "Shift Siang-Malam Dimulai",
-                    "Pergantian shift. Shift malam 12:00 — 21:00", "#6C63FF"));
+                    "Pergantian shift. Shift malam 15:00 — 04:00", "#6C63FF"));
         }
 
         return list;

@@ -281,7 +281,7 @@
               <Separator styleClass="about-sep" />
               <HBox alignment="CENTER" spacing="30">
                 <VBox alignment="CENTER" spacing="4">
-                  <Label styleClass="about-stat-value" text="JavaFX 21" />
+                  <Label styleClass="about-stat-value" text="JavaFX 26" />
                   <Label styleClass="about-stat-label" text="Framework" />
                 </VBox>
                 <VBox alignment="CENTER" spacing="4">
