@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
@@ -24,7 +23,7 @@
       </padding>
       <Label styleClass="signup-logo" text="🏪" />
       <Label styleClass="signup-title" text="Buat Akun Baru" />
-      <Label styleClass="signup-sub" text="Daftarkan diri Anda ke StoreMS" />
+      <Label styleClass="signup-sub" text="Daftarkan diri Anda " />
     </VBox>
     <!-- Form -->
     <VBox spacing="16" styleClass="signup-form">
@@ -69,8 +68,6 @@
          <padding>
            <Insets bottom="28" />
          </padding>
-         <Label styleClass="footer-text" text="Sudah punya akun?" />
-         <Hyperlink fx:id="lnkLogin" onAction="#onGoLogin" styleClass="footer-link" text="Masuk sekarang" />
        </HBox>
     </VBox>
   </VBox>
