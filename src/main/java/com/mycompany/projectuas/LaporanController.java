@@ -1763,26 +1763,30 @@ public class LaporanController implements Initializable {
             headerFont.setBold(true);
             headerStyle.setFont(headerFont);
             Row headerRow = sheet.createRow(0);
-            String[] headers = { "No", "ID Transaksi", "Nama Lengkap", "Username",
-                    "Total Pembayaran", "Uang Pembayaran", "Kembalian", "Kekurangan", "Status", "Tanggal" };
+            String[] headers = { "No", "ID Transaksi", "Nama Pelanggan", "Item", "Durasi PS",
+                    "Total Pembayaran", "Uang Dibayar", "Kembalian", "Kekurangan", "Status",
+                    "Tanggal Transaksi", "User Input", "Nama Kasir" };
             for (int i = 0; i < headers.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(headers[i]);
                 cell.setCellStyle(headerStyle);
             }
+
             int rowIndex = 1;
             for (LaporanTransaksiItem item : TableLaporan.getItems()) {
                 Row row = sheet.createRow(rowIndex++);
                 row.createCell(0).setCellValue(item.no);
                 row.createCell(1).setCellValue(item.idTransaksi);
                 row.createCell(2).setCellValue(item.namaLengkap);
-                row.createCell(3).setCellValue(item.username);
-                row.createCell(4).setCellValue(item.totalPembayaran);
-                row.createCell(5).setCellValue(item.uangPembayaran);
-                row.createCell(6).setCellValue(item.kembalian);
-                row.createCell(7).setCellValue(item.kekurangan);
-                row.createCell(8).setCellValue(item.statusPembayaran);
-                row.createCell(9).setCellValue(item.tanggalTransaksi.toString());
+                row.createCell(3).setCellValue(item.jumlahItem + " item"); // sesuaikan nama field
+                row.createCell(4).setCellValue(item.totalDurasiPs > 0 ? String.valueOf(item.totalDurasiPs) : "-");                row.createCell(5).setCellValue(item.totalPembayaran);
+                row.createCell(6).setCellValue(item.uangPembayaran);
+                row.createCell(7).setCellValue(item.kembalian);
+                row.createCell(8).setCellValue(item.kekurangan);
+                row.createCell(9).setCellValue(item.statusPembayaran);
+                row.createCell(10).setCellValue(item.tanggalTransaksi.toString());
+                row.createCell(11).setCellValue(item.username); // sesuaikan nama field
+                row.createCell(12).setCellValue(item.namaLengkap); // sesuaikan nama field
             }
             for (int i = 0; i < headers.length; i++)
                 sheet.autoSizeColumn(i);

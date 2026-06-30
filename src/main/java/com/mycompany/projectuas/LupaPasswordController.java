@@ -291,7 +291,7 @@ public class LupaPasswordController implements Initializable {
         // Update username dan password — password di-hash agar konsisten
         koneksi.eksekusiQuery(
                 "UPDATE tb_karyawan SET username = ?, password = ? WHERE nama_lengkap = ?",
-                usernameBaru, hashPassword(passwordBaru), nama);
+                usernameBaru, passwordBaru, nama);
 
         new Popup().showModernPopup("SUCCESS",
                 "Username dan password karyawan berhasil direset!",
